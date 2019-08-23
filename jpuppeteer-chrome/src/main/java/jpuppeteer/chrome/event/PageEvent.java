@@ -9,6 +9,7 @@ import jpuppeteer.cdp.cdp.entity.page.WindowOpenEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ExceptionThrownEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
+import jpuppeteer.chrome.entity.CookieEvent;
 
 public final class PageEvent<E> extends FrameEvent<E> {
 
@@ -35,6 +36,8 @@ public final class PageEvent<E> extends FrameEvent<E> {
     public static final PageEvent<WindowOpenEvent> POPUP = new PageEvent<>(WindowOpenEvent.class);
 
     public static final PageEvent<ExceptionThrownEvent> PAGEERROR = new PageEvent<>(ExceptionThrownEvent.class);
+
+    public static final PageEvent<CookieEvent> COOKIE = new PageEvent<>(CookieEvent.class);
 
 
     private PageEvent(Class<E> eventClass) {

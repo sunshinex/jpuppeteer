@@ -67,10 +67,11 @@ public class ChromeLauncher implements Launcher {
             page.addListener(PageEvent.LOAD, event -> {
                 logger.info("type=LOAD, event={}", event);
             });
+            page.addListener(PageEvent.COOKIE, e -> logger.info("type=COOKIR, cookies={}", e.getCookies()));
             page.navigate("https://login.taobao.com/?useMobile=false", null);
             page.wait(PageEvent.DOMCONTENTLOADED);
             //page.setContent("<a href='http://www.baidu.com/' target='_blank'>点击打开新窗口</a>");
-            System.out.println(page.content());
+            //System.out.println(page.content());
             //page.querySelector("#TPL_username_1").input("abc12348", 50);
             //page.querySelector("#TPL_password_1").input("1239091234", 50);
             //page.querySelector("#J_SubmitStatic").click();
@@ -86,8 +87,6 @@ public class ChromeLauncher implements Launcher {
 //            page.querySelector(".s_tab_inner a:nth-of-type(3)").click(ButtonType.LEFT);
 //            List<ChromeElement> divs = page.querySelectorAll("div");
 //            head.querySelector("title");
-            System.out.println(page.url());
-            TimeUnit.SECONDS.sleep(2);
         //}
         //page.navigate("https://www.w3school.com.cn/tiy/t.asp?f=html_iframe", WaitUntil.NETWORKIDLE1, null);
 //        browser.defaultContext().newPage().navigate("http://i.taobao.com/", WaitUntil.LOAD, null);

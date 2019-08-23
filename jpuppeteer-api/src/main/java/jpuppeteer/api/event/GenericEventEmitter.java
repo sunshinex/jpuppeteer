@@ -2,6 +2,7 @@ package jpuppeteer.api.event;
 
 import com.alibaba.fastjson.JSON;
 import jpuppeteer.api.future.DefaultPromise;
+import jpuppeteer.api.future.Promise;
 import jpuppeteer.api.util.ConcurrentHashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class GenericEventEmitter implements EventEmitter {
 
@@ -59,15 +61,38 @@ public class GenericEventEmitter implements EventEmitter {
         }
     }
 
+    private <E> E wait(EventType<E> eventType, Promise<E> promise, Consumer<E> consumer, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        addListener(eventType, consumer);
+        try {
+            if (unit != null && timeout > 0) {
+                return promise.get(timeout, unit);
+            } else {
+                return promise.get();
+            }
+        } finally {
+            removeListener(eventType, consumer);
+        }
+    }
+
     @Override
     public <E> E wait(EventType<E> eventType, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         DefaultPromise<E> promise = new DefaultPromise<>();
-        addListener(eventType, new WaitConsumer<>(eventType, promise));
-        if (unit != null && timeout > 0) {
-            return promise.get(timeout, unit);
-        } else {
-            return promise.get();
-        }
+        return wait(eventType, promise, e -> promise.trySuccess(e), timeout, unit);
+    }
+
+    @Override
+    public <E> E wait(EventType<E> eventType, Predicate<E> predicate, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        DefaultPromise<E> promise = new DefaultPromise<>();
+        return wait(
+                eventType,
+                promise, e -> {
+                    if (!predicate.test(e)) {
+                        return;
+                    }
+                    promise.trySuccess(e);
+                },
+                timeout,
+                unit);
     }
 
     @Override
@@ -100,24 +125,6 @@ public class GenericEventEmitter implements EventEmitter {
             } catch (Exception e) {
                 logger.error("publish event error, event={}, error={}", JSON.toJSONString(event), e.getMessage(), e);
             }
-        }
-    }
-
-    class WaitConsumer<E> implements Consumer<E> {
-
-        DefaultPromise<E> promise;
-
-        EventType<E> eventType;
-
-        WaitConsumer(EventType<E> eventType, DefaultPromise<E> promise) {
-            this.eventType = eventType;
-            this.promise = promise;
-        }
-
-        @Override
-        public void accept(E e) {
-            promise.setSuccess(e);
-            removeListener(eventType, this);
         }
     }
 

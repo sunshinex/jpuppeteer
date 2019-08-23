@@ -37,6 +37,9 @@ import jpuppeteer.cdp.cdp.entity.runtime.ReleaseObjectRequest;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
+import jpuppeteer.chrome.entity.CookieEvent;
+import jpuppeteer.chrome.event.PageEvent;
+import jpuppeteer.chrome.util.CookieUtils;
 import jpuppeteer.chrome.util.TransUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -707,6 +710,15 @@ public class ChromePage extends ChromeFrame implements Page {
                     .remoteAddress(res.getRemoteIPAddress() + ":" + res.getRemotePort())
                     .securityDetails(securityDetails)
                     .build();
+
+            Optional<Header> header = headers.stream().filter(h -> StringUtils.equalsIgnoreCase(CookieUtils.SET_COOKIE, h.getName())).findFirst();
+            if (header.isPresent()) {
+                try {
+                    emit(COOKIE, new CookieEvent(response, CookieUtils.parse(header.get(), url)));
+                } catch (Throwable t) {
+                    logger.warn("emit cookie event failed, error={}", t.getMessage(), t);
+                }
+            }
 
             request.setResponse(response);
             //frame.emit(RESPONSE, response);
