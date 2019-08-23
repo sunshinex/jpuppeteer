@@ -31,11 +31,11 @@ public class ChromeBrowser implements Browser {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeBrowser.class);
 
-    private EventEmitter events;
-
     private static final String DEFAULT_URL = "about:blank";
 
     public static final int DEFAULT_TIMEOUT = 30;
+
+    private EventEmitter events;
 
     private CDPConnection connection;
 

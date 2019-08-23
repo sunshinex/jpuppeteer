@@ -692,6 +692,8 @@ public class ChromePage extends ChromeFrame implements Page {
                         .build();
             }
 
+            List<Header> headers = parseHeader(res.getHeaders());
+
             ChromeResponse response = ChromeResponse.builder()
                     .session(session)
                     .network(network)
@@ -701,7 +703,7 @@ public class ChromePage extends ChromeFrame implements Page {
                     .url(url)
                     .status(res.getStatus())
                     .statusText(res.getStatusText())
-                    .headers(parseHeader(res.getHeaders()))
+                    .headers(headers)
                     .remoteAddress(res.getRemoteIPAddress() + ":" + res.getRemotePort())
                     .securityDetails(securityDetails)
                     .build();
