@@ -4,10 +4,10 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.util.TypeUtils;
 import jpuppeteer.api.browser.BrowserObject;
-import jpuppeteer.api.browser.Frame;
-import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
-import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
+import jpuppeteer.api.browser.ExecutionContext;
+import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.entity.runtime.*;
+import jpuppeteer.chrome.util.ArgUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
@@ -28,21 +28,18 @@ public class ChromeBrowserObject implements BrowserObject {
 
     private static final String NEGATIVE_INFINITY = "-Infinity";
 
-    protected ChromeFrame frame;
+    protected Runtime runtime;
+
+    protected ChromeExecutionContext executionContext;
 
     protected String objectId;
 
-    protected RemoteObjectType objectType;
-
-    protected RemoteObjectSubtype subType;
-
     protected RemoteObject object;
 
-    public ChromeBrowserObject(ChromeFrame frame, RemoteObject object) {
-        this.frame = frame;
+    public ChromeBrowserObject(Runtime runtime, ChromeExecutionContext executionContext, RemoteObject object) {
+        this.runtime = runtime;
+        this.executionContext = executionContext;
         this.objectId = object.getObjectId();
-        this.objectType = RemoteObjectType.findByValue(object.getType());
-        this.subType = RemoteObjectSubtype.findByValue(object.getSubtype());
         this.object = object;
     }
 
@@ -50,17 +47,9 @@ public class ChromeBrowserObject implements BrowserObject {
         return objectId;
     }
 
-    public RemoteObjectType getObjectType() {
-        return objectType;
-    }
-
-    public RemoteObjectSubtype getSubType() {
-        return subType;
-    }
-
     @Override
-    public Frame frame() {
-        return frame;
+    public ExecutionContext executionContext() {
+        return executionContext;
     }
 
     @Override
@@ -68,7 +57,7 @@ public class ChromeBrowserObject implements BrowserObject {
         GetPropertiesRequest request = new GetPropertiesRequest();
         request.setObjectId(objectId);
         request.setOwnProperties(true);
-        GetPropertiesResponse response = frame.runtime.getProperties(request, DEFAULT_TIMEOUT);
+        GetPropertiesResponse response = runtime.getProperties(request, DEFAULT_TIMEOUT);
         if (response.getExceptionDetails() != null) {
             throw new Exception(response.getExceptionDetails().getException().getDescription());
         }
@@ -77,20 +66,17 @@ public class ChromeBrowserObject implements BrowserObject {
             if (!descriptor.getEnumerable()) {
                 continue;
             }
-            objects.add(new ChromeBrowserObject(frame, descriptor.getValue()));
+            objects.add(new ChromeBrowserObject(runtime, executionContext, descriptor.getValue()));
         }
         return objects;
     }
 
     @Override
     public ChromeBrowserObject getProperty(String name) throws Exception {
-        CallArgument object = new CallArgument();
-        object.setObjectId(objectId);
-        CallArgument prop = new CallArgument();
-        prop.setValue(name);
-        return frame.evaluate(
+        CallArgument object = ArgUtils.createFromObjectId(objectId);
+        CallArgument prop = ArgUtils.createFromValue(name);
+        return executionContext.evaluate(
                 "function(object, prop){return object[prop];}",
-                false,
                 object, prop
                 );
     }
@@ -99,7 +85,7 @@ public class ChromeBrowserObject implements BrowserObject {
     public void release() throws Exception {
         ReleaseObjectRequest request = new ReleaseObjectRequest();
         request.setObjectId(objectId);
-        frame.runtime.releaseObject(request, DEFAULT_TIMEOUT);
+        runtime.releaseObject(request, DEFAULT_TIMEOUT);
     }
 
     @Override
@@ -110,7 +96,7 @@ public class ChromeBrowserObject implements BrowserObject {
         String origin = object.getUnserializableValue();
         if (NEGATIVE_ZERO.equals(origin)) {
             return -0;
-        } else if (NAN.equals(origin) || INFINITY.equals(origin) || NEGATIVE_INFINITY.equals(origin)) {
+        } else if (origin == null || NAN.equals(origin) || INFINITY.equals(origin) || NEGATIVE_INFINITY.equals(origin)) {
             //解析不了的数字, 正无穷, 负无穷 全部返回null
             return null;
         } else {

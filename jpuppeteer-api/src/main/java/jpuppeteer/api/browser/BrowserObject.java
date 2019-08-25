@@ -9,11 +9,7 @@ import java.util.List;
 
 public interface BrowserObject {
 
-    /**
-     * 持有此对象的frame
-     * @return
-     */
-    Frame frame();
+    ExecutionContext executionContext();
 
     List<? extends BrowserObject> getProperties() throws Exception;
 

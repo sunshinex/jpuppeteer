@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public interface Frame extends EventEmitter, ExecutionContext {
+public interface Frame<T> extends EventEmitter, ExecutionContext<T> {
 
     String frameId();
 
@@ -34,7 +34,7 @@ public interface Frame extends EventEmitter, ExecutionContext {
 
     List<? extends Element> querySelectorAll(String selector) throws Exception;
 
-    BrowserObject wait(String expression, int timeout, TimeUnit unit) throws Exception;
+    BrowserObject wait(String expression, int timeout, TimeUnit unit, T... args) throws Exception;
 
     Element waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
 

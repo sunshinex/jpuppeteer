@@ -1,5 +1,6 @@
 package jpuppeteer.chrome;
 
+import jpuppeteer.api.browser.BoundingBox;
 import jpuppeteer.api.browser.BoxModel;
 import jpuppeteer.api.browser.Coordinate;
 import jpuppeteer.api.browser.Element;
@@ -12,6 +13,8 @@ import jpuppeteer.cdp.cdp.entity.dom.SetFileInputFilesRequest;
 import jpuppeteer.cdp.cdp.entity.input.InsertTextRequest;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
+import jpuppeteer.chrome.util.ArgUtils;
+import jpuppeteer.chrome.util.MathUtils;
 import jpuppeteer.chrome.util.ScriptUtils;
 
 import java.io.File;
@@ -27,10 +30,15 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     private static final String SCRIPT_SELECT = ScriptUtils.load("select.js");
 
+    private static final String SCRIPT_IS_INTERSECTING_VIEWPORT = ScriptUtils.load("isintersectingviewport.js");
+
     protected ChromePage page;
 
+    protected ChromeFrame frame;
+
     protected ChromeElement(ChromeFrame frame, RemoteObject object) {
-        super(frame, object);
+        super(frame.runtime, frame, object);
+        this.frame = frame;
         if (frame instanceof ChromePage) {
             this.page = (ChromePage) frame;
         } else {
@@ -42,23 +50,23 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
         }
     }
 
+    protected ChromeElement(ChromeFrame frame, ChromeBrowserObject object) {
+        this(frame, object.object);
+    }
+
     @Override
     public ChromeElement querySelector(String selector) throws Exception {
-        CallArgument parent = new CallArgument();
-        parent.setObjectId(objectId);
-        CallArgument argSelector = new CallArgument();
-        argSelector.setValue(selector);
-        ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelector(selector);}", false, parent, argSelector);
+        CallArgument parent = ArgUtils.createFromObjectId(objectId);
+        CallArgument argSelector = ArgUtils.createFromValue(selector);
+        ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelector(selector);}", parent, argSelector);
         return new ChromeElement(frame, object.object);
     }
 
     @Override
     public List<ChromeElement> querySelectorAll(String selector) throws Exception {
-        CallArgument parent = new CallArgument();
-        parent.setObjectId(objectId);
-        CallArgument argSelector = new CallArgument();
-        argSelector.setValue(selector);
-        ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelectorAll(selector);}", false, parent, argSelector);
+        CallArgument parent = ArgUtils.createFromObjectId(objectId);
+        CallArgument argSelector = ArgUtils.createFromValue(selector);
+        ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelectorAll(selector);}", parent, argSelector);
         List<ChromeBrowserObject> properties = object.getProperties();
         return properties.stream().map(obj -> new ChromeElement(frame, obj.object)).collect(Collectors.toList());
     }
@@ -69,10 +77,35 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
     }
 
     @Override
+    public boolean isIntersectingViewport() throws Exception {
+        return frame.evaluate(SCRIPT_IS_INTERSECTING_VIEWPORT, Boolean.class, ArgUtils.createFromObjectId(objectId));
+    }
+
+    @Override
+    public BoundingBox boundingBox() throws Exception {
+        BoxModel model = boxModel();
+        if (model == null) {
+            return null;
+        }
+
+        Coordinate[] border = model.getBorder();
+
+        double x = MathUtils.min(border[0].getX(), border[1].getX(), border[2].getX(), border[3].getX());
+        double y = MathUtils.min(border[0].getY(), border[1].getY(), border[2].getY(), border[3].getY());
+
+        double width = MathUtils.max(border[0].getX(), border[1].getY(), border[2].getX(), border[3].getX()) - x;
+        double height = MathUtils.max(border[0].getY(), border[1].getY(), border[2].getY(), border[3].getY()) - y;
+        return new BoundingBox(x, y, width, height);
+    }
+
+    @Override
     public BoxModel boxModel() throws Exception {
         GetBoxModelRequest request = new GetBoxModelRequest();
         request.setObjectId(objectId);
         GetBoxModelResponse resp = frame.dom.getBoxModel(request, DEFAULT_TIMEOUT);
+        if (resp == null) {
+            return null;
+        }
         return new BoxModel(
                 resp.getModel().getWidth(),
                 resp.getModel().getHeight(),
@@ -149,7 +182,11 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public void input(String text, int delay) throws Exception {
-        focus();
+        try {
+            focus();
+        } catch (Exception e) {
+            click();
+        }
         for(char chr : text.toCharArray()) {
             String chrStr = String.valueOf(chr);
             USKeyboardDefinition def = USKeyboardDefinition.find(chrStr);
@@ -166,10 +203,8 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public void select(String... values) throws Exception {
-        CallArgument parent = new CallArgument();
-        parent.setObjectId(objectId);
-        CallArgument argValues = new CallArgument();
-        argValues.setValue(values);
-        frame.evaluate(SCRIPT_SELECT, false, parent, argValues);
+        CallArgument parent = ArgUtils.createFromObjectId(objectId);
+        CallArgument argValues = ArgUtils.createFromValue(values);
+        frame.evaluate(SCRIPT_SELECT, parent, argValues);
     }
 }

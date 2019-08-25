@@ -7,15 +7,19 @@ import java.util.List;
 
 public interface Element extends BrowserObject {
 
+    Frame frame();
+
     Element querySelector(String selector) throws Exception;
 
     List<? extends Element> querySelectorAll(String selector) throws Exception;
 
+    BoundingBox boundingBox() throws Exception;
+
+    boolean isIntersectingViewport() throws Exception;
+
     BoxModel boxModel() throws Exception;
 
     void uploadFile(File... files) throws Exception;
-
-//    boolean isIntersectingViewport();
 
     //dom event
     void focus() throws Exception;

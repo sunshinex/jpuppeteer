@@ -67,15 +67,22 @@ public class ChromeLauncher implements Launcher {
             page.addListener(PageEvent.LOAD, event -> {
                 logger.info("type=LOAD, event={}", event);
             });
+            page.addListener(PageEvent.DOMCONTENTLOADED, event -> {
+                logger.info("type=DOMCONTENTLOADED, event={}", event);
+            });
             page.addListener(PageEvent.COOKIE, e -> logger.info("type=COOKIR, cookies={}", e.getCookies()));
             page.navigate("https://login.taobao.com/?useMobile=false", null);
             page.wait(PageEvent.DOMCONTENTLOADED);
+//            System.out.println(-0);
+//            System.out.println(page.evaluate("function(){return BigInt('12393249091902388912399');}").get());
             //page.setContent("<a href='http://www.baidu.com/' target='_blank'>点击打开新窗口</a>");
             //System.out.println(page.content());
-            //page.querySelector("#TPL_username_1").input("abc12348", 50);
+            page.waitSelector("body", 10, TimeUnit.SECONDS);
             //page.querySelector("#TPL_password_1").input("1239091234", 50);
             //page.querySelector("#J_SubmitStatic").click();
             //page.wait(PageEvent.LOAD);
+            //ChromeElement message = page.waitSelector("#J_Message", 5, TimeUnit.SECONDS);
+            //System.out.println(message.getProperty("innerText").getString());
 //            ChromeElement element = page.querySelector("head");
 //            System.out.println(element);
             //logger.info("response={}", response);
@@ -121,7 +128,7 @@ public class ChromeLauncher implements Launcher {
     }
 
     public static void main(String[] args) throws Exception {
-//        new ChromeLauncher(new File("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")).launch(args);
-        new ChromeLauncher(new File("D:\\workspace\\browser-driver\\bin\\chrome\\win32-x64\\chrome")).launch(args);
+        new ChromeLauncher(new File("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")).launch(args);
+//        new ChromeLauncher(new File("D:\\workspace\\browser-driver\\bin\\chrome\\win32-x64\\chrome")).launch(args);
     }
 }

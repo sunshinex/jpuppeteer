@@ -6,7 +6,7 @@ import jpuppeteer.api.constant.USKeyboardDefinition;
 
 import java.util.List;
 
-public interface Page extends Frame {
+public interface Page<T> extends Frame<T> {
 
     void setCookie(Cookie... cookies) throws Exception;
 

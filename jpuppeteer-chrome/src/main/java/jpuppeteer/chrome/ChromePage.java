@@ -32,13 +32,13 @@ import jpuppeteer.cdp.cdp.entity.log.EntryAddedEvent;
 import jpuppeteer.cdp.cdp.entity.network.GetCookiesResponse;
 import jpuppeteer.cdp.cdp.entity.network.*;
 import jpuppeteer.cdp.cdp.entity.page.*;
+import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextCreatedEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ReleaseObjectRequest;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
 import jpuppeteer.chrome.entity.CookieEvent;
-import jpuppeteer.chrome.event.PageEvent;
 import jpuppeteer.chrome.util.CookieUtils;
 import jpuppeteer.chrome.util.TransUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -59,7 +59,7 @@ import static jpuppeteer.cdp.cdp.CDPEventType.*;
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 import static jpuppeteer.chrome.event.PageEvent.*;
 
-public class ChromePage extends ChromeFrame implements Page {
+public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromePage.class);
 
@@ -854,8 +854,9 @@ public class ChromePage extends ChromeFrame implements Page {
             if (frame == null) {
                 return;
             }
-            frame.executionContextId = evt.getContext().getId();
-            logger.info("frame {} init execution with id:{}", frameId, frame.executionContextId);
+            Integer executionContextId = evt.getContext().getId();
+            frame.setExecutionContextId(executionContextId);
+            logger.info("frame {} init execution with id:{}", frameId, executionContextId);
         }
     }
 
