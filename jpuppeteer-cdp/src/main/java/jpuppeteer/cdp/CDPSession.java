@@ -26,7 +26,7 @@ public class CDPSession {
 
     private Map<String, Object> extra;
 
-    protected CDPSession(CDPConnection connection, TargetType type, String sessionId) {
+    public CDPSession(CDPConnection connection, TargetType type, String sessionId) {
         this.events = new GenericEventEmitter();
         this.connection = connection;
         this.type = type;

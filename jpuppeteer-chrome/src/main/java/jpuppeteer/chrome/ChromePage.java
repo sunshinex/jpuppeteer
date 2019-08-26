@@ -154,22 +154,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     @Override
     public void setCookie(Cookie... cookies) throws Exception {
-        SetCookiesRequest request = new SetCookiesRequest();
-        List<CookieParam> cookieParams = Lists.newArrayListWithCapacity(cookies.length);
-        for(Cookie cookie : cookies) {
-            CookieParam cookieParam = new CookieParam();
-            cookieParam.setName(cookie.getName());
-            cookieParam.setValue(cookie.getValue());
-            cookieParam.setDomain(cookie.getDomain());
-            cookieParam.setPath(cookie.getPath());
-            cookieParam.setExpires(cookie.getExpires().doubleValue());
-            cookieParam.setSecure(cookie.isSecure());
-            cookieParam.setHttpOnly(cookie.isHttpOnly());
-            cookieParam.setSameSite(cookie.getSameSite());
-            cookieParam.setUrl(cookie.getUrl());
-            cookieParams.add(cookieParam);
-        }
-        request.setCookies(cookieParams);
+        SetCookiesRequest request = CookieUtils.create(cookies);
         network.setCookies(request, DEFAULT_TIMEOUT);
     }
 

@@ -1,7 +1,10 @@
 package jpuppeteer.chrome.util;
 
+import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.browser.Header;
+import jpuppeteer.cdp.cdp.entity.network.CookieParam;
+import jpuppeteer.cdp.cdp.entity.network.SetCookiesRequest;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -83,6 +86,26 @@ public class CookieUtils {
             "EEE,dd-MMM-yyyy HH:mm:ss z",
             "EEE, dd-MM-yyyy HH:mm:ss z",
     };
+
+    public static SetCookiesRequest create(Cookie... cookies) {
+        SetCookiesRequest request = new SetCookiesRequest();
+        List<CookieParam> cookieParams = Lists.newArrayListWithCapacity(cookies.length);
+        for(Cookie cookie : cookies) {
+            CookieParam cookieParam = new CookieParam();
+            cookieParam.setName(cookie.getName());
+            cookieParam.setValue(cookie.getValue());
+            cookieParam.setDomain(cookie.getDomain());
+            cookieParam.setPath(cookie.getPath());
+            cookieParam.setExpires(cookie.getExpires().doubleValue());
+            cookieParam.setSecure(cookie.isSecure());
+            cookieParam.setHttpOnly(cookie.isHttpOnly());
+            cookieParam.setSameSite(cookie.getSameSite());
+            cookieParam.setUrl(cookie.getUrl());
+            cookieParams.add(cookieParam);
+        }
+        request.setCookies(cookieParams);
+        return request;
+    }
 
 
     public static List<Cookie> parse(Header header, URL url) throws UnsupportedEncodingException, ParseException {

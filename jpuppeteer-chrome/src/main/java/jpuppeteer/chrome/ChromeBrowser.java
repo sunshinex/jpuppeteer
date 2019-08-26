@@ -2,16 +2,23 @@ package jpuppeteer.chrome;
 
 import jpuppeteer.api.browser.Browser;
 import jpuppeteer.api.browser.Cookie;
+import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.EventType;
 import jpuppeteer.api.event.GenericEventEmitter;
 import jpuppeteer.cdp.CDPConnection;
+import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.WebSocketConnection;
+import jpuppeteer.cdp.cdp.domain.Network;
 import jpuppeteer.cdp.cdp.domain.Target;
 import jpuppeteer.cdp.cdp.entity.browser.GetVersionResponse;
 import jpuppeteer.cdp.cdp.entity.network.GetAllCookiesResponse;
+import jpuppeteer.cdp.cdp.entity.network.SetCookieResponse;
+import jpuppeteer.cdp.cdp.entity.network.SetCookiesRequest;
 import jpuppeteer.cdp.cdp.entity.target.*;
+import jpuppeteer.cdp.constant.TargetType;
 import jpuppeteer.chrome.event.BrowserEvent;
+import jpuppeteer.chrome.util.CookieUtils;
 import jpuppeteer.chrome.util.TransUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +55,10 @@ public class ChromeBrowser implements Browser {
 
     private Target target;
 
+    private CDPSession defaultSession;
+
+    private Network network;
+
     public ChromeBrowser(Process process, CDPConnection connection) throws Exception {
         connection.open();
         this.events = new GenericEventEmitter();
@@ -65,6 +76,22 @@ public class ChromeBrowser implements Browser {
         connection.addListener(TARGET_ATTACHEDTOTARGET, ev -> emit(ATTACHEDTOTARGET, ev.getParams().toJavaObject(ATTACHEDTOTARGET.eventClass())));
         connection.addListener(TARGET_DETACHEDFROMTARGET, ev -> emit(DETACHEDFROMTARGET, ev.getParams().toJavaObject(DETACHEDFROMTARGET.eventClass())));
         connection.addListener(TARGET_RECEIVEDMESSAGEFROMTARGET, ev -> emit(RECEIVEDMESSAGEFROMTARGET, ev.getParams().toJavaObject(RECEIVEDMESSAGEFROMTARGET.eventClass())));
+        //找到默认的标签页
+        String defaultTargetId = null;
+        for(TargetInfo targetInfo : getTargets()) {
+            TargetType targetType = TargetType.findByValue(targetInfo.getType());
+            if (TargetType.PAGE.equals(targetType)) {
+                defaultTargetId = targetInfo.getTargetId();
+            }
+        }
+        //如果没有找到默认的标签页, 则创建一个
+        if (defaultTargetId == null) {
+            defaultTargetId = createTarget(null);
+        }
+        //给默认标签页附加devtools
+        String sessionId = attachToTarget(defaultTargetId);
+        defaultSession = new CDPSession(connection, TargetType.PAGE, sessionId);
+        this.network = new Network(defaultSession);
     }
 
     private static <E> void checkEventType(EventType<E> eventType) {
@@ -190,33 +217,18 @@ public class ChromeBrowser implements Browser {
 
     @Override
     public void setCookie(Cookie... cookies) throws Exception {
-        ChromePage page = defaultContext.newPage();
-        try {
-            page.setCookie(cookies);
-        } finally {
-            page.close();
-        }
+        SetCookiesRequest request = CookieUtils.create(cookies);
+        network.setCookies(request, DEFAULT_TIMEOUT);
     }
 
     @Override
     public void clearCookie() throws Exception {
-        ChromePage page = defaultContext.newPage();
-        try {
-            page.network.clearBrowserCookies(DEFAULT_TIMEOUT);
-        } finally {
-            page.close();
-        }
+        network.clearBrowserCookies(DEFAULT_TIMEOUT);
     }
 
     @Override
     public List<Cookie> cookies() throws Exception {
-        ChromePage page = defaultContext.newPage();
-        GetAllCookiesResponse response;
-        try {
-            response = page.network.getAllCookies(DEFAULT_TIMEOUT);
-        } finally {
-            page.close();
-        }
+        GetAllCookiesResponse response = network.getAllCookies(DEFAULT_TIMEOUT);
         return response.getCookies().stream().map(cookie -> TransUtils.cookie(cookie)).collect(Collectors.toList());
     }
 }
