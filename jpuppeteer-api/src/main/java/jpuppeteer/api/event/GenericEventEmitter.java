@@ -55,6 +55,7 @@ public class GenericEventEmitter implements EventEmitter {
 
     @Override
     public <E> void removeListener(EventType<E> eventType, Consumer<E> consumer) {
+        //TODO 后续需要处理remove时候的并发问题
         String eventName = eventType.eventName();
         if (listenerMap.containsKey(eventName)) {
             listenerMap.get(eventName).remove(consumer);

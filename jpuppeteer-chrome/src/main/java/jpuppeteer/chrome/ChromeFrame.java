@@ -101,6 +101,18 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
     }
 
     @Override
+    public <E> E wait(EventType<E> eventType, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        checkEventType(eventType);
+        return events.wait(eventType, timeout, unit);
+    }
+
+    @Override
+    public <E> E wait(EventType<E> eventType, Predicate<E> predicate, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        checkEventType(eventType);
+        return events.wait(eventType, predicate, timeout, unit);
+    }
+
+    @Override
     public <E> void emit(EventType<E> eventType, E event) {
         checkEventType(eventType);
         events.emit(eventType, event);
@@ -196,18 +208,6 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
         request.setReferrer(referer);
         request.setFrameId(frameId);
         page.navigate(request, DEFAULT_TIMEOUT);
-    }
-
-    @Override
-    public <E> E wait(EventType<E> eventType, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        checkEventType(eventType);
-        return events.wait(eventType, timeout, unit);
-    }
-
-    @Override
-    public <E> E wait(EventType<E> eventType, Predicate<E> predicate, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        checkEventType(eventType);
-        return events.wait(eventType, predicate, timeout, unit);
     }
 
     @Override
