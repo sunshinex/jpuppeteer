@@ -1,7 +1,6 @@
 package jpuppeteer.chrome;
 
 
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 import jpuppeteer.api.browser.Header;
 import jpuppeteer.api.browser.Response;
 import jpuppeteer.api.browser.SecurityDetails;
@@ -16,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Base64;
 import java.util.List;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
@@ -100,7 +100,7 @@ public class ChromeResponse implements Response {
         request.setRequestId(request.getRequestId());
         try {
             GetResponseBodyResponse response = network.getResponseBody(request, DEFAULT_TIMEOUT);
-            content = Boolean.TRUE.equals(response.getBase64Encoded()) ? new String(Base64.decode(response.getBody())) : response.getBody();
+            content = Boolean.TRUE.equals(response.getBase64Encoded()) ? new String(Base64.getDecoder().decode(response.getBody())) : response.getBody();
         } catch (Exception e) {
             logger.error("getResponseBody error, error={}", e.getMessage(), e);
         }
