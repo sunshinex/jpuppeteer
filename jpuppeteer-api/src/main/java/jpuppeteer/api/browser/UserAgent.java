@@ -14,6 +14,10 @@ public class UserAgent {
         this.platform = platform;
     }
 
+    public UserAgent(String userAgent) {
+        this(userAgent, null, null);
+    }
+
     public String getUserAgent() {
         return userAgent;
     }

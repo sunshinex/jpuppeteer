@@ -37,6 +37,8 @@ public class ChromeArguments {
             "--enable-automation",
             "--password-store=basic",
             "--use-mock-keychain",
+            //禁用cookie加密(仅限headless模式下有效)
+            "--disable-cookie-encryption"
     };
 
     private String executable;
@@ -126,14 +128,12 @@ public class ChromeArguments {
             }
             arguments.userDataDir = userDataDir.getAbsolutePath();
             arguments.args.add("--user-data-dir=" + userDataDir.getAbsolutePath());
-            //java进程退出时删除此目录
-            userDataDir.deleteOnExit();
         }
         if (!arguments.pipe) {
             if (!hasDebugPort) {
                 arguments.args.add("--remote-debugging-port=0");
             }
-            arguments.args.add("--remote-debugging-address=10.100.72.148");
+            arguments.args.add("--remote-debugging-address=0.0.0.0");
         }
         return arguments;
     }

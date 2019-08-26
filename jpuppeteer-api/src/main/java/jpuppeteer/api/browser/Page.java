@@ -23,8 +23,6 @@ public interface Page<T> extends Frame<T> {
 
     void close();
 
-    void emulate(Emulator emulator) throws Exception;
-
     void emulateMedia(MediaType mediaType) throws Exception;
 
     String evaluateOnNewDocument(String script) throws Exception;
@@ -48,21 +46,25 @@ public interface Page<T> extends Frame<T> {
     //暂不支持, 后续支持
 //    void setRequestInterceptionEnable(boolean enable);
 
-    void setUserAgent(String userAgent) throws Exception;
+    void setUserAgent(UserAgent userAgent) throws Exception;
 
-    void setViewport(Viewport viewport) throws Exception;
+    void setDevice(Device device) throws Exception;
 
-    String userAgent();
+    UserAgent userAgent();
 
-    Viewport viewport();
+    Device device();
 
 
     //mouse event
-    void mouseDown(MouseDefinition buttonType) throws Exception;
+    void mouseDown(MouseDefinition mouseDefinition) throws Exception;
 
-    void mouseUp(MouseDefinition buttonType) throws Exception;
+    void mouseUp(MouseDefinition mouseDefinition) throws Exception;
 
     void mouseMove(double x, double y, int steps) throws Exception;
+
+    default void mouseMove(double x, double y) throws Exception {
+        mouseMove(x, y, 1);
+    }
 
     //keyboard event;
     void keyDown(USKeyboardDefinition key) throws Exception;
@@ -70,6 +72,10 @@ public interface Page<T> extends Frame<T> {
     void keyUp(USKeyboardDefinition key) throws Exception;
 
     void press(USKeyboardDefinition key, int delay) throws Exception;
+
+    default void press(USKeyboardDefinition key) throws Exception {
+        press(key, 0);
+    }
 
     //touch event
     void touchStart(double x, double y) throws Exception;

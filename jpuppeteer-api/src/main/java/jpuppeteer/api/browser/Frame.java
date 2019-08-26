@@ -30,6 +30,10 @@ public interface Frame<T> extends EventEmitter, ExecutionContext<T> {
 
     void navigate(String url, String referer) throws Exception;
 
+    default void navigate(String url) throws Exception {
+        navigate(url, null);
+    }
+
     Element querySelector(String selector) throws Exception;
 
     List<? extends Element> querySelectorAll(String selector) throws Exception;

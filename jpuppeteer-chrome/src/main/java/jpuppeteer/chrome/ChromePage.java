@@ -3,7 +3,6 @@ package jpuppeteer.chrome;
 import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.browser.Page;
-import jpuppeteer.api.browser.Viewport;
 import jpuppeteer.api.browser.*;
 import jpuppeteer.api.constant.MediaType;
 import jpuppeteer.api.constant.MouseDefinition;
@@ -18,6 +17,7 @@ import jpuppeteer.cdp.cdp.constant.input.DispatchMouseEventRequestPointerType;
 import jpuppeteer.cdp.cdp.constant.input.DispatchMouseEventRequestType;
 import jpuppeteer.cdp.cdp.constant.input.DispatchTouchEventRequestType;
 import jpuppeteer.cdp.cdp.constant.network.BlockedReason;
+import jpuppeteer.cdp.cdp.constant.page.SetTouchEmulationEnabledRequestConfiguration;
 import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.domain.*;
 import jpuppeteer.cdp.cdp.entity.emulation.SetDeviceMetricsOverrideRequest;
@@ -31,6 +31,7 @@ import jpuppeteer.cdp.cdp.entity.input.TouchPoint;
 import jpuppeteer.cdp.cdp.entity.log.EntryAddedEvent;
 import jpuppeteer.cdp.cdp.entity.network.GetCookiesResponse;
 import jpuppeteer.cdp.cdp.entity.network.*;
+import jpuppeteer.cdp.cdp.entity.page.SetTouchEmulationEnabledRequest;
 import jpuppeteer.cdp.cdp.entity.page.*;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextCreatedEvent;
@@ -79,9 +80,9 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     private volatile Map<String/*requestId*/, ChromeRequest> requestMap;
 
-    private String userAgent;
+    private UserAgent userAgent;
 
-    private Viewport viewport;
+    private Device device;
 
     private volatile boolean close;
 
@@ -111,7 +112,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
         this.requestMap = new ConcurrentHashMap<>();
         this.userAgent = null;
-        this.viewport = null;
+        this.device = null;
         this.close = false;
 
         this.pressedKeys = new ConcurrentHashSet<>();
@@ -423,28 +424,6 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
     }
 
     @Override
-    public void emulate(Emulator emulator) throws Exception {
-        SetDeviceMetricsOverrideRequest request = new SetDeviceMetricsOverrideRequest();
-        request.setWidth(emulator.getViewport().getWidth());
-        request.setHeight(emulator.getViewport().getHeight());
-        request.setDeviceScaleFactor(Double.valueOf(emulator.getViewport().getDeviceScaleFactor()));
-        if (emulator.getViewport().isLandscape()) {
-            ScreenOrientation screenOrientation = new ScreenOrientation();
-            screenOrientation.setType(ScreenOrientationType.LANDSCAPEPRIMARY.getValue());
-            screenOrientation.setAngle(0);
-            request.setScreenOrientation(screenOrientation);
-        }
-        emulation.setDeviceMetricsOverride(request, DEFAULT_TIMEOUT);
-        SetUserAgentOverrideRequest userAgentRequest = new SetUserAgentOverrideRequest();
-        userAgentRequest.setUserAgent(emulator.getUserAgent().getUserAgent());
-        userAgentRequest.setAcceptLanguage(emulator.getUserAgent().getAcceptLanguage());
-        userAgentRequest.setPlatform(emulator.getUserAgent().getPlatform());
-        emulation.setUserAgentOverride(userAgentRequest, DEFAULT_TIMEOUT);
-        this.viewport = emulator.getViewport();
-        this.userAgent = emulator.getUserAgent() != null ? emulator.getUserAgent().getUserAgent() : null;
-    }
-
-    @Override
     public void emulateMedia(MediaType mediaType) throws Exception {
         SetEmulatedMediaRequest request = new SetEmulatedMediaRequest();
         request.setMedia(mediaType.getValue());
@@ -499,30 +478,44 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
     }
 
     @Override
-    public void setUserAgent(String userAgent) throws Exception {
-        emulate(Emulator.newBuilder().userAgent(userAgent).build());
+    public void setUserAgent(UserAgent userAgent) throws Exception {
+        SetUserAgentOverrideRequest request = new SetUserAgentOverrideRequest();
+        request.setUserAgent(userAgent.getUserAgent());
+        request.setAcceptLanguage(userAgent.getAcceptLanguage());
+        request.setPlatform(userAgent.getPlatform());
+        emulation.setUserAgentOverride(request, DEFAULT_TIMEOUT);
     }
 
     @Override
-    public void setViewport(Viewport viewport) throws Exception {
-        emulate(Emulator.newBuilder()
-                .width(viewport.getWidth())
-                .height(viewport.getHeight())
-                .deviceScaleFactor(viewport.getDeviceScaleFactor())
-                .hasTouch(viewport.isHasTouch())
-                .isMobile(viewport.isMobile())
-                .isLandscape(viewport.isLandscape())
-                .build());
+    public void setDevice(Device device) throws Exception {
+        SetDeviceMetricsOverrideRequest request = new SetDeviceMetricsOverrideRequest();
+        request.setWidth(device.getWidth());
+        request.setHeight(device.getHeight());
+        request.setDeviceScaleFactor(device.getDeviceScaleFactor());
+        request.setMobile(device.isMobile());
+        if (device.isLandscape()) {
+            ScreenOrientation screen = new ScreenOrientation();
+            screen.setType(ScreenOrientationType.LANDSCAPEPRIMARY.getValue());
+            screen.setAngle(0);
+            request.setScreenOrientation(screen);
+        }
+        if (device.isHasTouch()) {
+            SetTouchEmulationEnabledRequest req = new SetTouchEmulationEnabledRequest();
+            req.setEnabled(true);
+            req.setConfiguration(SetTouchEmulationEnabledRequestConfiguration.MOBILE.getValue());
+            page.setTouchEmulationEnabled(req, DEFAULT_TIMEOUT);
+        }
+        emulation.setDeviceMetricsOverride(request, DEFAULT_TIMEOUT);
     }
 
     @Override
-    public String userAgent() {
+    public UserAgent userAgent() {
         return userAgent;
     }
 
     @Override
-    public Viewport viewport() {
-        return viewport;
+    public Device device() {
+        return device;
     }
 
     private void go(int steps) throws Exception {

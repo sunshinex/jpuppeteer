@@ -19,6 +19,7 @@ async function wait(expression, timeout) {
             resolve(result);
         }, 100);
         setTimeout(function(){
+            clearInterval(timer);
             reject(new Error("timeout"));
         }, timeout);
     });

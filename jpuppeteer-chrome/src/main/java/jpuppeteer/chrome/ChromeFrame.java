@@ -1,11 +1,11 @@
 package jpuppeteer.chrome;
 
-import com.google.common.collect.Lists;
-import jpuppeteer.api.browser.BrowserObject;
 import jpuppeteer.api.browser.Frame;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.EventType;
 import jpuppeteer.api.event.GenericEventEmitter;
+import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
+import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
 import jpuppeteer.cdp.cdp.domain.DOM;
 import jpuppeteer.cdp.cdp.domain.Input;
 import jpuppeteer.cdp.cdp.domain.Page;
@@ -17,7 +17,6 @@ import jpuppeteer.chrome.util.ArgUtils;
 import jpuppeteer.chrome.util.ScriptUtils;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +40,8 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
     private static final String SCRIPT_WAIT = ScriptUtils.load("wait.js");
 
     private static final String SCRIPT_SET_CONTENT = ScriptUtils.load("setcontent.js");
+
+    private static final String SCRIPT_WAIT_SELECTOR = ScriptUtils.load("waitselector.js");
 
     protected EventEmitter events;
 
@@ -161,8 +162,11 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
     @Override
     public ChromeElement querySelector(String selector) throws Exception {
         CallArgument argSelector = ArgUtils.createFromValue(selector);
-        ChromeBrowserObject browserObject = evaluate("function(selector){return document.querySelector(selector);}", argSelector);
-        return new ChromeElement(this, browserObject);
+        ChromeBrowserObject object = evaluate("function(selector){return document.querySelector(selector);}", argSelector);
+        if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
+            return null;
+        }
+        return new ChromeElement(this, object);
     }
 
     @Override
@@ -225,7 +229,10 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
     @Override
     public ChromeElement waitSelector(String selector, int timeout, TimeUnit unit) throws Exception {
         CallArgument argSelector = ArgUtils.createFromValue(selector);
-        ChromeBrowserObject object = wait("function (selector){return document.querySelector(selector);}", timeout, unit, argSelector);
+        ChromeBrowserObject object = wait(SCRIPT_WAIT_SELECTOR, timeout, unit, argSelector);
+        if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
+            return null;
+        }
         return new ChromeElement(this, object);
     }
 

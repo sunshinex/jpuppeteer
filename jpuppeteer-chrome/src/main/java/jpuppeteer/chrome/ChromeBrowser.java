@@ -191,22 +191,32 @@ public class ChromeBrowser implements Browser {
     @Override
     public void setCookie(Cookie... cookies) throws Exception {
         ChromePage page = defaultContext.newPage();
-        page.setCookie(cookies);
-        page.close();
+        try {
+            page.setCookie(cookies);
+        } finally {
+            page.close();
+        }
     }
 
     @Override
     public void clearCookie() throws Exception {
         ChromePage page = defaultContext.newPage();
-        page.network.clearBrowserCookies(DEFAULT_TIMEOUT);
-        page.close();
+        try {
+            page.network.clearBrowserCookies(DEFAULT_TIMEOUT);
+        } finally {
+            page.close();
+        }
     }
 
     @Override
     public List<Cookie> cookies() throws Exception {
         ChromePage page = defaultContext.newPage();
-        GetAllCookiesResponse response = page.network.getAllCookies(DEFAULT_TIMEOUT);
-        page.close();
+        GetAllCookiesResponse response;
+        try {
+            response = page.network.getAllCookies(DEFAULT_TIMEOUT);
+        } finally {
+            page.close();
+        }
         return response.getCookies().stream().map(cookie -> TransUtils.cookie(cookie)).collect(Collectors.toList());
     }
 }

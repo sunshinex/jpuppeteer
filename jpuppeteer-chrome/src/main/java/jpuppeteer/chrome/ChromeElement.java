@@ -6,6 +6,8 @@ import jpuppeteer.api.browser.Coordinate;
 import jpuppeteer.api.browser.Element;
 import jpuppeteer.api.constant.MouseDefinition;
 import jpuppeteer.api.constant.USKeyboardDefinition;
+import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
+import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
 import jpuppeteer.cdp.cdp.entity.dom.FocusRequest;
 import jpuppeteer.cdp.cdp.entity.dom.GetBoxModelRequest;
 import jpuppeteer.cdp.cdp.entity.dom.GetBoxModelResponse;
@@ -59,6 +61,9 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
         CallArgument parent = ArgUtils.createFromObjectId(objectId);
         CallArgument argSelector = ArgUtils.createFromValue(selector);
         ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelector(selector);}", parent, argSelector);
+        if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
+            return null;
+        }
         return new ChromeElement(frame, object.object);
     }
 

@@ -1,12 +1,12 @@
 package jpuppeteer.api.browser;
 
-public class Viewport {
+public class Device {
 
     private final int width;
 
     private final int height;
 
-    private final int deviceScaleFactor;
+    private double deviceScaleFactor;
 
     private final boolean isMobile;
 
@@ -14,13 +14,17 @@ public class Viewport {
 
     private final boolean isLandscape;
 
-    public Viewport(int width, int height, int deviceScaleFactor, boolean isMobile, boolean hasTouch, boolean isLandscape) {
+    public Device(int width, int height, double deviceScaleFactor, boolean isMobile, boolean hasTouch, boolean isLandscape) {
         this.width = width;
         this.height = height;
         this.deviceScaleFactor = deviceScaleFactor;
         this.isMobile = isMobile;
         this.hasTouch = hasTouch;
         this.isLandscape = isLandscape;
+    }
+
+    public Device(int width, int height) {
+        this(width, height, 1.0, false, false, false);
     }
 
     public int getWidth() {
@@ -31,7 +35,7 @@ public class Viewport {
         return height;
     }
 
-    public int getDeviceScaleFactor() {
+    public double getDeviceScaleFactor() {
         return deviceScaleFactor;
     }
 

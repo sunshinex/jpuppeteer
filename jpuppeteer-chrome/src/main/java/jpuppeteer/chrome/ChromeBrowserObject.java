@@ -5,6 +5,8 @@ import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.util.TypeUtils;
 import jpuppeteer.api.browser.BrowserObject;
 import jpuppeteer.api.browser.ExecutionContext;
+import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
+import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
 import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.entity.runtime.*;
 import jpuppeteer.chrome.util.ArgUtils;
@@ -34,12 +36,18 @@ public class ChromeBrowserObject implements BrowserObject {
 
     protected String objectId;
 
+    protected RemoteObjectType type;
+
+    protected RemoteObjectSubtype subType;
+
     protected RemoteObject object;
 
     public ChromeBrowserObject(Runtime runtime, ChromeExecutionContext executionContext, RemoteObject object) {
         this.runtime = runtime;
         this.executionContext = executionContext;
         this.objectId = object.getObjectId();
+        this.type = RemoteObjectType.findByValue(object.getType());
+        this.subType = RemoteObjectSubtype.findByValue(object.getSubtype());
         this.object = object;
     }
 
