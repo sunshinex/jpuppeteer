@@ -13,6 +13,7 @@
     <module>jpuppeteer-chrome</module>
     <module>jpuppeteer-cdp</module>
     <module>jpuppeteer-cdp-generator</module>
+    <module>jpuppeteer-httpclient</module>
   </modules>
 
   <name>jpuppeteer</name>
@@ -95,21 +96,6 @@
         <groupId>org.java-websocket</groupId>
         <artifactId>Java-WebSocket</artifactId>
         <version>${websocket.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.netty</groupId>
-        <artifactId>netty-buffer</artifactId>
-        <version>${netty-buffer.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.netty</groupId>
-        <artifactId>netty-common</artifactId>
-        <version>${netty-common.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-beanutils</groupId>
-        <artifactId>commons-beanutils</artifactId>
-        <version>${commons-beanutils.version}</version>
       </dependency>
       <dependency>
         <groupId>org.projectlombok</groupId>
