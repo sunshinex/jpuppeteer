@@ -49,6 +49,8 @@ public interface Browser extends EventEmitter {
 
     void setCookie(Cookie... cookies) throws Exception;
 
+    void deleteCookie(Cookie... cookies) throws Exception;
+
     void clearCookie() throws Exception;
 
     List<Cookie> cookies() throws Exception;

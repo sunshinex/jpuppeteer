@@ -16,10 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -41,7 +38,7 @@ public abstract class CDPConnection implements Closeable {
 
     private final AtomicInteger messageId;
 
-    protected final Map<Integer, DefaultPromise<JSONObject>> requestMap;
+    protected final Map<Integer, RequestFuture> requestMap;
 
     private volatile Map<String/*sessionId*/, CDPSession> sessionMap;
 
@@ -62,7 +59,12 @@ public abstract class CDPConnection implements Closeable {
         sessionMap.remove(sessionId);
     }
 
-    private JSONObject send0(String method, Object params, Map<String, Object> extra, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
+    private JSONObject sendBase(String method, Object params, Map<String, Object> extra, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
+        RequestFuture future = send0(method, params, extra);
+        return future.get(timeout, TimeUnit.SECONDS);
+    }
+
+    private RequestFuture send0(String method, Object params, Map<String, Object> extra) {
         JSONObject json = new JSONObject();
         int id = messageId.getAndIncrement();
         //避免extra中的内容会覆盖ID, METHOD, PARAMS, 所以在前面先put进去
@@ -72,19 +74,15 @@ public abstract class CDPConnection implements Closeable {
         json.put(ID, id);
         json.put(METHOD, method);
         json.put(PARAMS, params);
-        DefaultPromise<JSONObject> future = new DefaultPromise<>();
+        RequestFuture future = new RequestFuture(id);
         requestMap.put(id, future);
         logger.debug("==> send method={}, id={}, extra={}, params={}", method, id, JSON.toJSONString(extra), JSON.toJSONString(params));
         try {
-            try {
-                sendInternal(json);
-            } catch (IOException ioe) {
-                future.setFailure(ioe);
-            }
-            return future.get(timeout, TimeUnit.SECONDS);
-        } finally {
-            requestMap.remove(id);
+            sendInternal(json);
+        } catch (IOException ioe) {
+            future.setFailure(ioe);
         }
+        return future;
     }
 
     public void addListener(CDPEventType eventType, Consumer<CDPEvent> consumer) {
@@ -100,31 +98,35 @@ public abstract class CDPConnection implements Closeable {
     }
 
     public final <T> T send(String method, Object params, Map<String, Object> extra, Class<T> clazz, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
-        JSONObject result = send0(method, params, extra, timeout);
+        JSONObject result = sendBase(method, params, extra, timeout);
         return JSONObject.class.equals(clazz) ? (T) result : result.toJavaObject(clazz);
     }
 
     public final <T> T send(String method, Object params, Map<String, Object> extra, TypeReference<T> type, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
-        JSONObject result = send0(method, params, extra, timeout);
+        JSONObject result = sendBase(method, params, extra, timeout);
         return type.getType().equals(JSONObject.class) ? (T) result : result.toJavaObject(type);
     }
 
     public final void send(String method, Object params, Map<String, Object> extra, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
-        send0(method, params, extra, timeout);
+        sendBase(method, params, extra, timeout);
     }
 
     public final <T> T send(String method, Object params, Class<T> clazz, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
-        JSONObject result = send0(method, params, null, timeout);
+        JSONObject result = sendBase(method, params, null, timeout);
         return JSONObject.class.equals(clazz) ? (T) result : result.toJavaObject(clazz);
     }
 
     public final <T> T send(String method, Object params, TypeReference<T> type, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
-        JSONObject result = send0(method, params, null, timeout);
+        JSONObject result = sendBase(method, params, null, timeout);
         return type.getType().equals(JSONObject.class) ? (T) result : result.toJavaObject(type);
     }
 
     public final void send(String method, Object params, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
-        send0(method, params, null, timeout);
+        sendBase(method, params, null, timeout);
+    }
+
+    public final Future<JSONObject> asyncSend(String method, Object params, Map<String, Object> extra) {
+        return send0(method, params, extra);
     }
 
     private void handleEvent(JSONObject json) {
@@ -164,7 +166,7 @@ public abstract class CDPConnection implements Closeable {
             throw new IllegalArgumentException("attribute \"id\" can not be null");
         }
         Integer id = json.getInteger(ID);
-        DefaultPromise future = requestMap.get(id);
+        RequestFuture future = requestMap.get(id);
         if (future == null) {
             throw new RuntimeException("invalid id="+id);
         }
@@ -179,5 +181,32 @@ public abstract class CDPConnection implements Closeable {
     public abstract void open() throws IOException, InterruptedException;
 
     protected abstract void sendInternal(JSONObject request) throws IOException;
+
+    class RequestFuture extends DefaultPromise<JSONObject> {
+
+        private final int id;
+
+        public RequestFuture(int id) {
+            this.id = id;
+        }
+
+        @Override
+        public JSONObject get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            try {
+                return super.get(timeout, unit);
+            } finally {
+                requestMap.remove(id);
+            }
+        }
+
+        @Override
+        public JSONObject get() throws InterruptedException, ExecutionException {
+            try {
+                return super.get();
+            } finally {
+                requestMap.remove(id);
+            }
+        }
+    }
 
 }

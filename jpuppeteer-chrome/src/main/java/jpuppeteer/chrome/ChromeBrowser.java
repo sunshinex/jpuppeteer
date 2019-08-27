@@ -1,5 +1,6 @@
 package jpuppeteer.chrome;
 
+import com.alibaba.fastjson.JSONObject;
 import jpuppeteer.api.browser.Browser;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.browser.Page;
@@ -12,6 +13,7 @@ import jpuppeteer.cdp.WebSocketConnection;
 import jpuppeteer.cdp.cdp.domain.Network;
 import jpuppeteer.cdp.cdp.domain.Target;
 import jpuppeteer.cdp.cdp.entity.browser.GetVersionResponse;
+import jpuppeteer.cdp.cdp.entity.network.DeleteCookiesRequest;
 import jpuppeteer.cdp.cdp.entity.network.GetAllCookiesResponse;
 import jpuppeteer.cdp.cdp.entity.network.SetCookieResponse;
 import jpuppeteer.cdp.cdp.entity.network.SetCookiesRequest;
@@ -24,8 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
@@ -219,6 +223,23 @@ public class ChromeBrowser implements Browser {
     public void setCookie(Cookie... cookies) throws Exception {
         SetCookiesRequest request = CookieUtils.create(cookies);
         network.setCookies(request, DEFAULT_TIMEOUT);
+    }
+
+    @Override
+    public void deleteCookie(Cookie... cookies) throws Exception {
+        //此处需要异步实现
+        List<Future<JSONObject>> futures = new ArrayList<>();
+        for(Cookie cookie : cookies) {
+            DeleteCookiesRequest request = new DeleteCookiesRequest();
+            request.setName(cookie.getName());
+            request.setDomain(cookie.getDomain());
+            request.setPath(cookie.getPath());
+            request.setUrl(cookie.getUrl());
+            futures.add(defaultSession.asyncSend("Network.deleteCookies", request));
+        }
+        for(Future<JSONObject> future : futures) {
+            future.get(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+        }
     }
 
     @Override

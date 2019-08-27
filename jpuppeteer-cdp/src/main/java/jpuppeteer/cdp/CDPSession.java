@@ -1,5 +1,6 @@
 package jpuppeteer.cdp;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.GenericEventEmitter;
@@ -9,6 +10,7 @@ import jpuppeteer.cdp.constant.TargetType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
@@ -61,5 +63,9 @@ public class CDPSession {
 
     public final void send(String method, Object params, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
         connection.send(method, params, extra, timeout);
+    }
+
+    public final Future<JSONObject> asyncSend(String method, Object params) {
+        return connection.asyncSend(method, params, extra);
     }
 }
