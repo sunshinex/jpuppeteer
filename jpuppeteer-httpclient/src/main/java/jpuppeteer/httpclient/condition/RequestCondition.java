@@ -7,8 +7,8 @@ public interface RequestCondition<T> {
 
     T combine(T other);
 
-    T getMatchingCondition(HttpUriRequest request);
+    T getMatchingCondition(HttpRequestInfo request);
 
-    int compareTo(T other, HttpUriRequest request);
+    int compareTo(T other, HttpRequestInfo request);
 
 }

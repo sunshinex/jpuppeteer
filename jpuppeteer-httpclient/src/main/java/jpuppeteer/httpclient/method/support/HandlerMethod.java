@@ -11,8 +11,8 @@ public class HandlerMethod {
 
     public final Parameter[] parameters;
 
-    public HandlerMethod(Method method) {
-        this.handler = new Object();
+    public HandlerMethod(Object handler, Method method) {
+        this.handler = handler;
         this.method = method;
         this.parameters = new Parameter[]{};
     }

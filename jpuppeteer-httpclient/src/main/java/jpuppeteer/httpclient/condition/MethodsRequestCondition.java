@@ -1,23 +1,24 @@
 package jpuppeteer.httpclient.condition;
 
+import com.google.common.collect.ImmutableSet;
 import jpuppeteer.httpclient.constant.RequestMethod;
 import org.apache.http.client.methods.HttpUriRequest;
 
 import java.util.*;
 
-public final class RequestMethodsRequestCondition extends AbstractRequestCondition<RequestMethodsRequestCondition> {
+public final class MethodsRequestCondition extends AbstractRequestCondition<MethodsRequestCondition> {
 
-    private static final RequestMethodsRequestCondition GET_CONDITION =
-            new RequestMethodsRequestCondition(RequestMethod.GET);
+    private static final MethodsRequestCondition GET_CONDITION =
+            new MethodsRequestCondition(RequestMethod.GET);
 
     private final Set<RequestMethod> methods;
 
-    public RequestMethodsRequestCondition(RequestMethod... requestMethods) {
+    public MethodsRequestCondition(RequestMethod... requestMethods) {
         this(Arrays.asList(requestMethods));
     }
 
-    private RequestMethodsRequestCondition(Collection<RequestMethod> requestMethods) {
-        this.methods = Collections.unmodifiableSet(new LinkedHashSet<>(requestMethods));
+    private MethodsRequestCondition(Collection<RequestMethod> requestMethods) {
+        this.methods = ImmutableSet.copyOf(requestMethods);
     }
 
     public Set<RequestMethod> getMethods() {
@@ -35,19 +36,19 @@ public final class RequestMethodsRequestCondition extends AbstractRequestConditi
     }
 
     @Override
-    public RequestMethodsRequestCondition combine(RequestMethodsRequestCondition other) {
+    public MethodsRequestCondition combine(MethodsRequestCondition other) {
         Set<RequestMethod> set = new LinkedHashSet<>(this.methods);
         set.addAll(other.methods);
-        return new RequestMethodsRequestCondition(set);
+        return new MethodsRequestCondition(set);
     }
 
     @Override
-    public RequestMethodsRequestCondition getMatchingCondition(HttpUriRequest request) {
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+    public MethodsRequestCondition getMatchingCondition(HttpRequestInfo request) {
+        RequestMethod requestMethod = request.getMethod();
         if (requestMethod != null) {
             for (RequestMethod method : getMethods()) {
                 if (method.equals(requestMethod)) {
-                    return new RequestMethodsRequestCondition(method);
+                    return new MethodsRequestCondition(method);
                 }
             }
             if (RequestMethod.HEAD.equals(requestMethod) && getMethods().contains(RequestMethod.GET)) {
@@ -58,7 +59,7 @@ public final class RequestMethodsRequestCondition extends AbstractRequestConditi
     }
 
     @Override
-    public int compareTo(RequestMethodsRequestCondition other, HttpUriRequest request) {
+    public int compareTo(MethodsRequestCondition other, HttpRequestInfo request) {
         if (other.methods.size() != this.methods.size()) {
             return other.methods.size() - this.methods.size();
         }

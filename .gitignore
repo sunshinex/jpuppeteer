@@ -16,3 +16,4 @@ buildNumber.properties
 /jpuppeteer-cdp/target
 /jpuppeteer-cdp-generator/target
 /jpuppeteer-chrome/target
+/jpuppeteer-httpclient/target

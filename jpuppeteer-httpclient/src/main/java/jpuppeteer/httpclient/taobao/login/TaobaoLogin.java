@@ -9,7 +9,7 @@ import org.apache.http.protocol.HttpContext;
 @Processor("login.taobao.com")
 public class TaobaoLogin {
 
-    @RequestProcessor(path = {"/", "/member/login.jhtml"})
+    @RequestProcessor({"/", "/member/login.jhtml"})
     void login(HttpRequest request, HttpContext context) {
 
     }
