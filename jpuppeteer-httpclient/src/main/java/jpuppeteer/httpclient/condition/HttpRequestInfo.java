@@ -9,6 +9,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URLEncodedUtils;
 
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -29,6 +30,10 @@ public class HttpRequestInfo {
             multimap.put(kv.getName(), kv.getValue() != null ? kv.getValue() : Constants.EMPTY_STRING);
         }
         this.query = ImmutableSetMultimap.copyOf(multimap);
+    }
+
+    public URI getURI() {
+        return request.getURI();
     }
 
     public RequestMethod getMethod() {

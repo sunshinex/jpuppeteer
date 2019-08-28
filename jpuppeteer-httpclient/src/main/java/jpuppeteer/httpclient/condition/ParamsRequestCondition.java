@@ -38,10 +38,6 @@ public class ParamsRequestCondition extends AbstractRequestCondition<ParamsReque
         this.matches = ImmutableSetMultimap.copyOf(multimap);
     }
 
-    private ParamsRequestCondition(Multimap<String, String> matches) {
-        this.matches = ImmutableSetMultimap.copyOf(matches);
-    }
-
     @Override
     protected Collection<?> getContent() {
         return this.matches.entries();
@@ -53,34 +49,26 @@ public class ParamsRequestCondition extends AbstractRequestCondition<ParamsReque
     }
 
     @Override
-    public ParamsRequestCondition combine(ParamsRequestCondition other) {
-        Multimap<String, String> multimap = LinkedHashMultimap.create(matches);
-        multimap.putAll(other.matches);
-        return new ParamsRequestCondition(multimap);
-    }
-
-    @Override
-    public ParamsRequestCondition getMatchingCondition(HttpRequestInfo request) {
+    public boolean match(HttpRequestInfo request) {
         Map<String, Collection<String>> map = this.matches.asMap();
         OUTER:
         for(Map.Entry<String, Collection<String>> entry : map.entrySet()) {
             if (!request.getQuery().containsKey(entry.getKey())) {
-                return null;
+                return false;
             }
             for(String value : entry.getValue()) {
                 if (request.getQuery().containsEntry(entry.getKey(), value)) {
                     //只要发现一个匹配的, 就进入下一个的判断
                     continue OUTER;
                 }
-                return null;
+                return false;
             }
         }
-        return this;
+        return true;
     }
 
     @Override
-    public int compareTo(ParamsRequestCondition other, HttpRequestInfo request) {
-        //限定参数个数多的>限定参数个数少的
+    public int compareTo(ParamsRequestCondition other) {
         return this.matches.size() - other.matches.size();
     }
 }

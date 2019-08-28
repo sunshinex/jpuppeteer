@@ -2,6 +2,10 @@ package jpuppeteer.httpclient;
 
 import jpuppeteer.api.browser.Browser;
 import jpuppeteer.chrome.ChromeLauncher;
+import jpuppeteer.httpclient.interceptor.taobao.login.TaobaoLogin;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
@@ -12,8 +16,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HttpContext;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -46,14 +52,15 @@ public class HttpClient {
                 .setDefaultHeaders(headers)
                 .setConnectionTimeToLive(120, TimeUnit.SECONDS)//keep alive 维持2分钟
                 .setDefaultRequestConfig(requestConfig)
-                .setRequestExecutor(new SmartRequestExecutor(browser))
+                //.setRequestExecutor(new SmartRequestExecutor(browser))
                 .setDefaultCookieStore(cookieStore)
                 .setRedirectStrategy(new LaxRedirectStrategy())
 //				.setProxy(new HttpHost("127.0.0.1", 8888))
                 .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                .addInterceptorFirst(new TaobaoLogin(browser))
                 .build();
 
-        HttpGet request = new HttpGet("https://veromoda.tmall.com/");
+        HttpGet request = new HttpGet("https://login.taobao.com/");
         CloseableHttpResponse response = httpClient.execute(request);
 
     }

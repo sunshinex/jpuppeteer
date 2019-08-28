@@ -1,15 +1,16 @@
 package jpuppeteer.httpclient.condition;
 
-import org.apache.http.client.methods.HttpUriRequest;
-
 public class RequestMappingInfo implements RequestCondition<RequestMappingInfo> {
 
     private final MethodsRequestCondition methodsCondition;
 
+    private final PathsRequestCondition pathsCondition;
+
     private final ParamsRequestCondition paramsCondition;
 
-    public RequestMappingInfo(MethodsRequestCondition methodsCondition, ParamsRequestCondition paramsCondition) {
+    public RequestMappingInfo(MethodsRequestCondition methodsCondition, PathsRequestCondition pathsCondition, ParamsRequestCondition paramsCondition) {
         this.methodsCondition = methodsCondition;
+        this.pathsCondition = pathsCondition;
         this.paramsCondition = paramsCondition;
     }
 
@@ -17,36 +18,38 @@ public class RequestMappingInfo implements RequestCondition<RequestMappingInfo> 
         return methodsCondition;
     }
 
+    public PathsRequestCondition getPathsCondition() {
+        return pathsCondition;
+    }
+
     public ParamsRequestCondition getParamsCondition() {
         return paramsCondition;
     }
 
     @Override
-    public RequestMappingInfo combine(RequestMappingInfo other) {
-        MethodsRequestCondition methods = methodsCondition.combine(other.methodsCondition);
-        ParamsRequestCondition params = paramsCondition.combine(other.paramsCondition);
-        return new RequestMappingInfo(methods, params);
+    public boolean match(HttpRequestInfo request) {
+        if (!methodsCondition.match(request)) {
+            return false;
+        }
+        if (!pathsCondition.match(request)) {
+            return false;
+        }
+        if (!paramsCondition.match(request)) {
+            return false;
+        }
+        return true;
     }
 
     @Override
-    public RequestMappingInfo getMatchingCondition(HttpRequestInfo request) {
-        MethodsRequestCondition methods = methodsCondition.getMatchingCondition(request);
-        if (methods == null) {
-            return null;
+    public int compareTo(RequestMappingInfo other) {
+        int result = methodsCondition.compareTo(other.methodsCondition);
+        if (result != 0) {
+            return result;
         }
-        ParamsRequestCondition params = paramsCondition.getMatchingCondition(request);
-        if (params == null) {
-            return null;
+        result = pathsCondition.compareTo(other.pathsCondition);
+        if (result != 0) {
+            return result;
         }
-        return new RequestMappingInfo(methods, params);
-    }
-
-    @Override
-    public int compareTo(RequestMappingInfo other, HttpRequestInfo request) {
-        int methodCompareResult = methodsCondition.compareTo(other.methodsCondition, request);
-        if (methodCompareResult != 0) {
-            return methodCompareResult;
-        }
-        return paramsCondition.compareTo(other.paramsCondition, request);
+        return paramsCondition.compareTo(other.paramsCondition);
     }
 }

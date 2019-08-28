@@ -4,9 +4,13 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import jpuppeteer.httpclient.condition.RequestMappingInfo;
 import jpuppeteer.httpclient.method.support.HandlerMethod;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class RequestMappingRegistry {
@@ -43,9 +47,10 @@ public class RequestMappingRegistry {
             assertUniqueMethodMapping(handlerMethod, mapping);
             this.mappingLookup.put(mapping, handlerMethod);
 
-            List<String> directUrls = getDirectUrls(mapping);
-            for (String url : directUrls) {
-                this.urlLookup.put(url, mapping);
+            for (String host : mapping.getPathsCondition().getHosts()) {
+                for (String path : mapping.getPathsCondition().getPaths()) {
+                    this.urlLookup.put(host + path, mapping);
+                }
             }
         }
         finally {
@@ -62,84 +67,21 @@ public class RequestMappingRegistry {
         }
     }
 
-//    private List<String> getDirectUrls(RequestMappingInfo mapping) {
-//        List<String> urls = new ArrayList<>(1);
-//        for (String path : getMappingPathPatterns(mapping)) {
-//            if (!getPathMatcher().isPattern(path)) {
-//                urls.add(path);
-//            }
-//        }
-//        return urls;
-//    }
-//
-//    private void addMappingName(String name, HandlerMethod handlerMethod) {
-//        List<HandlerMethod> oldList = this.nameLookup.get(name);
-//        if (oldList == null) {
-//            oldList = Collections.emptyList();
-//        }
-//
-//        for (HandlerMethod current : oldList) {
-//            if (handlerMethod.equals(current)) {
-//                return;
-//            }
-//        }
-//
-//        List<HandlerMethod> newList = new ArrayList<>(oldList.size() + 1);
-//        newList.addAll(oldList);
-//        newList.add(handlerMethod);
-//        this.nameLookup.put(name, newList);
-//    }
-//
-//    public void unregister(T mapping) {
-//        this.readWriteLock.writeLock().lock();
-//        try {
-//            MappingRegistration<T> definition = this.registry.remove(mapping);
-//            if (definition == null) {
-//                return;
-//            }
-//
-//            this.mappingLookup.remove(definition.getMapping());
-//
-//            for (String url : definition.getDirectUrls()) {
-//                List<T> list = this.urlLookup.get(url);
-//                if (list != null) {
-//                    list.remove(definition.getMapping());
-//                    if (list.isEmpty()) {
-//                        this.urlLookup.remove(url);
-//                    }
-//                }
-//            }
-//
-//            removeMappingName(definition);
-//
-//            this.corsLookup.remove(definition.getHandlerMethod());
-//        }
-//        finally {
-//            this.readWriteLock.writeLock().unlock();
-//        }
-//    }
-//
-//    private void removeMappingName(MappingRegistration<T> definition) {
-//        String name = definition.getMappingName();
-//        if (name == null) {
-//            return;
-//        }
-//        HandlerMethod handlerMethod = definition.getHandlerMethod();
-//        List<HandlerMethod> oldList = this.nameLookup.get(name);
-//        if (oldList == null) {
-//            return;
-//        }
-//        if (oldList.size() <= 1) {
-//            this.nameLookup.remove(name);
-//            return;
-//        }
-//        List<HandlerMethod> newList = new ArrayList<>(oldList.size() - 1);
-//        for (HandlerMethod current : oldList) {
-//            if (!current.equals(handlerMethod)) {
-//                newList.add(current);
-//            }
-//        }
-//        this.nameLookup.put(name, newList);
-//    }
+    public void unregister(RequestMappingInfo mapping) {
+        this.readWriteLock.writeLock().lock();
+        try {
+
+            this.mappingLookup.remove(mapping);
+            for (String host : mapping.getPathsCondition().getHosts()) {
+                for (String path : mapping.getPathsCondition().getPaths()) {
+                    this.urlLookup.remove(host + path, mapping);
+                }
+            }
+        }
+        finally {
+            this.readWriteLock.writeLock().unlock();
+        }
+    }
+
 
 }
