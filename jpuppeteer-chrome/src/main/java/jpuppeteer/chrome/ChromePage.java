@@ -447,7 +447,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         SetExtraHTTPHeadersRequest request = new SetExtraHTTPHeadersRequest();
         Map<String, Object> headerMap = new HashMap<>();
         for(Header header : headers) {
-            headerMap.put(header.getName(), header.getValues());
+            headerMap.put(header.getName(), header.getValue());
         }
         request.setHeaders(headerMap);
         network.setExtraHTTPHeaders(request, DEFAULT_TIMEOUT);

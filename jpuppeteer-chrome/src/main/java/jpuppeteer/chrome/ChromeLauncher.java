@@ -89,35 +89,4 @@ public class ChromeLauncher implements Launcher {
         }
         throw new RuntimeException("please ensure startup with arg --remote-debugging-pipe or --remote-debugging-port");
     }
-
-    public static void main(String[] args) throws Exception {
-        ChromeBrowser browser = new ChromeLauncher(new File("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")).launch(args);
-//        ChromeBrowser browser = new ChromeLauncher(new File("D:\\workspace\\browser-driver\\bin\\chrome\\win32-x64\\chrome")).launch(args);
-        ChromePage page = browser.defaultContext().newPage();
-//        page.addListener(PageEvent.COOKIE, event -> {
-//            for(Cookie cookie : event.getCookies()) {
-//                logger.info("received cookie, {}={}, {}", cookie.getName(), cookie.getValue(), cookie);
-//            }
-//        });
-//        page.evaluateOnNewDocument(ScriptUtils.load("fake.js"));
-        page.navigate("https://login.taobao.com/member/login.jhtml");
-        page.wait(PageEvent.LOAD);
-        page.navigate("https://www.baidu.com/");
-        page.wait(PageEvent.LOAD);
-        page.navigate("https://www.126.com/");
-        page.wait(PageEvent.LOAD);
-        page.evaluate("function(){alert('abc');}");
-//        page.wait(PageEvent.DOMCONTENTLOADED);
-//        page.waitSelector(".J_Quick2Static", 5, TimeUnit.SECONDS).click();
-//        page.waitSelector("#TPL_username_1", 5, TimeUnit.SECONDS).input("abc123456", 50);
-//        page.querySelector("#TPL_password_1").input("nasd123123", 50);
-//        page.querySelector("#J_SubmitStatic").click();
-        //page.wait(PageEvent.LOAD);
-        for(int i=0; i<100; i++) {
-            long start = System.currentTimeMillis();
-            browser.cookies();
-            long end = System.currentTimeMillis();
-            System.out.println("cost=" + (end - start));
-        }
-    }
 }

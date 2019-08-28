@@ -1,9 +1,11 @@
 package jpuppeteer.httpclient;
 
 import jpuppeteer.api.browser.Browser;
+import jpuppeteer.chrome.ChromeBrowser;
 import jpuppeteer.chrome.ChromeLauncher;
 import jpuppeteer.httpclient.interceptor.taobao.login.TaobaoLogin;
 import org.apache.http.HttpException;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.client.CookieStore;
@@ -38,12 +40,13 @@ public class HttpClient {
                 .build();
         List<BasicHeader> headers = new ArrayList<>();
         headers.add(new BasicHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"));
-        headers.add(new BasicHeader("Accept-Encoding", "gzip, deflate, br"));
+        headers.add(new BasicHeader("Accept-Encoding", "gzip, deflate"));
         headers.add(new BasicHeader("Accept-Language", "zh-CN,zh;q=0.9"));
         headers.add(new BasicHeader("Connection", "keep-alive"));
         headers.add(new BasicHeader("Upgrade-Insecure-Requests", "1"));
 
-        Browser browser = new ChromeLauncher(new File("D:\\workspace\\browser-driver\\bin\\chrome\\win32-x64\\chrome")).launch(args);
+        Browser browser = new ChromeLauncher(new File("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")).launch(args);
+//        Browser browser = new ChromeLauncher(new File("D:\\workspace\\browser-driver\\bin\\chrome\\win32-x64\\chrome")).launch(args);
 
         CookieStore cookieStore = new SharedCookieStore(browser);
 
@@ -57,10 +60,11 @@ public class HttpClient {
                 .setRedirectStrategy(new LaxRedirectStrategy())
 //				.setProxy(new HttpHost("127.0.0.1", 8888))
                 .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
-                .addInterceptorFirst(new TaobaoLogin(browser))
+                .addInterceptorLast(new TaobaoLogin(browser))
                 .build();
 
         HttpGet request = new HttpGet("https://login.taobao.com/");
+        request.setHeader(HttpHeaders.REFERER, "https://www.taobao.com/");
         CloseableHttpResponse response = httpClient.execute(request);
 
     }
