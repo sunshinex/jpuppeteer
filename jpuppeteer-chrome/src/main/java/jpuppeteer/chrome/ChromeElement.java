@@ -186,6 +186,11 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
     }
 
     @Override
+    public void clear() throws Exception {
+        page.evaluate("function(element){element.value='';}", ArgUtils.createFromObjectId(objectId));
+    }
+
+    @Override
     public void input(String text, int delay) throws Exception {
         try {
             focus();

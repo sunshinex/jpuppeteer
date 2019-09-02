@@ -40,8 +40,14 @@ public interface Element extends BrowserObject {
         tap(0);
     }
 
+    void clear() throws Exception;
+
     //keyboard event
     void input(String text, int delay) throws Exception;
+
+    default void input(String text) throws Exception {
+        input(text, 35);
+    }
 
     //select event
     void select(String... values) throws Exception;

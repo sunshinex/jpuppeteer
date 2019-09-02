@@ -83,7 +83,7 @@ public class ChromeLauncher implements Launcher {
         while ((line = reader.readLine()) != null) {
             Matcher matcher = LISTENING_PATTERN.matcher(line);
             if (matcher.matches()) {
-                logger.debug("chrome startup output:{}", line);
+                logger.info(line);
                 return URI.create(matcher.group(1));
             }
         }
