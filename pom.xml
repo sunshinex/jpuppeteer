@@ -13,7 +13,6 @@
     <module>jpuppeteer-chrome</module>
     <module>jpuppeteer-cdp</module>
     <module>jpuppeteer-cdp-generator</module>
-    <module>jpuppeteer-httpclient</module>
   </modules>
 
   <name>jpuppeteer</name>

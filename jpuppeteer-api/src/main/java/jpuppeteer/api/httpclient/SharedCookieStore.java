@@ -1,10 +1,8 @@
-package jpuppeteer.httpclient;
+package jpuppeteer.api.httpclient;
 
 import jpuppeteer.api.browser.Browser;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.utils.DateUtils;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.slf4j.Logger;
@@ -35,7 +33,7 @@ public class SharedCookieStore implements CookieStore {
         if (cookie instanceof BasicClientCookie) {
             BasicClientCookie bcCookie = (BasicClientCookie) cookie;
             String domain = bcCookie.getAttribute(DOMAIN_ATTR);
-            if (!StringUtils.isEmpty(domain)) {
+            if (domain == null || domain.length() == 0) {
                 bcCookie.setDomain(domain);
             }
         }
@@ -46,7 +44,7 @@ public class SharedCookieStore implements CookieStore {
                 .path(cookie.getPath())
                 .secure(cookie.isSecure())
                 .httpOnly(false)
-                .expires(cookie.isPersistent() ? cookie.getExpiryDate().getTime() / 1000 : -1)
+                .expires(cookie.isPersistent() ? cookie.getExpiryDate() : null)
                 .sameSite(null)
                 .build();
         try {
@@ -64,7 +62,7 @@ public class SharedCookieStore implements CookieStore {
                 BasicClientCookie basicClientCookie = new BasicClientCookie(cookie.getName(), cookie.getValue());
                 basicClientCookie.setDomain(cookie.getDomain());
                 basicClientCookie.setPath(cookie.getPath());
-                basicClientCookie.setExpiryDate(cookie.getExpires() != -1 ? new Date(cookie.getExpires() * 1000) : null);
+                basicClientCookie.setExpiryDate(cookie.getExpires());
                 basicClientCookie.setSecure(cookie.isSecure());
                 basicClientCookie.setVersion(1);
 
@@ -75,7 +73,7 @@ public class SharedCookieStore implements CookieStore {
                 basicClientCookie.setAttribute(DOMAIN_ATTR, cookie.getDomain());
                 basicClientCookie.setAttribute(PATH_ATTR, cookie.getPath());
                 if (basicClientCookie.getExpiryDate() != null) {
-                    basicClientCookie.setAttribute(EXPIRES_ATTR, DateFormatUtils.format(basicClientCookie.getExpiryDate(), "yyyy-MM-dd HH:mm:ss"));
+                    basicClientCookie.setAttribute(EXPIRES_ATTR, DateUtils.formatDate(basicClientCookie.getExpiryDate()));
                 }
                 basicClientCookie.setAttribute(SECURE_ATTR, cookie.isSecure() ? "true" : "false");
                 return basicClientCookie;
@@ -91,9 +89,9 @@ public class SharedCookieStore implements CookieStore {
         boolean success = true;
         try {
             List<jpuppeteer.api.browser.Cookie> expired = browser.cookies().stream()
-                    .filter(cookie -> cookie.getExpires() != -1 ? cookie.getExpires() < date.getTime() / 1000 : false)
+                    .filter(cookie -> cookie.getExpires() != null ? cookie.getExpires().before(date) : false)
                     .collect(Collectors.toList());
-            if (CollectionUtils.isNotEmpty(expired)) {
+            if (expired != null && expired.size() > 0) {
                 browser.deleteCookie(expired.toArray(new jpuppeteer.api.browser.Cookie[expired.size()]));
             }
         } catch (Exception e) {

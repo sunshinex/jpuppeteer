@@ -96,7 +96,8 @@ public class CookieUtils {
             cookieParam.setValue(cookie.getValue());
             cookieParam.setDomain(cookie.getDomain());
             cookieParam.setPath(cookie.getPath());
-            cookieParam.setExpires(cookie.getExpires().doubleValue());
+            //
+            cookieParam.setExpires(Long.valueOf(cookie.getExpires().getTime() / 1000).doubleValue());
             cookieParam.setSecure(cookie.isSecure());
             cookieParam.setHttpOnly(cookie.isHttpOnly());
             cookieParam.setSameSite(cookie.getSameSite());
@@ -105,6 +106,19 @@ public class CookieUtils {
         }
         request.setCookies(cookieParams);
         return request;
+    }
+
+    public static Cookie copyOf(jpuppeteer.cdp.cdp.entity.network.Cookie cookie) {
+        return Cookie.builder()
+                .name(cookie.getName())
+                .value(cookie.getValue())
+                .domain(cookie.getDomain())
+                .path(cookie.getPath())
+                .expires(new Date(cookie.getExpires().longValue()))
+                .httpOnly(cookie.getHttpOnly())
+                .secure(cookie.getSecure())
+                .sameSite(cookie.getSameSite())
+                .build();
     }
 
 
@@ -156,6 +170,8 @@ public class CookieUtils {
 
         return cookies;
     }
+
+
 
     /**
      * Parses a date value.  The formats used for parsing the date value are retrieved from

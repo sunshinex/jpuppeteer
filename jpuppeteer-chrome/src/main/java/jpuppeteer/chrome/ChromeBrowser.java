@@ -3,7 +3,6 @@ package jpuppeteer.chrome;
 import com.alibaba.fastjson.JSONObject;
 import jpuppeteer.api.browser.Browser;
 import jpuppeteer.api.browser.Cookie;
-import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.EventType;
 import jpuppeteer.api.event.GenericEventEmitter;
@@ -15,13 +14,11 @@ import jpuppeteer.cdp.cdp.domain.Target;
 import jpuppeteer.cdp.cdp.entity.browser.GetVersionResponse;
 import jpuppeteer.cdp.cdp.entity.network.DeleteCookiesRequest;
 import jpuppeteer.cdp.cdp.entity.network.GetAllCookiesResponse;
-import jpuppeteer.cdp.cdp.entity.network.SetCookieResponse;
 import jpuppeteer.cdp.cdp.entity.network.SetCookiesRequest;
 import jpuppeteer.cdp.cdp.entity.target.*;
 import jpuppeteer.cdp.constant.TargetType;
 import jpuppeteer.chrome.event.BrowserEvent;
 import jpuppeteer.chrome.util.CookieUtils;
-import jpuppeteer.chrome.util.TransUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -250,6 +247,6 @@ public class ChromeBrowser implements Browser {
     @Override
     public List<Cookie> cookies() throws Exception {
         GetAllCookiesResponse response = network.getAllCookies(DEFAULT_TIMEOUT);
-        return response.getCookies().stream().map(cookie -> TransUtils.cookie(cookie)).collect(Collectors.toList());
+        return response.getCookies().stream().map(cookie -> CookieUtils.copyOf(cookie)).collect(Collectors.toList());
     }
 }

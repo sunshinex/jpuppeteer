@@ -41,7 +41,6 @@ import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
 import jpuppeteer.chrome.entity.CookieEvent;
 import jpuppeteer.chrome.util.CookieUtils;
-import jpuppeteer.chrome.util.TransUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -175,7 +174,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         GetCookiesRequest request = new GetCookiesRequest();
         request.setUrls(Lists.newArrayList(url.toString()));
         GetCookiesResponse response = network.getCookies(request, DEFAULT_TIMEOUT);
-        return response.getCookies().stream().map(cookie -> TransUtils.cookie(cookie)).collect(Collectors.toList());
+        return response.getCookies().stream().map(cookie -> CookieUtils.copyOf(cookie)).collect(Collectors.toList());
     }
 
 
