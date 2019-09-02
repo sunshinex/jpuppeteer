@@ -21,42 +21,42 @@ public interface BrowserObject {
      * 原始值
      * @return
      */
-    Object get();
+    Object value();
 
-    Boolean getBoolean();
+    Boolean toBoolean();
 
-    boolean getBooleanValue();
+    boolean toBooleanValue();
 
-    Short getShort();
+    Short toShort();
 
-    short getShortValue();
+    short toShortValue();
 
-    Integer getInteger();
+    Integer toInteger();
 
-    int getIntValue();
+    int toIntValue();
 
-    Long getLong();
+    Long toLong();
 
-    long getLongValue();
+    long toLongValue();
 
-    Float getFloat();
+    Float toFloat();
 
-    float getFloatValue();
+    float toFloatValue();
 
-    Double getDouble();
+    Double toDouble();
 
-    double getDoubleValue();
+    double toDoubleValue();
 
-    BigDecimal getBigDecimal();
+    BigDecimal toBigDecimal();
 
-    BigInteger getBigInteger();
+    BigInteger toBigInteger();
 
-    String getString();
+    String toStringValue();
 
-    Date getDate();
+    Date toDate();
 
-    <T> T getObject(Class<T> clazz);
+    <T> T toObject(Class<T> clazz);
 
-    <T> T getObject(TypeReference<T> type);
+    <T> T toObject(TypeReference<T> type);
 
 }

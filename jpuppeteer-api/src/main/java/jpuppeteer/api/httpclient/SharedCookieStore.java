@@ -31,10 +31,9 @@ public class SharedCookieStore implements CookieStore {
          * 因为RFC6265中cookie的domain定义如果需要应用于二级域名的话, 不在需要前导的(.) 所以RFC6265CookieSpec.parse方法在解析cookie的时候去掉的前导的(.) 但是attributes中的domain保存了原始的值, 此处把他还原回来
          */
         if (cookie instanceof BasicClientCookie) {
-            BasicClientCookie bcCookie = (BasicClientCookie) cookie;
-            String domain = bcCookie.getAttribute(DOMAIN_ATTR);
-            if (domain == null || domain.length() == 0) {
-                bcCookie.setDomain(domain);
+            String domain = ((BasicClientCookie) cookie).getAttribute(DOMAIN_ATTR);
+            if (domain != null) {
+                ((BasicClientCookie) cookie).setDomain(domain);
             }
         }
         jpuppeteer.api.browser.Cookie ck = jpuppeteer.api.browser.Cookie.builder()
@@ -79,7 +78,7 @@ public class SharedCookieStore implements CookieStore {
                 return basicClientCookie;
             }).collect(Collectors.toList());
         } catch (Exception e) {
-            logger.error("get cookies failed, error={}", e.getMessage(), e);
+            logger.error("value cookies failed, error={}", e.getMessage(), e);
         }
         return cookies;
     }

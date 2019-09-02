@@ -96,8 +96,7 @@ public class CookieUtils {
             cookieParam.setValue(cookie.getValue());
             cookieParam.setDomain(cookie.getDomain());
             cookieParam.setPath(cookie.getPath());
-            //
-            cookieParam.setExpires(Long.valueOf(cookie.getExpires().getTime() / 1000).doubleValue());
+            cookieParam.setExpires(cookie.getExpires() != null ? Long.valueOf(cookie.getExpires().getTime() / 1000).doubleValue() : null);
             cookieParam.setSecure(cookie.isSecure());
             cookieParam.setHttpOnly(cookie.isHttpOnly());
             cookieParam.setSameSite(cookie.getSameSite());
@@ -114,7 +113,7 @@ public class CookieUtils {
                 .value(cookie.getValue())
                 .domain(cookie.getDomain())
                 .path(cookie.getPath())
-                .expires(new Date(cookie.getExpires().longValue()))
+                .expires(cookie.getExpires() != null && cookie.getExpires() != -1 ? new Date(cookie.getExpires().longValue()) : null)
                 .httpOnly(cookie.getHttpOnly())
                 .secure(cookie.getSecure())
                 .sameSite(cookie.getSameSite())

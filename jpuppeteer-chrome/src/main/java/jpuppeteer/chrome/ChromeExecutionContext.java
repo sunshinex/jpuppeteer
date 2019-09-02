@@ -71,34 +71,34 @@ public class ChromeExecutionContext implements ExecutionContext<CallArgument> {
     public <R> R evaluate(String expression, Class<R> clazz, CallArgument... args) throws Exception {
         ChromeBrowserObject object = evaluate(expression, true, args);
         if (Boolean.class.equals(clazz)) {
-            return (R) object.getBoolean();
+            return (R) object.toBoolean();
         } else if (Short.class.equals(clazz)) {
-            return (R) object.getShort();
+            return (R) object.toShort();
         } else if (Integer.class.equals(clazz)) {
-            return (R) object.getInteger();
+            return (R) object.toInteger();
         } else if (Long.class.equals(clazz)) {
-            return (R) object.getLong();
+            return (R) object.toLong();
         } else if (Float.class.equals(clazz)) {
-            return (R) object.getFloat();
+            return (R) object.toFloat();
         } else if (Double.class.equals(clazz)) {
-            return (R) object.getDouble();
+            return (R) object.toDouble();
         } else if (BigDecimal.class.equals(clazz)) {
-            return (R) object.getBigDecimal();
+            return (R) object.toBigDecimal();
         } else if (BigInteger.class.equals(clazz)) {
-            return (R) object.getBigInteger();
+            return (R) object.toBigInteger();
         } else if (String.class.equals(clazz)) {
-            return (R) object.getString();
+            return (R) object.toStringValue();
         } else if (Date.class.equals(clazz)) {
-            return (R) object.getDate();
+            return (R) object.toDate();
         } else {
-            return object.getObject(clazz);
+            return object.toObject(clazz);
         }
     }
 
     @Override
     public <R> R evaluate(String expression, TypeReference<R> type, CallArgument... args) throws Exception {
         ChromeBrowserObject object = evaluate(expression, true, args);
-        return object.getObject(type);
+        return object.toObject(type);
     }
 
     @Override

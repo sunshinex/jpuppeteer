@@ -97,7 +97,7 @@ public class ChromeBrowserObject implements BrowserObject {
     }
 
     @Override
-    public Object get() {
+    public Object value() {
         if (object.getValue() != null) {
             return object.getValue();
         }
@@ -114,106 +114,106 @@ public class ChromeBrowserObject implements BrowserObject {
     }
 
     @Override
-    public Boolean getBoolean() {
-        return TypeUtils.castToBoolean(get());
+    public Boolean toBoolean() {
+        return TypeUtils.castToBoolean(value());
     }
 
     @Override
-    public boolean getBooleanValue() {
-        Boolean value = getBoolean();
+    public boolean toBooleanValue() {
+        Boolean value = toBoolean();
         return value != null ? value.booleanValue() : false;
     }
 
     @Override
-    public Short getShort() {
-        return TypeUtils.castToShort(get());
+    public Short toShort() {
+        return TypeUtils.castToShort(value());
     }
 
     @Override
-    public short getShortValue() {
-        Short value = getShort();
+    public short toShortValue() {
+        Short value = toShort();
         return value != null ? value.shortValue() : 0;
     }
 
     @Override
-    public Integer getInteger() {
-        return TypeUtils.castToInt(get());
+    public Integer toInteger() {
+        return TypeUtils.castToInt(value());
     }
 
     @Override
-    public int getIntValue() {
-        Integer value = getInteger();
+    public int toIntValue() {
+        Integer value = toInteger();
         return value != null ? value.intValue() : 0;
     }
 
     @Override
-    public Long getLong() {
-        return TypeUtils.castToLong(get());
+    public Long toLong() {
+        return TypeUtils.castToLong(value());
     }
 
     @Override
-    public long getLongValue() {
-        Long value = getLong();
+    public long toLongValue() {
+        Long value = toLong();
         return value != null ? value.longValue() : 0;
     }
 
     @Override
-    public Float getFloat() {
-        return TypeUtils.castToFloat(get());
+    public Float toFloat() {
+        return TypeUtils.castToFloat(value());
     }
 
     @Override
-    public float getFloatValue() {
-        Float value = getFloat();
+    public float toFloatValue() {
+        Float value = toFloat();
         return value != null ? value.floatValue() : 0;
     }
 
     @Override
-    public Double getDouble() {
-        return TypeUtils.castToDouble(get());
+    public Double toDouble() {
+        return TypeUtils.castToDouble(value());
     }
 
     @Override
-    public double getDoubleValue() {
-        Double value = getDouble();
+    public double toDoubleValue() {
+        Double value = toDouble();
         return value != null ? value.doubleValue() : 0;
     }
 
     @Override
-    public BigDecimal getBigDecimal() {
-        return TypeUtils.castToBigDecimal(get());
+    public BigDecimal toBigDecimal() {
+        return TypeUtils.castToBigDecimal(value());
     }
 
     @Override
-    public BigInteger getBigInteger() {
-        return TypeUtils.castToBigInteger(get());
+    public BigInteger toBigInteger() {
+        return TypeUtils.castToBigInteger(value());
     }
 
     @Override
-    public String getString() {
-        return TypeUtils.castToString(get());
+    public String toStringValue() {
+        return TypeUtils.castToString(value());
     }
 
     @Override
-    public Date getDate() {
-        return TypeUtils.castToDate(get());
+    public Date toDate() {
+        return TypeUtils.castToDate(value());
     }
 
     @Override
-    public <T> T getObject(Class<T> clazz) {
-        Object value = get();
+    public <T> T toObject(Class<T> clazz) {
+        Object value = value();
         if (value == null) {
             return null;
         }
-        return TypeUtils.cast(get(), clazz, ParserConfig.getGlobalInstance());
+        return TypeUtils.cast(value(), clazz, ParserConfig.getGlobalInstance());
     }
 
     @Override
-    public <T> T getObject(TypeReference<T> type) {
-        Object value = get();
+    public <T> T toObject(TypeReference<T> type) {
+        Object value = value();
         if (value == null) {
             return null;
         }
-        return TypeUtils.cast(get(), type.getType(), ParserConfig.getGlobalInstance());
+        return TypeUtils.cast(value(), type.getType(), ParserConfig.getGlobalInstance());
     }
 }

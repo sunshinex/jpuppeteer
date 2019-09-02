@@ -180,7 +180,7 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
     @Override
     public String content() throws Exception {
         ChromeBrowserObject object = evaluate("function(){return document.documentElement.outerHTML;}");
-        return object.getString();
+        return object.toStringValue();
     }
 
     @Override
@@ -197,7 +197,7 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
     @Override
     public String title() throws Exception {
         ChromeBrowserObject object = evaluate("function(){return document.title;}");
-        return object.getString();
+        return object.toStringValue();
     }
 
     @Override
