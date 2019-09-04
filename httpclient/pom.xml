@@ -9,9 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>jpuppeteer-chrome</artifactId>
+    <artifactId>httpclient</artifactId>
 
-    <name>jpuppeteer-chrome</name>
+    <name>httpclient</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,16 +22,16 @@
     <dependencies>
         <dependency>
             <groupId>jpuppeteer</groupId>
-            <artifactId>jpuppeteer-cdp</artifactId>
+            <artifactId>jpuppeteer-chrome</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
     </dependencies>
 

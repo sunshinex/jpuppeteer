@@ -1,5 +1,6 @@
 package jpuppeteer.api.browser;
 
+import com.alibaba.fastjson.TypeReference;
 import jpuppeteer.api.event.EventEmitter;
 
 import java.net.URL;
@@ -39,6 +40,10 @@ public interface Frame<T> extends EventEmitter, ExecutionContext<T> {
     List<? extends Element> querySelectorAll(String selector) throws Exception;
 
     BrowserObject wait(String expression, int timeout, TimeUnit unit, T... args) throws Exception;
+
+    <R> R wait(String expression, int timeout, TimeUnit unit, Class<R> clazz, T... args) throws Exception;
+
+    <R> R wait(String expression, int timeout, TimeUnit unit, TypeReference<R> type, T... args) throws Exception;
 
     Element waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
 

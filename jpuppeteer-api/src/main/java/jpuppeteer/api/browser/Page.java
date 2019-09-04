@@ -58,7 +58,15 @@ public interface Page<T> extends Frame<T> {
     //mouse event
     void mouseDown(MouseDefinition mouseDefinition) throws Exception;
 
+    default void mouseDown() throws Exception {
+        mouseDown(MouseDefinition.LEFT);
+    }
+
     void mouseUp(MouseDefinition mouseDefinition) throws Exception;
+
+    default void mouseUp() throws Exception {
+        mouseUp(MouseDefinition.LEFT);
+    }
 
     void mouseMove(double x, double y, int steps) throws Exception;
 

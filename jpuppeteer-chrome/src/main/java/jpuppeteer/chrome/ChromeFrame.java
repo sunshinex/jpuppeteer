@@ -1,9 +1,12 @@
 package jpuppeteer.chrome;
 
+import com.alibaba.fastjson.TypeReference;
+import jpuppeteer.api.browser.BrowserObject;
 import jpuppeteer.api.browser.Frame;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.EventType;
 import jpuppeteer.api.event.GenericEventEmitter;
+import jpuppeteer.api.future.DefaultPromise;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
 import jpuppeteer.cdp.cdp.domain.DOM;
@@ -33,7 +36,7 @@ import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
-public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArgument> {
+public class ChromeFrame implements Frame<CallArgument> {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeFrame.class);
 
@@ -51,11 +54,15 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
 
     protected volatile Set<ChromeFrame> children;
 
+    private volatile DefaultPromise<ChromeExecutionContext> executionContextPromise;
+
     protected Page page;
 
     protected DOM dom;
 
     protected Input input;
+
+    protected Runtime runtime;
 
     @Setter
     protected String name;
@@ -73,7 +80,6 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
     protected URL unreachableUrl;
 
     public ChromeFrame(ChromeFrame parent, String frameId, Page page, Runtime runtime, DOM dom, Input input) {
-        super(runtime, null);
         this.events = new GenericEventEmitter();
         this.parent = parent;
         this.frameId = frameId;
@@ -81,6 +87,8 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
         this.page = page;
         this.dom = dom;
         this.input = input;
+        this.runtime = runtime;
+        this.executionContextPromise = new DefaultPromise<>();
     }
 
     private static <E> void checkEventType(EventType<E> eventType) {
@@ -133,6 +141,21 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
         return null;
     }
 
+    protected ChromeFrame find(Integer executionContextId) {
+        ChromeExecutionContext executionContext = executionContextPromise.getNow();
+        if (executionContext != null && executionContext.executionContextId == executionContextId) {
+            return this;
+        } else if (CollectionUtils.isNotEmpty(children)) {
+            for (ChromeFrame frame : children) {
+                if (frame.find(executionContextId) == null) {
+                    continue;
+                }
+                return frame;
+            }
+        }
+        return null;
+    }
+
     protected void append(String frameId) {
         this.children.add(new ChromeFrame(this, frameId, page, runtime, dom, input));
     }
@@ -141,6 +164,14 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
         if (this.parent != null) {
             this.parent.children.remove(this);
         }
+    }
+
+    public void createExecutionContext(Integer executionContextId) {
+        executionContextPromise.trySuccess(new ChromeExecutionContext(runtime, executionContextId));
+    }
+
+    public void destroyExecutionContext() {
+        executionContextPromise = new DefaultPromise<>();
     }
 
     @Override
@@ -157,6 +188,21 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
     public ChromeFrame[] children() {
         ChromeFrame[] frames = new ChromeFrame[this.children.size()];
         return this.children.toArray(frames);
+    }
+
+    @Override
+    public <R> R evaluate(String expression, Class<R> clazz, CallArgument... args) throws Exception {
+        return executionContextPromise.get().evaluate(expression, clazz, args);
+    }
+
+    @Override
+    public <R> R evaluate(String expression, TypeReference<R> type, CallArgument... args) throws Exception {
+        return executionContextPromise.get().evaluate(expression, type, args);
+    }
+
+    @Override
+    public ChromeBrowserObject evaluate(String expression, CallArgument... args) throws Exception {
+        return executionContextPromise.get().evaluate(expression, args);
     }
 
     @Override
@@ -214,8 +260,7 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
         page.navigate(request, DEFAULT_TIMEOUT);
     }
 
-    @Override
-    public ChromeBrowserObject wait(String expression, int timeout, TimeUnit unit, CallArgument... args) throws Exception {
+    private static CallArgument[] buildWaitArgs(String expression, int timeout, TimeUnit unit, CallArgument... args) {
         //TODO 带有超时设定的方法需要把超时设置传递给cdp request
         CallArgument argExpression = ArgUtils.createFromValue(expression);
         CallArgument argTimeout = ArgUtils.createFromValue(unit.toMillis(timeout));
@@ -223,7 +268,25 @@ public class ChromeFrame extends ChromeExecutionContext implements Frame<CallArg
         callArgs[0] = argExpression;
         callArgs[1] = argTimeout;
         System.arraycopy(args, 0, callArgs, 2, args.length);
+        return callArgs;
+    }
+
+    @Override
+    public ChromeBrowserObject wait(String expression, int timeout, TimeUnit unit, CallArgument... args) throws Exception {
+        CallArgument[] callArgs = buildWaitArgs(expression, timeout, unit, args);
         return evaluate(SCRIPT_WAIT, callArgs);
+    }
+
+    @Override
+    public <R> R wait(String expression, int timeout, TimeUnit unit, Class<R> clazz, CallArgument... args) throws Exception {
+        CallArgument[] callArgs = buildWaitArgs(expression, timeout, unit, args);
+        return evaluate(SCRIPT_WAIT, clazz, callArgs);
+    }
+
+    @Override
+    public <R> R wait(String expression, int timeout, TimeUnit unit, TypeReference<R> type, CallArgument... args) throws Exception {
+        CallArgument[] callArgs = buildWaitArgs(expression, timeout, unit, args);
+        return evaluate(SCRIPT_WAIT, type, callArgs);
     }
 
     @Override

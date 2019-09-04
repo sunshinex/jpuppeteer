@@ -33,10 +33,7 @@ import jpuppeteer.cdp.cdp.entity.network.GetCookiesResponse;
 import jpuppeteer.cdp.cdp.entity.network.*;
 import jpuppeteer.cdp.cdp.entity.page.SetTouchEmulationEnabledRequest;
 import jpuppeteer.cdp.cdp.entity.page.*;
-import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
-import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextCreatedEvent;
-import jpuppeteer.cdp.cdp.entity.runtime.ReleaseObjectRequest;
-import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
+import jpuppeteer.cdp.cdp.entity.runtime.*;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
 import jpuppeteer.chrome.entity.CookieEvent;
@@ -831,9 +828,8 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
             if (frame == null) {
                 return;
             }
-            Integer executionContextId = evt.getContext().getId();
-            frame.setExecutionContextId(executionContextId);
-            logger.info("frame {} init execution with id:{}", frameId, executionContextId);
+            frame.executionContext = new ChromeExecutionContext(frame.runtime, evt.getContext().getId());
+            logger.info("frame {} init execution with id:{}", frameId, evt.getContext().getId());
         }
     }
 
@@ -842,7 +838,15 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         @Override
         public void accept(CDPEvent event) {
             //do nth...
-            //等frame的destory事件处理
+            ExecutionContextDestroyedEvent evt = event.getParams().toJavaObject(ExecutionContextDestroyedEvent.class);
+            if (evt == null || evt.getExecutionContextId() == null) {
+                return;
+            }
+            ChromeFrame frame = find(evt.getExecutionContextId());
+            if (frame == null) {
+                return;
+            }
+            frame.executionContext = null;
         }
     }
 

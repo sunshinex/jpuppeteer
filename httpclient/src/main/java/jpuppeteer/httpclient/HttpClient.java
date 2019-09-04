@@ -1,31 +1,24 @@
-package jpuppeteer.chrome.httpclient;
+package jpuppeteer.httpclient;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import jpuppeteer.api.browser.BoundingBox;
-import jpuppeteer.api.browser.Browser;
-import jpuppeteer.api.browser.Element;
-import jpuppeteer.api.browser.Page;
+import jpuppeteer.api.browser.*;
+import jpuppeteer.api.constant.MouseDefinition;
+import jpuppeteer.api.constant.PermissionType;
 import jpuppeteer.api.httpclient.SharedCookieStore;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.chrome.ChromeBrowser;
 import jpuppeteer.chrome.ChromeLauncher;
-import jpuppeteer.chrome.ChromePage;
 import jpuppeteer.chrome.event.PageEvent;
+import jpuppeteer.chrome.util.ArgUtils;
 import jpuppeteer.chrome.util.ScriptUtils;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.util.EntityUtils;
 
 import java.io.File;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,17 +65,50 @@ public class HttpClient {
         //String url = jsonObject.getString("url");
 
         Page<CallArgument> page = browser.defaultContext().newPage();
-        page.evaluateOnNewDocument(ScriptUtils.load("fake.js"));
+        //page.evaluateOnNewDocument(ScriptUtils.load("fake.js"));
+        page.browserContext().resetPermissions();
+        page.browserContext().grantPermissions("https://login.taobao.com", PermissionType.MIDI, PermissionType.MIDISYSEX, PermissionType.NOTIFICATIONS, PermissionType.GEOLOCATION, PermissionType.BACKGROUNDSYNC);
         page.addListener(PageEvent.DOMCONTENTLOADED, event -> {
             try {
                 Element username = page.waitSelector("#TPL_username_1", 10, TimeUnit.SECONDS);
                 username.clear();
                 username.input("17002030951");
                 page.querySelector("#TPL_password_1").input("vip123456");
-                Element element = page.waitSelector("#nocaptcha", 3, TimeUnit.SECONDS);
-                BoundingBox boundingBox = element.boundingBox();
-                double sliderWidth = boundingBox.getWidth();
-                System.out.println(sliderWidth);
+
+                Element slider;
+                try {
+                    slider = page.waitSelector("#nocaptcha", 3, TimeUnit.SECONDS);
+                } catch (Exception ex) {
+                    //无需滑块
+                    return;
+                }
+                int stepWidth = 10;
+                BoundingBox sliderBox = slider.boundingBox();
+                while(true) {
+                    JSONObject object = page.wait(ScriptUtils.load("wait-captcha-box.js"), 2, TimeUnit.SECONDS, JSONObject.class, ArgUtils.createFromValue("#nocaptcha .nc-lang-cnt"));
+                    String status = object.getString("status");
+                    if ("READY".equals(status)) {
+                        Element box = page.waitSelector("#nc_1_n1z", 3, TimeUnit.SECONDS);
+                        BoundingBox boxBox = box.boundingBox();
+                        //鼠标移动到节点上
+                        box.hover();
+                        //按下鼠标左键
+                        page.mouseDown(MouseDefinition.LEFT);
+                        //滑动
+                        double steps = Math.ceil(sliderBox.getWidth() / stepWidth);
+                        for (int i = 0; i < steps; ) {
+                            page.mouseMove(boxBox.getX() + stepWidth * ++i, boxBox.getY() + boxBox.getHeight() / 2);
+                            //TimeUnit.MILLISECONDS.sleep(20);
+                        }
+                        page.mouseUp(MouseDefinition.LEFT);
+                    } else if ("OK".equals(status)) {
+                        System.out.println("成功");
+                        break;
+                    } else if ("ERROR".equals(status)) {
+                        System.out.println("失败:" + object.getString("text"));
+                        page.querySelector("#nocaptcha .nc-lang-cnt a:first-child").click();
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

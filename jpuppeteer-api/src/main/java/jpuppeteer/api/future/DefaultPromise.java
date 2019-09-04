@@ -133,7 +133,8 @@ public class DefaultPromise<V> implements Promise<V> {
         return (result instanceof CauseHolder) ? ((CauseHolder) result).cause : null;
     }
 
-    private Promise<V> await() throws InterruptedException {
+    @Override
+    public Promise<V> await() throws InterruptedException {
         if (isDone()) {
             return this;
         }
@@ -153,6 +154,11 @@ public class DefaultPromise<V> implements Promise<V> {
             }
         }
         return this;
+    }
+
+    @Override
+    public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+        return await(unit.toNanos(timeout));
     }
 
     private boolean await(long timeoutNanos) throws InterruptedException {
@@ -200,7 +206,8 @@ public class DefaultPromise<V> implements Promise<V> {
         }
     }
 
-    private V getNow() {
+    @Override
+    public V getNow() {
         Object result = this.result;
         if (result instanceof CauseHolder || result == SUCCESS || result == UNCANCELLABLE) {
             return null;
