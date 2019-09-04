@@ -43,7 +43,9 @@ public class HttpClient {
         headers.add(new BasicHeader("Connection", "keep-alive"));
         headers.add(new BasicHeader("Upgrade-Insecure-Requests", "1"));
 
-        ChromeBrowser browser = new ChromeLauncher(new File("D:\\workspace\\browser-driver\\bin\\chrome\\win32-x64\\chrome")).launch(args);
+        //ChromeBrowser browser = new ChromeLauncher(new File("D:\\workspace\\browser-driver\\bin\\chrome\\win32-x64\\chrome")).launch(args);
+
+        ChromeBrowser browser = new ChromeLauncher(new File("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")).launch(args);
 
         SharedCookieStore cookieStore = new SharedCookieStore(browser);
 
@@ -65,50 +67,53 @@ public class HttpClient {
         //String url = jsonObject.getString("url");
 
         Page<CallArgument> page = browser.defaultContext().newPage();
-        //page.evaluateOnNewDocument(ScriptUtils.load("fake.js"));
+        page.evaluateOnNewDocument(ScriptUtils.load("fake.js"));
         page.browserContext().resetPermissions();
         page.browserContext().grantPermissions("https://login.taobao.com", PermissionType.MIDI, PermissionType.MIDISYSEX, PermissionType.NOTIFICATIONS, PermissionType.GEOLOCATION, PermissionType.BACKGROUNDSYNC);
         page.addListener(PageEvent.DOMCONTENTLOADED, event -> {
             try {
                 Element username = page.waitSelector("#TPL_username_1", 10, TimeUnit.SECONDS);
                 username.clear();
-                username.input("17002030951");
-                page.querySelector("#TPL_password_1").input("vip123456");
+                username.input("asd17002030951");
+                page.querySelector("#TPL_password_1").input("asd123123");
 
-                Element slider;
+                Element slider = null;
                 try {
                     slider = page.waitSelector("#nocaptcha", 3, TimeUnit.SECONDS);
                 } catch (Exception ex) {
-                    //无需滑块
-                    return;
+                    //do nth...
                 }
-                int stepWidth = 10;
-                BoundingBox sliderBox = slider.boundingBox();
-                while(true) {
-                    JSONObject object = page.wait(ScriptUtils.load("wait-captcha-box.js"), 2, TimeUnit.SECONDS, JSONObject.class, ArgUtils.createFromValue("#nocaptcha .nc-lang-cnt"));
-                    String status = object.getString("status");
-                    if ("READY".equals(status)) {
-                        Element box = page.waitSelector("#nc_1_n1z", 3, TimeUnit.SECONDS);
-                        BoundingBox boxBox = box.boundingBox();
-                        //鼠标移动到节点上
-                        box.hover();
-                        //按下鼠标左键
-                        page.mouseDown(MouseDefinition.LEFT);
-                        //滑动
-                        double steps = Math.ceil(sliderBox.getWidth() / stepWidth);
-                        for (int i = 0; i < steps; ) {
-                            page.mouseMove(boxBox.getX() + stepWidth * ++i, boxBox.getY() + boxBox.getHeight() / 2);
-                            //TimeUnit.MILLISECONDS.sleep(20);
+                if (slider != null) {
+                    int stepWidth = 10;
+                    BoundingBox sliderBox = slider.boundingBox();
+                    while (true) {
+                        JSONObject object = page.wait(ScriptUtils.load("wait-captcha-box.js"), 2, TimeUnit.SECONDS, JSONObject.class, ArgUtils.createFromValue("#nocaptcha .nc-lang-cnt"));
+                        String status = object.getString("status");
+                        if ("READY".equals(status)) {
+                            Element box = page.waitSelector("#nc_1_n1z", 3, TimeUnit.SECONDS);
+                            BoundingBox boxBox = box.boundingBox();
+                            //鼠标移动到节点上
+                            box.hover();
+                            //按下鼠标左键
+                            page.mouseDown(MouseDefinition.LEFT);
+                            //滑动
+                            double steps = Math.ceil(sliderBox.getWidth() / stepWidth);
+                            for (int i = 0; i < steps; ) {
+                                page.mouseMove(boxBox.getX() + stepWidth * ++i, boxBox.getY() + boxBox.getHeight() / 2);
+                                //TimeUnit.MILLISECONDS.sleep(20);
+                            }
+                            page.mouseUp(MouseDefinition.LEFT);
+                            TimeUnit.MILLISECONDS.sleep(200);
+                        } else if ("OK".equals(status)) {
+                            System.out.println("成功");
+                            break;
+                        } else if ("ERROR".equals(status)) {
+                            System.out.println("失败:" + object.getString("text"));
+                            page.querySelector("#nocaptcha .nc-lang-cnt a:first-child").click();
                         }
-                        page.mouseUp(MouseDefinition.LEFT);
-                    } else if ("OK".equals(status)) {
-                        System.out.println("成功");
-                        break;
-                    } else if ("ERROR".equals(status)) {
-                        System.out.println("失败:" + object.getString("text"));
-                        page.querySelector("#nocaptcha .nc-lang-cnt a:first-child").click();
                     }
                 }
+                page.querySelector("#J_SubmitStatic").click();
             } catch (Exception e) {
                 e.printStackTrace();
             }

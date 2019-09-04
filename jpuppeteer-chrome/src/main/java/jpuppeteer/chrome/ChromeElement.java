@@ -39,7 +39,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
     protected ChromeFrame frame;
 
     protected ChromeElement(ChromeFrame frame, RemoteObject object) {
-        super(frame.runtime, frame, object);
+        super(frame.runtime, frame.executionContext(), object);
         this.frame = frame;
         if (frame instanceof ChromePage) {
             this.page = (ChromePage) frame;

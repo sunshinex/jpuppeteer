@@ -127,6 +127,15 @@ public class ChromeFrame implements Frame<CallArgument> {
         events.emit(eventType, event);
     }
 
+    protected ChromeExecutionContext executionContext() {
+        try {
+            return this.executionContextPromise.get();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
     protected ChromeFrame find(String frameId) {
         if (this.frameId.equals(frameId)) {
             return this;
@@ -192,17 +201,17 @@ public class ChromeFrame implements Frame<CallArgument> {
 
     @Override
     public <R> R evaluate(String expression, Class<R> clazz, CallArgument... args) throws Exception {
-        return executionContextPromise.get().evaluate(expression, clazz, args);
+        return executionContext().evaluate(expression, clazz, args);
     }
 
     @Override
     public <R> R evaluate(String expression, TypeReference<R> type, CallArgument... args) throws Exception {
-        return executionContextPromise.get().evaluate(expression, type, args);
+        return executionContext().evaluate(expression, type, args);
     }
 
     @Override
     public ChromeBrowserObject evaluate(String expression, CallArgument... args) throws Exception {
-        return executionContextPromise.get().evaluate(expression, args);
+        return executionContext().evaluate(expression, args);
     }
 
     @Override

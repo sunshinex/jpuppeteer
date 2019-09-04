@@ -3,7 +3,6 @@ package jpuppeteer.chrome;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.ExecutionContext;
-import jpuppeteer.api.future.DefaultPromise;
 import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.cdp.cdp.entity.runtime.CallFunctionOnRequest;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.concurrent.Future;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
@@ -24,19 +22,11 @@ public class ChromeExecutionContext implements ExecutionContext<CallArgument> {
 
     protected Runtime runtime;
 
-    protected volatile Integer executionContextId;
-
-    private volatile DefaultPromise<Integer> promise;
+    protected final Integer executionContextId;
 
     protected ChromeExecutionContext(Runtime runtime, Integer executionContextId) {
         this.runtime = runtime;
         this.executionContextId = executionContextId;
-        this.promise = new DefaultPromise<>();
-    }
-
-    public void init(Integer executionContextId) {
-        this.executionContextId = executionContextId;
-        promise.trySuccess(executionContextId);
     }
 
     public Integer getExecutionContextId() {
@@ -44,7 +34,6 @@ public class ChromeExecutionContext implements ExecutionContext<CallArgument> {
     }
 
     private ChromeBrowserObject evaluate(String expression, boolean returnJSON, CallArgument... args) throws Exception {
-        promise.get();
         CallFunctionOnRequest request = new CallFunctionOnRequest();
         request.setFunctionDeclaration(expression);
         request.setArguments(Lists.newArrayList(args));
