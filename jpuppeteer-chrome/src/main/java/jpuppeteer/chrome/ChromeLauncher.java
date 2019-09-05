@@ -1,12 +1,8 @@
 package jpuppeteer.chrome;
 
-import com.alibaba.fastjson.JSON;
-import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.browser.Launcher;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.WebSocketConnection;
-import jpuppeteer.chrome.event.PageEvent;
-import jpuppeteer.chrome.util.ScriptUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

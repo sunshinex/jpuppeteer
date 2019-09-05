@@ -1,7 +1,9 @@
 package jpuppeteer.httpclient;
 
 import com.alibaba.fastjson.JSONObject;
-import jpuppeteer.api.browser.*;
+import jpuppeteer.api.browser.BoundingBox;
+import jpuppeteer.api.browser.Element;
+import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.constant.MouseDefinition;
 import jpuppeteer.api.constant.PermissionType;
 import jpuppeteer.api.httpclient.SharedCookieStore;
@@ -43,9 +45,9 @@ public class HttpClient {
         headers.add(new BasicHeader("Connection", "keep-alive"));
         headers.add(new BasicHeader("Upgrade-Insecure-Requests", "1"));
 
-        //ChromeBrowser browser = new ChromeLauncher(new File("D:\\workspace\\browser-driver\\bin\\chrome\\win32-x64\\chrome")).launch(args);
+        ChromeBrowser browser = new ChromeLauncher(new File("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe")).launch(args);
 
-        ChromeBrowser browser = new ChromeLauncher(new File("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")).launch(args);
+//        ChromeBrowser browser = new ChromeLauncher(new File("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")).launch(args);
 
         SharedCookieStore cookieStore = new SharedCookieStore(browser);
 
@@ -79,7 +81,7 @@ public class HttpClient {
 
                 Element slider = null;
                 try {
-                    slider = page.waitSelector("#nocaptcha", 3, TimeUnit.SECONDS);
+                    slider = page.waitSelector("#nocaptcha", 1, TimeUnit.SECONDS);
                 } catch (Exception ex) {
                     //do nth...
                 }

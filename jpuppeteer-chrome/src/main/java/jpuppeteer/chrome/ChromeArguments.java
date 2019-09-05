@@ -37,8 +37,6 @@ public class ChromeArguments {
             "--enable-automation",
             "--password-store=basic",
             "--use-mock-keychain",
-            //禁用cookie加密(仅限headless模式下有效)
-            "--disable-cookie-encryption"
     };
 
     private String executable;
@@ -135,6 +133,7 @@ public class ChromeArguments {
             }
             arguments.args.add("--remote-debugging-address=0.0.0.0");
         }
+        arguments.args.add("about:blank");
         return arguments;
     }
 

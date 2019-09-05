@@ -33,10 +33,14 @@ import jpuppeteer.cdp.cdp.entity.network.GetCookiesResponse;
 import jpuppeteer.cdp.cdp.entity.network.*;
 import jpuppeteer.cdp.cdp.entity.page.SetTouchEmulationEnabledRequest;
 import jpuppeteer.cdp.cdp.entity.page.*;
-import jpuppeteer.cdp.cdp.entity.runtime.*;
+import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
+import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextCreatedEvent;
+import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
+import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
 import jpuppeteer.chrome.entity.CookieEvent;
+import jpuppeteer.chrome.util.ChromeObjectUtils;
 import jpuppeteer.chrome.util.CookieUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -869,18 +873,8 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
                 return;
             }
             args.forEach(object -> {
-                if (object != null ) releaseObjectQuietly(object.getObjectId());
+                if (object != null ) ChromeObjectUtils.releaseObjectQuietly(runtime, object.getObjectId());
             });
-        }
-    }
-
-    private void releaseObjectQuietly(String objectId) {
-        ReleaseObjectRequest request = new ReleaseObjectRequest();
-        request.setObjectId(objectId);
-        try {
-            runtime.releaseObject(request, DEFAULT_TIMEOUT);
-        } catch (Exception e) {
-            logger.warn("release object failed, objectId={}", objectId, e);
         }
     }
 }

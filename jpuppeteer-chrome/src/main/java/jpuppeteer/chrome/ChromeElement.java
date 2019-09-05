@@ -18,6 +18,8 @@ import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.chrome.util.ArgUtils;
 import jpuppeteer.chrome.util.MathUtils;
 import jpuppeteer.chrome.util.ScriptUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,6 +31,8 @@ import java.util.stream.Collectors;
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
 public class ChromeElement extends ChromeBrowserObject implements Element {
+
+    private static final Logger logger = LoggerFactory.getLogger(ChromeElement.class);
 
     private static final String SCRIPT_SELECT = ScriptUtils.load("select.js");
 
@@ -44,11 +48,11 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
         if (frame instanceof ChromePage) {
             this.page = (ChromePage) frame;
         } else {
-            ChromeFrame up = null;
-            while (up.parent != null) {
-                up = up.parent;
+            ChromeFrame parent = null;
+            while (parent.parent != null) {
+                parent = parent.parent;
             }
-            this.page = (ChromePage) up;
+            this.page = (ChromePage) parent;
         }
     }
 
@@ -130,10 +134,10 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
     }
 
     private Coordinate getCenter() throws Exception {
-        BoxModel boxModel = boxModel();
+        BoundingBox box = boundingBox();
         return new Coordinate(
-                boxModel.getContent()[0].getX() + boxModel.getWidth() / 2,
-                boxModel.getContent()[0].getY() + boxModel.getHeight() / 2
+                box.getX() + box.getWidth() / 2,
+                box.getY() + box.getHeight() / 2
         );
     }
 

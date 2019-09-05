@@ -1,7 +1,6 @@
 package jpuppeteer.chrome;
 
 import com.alibaba.fastjson.TypeReference;
-import jpuppeteer.api.browser.BrowserObject;
 import jpuppeteer.api.browser.Frame;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.EventType;
@@ -13,10 +12,16 @@ import jpuppeteer.cdp.cdp.domain.DOM;
 import jpuppeteer.cdp.cdp.domain.Input;
 import jpuppeteer.cdp.cdp.domain.Page;
 import jpuppeteer.cdp.cdp.domain.Runtime;
+import jpuppeteer.cdp.cdp.entity.dom.DescribeNodeRequest;
+import jpuppeteer.cdp.cdp.entity.dom.DescribeNodeResponse;
+import jpuppeteer.cdp.cdp.entity.dom.ResolveNodeRequest;
+import jpuppeteer.cdp.cdp.entity.dom.ResolveNodeResponse;
 import jpuppeteer.cdp.cdp.entity.page.NavigateRequest;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
+import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.chrome.event.FrameEvent;
 import jpuppeteer.chrome.util.ArgUtils;
+import jpuppeteer.chrome.util.ChromeObjectUtils;
 import jpuppeteer.chrome.util.ScriptUtils;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
@@ -229,7 +234,9 @@ public class ChromeFrame implements Frame<CallArgument> {
         CallArgument argSelector = ArgUtils.createFromValue(selector);
         ChromeBrowserObject browserObject = evaluate("function(selector){return document.querySelectorAll(selector);}", argSelector);
         List<ChromeBrowserObject> properties = browserObject.getProperties();
-        return properties.stream().map(object -> new ChromeElement(this, object)).collect(Collectors.toList());
+        List<ChromeElement> elements = properties.stream().map(object -> new ChromeElement(this, object)).collect(Collectors.toList());
+        ChromeObjectUtils.releaseObjectQuietly(runtime, browserObject.objectId);
+        return elements;
     }
 
     @Override
@@ -305,7 +312,25 @@ public class ChromeFrame implements Frame<CallArgument> {
         if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
             return null;
         }
-        return new ChromeElement(this, object);
+        return new ChromeElement(this, toDomObject(this, object.object));
+    }
+
+    public static RemoteObject toDomObject(ChromeFrame frame, RemoteObject object) {
+        RemoteObject remoteObject = object;
+        try {
+            DescribeNodeRequest describeRequest = new DescribeNodeRequest();
+            describeRequest.setObjectId(object.getObjectId());
+            DescribeNodeResponse describeResponse = frame.dom.describeNode(describeRequest, DEFAULT_TIMEOUT);
+            ResolveNodeRequest resolveRequest = new ResolveNodeRequest();
+            resolveRequest.setBackendNodeId(describeResponse.getNode().getBackendNodeId());
+            resolveRequest.setExecutionContextId(frame.executionContext().executionContextId);
+            ResolveNodeResponse resolveResponse = frame.dom.resolveNode(resolveRequest, DEFAULT_TIMEOUT);
+            ChromeObjectUtils.releaseObjectQuietly(frame.runtime, object.getObjectId());
+            remoteObject = resolveResponse.getObject();
+        } catch (Exception e) {
+            logger.warn("script object to dom element error, error={}", e.getMessage(), e);
+        }
+        return remoteObject;
     }
 
 }
