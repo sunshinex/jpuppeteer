@@ -38,6 +38,8 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     private static final String SCRIPT_IS_INTERSECTING_VIEWPORT = ScriptUtils.load("isintersectingviewport.js");
 
+    private static final String SCRIPT_SCROLL_INTO_VIEW = ScriptUtils.load("scrollintoview.js");
+
     protected ChromePage page;
 
     protected ChromeFrame frame;
@@ -163,6 +165,12 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
         page.mouseMove(center.getX(), center.getY(), 1);
     }
 
+    @Override
+    public void scrollIntoView() throws Exception {
+        ChromeBrowserObject object = executionContext.evaluate(SCRIPT_SCROLL_INTO_VIEW, ArgUtils.createFromObjectId(objectId));
+        object.release();
+    }
+
     private void insertText(String text) throws Exception {
         InsertTextRequest request = new InsertTextRequest();
         request.setText(text);
@@ -171,6 +179,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public void click(MouseDefinition mouseDefinition, int delay) throws Exception {
+        scrollIntoView();
         hover();
         page.mouseDown(mouseDefinition);
         if (delay > 0) {
@@ -181,6 +190,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public void tap(int delay) throws Exception {
+        scrollIntoView();
         Coordinate center = getCenter();
         page.touchStart(center.getX(), center.getY());
         if (delay > 0) {

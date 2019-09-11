@@ -131,6 +131,19 @@ public class ChromeBrowser implements Browser {
         events.emit(eventType, event);
     }
 
+    /**
+     * 只对已经存在的页面生效
+     * @param autoAttach
+     * @throws Exception
+     */
+    protected void setAutoAttach(boolean autoAttach) throws Exception {
+        SetAutoAttachRequest request = new SetAutoAttachRequest();
+        request.setAutoAttach(autoAttach);
+        request.setFlatten(true);
+        request.setWaitForDebuggerOnStart(false);
+        this.target.setAutoAttach(request, DEFAULT_TIMEOUT);
+    }
+
     protected void activateTarget(String targetId) throws Exception {
         ActivateTargetRequest request = new ActivateTargetRequest();
         request.setTargetId(targetId);

@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface Page<T> extends Frame<T> {
 
+    Page<T> opener();
+
     void setCookie(Cookie... cookies) throws Exception;
 
     void clearCookie() throws Exception;

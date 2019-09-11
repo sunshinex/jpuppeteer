@@ -66,6 +66,8 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     private static final List<TouchPoint> EMPTY_TOUCHPOINTS = Lists.newArrayListWithCapacity(0);
 
+    private final ChromePage opener;
+
     protected CDPSession session;
 
     private ChromeContext browserContext;
@@ -94,7 +96,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     private volatile double mouseY;
 
-    public ChromePage(ChromeContext browserContext, CDPSession session, String targetId) throws Exception {
+    public ChromePage(ChromeContext browserContext, CDPSession session, String targetId, ChromePage opener) throws Exception {
         super(
                 null,
                 targetId,
@@ -104,6 +106,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
                 new Input(session)
         );
         this.session = session;
+        this.opener = opener;
         this.browserContext = browserContext;
         this.performance = new Performance(session);
         this.log = new Log(session);
@@ -150,6 +153,11 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         session.addListener(RUNTIME_EXECUTIONCONTEXTCREATED, new ExecutionCreatedHandler());
         session.addListener(RUNTIME_EXECUTIONCONTEXTDESTROYED, new ExecutionDestroyedHandler());
         session.addListener(RUNTIME_EXECUTIONCONTEXTSCLEARED, new ExecutionClearedHandler());
+    }
+
+    @Override
+    public Page<CallArgument> opener() {
+        return opener;
     }
 
     @Override

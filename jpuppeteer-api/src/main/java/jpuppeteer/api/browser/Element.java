@@ -21,6 +21,8 @@ public interface Element extends BrowserObject {
 
     void uploadFile(File... files) throws Exception;
 
+    void scrollIntoView() throws Exception;
+
     //dom event
     void focus() throws Exception;
 

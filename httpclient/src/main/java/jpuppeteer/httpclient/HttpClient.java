@@ -19,14 +19,20 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class HttpClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(HttpClient.class);
 
     private static final String DEFAULT_USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36";
 
@@ -61,7 +67,7 @@ public class HttpClient {
                 .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
                 .build();
 
-        String requestUrl = "https://login.taobao.com/member/login.jhtml?useMobile=false&redirectURL=" + URLEncoder.encode("https://ovvnz.m.tmall.com/shop/shop_auction_search.do?ajson=1&_tm_source=tmallsearch&sort=s&p=9&page_size=12&from=h5&shop_id=451600818", "UTF-8");
+        //String requestUrl = "https://login.taobao.com/member/login.jhtml?useMobile=false&redirectURL=" + URLEncoder.encode("https://ovvnz.m.tmall.com/shop/shop_auction_search.do?ajson=1&_tm_source=tmallsearch&sort=s&p=9&page_size=12&from=h5&shop_id=451600818", "UTF-8");
         //HttpGet request = new HttpGet(requestUrl);
         //CloseableHttpResponse response = httpClient.execute(request);
         //String jsonStr = EntityUtils.toString(response.getEntity());
@@ -69,58 +75,73 @@ public class HttpClient {
         //String url = jsonObject.getString("url");
 
         Page<CallArgument> page = browser.defaultContext().newPage();
-        page.evaluateOnNewDocument(ScriptUtils.load("fake.js"));
-        page.browserContext().resetPermissions();
-        page.browserContext().grantPermissions("https://login.taobao.com", PermissionType.MIDI, PermissionType.MIDISYSEX, PermissionType.NOTIFICATIONS, PermissionType.GEOLOCATION, PermissionType.BACKGROUNDSYNC);
-        page.addListener(PageEvent.DOMCONTENTLOADED, event -> {
-            try {
-                Element username = page.waitSelector("#TPL_username_1", 10, TimeUnit.SECONDS);
-                username.clear();
-                username.input("asd17002030951");
-                page.querySelector("#TPL_password_1").input("asd123123");
-
-                Element slider = null;
-                try {
-                    slider = page.waitSelector("#nocaptcha", 1, TimeUnit.SECONDS);
-                } catch (Exception ex) {
-                    //do nth...
-                }
-                if (slider != null) {
-                    int stepWidth = 10;
-                    BoundingBox sliderBox = slider.boundingBox();
-                    while (true) {
-                        JSONObject object = page.wait(ScriptUtils.load("wait-captcha-box.js"), 2, TimeUnit.SECONDS, JSONObject.class, ArgUtils.createFromValue("#nocaptcha .nc-lang-cnt"));
-                        String status = object.getString("status");
-                        if ("READY".equals(status)) {
-                            Element box = page.waitSelector("#nc_1_n1z", 3, TimeUnit.SECONDS);
-                            BoundingBox boxBox = box.boundingBox();
-                            //鼠标移动到节点上
-                            box.hover();
-                            //按下鼠标左键
-                            page.mouseDown(MouseDefinition.LEFT);
-                            //滑动
-                            double steps = Math.ceil(sliderBox.getWidth() / stepWidth);
-                            for (int i = 0; i < steps; ) {
-                                page.mouseMove(boxBox.getX() + stepWidth * ++i, boxBox.getY() + boxBox.getHeight() / 2);
-                                //TimeUnit.MILLISECONDS.sleep(20);
-                            }
-                            page.mouseUp(MouseDefinition.LEFT);
-                            TimeUnit.MILLISECONDS.sleep(200);
-                        } else if ("OK".equals(status)) {
-                            System.out.println("成功");
-                            break;
-                        } else if ("ERROR".equals(status)) {
-                            System.out.println("失败:" + object.getString("text"));
-                            page.querySelector("#nocaptcha .nc-lang-cnt a:first-child").click();
-                        }
-                    }
-                }
-                page.querySelector("#J_SubmitStatic").click();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        page.navigate(requestUrl, requestUrl);
+//        page.addListener(PageEvent.LOAD, event -> {
+//            try {
+//                Element el = page.querySelector("#subfootBaseLine");
+//                logger.info("scroll start");
+//                el.scrollIntoView();
+//                logger.info("scroll end");
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
+        page.navigate("https://www.163.com/");
+        page.wait(PageEvent.DOMCONTENTLOADED);
+        page.querySelector(".sitemap_flink>a").click();
+        TimeUnit.SECONDS.sleep(10);
+        browser.defaultContext().pages();
+//        page.evaluateOnNewDocument(ScriptUtils.load("fake.js"));
+//        page.browserContext().resetPermissions();
+//        page.browserContext().grantPermissions("https://login.taobao.com", PermissionType.MIDI, PermissionType.MIDISYSEX, PermissionType.NOTIFICATIONS, PermissionType.GEOLOCATION, PermissionType.BACKGROUNDSYNC);
+//        page.addListener(PageEvent.DOMCONTENTLOADED, event -> {
+//            try {
+//                Element username = page.waitSelector("#TPL_username_1", 10, TimeUnit.SECONDS);
+//                username.clear();
+//                username.input("asd17002030951");
+//                page.querySelector("#TPL_password_1").input("asd123123");
+//
+//                Element slider = null;
+//                try {
+//                    slider = page.waitSelector("#nocaptcha", 1, TimeUnit.SECONDS);
+//                } catch (Exception ex) {
+//                    //do nth...
+//                }
+//                if (slider != null) {
+//                    int stepWidth = 10;
+//                    BoundingBox sliderBox = slider.boundingBox();
+//                    while (true) {
+//                        JSONObject object = page.wait(ScriptUtils.load("wait-captcha-box.js"), 2, TimeUnit.SECONDS, JSONObject.class, ArgUtils.createFromValue("#nocaptcha .nc-lang-cnt"));
+//                        String status = object.getString("status");
+//                        if ("READY".equals(status)) {
+//                            Element box = page.waitSelector("#nc_1_n1z", 3, TimeUnit.SECONDS);
+//                            BoundingBox boxBox = box.boundingBox();
+//                            //鼠标移动到节点上
+//                            box.hover();
+//                            //按下鼠标左键
+//                            page.mouseDown(MouseDefinition.LEFT);
+//                            //滑动
+//                            double steps = Math.ceil(sliderBox.getWidth() / stepWidth);
+//                            for (int i = 0; i < steps; ) {
+//                                page.mouseMove(boxBox.getX() + stepWidth * ++i, boxBox.getY() + boxBox.getHeight() / 2);
+//                                //TimeUnit.MILLISECONDS.sleep(20);
+//                            }
+//                            page.mouseUp(MouseDefinition.LEFT);
+//                            TimeUnit.MILLISECONDS.sleep(200);
+//                        } else if ("OK".equals(status)) {
+//                            System.out.println("成功");
+//                            break;
+//                        } else if ("ERROR".equals(status)) {
+//                            System.out.println("失败:" + object.getString("text"));
+//                            page.querySelector("#nocaptcha .nc-lang-cnt a:first-child").click();
+//                        }
+//                    }
+//                }
+//                page.querySelector("#J_SubmitStatic").click();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
+//        page.navigate(requestUrl, requestUrl);
     }
 
 }

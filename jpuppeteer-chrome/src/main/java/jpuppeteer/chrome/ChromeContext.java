@@ -1,27 +1,29 @@
 package jpuppeteer.chrome;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.BrowserContext;
 import jpuppeteer.api.constant.PermissionType;
+import jpuppeteer.api.future.DefaultPromise;
+import jpuppeteer.api.future.Promise;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.cdp.domain.Browser;
 import jpuppeteer.cdp.cdp.domain.Target;
 import jpuppeteer.cdp.cdp.entity.browser.GrantPermissionsRequest;
 import jpuppeteer.cdp.cdp.entity.browser.ResetPermissionsRequest;
-import jpuppeteer.cdp.cdp.entity.target.CloseTargetRequest;
+import jpuppeteer.cdp.cdp.entity.target.*;
+import jpuppeteer.chrome.util.ImmediateFuture;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
-import static jpuppeteer.chrome.event.BrowserEvent.TARGETCRASHED;
-import static jpuppeteer.chrome.event.BrowserEvent.TARGETDESTROYED;
+import static jpuppeteer.chrome.event.BrowserEvent.*;
 
 public class ChromeContext implements BrowserContext {
 
@@ -33,7 +35,7 @@ public class ChromeContext implements BrowserContext {
 
     private String browserContextId;
 
-    private Map<String, ChromePage> pageMap;
+    private Map<String, Future<ChromePage>> pageMap;
 
     private Browser domainBrowser;
 
@@ -46,37 +48,81 @@ public class ChromeContext implements BrowserContext {
         this.pageMap = new ConcurrentHashMap<>();
         this.domainBrowser = new Browser(connection);
         this.target = new Target(connection);
+        browser.addListener(TARGETCREATED, event -> {
+            TargetInfo target = event.getTargetInfo();
+            String targetId = target.getTargetId();
+            try {
+                //对所有创建的页面, 自动附加
+                browser.attachToTarget(targetId);
+                logger.info("attach to target success, targetId={}", targetId);
+            } catch (Exception e) {
+                logger.error("attach to target failed, targetId={}, error={}", targetId, e.getMessage(), e);
+            }
+        });
+        browser.addListener(ATTACHEDTOTARGET, event -> {
+            String sessionId = event.getSessionId();
+            TargetInfo target = event.getTargetInfo();
+            String targetId = target.getTargetId();
+            logger.info("target attached, targetId={}, sessionId={}, target={}", targetId, sessionId, JSON.toJSONString(target));
+            String openerId = target.getOpenerId();
+            ChromePage opener = null;
+            if (StringUtils.isNotEmpty(openerId)) {
+                if (!pageMap.containsKey(openerId)) {
+                    logger.error("opener not found");
+                    return;
+                } else {
+                    try {
+                        opener = pageMap.get(openerId).get(30, TimeUnit.SECONDS);
+                    } catch (Exception e) {
+                        logger.error("opener future get failed, error={}", e.getMessage(), e);
+                        return;
+                    }
+                }
+            }
+            try {
+                ChromePage page = new ChromePage(this, connection.createSession(sessionId), targetId, opener);
+                Future<ChromePage> future;
+                synchronized (pageMap) {
+                    future = pageMap.get(targetId);
+                }
+                if (future != null) {
+                    Promise<ChromePage> promise = (Promise<ChromePage>) future;
+                    promise.setSuccess(page);
+                } else {
+                    pageMap.put(targetId, new ImmediateFuture<>(page));
+                }
+            } catch (Exception e) {
+                logger.error("create page failed, error={}", e.getMessage(), e);
+            }
+        });
         //监听target destory跟crash事件, 以便从pageMap中移除page
-        browser.addListener(TARGETDESTROYED, event -> {
-            ChromePage page = pageMap.get(event.getTargetId());
-            if (page == null) {
-                return;
-            }
-            //尝试关闭页面
-            if (!page.isClosed()) {
-                page.close();
-            }
-            //移除session
-            connection.removeSession(page.session.getSessionId());
-            //移除page link
-            pageMap.remove(event.getTargetId());
-            logger.info("page destroyed, clean done, pageId={}", event.getTargetId());
-        });
-        browser.addListener(TARGETCRASHED, event -> {
-            ChromePage page = pageMap.get(event.getTargetId());
-            if (page == null) {
-                return;
-            }
-            //尝试关闭页面
-            if (!page.isClosed()) {
-                page.close();
-            }
-            //移除session
-            connection.removeSession(page.session.getSessionId());
-            //移除page link
-            pageMap.remove(event.getTargetId());
-            logger.error("page crashed, clean done, pageId={}", event.getTargetId());
-        });
+        browser.addListener(TARGETDESTROYED, event -> cleanUp(event.getTargetId()));
+        browser.addListener(TARGETCRASHED, event -> cleanUp(event.getTargetId()));
+    }
+
+    private void cleanUp(String targetId) {
+        Future<ChromePage> future = pageMap.get(targetId);
+        if (future == null) {
+            return;
+        }
+        ChromePage page = null;
+        try {
+            page = future.get();
+        } catch (Exception e) {
+            logger.error("page future error, targetId={}, error={}", targetId, e.getMessage(), e);
+        }
+        if (page == null) {
+            return;
+        }
+        //尝试关闭页面
+        if (!page.isClosed()) {
+            page.close();
+        }
+        //移除session
+        connection.removeSession(page.session.getSessionId());
+        //移除page link
+        pageMap.remove(targetId);
+        logger.error("page clean up done, targetId={}", target);
     }
 
     @Override
@@ -106,23 +152,7 @@ public class ChromeContext implements BrowserContext {
      */
     @Override
     public void close() throws Exception {
-        //关闭所有打开的页面
-        Exception ex = null;
-        Iterator<Map.Entry<String, ChromePage>> iterator = pageMap.entrySet().iterator();
-        while(iterator.hasNext()) {
-            Map.Entry<String, ChromePage> entry = iterator.next();
-            try {
-                entry.getValue().close();
-            } catch (Exception e) {
-                ex = e;
-            } finally {
-                //这里需要等context的事件监听去移除, 所以不要对一个context执行两次close, 会发生异常
-                //iterator.remove();
-            }
-        }
-        if (ex != null) {
-            throw ex;
-        }
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -133,30 +163,29 @@ public class ChromeContext implements BrowserContext {
 
     @Override
     public ChromePage newPage() throws Exception {
-        //先创建一个target
-        String targetId = browser.createTarget(browserContextId);
-        Throwable cause = null;
+        Promise<ChromePage> promise = new DefaultPromise<>();
+        String targetId;
+        synchronized (pageMap) {
+            targetId = browser.createTarget(browserContextId);
+            pageMap.put(targetId, promise);
+        }
         try {
-            //attach dev tools
-            String sessionId = browser.attachToTarget(targetId);
-            ChromePage page = new ChromePage(this, connection.createSession(sessionId), targetId);
-            pageMap.put(targetId, page);
-            return page;
-        } catch (Throwable t) {
-            cause = t;
-            throw t;
-        } finally {
-            //无论哪一步失败了, 都关闭标签页
-            if (cause != null) {
-                CloseTargetRequest request = new CloseTargetRequest();
-                request.setTargetId(targetId);
-                target.closeTarget(request, DEFAULT_TIMEOUT);
-            }
+            return promise.get(30, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            //发生异常的时候关闭页面
+            CloseTargetRequest request = new CloseTargetRequest();
+            request.setTargetId(targetId);
+            target.closeTarget(request, DEFAULT_TIMEOUT);
+            throw e;
         }
     }
 
     @Override
-    public List<ChromePage> pages() {
-        return Lists.newArrayList(pageMap.values());
+    public List<ChromePage> pages() throws Exception {
+        List<ChromePage> pages = new ArrayList<>(pageMap.size());
+        for(Future<ChromePage> promise : pageMap.values()) {
+            pages.add(promise.get());
+        }
+        return pages;
     }
 }
