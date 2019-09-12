@@ -14,8 +14,6 @@ public interface BrowserContext {
 
     void grantPermissions(String origin, PermissionType... permissions) throws Exception;
 
-    void close() throws Exception;
-
     boolean isIncognito();
 
     /**

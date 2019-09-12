@@ -99,9 +99,9 @@ public class ChromeContext implements BrowserContext {
                 logger.error("create page failed, error={}", e.getMessage(), e);
             }
         });
-        //监听target destory跟crash事件, 以便从pageMap中移除page
+        //监听target destory事件, 以便从pageMap中移除page
         browser.addListener(TARGETDESTROYED, event -> cleanUp(event.getTargetId()));
-        browser.addListener(TARGETCRASHED, event -> cleanUp(event.getTargetId()));
+        //crashed事件暂时不处理, 交给业务自己处理
     }
 
     private void cleanUp(String targetId) {
@@ -117,10 +117,6 @@ public class ChromeContext implements BrowserContext {
         }
         if (page == null) {
             return;
-        }
-        //尝试关闭页面
-        if (!page.isClosed()) {
-            page.close();
         }
         //移除session
         connection.removeSession(page.session.getSessionId());
@@ -148,15 +144,6 @@ public class ChromeContext implements BrowserContext {
         request.setOrigin(origin);
         request.setPermissions(Arrays.stream(permissions).map(permission -> permission.getValue()).collect(Collectors.toList()));
         domainBrowser.grantPermissions(request, DEFAULT_TIMEOUT);
-    }
-
-    /**
-     * warning!!! 请不要对同一个context执行多次close
-     * @throws Exception
-     */
-    @Override
-    public void close() throws Exception {
-        throw new UnsupportedOperationException();
     }
 
     @Override

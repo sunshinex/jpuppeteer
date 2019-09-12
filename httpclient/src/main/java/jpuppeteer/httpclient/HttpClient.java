@@ -13,6 +13,7 @@ import jpuppeteer.cdp.cdp.entity.page.WindowOpenEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.chrome.ChromeBrowser;
 import jpuppeteer.chrome.ChromeLauncher;
+import jpuppeteer.chrome.ChromePage;
 import jpuppeteer.chrome.event.PageEvent;
 import jpuppeteer.chrome.util.ArgUtils;
 import jpuppeteer.chrome.util.ScriptUtils;
@@ -94,7 +95,8 @@ public class HttpClient {
         Future<Page> future = page.await(PageEvent.OPENPAGE);
         page.querySelector(".sitemap_flink>a").click();
         Page openPage = future.get();
-        System.out.println(openPage);
+        ChromePage pg1 = (ChromePage) openPage;
+        pg1.page.crash(ChromeBrowser.DEFAULT_TIMEOUT);
 //        page.evaluateOnNewDocument(ScriptUtils.load("fake.js"));
 //        page.browserContext().resetPermissions();
 //        page.browserContext().grantPermissions("https://login.taobao.com", PermissionType.MIDI, PermissionType.MIDISYSEX, PermissionType.NOTIFICATIONS, PermissionType.GEOLOCATION, PermissionType.BACKGROUNDSYNC);
