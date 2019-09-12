@@ -11,7 +11,7 @@ public interface Element extends BrowserObject {
 
     Element querySelector(String selector) throws Exception;
 
-    List<? extends Element> querySelectorAll(String selector) throws Exception;
+    <T extends Element> List<T> querySelectorAll(String selector) throws Exception;
 
     BoundingBox boundingBox() throws Exception;
 

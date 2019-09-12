@@ -1,6 +1,7 @@
 package jpuppeteer.api.event;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
@@ -12,13 +13,9 @@ public interface EventEmitter {
 
     <E> void removeListener(EventType<E> eventType, Consumer<E> consumer);
 
-    <E> E wait(EventType<E> eventType, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException;
+    <E> Future<E> await(EventType<E> eventType);
 
-    <E> E wait(EventType<E> eventType, Predicate<E> predicate, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException;
-
-    default <E> E wait(EventType<E> eventType) throws InterruptedException, ExecutionException, TimeoutException {
-        return wait(eventType, 0, null);
-    }
+    <E> Future<E> await(EventType<E> eventType, Predicate<E> predicate);
 
     <E> void emit(EventType<E> eventType, E event);
 

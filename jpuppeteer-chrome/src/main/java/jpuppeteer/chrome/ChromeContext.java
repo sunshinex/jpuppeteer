@@ -12,6 +12,7 @@ import jpuppeteer.cdp.cdp.domain.Target;
 import jpuppeteer.cdp.cdp.entity.browser.GrantPermissionsRequest;
 import jpuppeteer.cdp.cdp.entity.browser.ResetPermissionsRequest;
 import jpuppeteer.cdp.cdp.entity.target.*;
+import jpuppeteer.chrome.event.PageEvent;
 import jpuppeteer.chrome.util.ImmediateFuture;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -81,6 +82,9 @@ public class ChromeContext implements BrowserContext {
             }
             try {
                 ChromePage page = new ChromePage(this, connection.createSession(sessionId), targetId, opener);
+                if (opener != null) {
+                    opener.emit(PageEvent.OPENPAGE, page);
+                }
                 Future<ChromePage> future;
                 synchronized (pageMap) {
                     future = pageMap.get(targetId);

@@ -2,11 +2,14 @@ package jpuppeteer.httpclient;
 
 import com.alibaba.fastjson.JSONObject;
 import jpuppeteer.api.browser.BoundingBox;
+import jpuppeteer.api.browser.Browser;
 import jpuppeteer.api.browser.Element;
 import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.constant.MouseDefinition;
 import jpuppeteer.api.constant.PermissionType;
 import jpuppeteer.api.httpclient.SharedCookieStore;
+import jpuppeteer.cdp.cdp.entity.page.DomContentEventFiredEvent;
+import jpuppeteer.cdp.cdp.entity.page.WindowOpenEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.chrome.ChromeBrowser;
 import jpuppeteer.chrome.ChromeLauncher;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public class HttpClient {
@@ -51,9 +55,9 @@ public class HttpClient {
         headers.add(new BasicHeader("Connection", "keep-alive"));
         headers.add(new BasicHeader("Upgrade-Insecure-Requests", "1"));
 
-        ChromeBrowser browser = new ChromeLauncher(new File("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe")).launch(args);
+        Browser browser = new ChromeLauncher(new File("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe")).launch(args);
 
-//        ChromeBrowser browser = new ChromeLauncher(new File("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")).launch(args);
+//        Browser browser = new ChromeLauncher(new File("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")).launch(args);
 
         SharedCookieStore cookieStore = new SharedCookieStore(browser);
 
@@ -86,10 +90,11 @@ public class HttpClient {
 //            }
 //        });
         page.navigate("https://www.163.com/");
-        page.wait(PageEvent.DOMCONTENTLOADED);
+        page.await(PageEvent.DOMCONTENTLOADED).get();
+        Future<Page> future = page.await(PageEvent.OPENPAGE);
         page.querySelector(".sitemap_flink>a").click();
-        TimeUnit.SECONDS.sleep(10);
-        browser.defaultContext().pages();
+        Page openPage = future.get();
+        System.out.println(openPage);
 //        page.evaluateOnNewDocument(ScriptUtils.load("fake.js"));
 //        page.browserContext().resetPermissions();
 //        page.browserContext().grantPermissions("https://login.taobao.com", PermissionType.MIDI, PermissionType.MIDISYSEX, PermissionType.NOTIFICATIONS, PermissionType.GEOLOCATION, PermissionType.BACKGROUNDSYNC);

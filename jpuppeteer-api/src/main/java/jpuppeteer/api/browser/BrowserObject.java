@@ -11,7 +11,7 @@ public interface BrowserObject {
 
     ExecutionContext executionContext();
 
-    List<? extends BrowserObject> getProperties() throws Exception;
+    <T extends BrowserObject> List<T> getProperties() throws Exception;
 
     BrowserObject getProperty(String name) throws Exception;
 

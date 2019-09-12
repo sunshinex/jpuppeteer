@@ -23,6 +23,6 @@ public interface BrowserContext {
      */
     Page newPage() throws Exception;
 
-    List<? extends Page> pages() throws Exception;
+    <T extends Page> List<T> pages() throws Exception;
 
 }

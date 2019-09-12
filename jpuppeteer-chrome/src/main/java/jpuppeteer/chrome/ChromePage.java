@@ -139,7 +139,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         session.addListener(PAGE_LOADEVENTFIRED, ev -> emit(LOAD, ev.getParams().toJavaObject(LOAD.eventClass())));
         session.addListener(LOG_ENTRYADDED, new ConsoleHandler());
         session.addListener(PAGE_JAVASCRIPTDIALOGOPENING, ev -> emit(DIALOG, ev.getParams().toJavaObject(DIALOG.eventClass())));
-        session.addListener(PAGE_WINDOWOPEN, ev -> emit(POPUP, ev.getParams().toJavaObject(POPUP.eventClass())));
+        //session.addListener(PAGE_WINDOWOPEN, ev -> emit(POPUP, ev.getParams().toJavaObject(POPUP.eventClass())));
         session.addListener(RUNTIME_EXCEPTIONTHROWN, ev -> emit(PAGEERROR, ev.getParams().toJavaObject(PAGEERROR.eventClass())));
         session.addListener(NETWORK_REQUESTWILLBESENT, new RequestHandler());
         session.addListener(NETWORK_RESPONSERECEIVED, new ResponseHandler());

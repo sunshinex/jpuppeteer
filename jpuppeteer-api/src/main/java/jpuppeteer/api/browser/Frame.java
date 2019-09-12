@@ -37,7 +37,7 @@ public interface Frame<T> extends EventEmitter, ExecutionContext<T> {
 
     Element querySelector(String selector) throws Exception;
 
-    List<? extends Element> querySelectorAll(String selector) throws Exception;
+    <T extends Element> List<T> querySelectorAll(String selector) throws Exception;
 
     BrowserObject wait(String expression, int timeout, TimeUnit unit, T... args) throws Exception;
 

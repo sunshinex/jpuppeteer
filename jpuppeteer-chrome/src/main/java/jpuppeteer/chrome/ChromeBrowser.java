@@ -114,15 +114,15 @@ public class ChromeBrowser implements Browser {
     }
 
     @Override
-    public <E> E wait(EventType<E> eventType, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public <E> Future<E> await(EventType<E> eventType) {
         checkEventType(eventType);
-        return events.wait(eventType, timeout, unit);
+        return events.await(eventType);
     }
 
     @Override
-    public <E> E wait(EventType<E> eventType, Predicate<E> predicate, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public <E> Future<E> await(EventType<E> eventType, Predicate<E> predicate) {
         checkEventType(eventType);
-        return events.wait(eventType, predicate, timeout, unit);
+        return events.await(eventType, predicate);
     }
 
     @Override

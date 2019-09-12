@@ -1,11 +1,11 @@
 package jpuppeteer.chrome.event;
 
 
+import jpuppeteer.api.browser.Page;
 import jpuppeteer.cdp.cdp.entity.log.EntryAddedEvent;
 import jpuppeteer.cdp.cdp.entity.page.DomContentEventFiredEvent;
 import jpuppeteer.cdp.cdp.entity.page.JavascriptDialogOpeningEvent;
 import jpuppeteer.cdp.cdp.entity.page.LoadEventFiredEvent;
-import jpuppeteer.cdp.cdp.entity.page.WindowOpenEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ExceptionThrownEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
@@ -33,7 +33,7 @@ public final class PageEvent<E> extends FrameEvent<E> {
 
     public static final PageEvent<JavascriptDialogOpeningEvent> DIALOG = new PageEvent<>(JavascriptDialogOpeningEvent.class);
 
-    public static final PageEvent<WindowOpenEvent> POPUP = new PageEvent<>(WindowOpenEvent.class);
+    public static final PageEvent<Page> OPENPAGE = new PageEvent<>(Page.class);
 
     public static final PageEvent<ExceptionThrownEvent> PAGEERROR = new PageEvent<>(ExceptionThrownEvent.class);
 

@@ -62,38 +62,30 @@ public class GenericEventEmitter implements EventEmitter {
         }
     }
 
-    private <E> E wait(EventType<E> eventType, Promise<E> promise, Consumer<E> consumer, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        addListener(eventType, consumer);
-        try {
-            if (unit != null && timeout > 0) {
-                return promise.get(timeout, unit);
-            } else {
-                return promise.get();
+    private <E> Future<E> await0(EventType<E> eventType, Predicate<E> predicate) {
+        DefaultPromise<E> promise = new DefaultPromise<>();
+        final Consumer<E> consumer = new Consumer<E>() {
+            @Override
+            public void accept(E e) {
+                if (!predicate.test(e)) {
+                    return;
+                }
+                promise.setSuccess(e);
+                removeListener(eventType, this);
             }
-        } finally {
-            removeListener(eventType, consumer);
-        }
+        };
+        addListener(eventType, consumer);
+        return promise;
     }
 
     @Override
-    public <E> E wait(EventType<E> eventType, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        DefaultPromise<E> promise = new DefaultPromise<>();
-        return wait(eventType, promise, e -> promise.trySuccess(e), timeout, unit);
+    public <E> Future<E> await(EventType<E> eventType) {
+        return await0(eventType, e -> true);
     }
 
     @Override
-    public <E> E wait(EventType<E> eventType, Predicate<E> predicate, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        DefaultPromise<E> promise = new DefaultPromise<>();
-        return wait(
-                eventType,
-                promise, e -> {
-                    if (!predicate.test(e)) {
-                        return;
-                    }
-                    promise.trySuccess(e);
-                },
-                timeout,
-                unit);
+    public <E> Future<E> await(EventType<E> eventType, Predicate<E> predicate) {
+        return await(eventType, predicate);
     }
 
     @Override
@@ -107,7 +99,7 @@ public class GenericEventEmitter implements EventEmitter {
                 .forEachRemaining(handler -> executor.execute(new EventTask(handler, event)));
     }
 
-    class EventTask<E> implements Runnable {
+    static class EventTask<E> implements Runnable {
 
         private Consumer<E> consumer;
 

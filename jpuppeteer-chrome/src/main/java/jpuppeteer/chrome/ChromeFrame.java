@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
@@ -115,15 +116,15 @@ public class ChromeFrame implements Frame<CallArgument> {
     }
 
     @Override
-    public <E> E wait(EventType<E> eventType, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public <E> Future<E> await(EventType<E> eventType) {
         checkEventType(eventType);
-        return events.wait(eventType, timeout, unit);
+        return events.await(eventType);
     }
 
     @Override
-    public <E> E wait(EventType<E> eventType, Predicate<E> predicate, int timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public <E> Future<E> await(EventType<E> eventType, Predicate<E> predicate) {
         checkEventType(eventType);
-        return events.wait(eventType, predicate, timeout, unit);
+        return events.await(eventType, predicate);
     }
 
     @Override
