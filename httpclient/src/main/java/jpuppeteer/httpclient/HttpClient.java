@@ -92,11 +92,11 @@ public class HttpClient {
 //        });
         page.navigate("https://www.163.com/");
         page.await(PageEvent.DOMCONTENTLOADED).get();
-        Future<Page> future = page.await(PageEvent.OPENPAGE);
+        Future<ChromePage> future = page.await(PageEvent.OPENPAGE);
         page.querySelector(".sitemap_flink>a").click();
-        Page openPage = future.get();
-        ChromePage pg1 = (ChromePage) openPage;
-        pg1.page.crash(ChromeBrowser.DEFAULT_TIMEOUT);
+        ChromePage pg = future.get();
+        pg.await(PageEvent.LOAD).get();
+        pg.crash();
 //        page.evaluateOnNewDocument(ScriptUtils.load("fake.js"));
 //        page.browserContext().resetPermissions();
 //        page.browserContext().grantPermissions("https://login.taobao.com", PermissionType.MIDI, PermissionType.MIDISYSEX, PermissionType.NOTIFICATIONS, PermissionType.GEOLOCATION, PermissionType.BACKGROUNDSYNC);

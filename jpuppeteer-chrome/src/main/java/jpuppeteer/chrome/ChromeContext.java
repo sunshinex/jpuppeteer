@@ -55,9 +55,9 @@ public class ChromeContext implements BrowserContext {
             try {
                 //对所有创建的页面, 自动附加
                 browser.attachToTarget(targetId);
-                logger.info("attach to target success, targetId={}", targetId);
+                logger.info("do attach target success, targetId={}", targetId);
             } catch (Exception e) {
-                logger.error("attach to target failed, targetId={}, error={}", targetId, e.getMessage(), e);
+                logger.error("do attach target failed, targetId={}, error={}", targetId, e.getMessage(), e);
             }
         });
         browser.addListener(ATTACHEDTOTARGET, event -> {

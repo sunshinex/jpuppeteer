@@ -537,6 +537,10 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         page.reload(null, DEFAULT_TIMEOUT);
     }
 
+    public void crash() throws Exception {
+        session.asyncSend("Page.crash", null);
+    }
+
     private static List<Header> parseHeader(Map<String, Object> headerMap) {
         List<Header> headers = Lists.newArrayListWithCapacity(0);
         if (MapUtils.isNotEmpty(headerMap)) {
