@@ -126,7 +126,7 @@ public class ChromeContext implements BrowserContext {
         connection.removeSession(page.session.getSessionId());
         //移除page link
         pageMap.remove(targetId);
-        logger.error("page clean up done, targetId={}", target);
+        logger.debug("page clean up done, targetId={}", targetId);
     }
 
     @Override
