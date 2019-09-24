@@ -81,6 +81,7 @@ public abstract class CDPConnection implements Closeable {
             sendInternal(json);
         } catch (IOException ioe) {
             future.setFailure(ioe);
+            logger.error("internal send error, error={}", ioe.getMessage(), ioe);
         }
         return future;
     }

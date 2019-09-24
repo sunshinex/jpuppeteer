@@ -85,7 +85,7 @@ public class GenericEventEmitter implements EventEmitter {
 
     @Override
     public <E> Future<E> await(EventType<E> eventType, Predicate<E> predicate) {
-        return await(eventType, predicate);
+        return await0(eventType, predicate);
     }
 
     @Override
