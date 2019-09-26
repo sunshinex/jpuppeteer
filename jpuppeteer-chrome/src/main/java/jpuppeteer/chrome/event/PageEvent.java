@@ -1,7 +1,6 @@
 package jpuppeteer.chrome.event;
 
 
-import jpuppeteer.api.browser.Page;
 import jpuppeteer.cdp.cdp.entity.log.EntryAddedEvent;
 import jpuppeteer.cdp.cdp.entity.page.DomContentEventFiredEvent;
 import jpuppeteer.cdp.cdp.entity.page.JavascriptDialogOpeningEvent;

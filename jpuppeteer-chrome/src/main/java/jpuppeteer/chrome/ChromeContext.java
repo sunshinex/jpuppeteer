@@ -1,7 +1,6 @@
 package jpuppeteer.chrome;
 
 import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.BrowserContext;
 import jpuppeteer.api.constant.PermissionType;
 import jpuppeteer.api.future.DefaultPromise;
@@ -11,16 +10,21 @@ import jpuppeteer.cdp.cdp.domain.Browser;
 import jpuppeteer.cdp.cdp.domain.Target;
 import jpuppeteer.cdp.cdp.entity.browser.GrantPermissionsRequest;
 import jpuppeteer.cdp.cdp.entity.browser.ResetPermissionsRequest;
-import jpuppeteer.cdp.cdp.entity.target.*;
+import jpuppeteer.cdp.cdp.entity.target.CloseTargetRequest;
+import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
 import jpuppeteer.chrome.event.PageEvent;
 import jpuppeteer.chrome.util.ImmediateFuture;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;

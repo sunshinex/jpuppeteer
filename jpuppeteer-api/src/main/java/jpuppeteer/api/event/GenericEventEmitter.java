@@ -2,7 +2,6 @@ package jpuppeteer.api.event;
 
 import com.alibaba.fastjson.JSON;
 import jpuppeteer.api.future.DefaultPromise;
-import jpuppeteer.api.future.Promise;
 import jpuppeteer.api.util.ConcurrentHashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
