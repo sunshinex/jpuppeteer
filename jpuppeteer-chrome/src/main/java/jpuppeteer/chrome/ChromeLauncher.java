@@ -35,16 +35,18 @@ public class ChromeLauncher implements Launcher {
         chromeArguments = ChromeArguments.parse(executable.getAbsolutePath(), args);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             //java进程退出的时候, 把chrome进程也一并退出
+            logger.debug("chrome process is about to exit");
             if (process != null) {
                 process.destroy();
             }
+            logger.debug("chrome process is exited");
             if (chromeArguments.isUseTempUserData()) {
                 //删除临时文件夹
                 File tmp = new File(chromeArguments.getUserDataDir());
                 if (tmp.exists()) {
-                    logger.debug("开始清理临时文件夹:{}", chromeArguments.getUserDataDir());
+                    logger.debug("clean user data dir {}", chromeArguments.getUserDataDir());
                     delete(tmp);
-                    logger.debug("清理完成:{}", chromeArguments.getUserDataDir());
+                    logger.debug("clean success {}", chromeArguments.getUserDataDir());
                 }
             }
         }));
