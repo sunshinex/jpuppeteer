@@ -1,4 +1,4 @@
-package jupppeteer.chrome;
+package jpuppeteer.chrome;
 
 public class Constant {
 

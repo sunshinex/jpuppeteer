@@ -1,4 +1,4 @@
-package jupppeteer.chrome;
+package jpuppeteer.chrome;
 
 import jpuppeteer.api.browser.Browser;
 import jpuppeteer.api.browser.Cookie;
