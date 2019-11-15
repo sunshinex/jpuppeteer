@@ -38,7 +38,7 @@ public class CookieTest {
 
     @Test
     public void testSetCookie() throws Exception {
-        Browser browser = new ChromeLauncher(new File(Constant.CHROME_EXECUTABLE_PATH)).launch(ARGS);
+        Browser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch(ARGS);
         browser.setCookie(Cookie.builder().domain(".baidu.com").name("test123").value("test456").path("/").build());
         Page<CallArgument> page = browser.defaultContext().newPage();
         page.setUserAgent(new UserAgent(DEFAULT_USERAGENT));
@@ -65,7 +65,7 @@ public class CookieTest {
         headers.add(new BasicHeader("Connection", "keep-alive"));
         headers.add(new BasicHeader("Upgrade-Insecure-Requests", "1"));
 
-        Browser browser = new ChromeLauncher(new File(Constant.CHROME_EXECUTABLE_PATH)).launch(ARGS);
+        Browser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch(ARGS);
 
         SharedCookieStore cookieStore = new SharedCookieStore(browser);
 

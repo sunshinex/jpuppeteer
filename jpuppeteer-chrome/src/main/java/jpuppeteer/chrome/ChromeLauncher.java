@@ -20,19 +20,19 @@ public class ChromeLauncher implements Launcher {
 
     private static final Pattern LISTENING_PATTERN = Pattern.compile("^DevTools listening on (ws:\\/\\/.*)$");
 
-    private final File executable;
+    private final String executable;
 
     private Process process;
 
     private ChromeArguments chromeArguments;
 
-    public ChromeLauncher(File executable) {
+    public ChromeLauncher(String executable) {
         this.executable = executable;
     }
 
     @Override
     public ChromeBrowser launch(String... args) throws Exception {
-        chromeArguments = ChromeArguments.parse(executable.getAbsolutePath(), args);
+        chromeArguments = ChromeArguments.parse(executable, args);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             //java进程退出的时候, 把chrome进程也一并退出
             logger.debug("chrome process is about to exit");
