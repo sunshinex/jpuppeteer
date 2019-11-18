@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,11 +23,11 @@ public class ChromeLauncher implements Launcher {
 
     private final String executable;
 
-    private Process process;
+    private volatile Process process;
 
-    private ChromeBrowser browser;
+    private volatile ChromeBrowser browser;
 
-    private ChromeArguments chromeArguments;
+    private volatile ChromeArguments chromeArguments;
 
     public ChromeLauncher(String executable) {
         this.executable = executable;
@@ -40,15 +41,20 @@ public class ChromeLauncher implements Launcher {
                 if (browser != null) {
                     browser.close();
                     logger.info("normally quit browser succeed");
+                    //等待3s
+                    while (process.isAlive()) {
+                        System.out.println("process is alive");
+                        TimeUnit.SECONDS.sleep(1);
+                    }
                 }
             } catch (Exception e) {
                 logger.error("normally quit browser failed, error={}", e.getMessage(), e);
-            }/*去掉结束进程, 避免chrome出现异常, finally {
+            } finally {
                 if (process != null && process.isAlive()) {
                     process.destroy();
                     logger.info("chrome process is terminated");
                 }
-            }*/
+            }
             if (chromeArguments.isUseTempUserData()) {
                 //删除临时文件夹
                 File tmp = new File(chromeArguments.getUserDataDir());

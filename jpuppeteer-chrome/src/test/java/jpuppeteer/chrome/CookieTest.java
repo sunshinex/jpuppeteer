@@ -1,14 +1,12 @@
 package jpuppeteer.chrome;
 
-import jpuppeteer.api.browser.Browser;
-import jpuppeteer.api.browser.Cookie;
-import jpuppeteer.api.browser.Page;
-import jpuppeteer.api.browser.UserAgent;
+import jpuppeteer.api.browser.*;
 import jpuppeteer.api.httpclient.SharedCookieStore;
 import jpuppeteer.cdp.cdp.entity.page.DomContentEventFiredEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.chrome.ChromeLauncher;
 import jpuppeteer.chrome.event.PageEvent;
+import jpuppeteer.chrome.util.ArgUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
@@ -35,6 +33,17 @@ public class CookieTest {
     private static final String[] ARGS = new String[]{
             "--headless"
     };
+
+    @Test
+    public void test() throws Exception {
+        String url = "https://openapi.baidu.com/oauth/2.0/authorize?response_type=code&client_id=yy0aYDVrCpbxOLCYBQlFA0XG&redirect_uri=http://127.0.0.1:8080/token&scope=basic,netdisk&display=tv&qrcode=1";
+        Browser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
+        Page<CallArgument> page = browser.defaultContext().newPage();
+        page.navigate(url);
+        Element qrcode = page.waitSelector(".tang-pass-qrcode-img", 10, TimeUnit.SECONDS);
+        String src = page.evaluate("function(qrcode){return qrcode.src;}", String.class, ArgUtils.createFromObject((ChromeBrowserObject) qrcode));
+        System.out.println(src);
+    }
 
     @Test
     public void testSetCookie() throws Exception {

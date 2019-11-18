@@ -5,7 +5,6 @@ import jpuppeteer.api.browser.Frame;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.EventType;
 import jpuppeteer.api.event.GenericEventEmitter;
-import jpuppeteer.api.future.DefaultPromise;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
 import jpuppeteer.cdp.cdp.domain.DOM;
@@ -58,7 +57,7 @@ public class ChromeFrame implements Frame<CallArgument> {
 
     protected volatile Set<ChromeFrame> children;
 
-    private volatile DefaultPromise<ChromeExecutionContext> executionContextPromise;
+    private volatile ChromeExecutionContext executionContext;
 
     protected Page page;
 
@@ -92,7 +91,6 @@ public class ChromeFrame implements Frame<CallArgument> {
         this.dom = dom;
         this.input = input;
         this.runtime = runtime;
-        this.executionContextPromise = new DefaultPromise<>();
     }
 
     private static <E> void checkEventType(EventType<E> eventType) {
@@ -132,12 +130,19 @@ public class ChromeFrame implements Frame<CallArgument> {
     }
 
     protected ChromeExecutionContext executionContext() {
-        try {
-            return this.executionContextPromise.get();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return null;
+        if (executionContext == null) {
+            synchronized (this) {
+                while (true) {
+                    try {
+                        wait();
+                        break;
+                    } catch (InterruptedException e) {
+                        //忽略中断
+                    }
+                }
+            }
         }
+        return executionContext;
     }
 
     protected ChromeFrame find(String frameId) {
@@ -155,7 +160,6 @@ public class ChromeFrame implements Frame<CallArgument> {
     }
 
     protected ChromeFrame find(Integer executionContextId) {
-        ChromeExecutionContext executionContext = executionContextPromise.getNow();
         if (executionContext != null && executionContext.executionContextId == executionContextId) {
             return this;
         } else if (CollectionUtils.isNotEmpty(children)) {
@@ -180,11 +184,14 @@ public class ChromeFrame implements Frame<CallArgument> {
     }
 
     public void createExecutionContext(Integer executionContextId) {
-        executionContextPromise.trySuccess(new ChromeExecutionContext(runtime, executionContextId));
+        executionContext = new ChromeExecutionContext(runtime, executionContextId);
+        synchronized (this) {
+            notifyAll();
+        }
     }
 
     public void destroyExecutionContext() {
-        executionContextPromise = new DefaultPromise<>();
+        executionContext = null;
     }
 
     @Override
