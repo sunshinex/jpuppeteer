@@ -45,7 +45,7 @@ public class ChromeResponse implements Response {
 
     private boolean fromCache;
 
-    private String content;
+    private byte[] content;
 
     private String remoteAddress;
 
@@ -92,15 +92,15 @@ public class ChromeResponse implements Response {
     }
 
     @Override
-    public String content() {
+    public byte[] content() {
         if (content != null) {
             return content;
         }
-        GetResponseBodyRequest request = new GetResponseBodyRequest();
-        request.setRequestId(request.getRequestId());
+        GetResponseBodyRequest req = new GetResponseBodyRequest();
+        req.setRequestId(request.getRequestId());
         try {
-            GetResponseBodyResponse response = network.getResponseBody(request, DEFAULT_TIMEOUT);
-            content = Boolean.TRUE.equals(response.getBase64Encoded()) ? new String(Base64.getDecoder().decode(response.getBody())) : response.getBody();
+            GetResponseBodyResponse response = network.getResponseBody(req, DEFAULT_TIMEOUT);
+            content = Boolean.TRUE.equals(response.getBase64Encoded()) ? Base64.getDecoder().decode(response.getBody()) : response.getBody().getBytes();
         } catch (Exception e) {
             logger.error("getResponseBody error, error={}", e.getMessage(), e);
         }

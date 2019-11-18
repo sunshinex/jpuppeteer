@@ -24,7 +24,7 @@ public interface Response {
 
     String statusText();
 
-    String content();
+    byte[] content();
 
     URL url();
 
