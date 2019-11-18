@@ -1,6 +1,7 @@
 package jpuppeteer.chrome;
 
 
+import com.google.common.base.Charsets;
 import jpuppeteer.api.browser.Header;
 import jpuppeteer.api.browser.Response;
 import jpuppeteer.api.browser.SecurityDetails;
@@ -15,8 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
@@ -26,6 +30,8 @@ import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 public class ChromeResponse implements Response {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeResponse.class);
+
+    private static final Pattern PATTERN_CHARSET = Pattern.compile("charset=(.+)$", Pattern.CASE_INSENSITIVE);
 
     private transient CDPSession session;
 
@@ -100,7 +106,20 @@ public class ChromeResponse implements Response {
         req.setRequestId(request.getRequestId());
         try {
             GetResponseBodyResponse response = network.getResponseBody(req, DEFAULT_TIMEOUT);
-            content = Boolean.TRUE.equals(response.getBase64Encoded()) ? Base64.getDecoder().decode(response.getBody()) : response.getBody().getBytes();
+            if (Boolean.TRUE.equals(response.getBase64Encoded())) {
+                content = Base64.getDecoder().decode(response.getBody());
+            } else {
+                Charset contentEncoding = Charsets.UTF_8;
+                for(Header header : headers) {
+                    if ("content-type".equalsIgnoreCase(header.getName())) {
+                        Matcher matcher = PATTERN_CHARSET.matcher(header.getValue());
+                        if (matcher.find(1)) {
+                            contentEncoding = Charset.forName(matcher.group(1));
+                        }
+                    }
+                }
+                content = response.getBody().getBytes(contentEncoding);
+            }
         } catch (Exception e) {
             logger.error("getResponseBody error, error={}", e.getMessage(), e);
         }
