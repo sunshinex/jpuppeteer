@@ -24,6 +24,8 @@ public class ChromeLauncher implements Launcher {
 
     private Process process;
 
+    private ChromeBrowser browser;
+
     private ChromeArguments chromeArguments;
 
     public ChromeLauncher(String executable) {
@@ -34,12 +36,19 @@ public class ChromeLauncher implements Launcher {
     public ChromeBrowser launch(String... args) throws Exception {
         chromeArguments = ChromeArguments.parse(executable, args);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            //java进程退出的时候, 把chrome进程也一并退出
-            logger.debug("chrome process is about to exit");
-            if (process != null) {
-                process.destroy();
+            try {
+                if (browser != null) {
+                    browser.close();
+                    logger.info("normally quit browser succeed");
+                }
+            } catch (Exception e) {
+                logger.error("normally quit browser failed, error={}", e.getMessage(), e);
+            } finally {
+                if (process != null && process.isAlive()) {
+                    process.destroy();
+                    logger.info("chrome process is terminated");
+                }
             }
-            logger.debug("chrome process is exited");
             if (chromeArguments.isUseTempUserData()) {
                 //删除临时文件夹
                 File tmp = new File(chromeArguments.getUserDataDir());
@@ -62,7 +71,8 @@ public class ChromeLauncher implements Launcher {
         } else {
             throw new Exception("unsupport pipe debug mode");
         }
-        return new ChromeBrowser(process, connection);
+        browser = new ChromeBrowser(process, connection);
+        return browser;
     }
 
     private void delete(File file) {
