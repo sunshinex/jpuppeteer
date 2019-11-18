@@ -43,12 +43,12 @@ public class ChromeLauncher implements Launcher {
                 }
             } catch (Exception e) {
                 logger.error("normally quit browser failed, error={}", e.getMessage(), e);
-            } finally {
+            }/*去掉结束进程, 避免chrome出现异常, finally {
                 if (process != null && process.isAlive()) {
                     process.destroy();
                     logger.info("chrome process is terminated");
                 }
-            }
+            }*/
             if (chromeArguments.isUseTempUserData()) {
                 //删除临时文件夹
                 File tmp = new File(chromeArguments.getUserDataDir());
