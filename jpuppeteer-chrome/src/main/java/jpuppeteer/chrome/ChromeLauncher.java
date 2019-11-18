@@ -41,11 +41,12 @@ public class ChromeLauncher implements Launcher {
                 if (browser != null) {
                     browser.close();
                     logger.info("normally quit browser succeed");
-                    //等待3s
+                    //等待chrome进程退出
                     while (process.isAlive()) {
-                        System.out.println("process is alive");
+                        logger.info("chrome process is alive, waiting...");
                         TimeUnit.SECONDS.sleep(1);
                     }
+                    logger.info("chrome process is normally terminated");
                 }
             } catch (Exception e) {
                 logger.error("normally quit browser failed, error={}", e.getMessage(), e);
