@@ -38,7 +38,7 @@ public class ChromeLauncher implements Launcher {
         chromeArguments = ChromeArguments.parse(executable, args);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                if (browser != null) {
+                if (browser != null && process != null && process.isAlive()) {
                     browser.close();
                     logger.info("normally quit browser succeed");
                     //等待chrome进程退出
