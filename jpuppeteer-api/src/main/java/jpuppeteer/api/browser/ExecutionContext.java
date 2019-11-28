@@ -8,6 +8,6 @@ public interface ExecutionContext<T> {
 
     <R> R evaluate(String expression, TypeReference<R> type, T... args) throws Exception;
 
-    BrowserObject evaluate(String expression, T... args) throws Exception;
+    <R extends BrowserObject> R evaluate(String expression, T... args) throws Exception;
 
 }

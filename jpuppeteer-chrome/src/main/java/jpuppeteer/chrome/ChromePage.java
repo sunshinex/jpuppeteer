@@ -157,7 +157,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
     }
 
     @Override
-    public Page<CallArgument> opener() {
+    public ChromePage opener() {
         return opener;
     }
 

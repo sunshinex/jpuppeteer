@@ -35,17 +35,17 @@ public interface Frame<T> extends EventEmitter, ExecutionContext<T> {
         navigate(url, null);
     }
 
-    Element querySelector(String selector) throws Exception;
+    <R extends Element> R querySelector(String selector) throws Exception;
 
-    <T extends Element> List<T> querySelectorAll(String selector) throws Exception;
+    <R extends Element> List<R> querySelectorAll(String selector) throws Exception;
 
-    BrowserObject wait(String expression, int timeout, TimeUnit unit, T... args) throws Exception;
+    <R extends BrowserObject> R wait(String expression, int timeout, TimeUnit unit, T... args) throws Exception;
 
     <R> R wait(String expression, int timeout, TimeUnit unit, Class<R> clazz, T... args) throws Exception;
 
     <R> R wait(String expression, int timeout, TimeUnit unit, TypeReference<R> type, T... args) throws Exception;
 
-    Element waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
+    <R extends Element> R waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
 
 }
 

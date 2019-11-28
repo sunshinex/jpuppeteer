@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface BrowserObject {
 
-    ExecutionContext executionContext();
+    <R extends ExecutionContext> R executionContext();
 
-    <T extends BrowserObject> List<T> getProperties() throws Exception;
+    <R extends BrowserObject> List<R> getProperties() throws Exception;
 
-    BrowserObject getProperty(String name) throws Exception;
+    <R extends BrowserObject> R getProperty(String name) throws Exception;
 
     void release() throws Exception;
 

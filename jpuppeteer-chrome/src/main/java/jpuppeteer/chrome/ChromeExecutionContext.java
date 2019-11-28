@@ -2,6 +2,7 @@ package jpuppeteer.chrome;
 
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
+import jpuppeteer.api.browser.BrowserObject;
 import jpuppeteer.api.browser.ExecutionContext;
 import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;

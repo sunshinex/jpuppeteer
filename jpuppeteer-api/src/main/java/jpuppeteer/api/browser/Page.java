@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface Page<T> extends Frame<T> {
 
-    Page<T> opener();
+    <R extends Page<T>> R opener();
 
     void setCookie(Cookie... cookies) throws Exception;
 
@@ -22,7 +22,7 @@ public interface Page<T> extends Frame<T> {
 
     void bringToFront() throws Exception;
 
-    BrowserContext browserContext();
+    <R extends BrowserContext> R browserContext();
 
     void close();
 
