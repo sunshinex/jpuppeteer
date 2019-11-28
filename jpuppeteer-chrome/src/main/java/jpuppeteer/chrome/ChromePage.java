@@ -48,6 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -539,6 +540,14 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     public void crash() throws Exception {
         session.asyncSend("Page.crash", null);
+    }
+
+    @Override
+    public byte[] screenshot() throws Exception {
+        CaptureScreenshotRequest request = new CaptureScreenshotRequest();
+        request.setFormat("png");
+        CaptureScreenshotResponse response = page.captureScreenshot(request, DEFAULT_TIMEOUT);
+        return Base64.getDecoder().decode(response.getData());
     }
 
     private static List<Header> parseHeader(Map<String, Object> headerMap) {

@@ -4,6 +4,7 @@ import jpuppeteer.api.constant.MediaType;
 import jpuppeteer.api.constant.MouseDefinition;
 import jpuppeteer.api.constant.USKeyboardDefinition;
 
+import java.io.InputStream;
 import java.util.List;
 
 public interface Page<T> extends Frame<T> {
@@ -95,5 +96,12 @@ public interface Page<T> extends Frame<T> {
     void touchMove(double x, double y) throws Exception;
 
     void touchCancel() throws Exception;
+
+    /**
+     *
+     * @return png format byte array
+     * @throws Exception
+     */
+    byte[] screenshot() throws Exception;
 
 }

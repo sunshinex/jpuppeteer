@@ -1,5 +1,8 @@
 package jpuppeteer.api.browser;
 
+import lombok.Builder;
+
+@Builder
 public class Device {
 
     private final int width;
