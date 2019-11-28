@@ -14,7 +14,7 @@ public interface Request {
 //
 //    void failure();
 
-    Frame frame();
+    <R extends Frame> R frame();
 
     List<Header> headers();
 
@@ -27,11 +27,11 @@ public interface Request {
     /**
      * @return 当前请求的重定向来源
      */
-    Request prev();
+    <R extends Request> R prev();
 
     ResourceType resourceType();
 
-    Response response();
+    <R extends Response> R response();
 
     URL url();
 
