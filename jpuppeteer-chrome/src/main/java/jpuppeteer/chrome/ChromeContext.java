@@ -12,6 +12,7 @@ import jpuppeteer.cdp.cdp.entity.browser.GrantPermissionsRequest;
 import jpuppeteer.cdp.cdp.entity.browser.ResetPermissionsRequest;
 import jpuppeteer.cdp.cdp.entity.target.CloseTargetRequest;
 import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
+import jpuppeteer.cdp.constant.TargetType;
 import jpuppeteer.chrome.event.PageEvent;
 import jpuppeteer.chrome.util.ImmediateFuture;
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +56,11 @@ public class ChromeContext implements BrowserContext {
         this.target = new Target(connection);
         browser.addListener(TARGETCREATED, event -> {
             TargetInfo target = event.getTargetInfo();
+            TargetType targetType = TargetType.findByValue(target.getType());
+            if (!(TargetType.PAGE.equals(targetType))) {
+                logger.debug("ignore target is not page, target={}", target);
+                return;
+            }
             String targetId = target.getTargetId();
             try {
                 //对所有创建的页面, 自动附加
@@ -65,8 +71,8 @@ public class ChromeContext implements BrowserContext {
             }
         });
         browser.addListener(ATTACHEDTOTARGET, event -> {
-            String sessionId = event.getSessionId();
             TargetInfo target = event.getTargetInfo();
+            String sessionId = event.getSessionId();
             String targetId = target.getTargetId();
             logger.info("target attached, targetId={}, sessionId={}, target={}", targetId, sessionId, JSON.toJSONString(target));
             String openerId = target.getOpenerId();

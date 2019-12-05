@@ -78,6 +78,21 @@ public class ChromeLauncher implements Launcher {
         } else {
             throw new Exception("unsupport pipe debug mode");
         }
+        //启动线程记录subprocess stderr的输出
+        new Thread("CHROME-STDERR-LOG-THREAD") {
+            @Override
+            public void run() {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                while (process.isAlive()) {
+                    try {
+                        String line = reader.readLine();
+                        logger.error("chrome process stderr message={}", line);
+                    } catch (IOException e) {
+                        logger.error("chrome process stderr read error, error={}", e.getMessage(), e);
+                    }
+                }
+            }
+        }.start();
         browser = new ChromeBrowser(process, connection);
         return browser;
     }
