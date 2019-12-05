@@ -86,7 +86,7 @@ public class ChromeLauncher implements Launcher {
                 while (process.isAlive()) {
                     try {
                         String line = reader.readLine();
-                        logger.error("chrome process stderr message={}", line);
+                        logger.debug("chrome process stderr message={}", line);
                     } catch (IOException e) {
                         logger.error("chrome process stderr read error, error={}", e.getMessage(), e);
                     }
