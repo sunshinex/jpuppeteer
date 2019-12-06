@@ -1,6 +1,7 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Streams;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.browser.*;
@@ -11,7 +12,9 @@ import jpuppeteer.api.constant.USKeyboardDefinition;
 import jpuppeteer.api.util.ConcurrentHashSet;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.CDPSession;
+import jpuppeteer.cdp.cdp.CDPEventType;
 import jpuppeteer.cdp.cdp.constant.emulation.ScreenOrientationType;
+import jpuppeteer.cdp.cdp.constant.fetch.AuthChallengeResponseResponse;
 import jpuppeteer.cdp.cdp.constant.input.DispatchKeyEventRequestType;
 import jpuppeteer.cdp.cdp.constant.input.DispatchMouseEventRequestPointerType;
 import jpuppeteer.cdp.cdp.constant.input.DispatchMouseEventRequestType;
@@ -24,6 +27,10 @@ import jpuppeteer.cdp.cdp.entity.emulation.SetDeviceMetricsOverrideRequest;
 import jpuppeteer.cdp.cdp.entity.emulation.SetGeolocationOverrideRequest;
 import jpuppeteer.cdp.cdp.entity.emulation.SetUserAgentOverrideRequest;
 import jpuppeteer.cdp.cdp.entity.emulation.*;
+import jpuppeteer.cdp.cdp.entity.fetch.AuthChallengeResponse;
+import jpuppeteer.cdp.cdp.entity.fetch.EnableRequest;
+import jpuppeteer.cdp.cdp.entity.fetch.RequestPattern;
+import jpuppeteer.cdp.cdp.entity.fetch.*;
 import jpuppeteer.cdp.cdp.entity.input.DispatchKeyEventRequest;
 import jpuppeteer.cdp.cdp.entity.input.DispatchMouseEventRequest;
 import jpuppeteer.cdp.cdp.entity.input.DispatchTouchEventRequest;
@@ -42,13 +49,13 @@ import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
 import jpuppeteer.chrome.entity.CookieEvent;
 import jpuppeteer.chrome.util.ChromeObjectUtils;
 import jpuppeteer.chrome.util.CookieUtils;
+import jpuppeteer.chrome.util.ObjectMapperUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -81,6 +88,8 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     protected Network network;
 
+    protected Fetch fetch;
+
     private volatile Map<String/*requestId*/, ChromeRequest> requestMap;
 
     private UserAgent userAgent;
@@ -96,6 +105,10 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
     private volatile double mouseX;
 
     private volatile double mouseY;
+
+    private String username;
+
+    private String password;
 
     public ChromePage(ChromeContext browserContext, CDPSession session, String targetId, ChromePage opener) throws Exception {
         super(
@@ -113,6 +126,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         this.log = new Log(session);
         this.emulation = new Emulation(session);
         this.network = new Network(session);
+        this.fetch = new Fetch(session);
 
         this.requestMap = new ConcurrentHashMap<>();
         this.userAgent = null;
@@ -154,6 +168,37 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         session.addListener(RUNTIME_EXECUTIONCONTEXTCREATED, new ExecutionCreatedHandler());
         session.addListener(RUNTIME_EXECUTIONCONTEXTDESTROYED, new ExecutionDestroyedHandler());
         session.addListener(RUNTIME_EXECUTIONCONTEXTSCLEARED, new ExecutionClearedHandler());
+        //request interception
+        session.addListener(FETCH_REQUESTPAUSED, new RequestInterceptor());
+        session.addListener(FETCH_AUTHREQUIRED, new AuthHandler());
+    }
+
+
+    @Override
+    public void authenticate(String username, String password) throws Exception {
+        this.username = username;
+        this.password = password;
+        if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+            enableRequestInterception();
+        }
+    }
+
+    @Override
+    public void enableRequestInterception(String... patterns) throws Exception {
+        EnableRequest request = new EnableRequest();
+        List<RequestPattern> patternList = Arrays.stream(patterns)
+                .map(p -> ObjectMapperUtils.create(p))
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(patternList)) {
+            patternList = Lists.newArrayList(ObjectMapperUtils.create("*"));
+        }
+        request.setPatterns(patternList);
+        fetch.enable(request, DEFAULT_TIMEOUT);
+    }
+
+    @Override
+    public void disableRequestInterception() throws Exception {
+        fetch.disable(DEFAULT_TIMEOUT);
     }
 
     @Override
@@ -896,6 +941,46 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
             args.forEach(object -> {
                 if (object != null ) ChromeObjectUtils.releaseObjectQuietly(runtime, object.getObjectId());
             });
+        }
+    }
+
+    private class RequestInterceptor implements Consumer<CDPEvent> {
+
+        @Override
+        public void accept(CDPEvent event) {
+            RequestPausedEvent evt = event.getParams().toJavaObject(RequestPausedEvent.class);
+            ContinueRequestRequest request = new ContinueRequestRequest();
+            request.setRequestId(evt.getRequestId());
+            try {
+                fetch.continueRequest(request, DEFAULT_TIMEOUT);
+            } catch (Exception e) {
+                logger.error("continue request failed, error={}", e.getMessage(), e);
+            }
+        }
+    }
+
+    private class AuthHandler implements Consumer<CDPEvent> {
+
+        @Override
+        public void accept(CDPEvent event) {
+            AuthRequiredEvent evt = event.getParams().toJavaObject(AuthRequiredEvent.class);
+            AuthChallengeResponse authChallenge = new AuthChallengeResponse();
+            authChallenge.setResponse(AuthChallengeResponseResponse.DEFAULT.getValue());
+            if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+                authChallenge.setResponse(AuthChallengeResponseResponse.PROVIDECREDENTIALS.getValue());
+            } else {
+                authChallenge.setResponse(AuthChallengeResponseResponse.CANCELAUTH.getValue());
+            }
+            authChallenge.setUsername(username);
+            authChallenge.setPassword(password);
+            ContinueWithAuthRequest request = new ContinueWithAuthRequest();
+            request.setAuthChallengeResponse(authChallenge);
+            request.setRequestId(evt.getRequestId());
+            try {
+                fetch.continueWithAuth(request, DEFAULT_TIMEOUT);
+            } catch (Exception e) {
+                logger.error("auth failed, error={}", e.getMessage(), e);
+            }
         }
     }
 }

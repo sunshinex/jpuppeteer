@@ -5,6 +5,7 @@ import jpuppeteer.api.browser.Request;
 import jpuppeteer.api.constant.ResourceType;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.domain.Network;
+import jpuppeteer.cdp.cdp.entity.network.ContinueInterceptedRequestRequest;
 import jpuppeteer.cdp.cdp.entity.network.GetRequestPostDataRequest;
 import jpuppeteer.cdp.cdp.entity.network.GetRequestPostDataResponse;
 import lombok.Builder;
@@ -115,5 +116,20 @@ public class ChromeRequest implements Request {
     @Override
     public URL url() {
         return url;
+    }
+
+    @Override
+    public void abort() {
+        ContinueInterceptedRequestRequest request = new ContinueInterceptedRequestRequest();
+    }
+
+    @Override
+    public void failure() {
+
+    }
+
+    @Override
+    public void continues() {
+
     }
 }

@@ -95,4 +95,14 @@ public class CookieTest {
         System.out.println(cookies);
         Assert.assertFalse(CollectionUtils.isEmpty(cookies));
     }
+
+    @Test
+    public void test2() throws Exception {
+        Browser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
+        ChromePage page = browser.defaultContext().newPage();
+        //page.authenticate("test", "test");
+        page.enableRequestInterception();
+        page.navigate("https://a.vpimg2.com/upload/merchandise/pdcvis/105933/2019/0801/199/00f173d5-e504-4982-b2af-b92f5071f33c.jpg");
+        TimeUnit.HOURS.sleep(1);
+    }
 }

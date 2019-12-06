@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface Page<T> extends Frame<T> {
 
+    void authenticate(String username, String password) throws Exception;
+
     <R extends Page<T>> R opener();
 
     void setCookie(Cookie... cookies) throws Exception;
@@ -16,9 +18,6 @@ public interface Page<T> extends Frame<T> {
     void clearCookie() throws Exception;
 
     List<Cookie> cookies() throws Exception;
-
-    //@TODO 暂不支持
-    //void authenticate(String username, String password);
 
     void bringToFront() throws Exception;
 
@@ -46,8 +45,14 @@ public interface Page<T> extends Frame<T> {
 
     void setGeolocation(double latitude, double longitude, int accuracy) throws Exception;
 
-    //暂不支持, 后续支持
-//    void setRequestInterceptionEnable(boolean enable);
+    /**
+     *
+     * @param patterns 不传默认未*(表示拦截所有的请求)
+     * @throws Exception
+     */
+    void enableRequestInterception(String... patterns) throws Exception;
+
+    void disableRequestInterception() throws Exception;
 
     void setUserAgent(UserAgent userAgent) throws Exception;
 

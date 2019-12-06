@@ -8,11 +8,11 @@ import java.util.List;
 public interface Request {
 
     //暂不支持, 后续支持
-//    void abort();
-//
-//    void continues();
-//
-//    void failure();
+    void abort();
+
+    void continues();
+
+    void failure();
 
     <R extends Frame> R frame();
 
