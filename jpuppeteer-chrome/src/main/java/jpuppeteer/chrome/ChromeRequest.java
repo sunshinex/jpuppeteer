@@ -4,10 +4,14 @@ import jpuppeteer.api.browser.Header;
 import jpuppeteer.api.browser.Request;
 import jpuppeteer.api.constant.ResourceType;
 import jpuppeteer.cdp.CDPSession;
+import jpuppeteer.cdp.cdp.constant.network.ErrorReason;
+import jpuppeteer.cdp.cdp.domain.Fetch;
 import jpuppeteer.cdp.cdp.domain.Network;
+import jpuppeteer.cdp.cdp.entity.fetch.FailRequestRequest;
 import jpuppeteer.cdp.cdp.entity.network.ContinueInterceptedRequestRequest;
 import jpuppeteer.cdp.cdp.entity.network.GetRequestPostDataRequest;
 import jpuppeteer.cdp.cdp.entity.network.GetRequestPostDataResponse;
+import jpuppeteer.chrome.constant.RequestStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,6 +53,8 @@ public class ChromeRequest implements Request {
     private transient boolean hasPostData;
 
     private String postData;
+
+    private RequestStatus status;
 
     /**
      * 此处记录下一个请求, 也就是如果存在redirect的话, 此处会是一个链表
@@ -120,16 +126,11 @@ public class ChromeRequest implements Request {
 
     @Override
     public void abort() {
-        ContinueInterceptedRequestRequest request = new ContinueInterceptedRequestRequest();
-    }
-
-    @Override
-    public void failure() {
-
+        this.status = RequestStatus.ABORTED;
     }
 
     @Override
     public void continues() {
-
+        this.status = RequestStatus.CONTINUE;
     }
 }

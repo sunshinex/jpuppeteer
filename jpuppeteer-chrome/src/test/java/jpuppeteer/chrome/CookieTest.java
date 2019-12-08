@@ -5,6 +5,7 @@ import jpuppeteer.api.httpclient.SharedCookieStore;
 import jpuppeteer.cdp.cdp.entity.page.DomContentEventFiredEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.chrome.ChromeLauncher;
+import jpuppeteer.chrome.event.FrameEvent;
 import jpuppeteer.chrome.event.PageEvent;
 import jpuppeteer.chrome.util.ArgUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -102,6 +103,14 @@ public class CookieTest {
         ChromePage page = browser.defaultContext().newPage();
         //page.authenticate("test", "test");
         page.enableRequestInterception();
+        page.addListener(FrameEvent.REQUEST, request -> {
+            try {
+                request.abort();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println(request);
+        });
         page.navigate("https://a.vpimg2.com/upload/merchandise/pdcvis/105933/2019/0801/199/00f173d5-e504-4982-b2af-b92f5071f33c.jpg");
         TimeUnit.HOURS.sleep(1);
     }

@@ -12,8 +12,6 @@ public interface Request {
 
     void continues();
 
-    void failure();
-
     <R extends Frame> R frame();
 
     List<Header> headers();

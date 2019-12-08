@@ -1,7 +1,6 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Streams;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.browser.*;
@@ -12,7 +11,6 @@ import jpuppeteer.api.constant.USKeyboardDefinition;
 import jpuppeteer.api.util.ConcurrentHashSet;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.CDPSession;
-import jpuppeteer.cdp.cdp.CDPEventType;
 import jpuppeteer.cdp.cdp.constant.emulation.ScreenOrientationType;
 import jpuppeteer.cdp.cdp.constant.fetch.AuthChallengeResponseResponse;
 import jpuppeteer.cdp.cdp.constant.input.DispatchKeyEventRequestType;
@@ -20,6 +18,7 @@ import jpuppeteer.cdp.cdp.constant.input.DispatchMouseEventRequestPointerType;
 import jpuppeteer.cdp.cdp.constant.input.DispatchMouseEventRequestType;
 import jpuppeteer.cdp.cdp.constant.input.DispatchTouchEventRequestType;
 import jpuppeteer.cdp.cdp.constant.network.BlockedReason;
+import jpuppeteer.cdp.cdp.constant.network.ErrorReason;
 import jpuppeteer.cdp.cdp.constant.page.SetTouchEmulationEnabledRequestConfiguration;
 import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.domain.*;
@@ -46,6 +45,7 @@ import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
+import jpuppeteer.chrome.constant.RequestStatus;
 import jpuppeteer.chrome.entity.CookieEvent;
 import jpuppeteer.chrome.util.ChromeObjectUtils;
 import jpuppeteer.chrome.util.CookieUtils;
@@ -75,8 +75,6 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
     private static final List<TouchPoint> EMPTY_TOUCHPOINTS = Lists.newArrayListWithCapacity(0);
 
     private final ChromePage opener;
-
-    protected CDPSession session;
 
     private ChromeContext browserContext;
 
@@ -114,12 +112,12 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         super(
                 null,
                 targetId,
+                session,
                 new jpuppeteer.cdp.cdp.domain.Page(session),
                 new Runtime(session),
                 new DOM(session),
                 new Input(session)
         );
-        this.session = session;
         this.opener = opener;
         this.browserContext = browserContext;
         this.performance = new Performance(session);
@@ -946,15 +944,52 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     private class RequestInterceptor implements Consumer<CDPEvent> {
 
-        @Override
-        public void accept(CDPEvent event) {
-            RequestPausedEvent evt = event.getParams().toJavaObject(RequestPausedEvent.class);
+        private void continueRequest(String interceptorId, String postData, String method, String url, List<HeaderEntry> headers) {
             ContinueRequestRequest request = new ContinueRequestRequest();
-            request.setRequestId(evt.getRequestId());
+            request.setRequestId(interceptorId);
+            request.setPostData(postData);
+            request.setMethod(method);
+            request.setUrl(url);
+            request.setHeaders(headers);
             try {
                 fetch.continueRequest(request, DEFAULT_TIMEOUT);
             } catch (Exception e) {
-                logger.error("continue request failed, error={}", e.getMessage(), e);
+                logger.error("continue request failed, interceptorId={}, error={}", interceptorId, e.getMessage(), e);
+            }
+        }
+
+        private void continueRequest(String interceptorId) {
+            continueRequest(interceptorId, null, null, null, null);
+        }
+
+        private void abort(String interceptorId) {
+            FailRequestRequest request = new FailRequestRequest();
+            request.setRequestId(interceptorId);
+            request.setErrorReason(ErrorReason.ABORTED.getValue());
+            try {
+                fetch.failRequest(request, DEFAULT_TIMEOUT);
+            } catch (Exception e) {
+                logger.error("fail request failed, interceptorId={}, error={}", interceptorId, e.getMessage(), e);
+            }
+        }
+
+        @Override
+        public void accept(CDPEvent event) {
+            RequestPausedEvent evt = event.getParams().toJavaObject(RequestPausedEvent.class);
+            logger.info("request intercepted, requestId={}, interceptorId={}", evt.getNetworkId(), evt.getRequestId());
+            ChromeRequest request = requestMap.get(evt.getNetworkId());
+            if (request == null) {
+                continueRequest(evt.getRequestId());
+                return;
+            }
+            RequestStatus status = request.getStatus();
+            if (status == null) {
+                continueRequest(evt.getRequestId());
+                return;
+            }
+            switch (status) {
+                case ABORTED:
+                    abort(evt.getRequestId());
             }
         }
     }

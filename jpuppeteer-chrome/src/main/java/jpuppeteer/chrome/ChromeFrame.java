@@ -5,6 +5,7 @@ import jpuppeteer.api.browser.Frame;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.EventType;
 import jpuppeteer.api.event.GenericEventEmitter;
+import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
 import jpuppeteer.cdp.cdp.domain.DOM;
@@ -59,6 +60,8 @@ public class ChromeFrame implements Frame<CallArgument> {
 
     private volatile ChromeExecutionContext executionContext;
 
+    protected CDPSession session;
+
     protected Page page;
 
     protected DOM dom;
@@ -82,10 +85,11 @@ public class ChromeFrame implements Frame<CallArgument> {
     @Setter
     protected URL unreachableUrl;
 
-    public ChromeFrame(ChromeFrame parent, String frameId, Page page, Runtime runtime, DOM dom, Input input) {
-        this.events = new GenericEventEmitter();
+    public ChromeFrame(ChromeFrame parent, String frameId, CDPSession session, Page page, Runtime runtime, DOM dom, Input input) {
+        this.events = new GenericEventEmitter(session.getExecutor());
         this.parent = parent;
         this.frameId = frameId;
+        this.session = session;
         this.children = new HashSet<>(0);
         this.page = page;
         this.dom = dom;
@@ -174,7 +178,7 @@ public class ChromeFrame implements Frame<CallArgument> {
     }
 
     protected void append(String frameId) {
-        this.children.add(new ChromeFrame(this, frameId, page, runtime, dom, input));
+        this.children.add(new ChromeFrame(this, frameId, session, page, runtime, dom, input));
     }
 
     protected void remove() {

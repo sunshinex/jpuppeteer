@@ -17,7 +17,7 @@ public class GenericEventEmitter implements EventEmitter {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericEventEmitter.class);
 
-    protected static final ThreadFactory THREAD_FACTORY = new GenericThreadFactory();
+    public static final ThreadFactory THREAD_FACTORY = new GenericThreadFactory();
 
     /**
      * 默认的事件触发为单线程, 保证事件顺序处理

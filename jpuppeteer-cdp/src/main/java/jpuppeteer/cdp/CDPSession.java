@@ -9,15 +9,14 @@ import jpuppeteer.cdp.constant.TargetType;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 public class CDPSession {
 
     private static final String SESSION_ID = "sessionId";
+
+    private Executor executor;
 
     private EventEmitter events;
 
@@ -30,7 +29,8 @@ public class CDPSession {
     private Map<String, Object> extra;
 
     public CDPSession(CDPConnection connection, TargetType type, String sessionId) {
-        this.events = new SessionEventEmitter();
+        this.executor = Executors.newSingleThreadExecutor(GenericEventEmitter.THREAD_FACTORY);
+        this.events = new GenericEventEmitter(executor);
         this.connection = connection;
         this.type = type;
         this.sessionId = sessionId;
@@ -70,11 +70,7 @@ public class CDPSession {
         return connection.asyncSend(method, params, extra);
     }
 
-    class SessionEventEmitter extends GenericEventEmitter {
-
-        SessionEventEmitter() {
-            super(Executors.newSingleThreadExecutor(THREAD_FACTORY));
-        }
-
+    public Executor getExecutor() {
+        return executor;
     }
 }
