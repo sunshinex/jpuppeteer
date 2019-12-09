@@ -8,6 +8,7 @@ import jpuppeteer.api.constant.MediaType;
 import jpuppeteer.api.constant.MouseDefinition;
 import jpuppeteer.api.constant.ResourceType;
 import jpuppeteer.api.constant.USKeyboardDefinition;
+import jpuppeteer.api.event.EventType;
 import jpuppeteer.api.util.ConcurrentHashSet;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.CDPSession;
@@ -45,11 +46,9 @@ import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
-import jpuppeteer.chrome.constant.RequestStatus;
 import jpuppeteer.chrome.entity.CookieEvent;
 import jpuppeteer.chrome.util.ChromeObjectUtils;
 import jpuppeteer.chrome.util.CookieUtils;
-import jpuppeteer.chrome.util.ObjectMapperUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -104,6 +103,8 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     private volatile double mouseY;
 
+    private boolean requestInterceptionEnabled;
+
     private String username;
 
     private String password;
@@ -135,6 +136,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         this.keyModifiers = 0;
         this.mouseX = 0;
         this.mouseY = 0;
+        this.requestInterceptionEnabled = false;
 
         enablePage();
         enablePageLifecycleEvent();
@@ -177,26 +179,25 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         this.username = username;
         this.password = password;
         if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-            enableRequestInterception();
+            enableRequestInterception(true);
         }
     }
 
     @Override
-    public void enableRequestInterception(String... patterns) throws Exception {
+    public void enableRequestInterception(boolean handleAuthRequest) throws Exception {
         EnableRequest request = new EnableRequest();
-        List<RequestPattern> patternList = Arrays.stream(patterns)
-                .map(p -> ObjectMapperUtils.create(p))
-                .collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(patternList)) {
-            patternList = Lists.newArrayList(ObjectMapperUtils.create("*"));
-        }
-        request.setPatterns(patternList);
+        RequestPattern pattern = new RequestPattern();
+        pattern.setUrlPattern("*");
+        request.setPatterns(Lists.newArrayList(pattern));
+        request.setHandleAuthRequests(handleAuthRequest);
         fetch.enable(request, DEFAULT_TIMEOUT);
+        this.requestInterceptionEnabled = true;
     }
 
     @Override
     public void disableRequestInterception() throws Exception {
         fetch.disable(DEFAULT_TIMEOUT);
+        this.requestInterceptionEnabled = false;
     }
 
     @Override
@@ -678,6 +679,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
             ChromeRequest request = ChromeRequest.builder()
                     .session(session)
                     .network(network)
+                    .fetch(fetch)
                     .frame(frame)
                     .loaderId(evt.getLoaderId())
                     .requestId(evt.getRequestId())
@@ -699,7 +701,10 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
                 }
             }
             //frame.emit(REQUEST, request);
-            emit(REQUEST, request);
+            if (!requestInterceptionEnabled) {
+                //如果启动请求拦截, 则不在此处触发REQUEST事件, 转到拦截器处触发REQUEST事件
+                emit(REQUEST, request);
+            }
         }
     }
 
@@ -944,13 +949,9 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     private class RequestInterceptor implements Consumer<CDPEvent> {
 
-        private void continueRequest(String interceptorId, String postData, String method, String url, List<HeaderEntry> headers) {
+        private void continueRequest(String interceptorId) {
             ContinueRequestRequest request = new ContinueRequestRequest();
             request.setRequestId(interceptorId);
-            request.setPostData(postData);
-            request.setMethod(method);
-            request.setUrl(url);
-            request.setHeaders(headers);
             try {
                 fetch.continueRequest(request, DEFAULT_TIMEOUT);
             } catch (Exception e) {
@@ -958,38 +959,34 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
             }
         }
 
-        private void continueRequest(String interceptorId) {
-            continueRequest(interceptorId, null, null, null, null);
-        }
-
-        private void abort(String interceptorId) {
-            FailRequestRequest request = new FailRequestRequest();
-            request.setRequestId(interceptorId);
-            request.setErrorReason(ErrorReason.ABORTED.getValue());
-            try {
-                fetch.failRequest(request, DEFAULT_TIMEOUT);
-            } catch (Exception e) {
-                logger.error("fail request failed, interceptorId={}, error={}", interceptorId, e.getMessage(), e);
-            }
-        }
-
         @Override
         public void accept(CDPEvent event) {
             RequestPausedEvent evt = event.getParams().toJavaObject(RequestPausedEvent.class);
             logger.info("request intercepted, requestId={}, interceptorId={}", evt.getNetworkId(), evt.getRequestId());
-            ChromeRequest request = requestMap.get(evt.getNetworkId());
-            if (request == null) {
-                continueRequest(evt.getRequestId());
-                return;
+            String interceptorId = evt.getRequestId();
+            String requestId = evt.getNetworkId();
+            ChromeRequest request = null;
+            if (StringUtils.isNotEmpty(requestId)) {
+                request = requestMap.get(requestId);
             }
-            RequestStatus status = request.getStatus();
-            if (status == null) {
-                continueRequest(evt.getRequestId());
-                return;
+            if (request != null && StringUtils.isNotEmpty(interceptorId)) {
+                request.setInterceptorId(interceptorId);
             }
-            switch (status) {
-                case ABORTED:
-                    abort(evt.getRequestId());
+            //没有interceptorId的请求, 一般情况下是已经override过的请求
+            if (StringUtils.isNotEmpty(interceptorId) && StringUtils.isNotEmpty(requestId)) {
+                //两者同时存在, 就是一个正常的请求
+                //如果请求没查到, 则直接继续请求, 否则触发REQUEST事件
+                if (request == null) {
+                    continueRequest(interceptorId);
+                } else {
+                    emit(REQUEST, request);
+                }
+            } else if (StringUtils.isEmpty(interceptorId) && request != null) {
+                //如果interceptorId以及request不为空, 则触发REQUEST事件
+                emit(REQUEST, request);
+            } else if (StringUtils.isEmpty(requestId)) {
+                //对于data:协议, 是没有requestId的, 直接继续请求
+                continueRequest(interceptorId);
             }
         }
     }

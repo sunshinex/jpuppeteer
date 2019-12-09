@@ -22,6 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -101,17 +102,24 @@ public class CookieTest {
     public void test2() throws Exception {
         Browser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
         ChromePage page = browser.defaultContext().newPage();
-        //page.authenticate("test", "test");
-        page.enableRequestInterception();
+        //page.enableRequestInterception(true);
+        page.authenticate("test", "test");
+////        page.enableRequestInterception();
         page.addListener(FrameEvent.REQUEST, request -> {
             try {
-                request.abort();
+                if (request.url().getHost().equals("10.199.215.216") && request.url().getPath().equals("/")) {
+                    request.continues(ChromeRequest.builder()
+                            .url(new URL("https://www.baidu.com/"))
+                            .build());
+                } else {
+                    request.continues();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            System.out.println(request);
         });
-        page.navigate("https://a.vpimg2.com/upload/merchandise/pdcvis/105933/2019/0801/199/00f173d5-e504-4982-b2af-b92f5071f33c.jpg");
+        page.navigate("http://10.199.215.216/");
+        //page.navigate("https://a.vpimg2.com/upload/merchandise/pdcvis/105933/2019/0801/199/00f173d5-e504-4982-b2af-b92f5071f33c.jpg");
         TimeUnit.HOURS.sleep(1);
     }
 }

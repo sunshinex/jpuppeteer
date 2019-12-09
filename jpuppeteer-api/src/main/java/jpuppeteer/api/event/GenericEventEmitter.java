@@ -6,18 +6,21 @@ import jpuppeteer.api.util.ConcurrentHashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class GenericEventEmitter implements EventEmitter {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericEventEmitter.class);
 
-    public static final ThreadFactory THREAD_FACTORY = new GenericThreadFactory();
+    protected static final ThreadFactory THREAD_FACTORY = new GenericThreadFactory();
 
     /**
      * 默认的事件触发为单线程, 保证事件顺序处理

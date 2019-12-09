@@ -47,10 +47,14 @@ public interface Page<T> extends Frame<T> {
 
     /**
      *
-     * @param patterns 不传默认未*(表示拦截所有的请求)
+     * @param handleAuthRequest 是否拦截身份验证
      * @throws Exception
      */
-    void enableRequestInterception(String... patterns) throws Exception;
+    void enableRequestInterception(boolean handleAuthRequest) throws Exception;
+
+    default void enableRequestInterception() throws Exception {
+        enableRequestInterception(false);
+    }
 
     void disableRequestInterception() throws Exception;
 

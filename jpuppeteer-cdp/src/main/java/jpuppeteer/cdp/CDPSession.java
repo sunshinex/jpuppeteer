@@ -9,16 +9,15 @@ import jpuppeteer.cdp.constant.TargetType;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
-public class CDPSession {
+public class CDPSession extends GenericEventEmitter implements EventEmitter {
 
     private static final String SESSION_ID = "sessionId";
-
-    private Executor executor;
-
-    private EventEmitter events;
 
     private CDPConnection connection;
 
@@ -29,8 +28,7 @@ public class CDPSession {
     private Map<String, Object> extra;
 
     public CDPSession(CDPConnection connection, TargetType type, String sessionId) {
-        this.executor = Executors.newSingleThreadExecutor(GenericEventEmitter.THREAD_FACTORY);
-        this.events = new GenericEventEmitter(executor);
+        super(Executors.newSingleThreadExecutor(THREAD_FACTORY));
         this.connection = connection;
         this.type = type;
         this.sessionId = sessionId;
@@ -43,15 +41,15 @@ public class CDPSession {
     }
 
     public void addListener(CDPEventType eventType, Consumer<CDPEvent> consumer) {
-        events.addListener(CDPEventWrapper.wrap(eventType), consumer);
+        addListener(CDPEventWrapper.wrap(eventType), consumer);
     }
 
     public void removeListener(CDPEventType eventType, Consumer<CDPEvent> consumer) {
-        events.removeListener(CDPEventWrapper.wrap(eventType), consumer);
+        removeListener(CDPEventWrapper.wrap(eventType), consumer);
     }
 
     public void emit(CDPEventType eventType, CDPEvent event) {
-        events.emit(CDPEventWrapper.wrap(eventType), event);
+        emit(CDPEventWrapper.wrap(eventType), event);
     }
 
     public final <T> T send(String method, Object params, Class<T> clazz, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
@@ -70,7 +68,4 @@ public class CDPSession {
         return connection.asyncSend(method, params, extra);
     }
 
-    public Executor getExecutor() {
-        return executor;
-    }
 }

@@ -50,8 +50,6 @@ public class ChromeFrame implements Frame<CallArgument> {
 
     private static final String SCRIPT_WAIT_SELECTOR = ScriptUtils.load("waitselector.js");
 
-    protected EventEmitter events;
-
     protected String frameId;
 
     protected ChromeFrame parent;
@@ -86,7 +84,6 @@ public class ChromeFrame implements Frame<CallArgument> {
     protected URL unreachableUrl;
 
     public ChromeFrame(ChromeFrame parent, String frameId, CDPSession session, Page page, Runtime runtime, DOM dom, Input input) {
-        this.events = new GenericEventEmitter(session.getExecutor());
         this.parent = parent;
         this.frameId = frameId;
         this.session = session;
@@ -106,31 +103,31 @@ public class ChromeFrame implements Frame<CallArgument> {
     @Override
     public <E> void addListener(EventType<E> eventType, Consumer<E> consumer) {
         checkEventType(eventType);
-        events.addListener(eventType, consumer);
+        session.addListener(eventType, consumer);
     }
 
     @Override
     public <E> void removeListener(EventType<E> eventType, Consumer<E> consumer) {
         checkEventType(eventType);
-        events.removeListener(eventType, consumer);
+        session.removeListener(eventType, consumer);
     }
 
     @Override
     public <E> Future<E> await(EventType<E> eventType) {
         checkEventType(eventType);
-        return events.await(eventType);
+        return session.await(eventType);
     }
 
     @Override
     public <E> Future<E> await(EventType<E> eventType, Predicate<E> predicate) {
         checkEventType(eventType);
-        return events.await(eventType, predicate);
+        return session.await(eventType, predicate);
     }
 
     @Override
     public <E> void emit(EventType<E> eventType, E event) {
         checkEventType(eventType);
-        events.emit(eventType, event);
+        session.emit(eventType, event);
     }
 
     protected ChromeExecutionContext executionContext() {

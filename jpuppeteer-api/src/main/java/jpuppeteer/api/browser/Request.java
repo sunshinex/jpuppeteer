@@ -8,9 +8,13 @@ import java.util.List;
 public interface Request {
 
     //暂不支持, 后续支持
-    void abort();
+    void abort() throws Exception;
 
-    void continues();
+    void continues(Request request) throws Exception;
+
+    default void continues() throws Exception {
+        continues(null);
+    }
 
     <R extends Frame> R frame();
 

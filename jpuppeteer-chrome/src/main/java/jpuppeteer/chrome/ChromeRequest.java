@@ -7,20 +7,22 @@ import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.constant.network.ErrorReason;
 import jpuppeteer.cdp.cdp.domain.Fetch;
 import jpuppeteer.cdp.cdp.domain.Network;
+import jpuppeteer.cdp.cdp.entity.fetch.ContinueRequestRequest;
 import jpuppeteer.cdp.cdp.entity.fetch.FailRequestRequest;
-import jpuppeteer.cdp.cdp.entity.network.ContinueInterceptedRequestRequest;
+import jpuppeteer.cdp.cdp.entity.fetch.HeaderEntry;
 import jpuppeteer.cdp.cdp.entity.network.GetRequestPostDataRequest;
 import jpuppeteer.cdp.cdp.entity.network.GetRequestPostDataResponse;
-import jpuppeteer.chrome.constant.RequestStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
@@ -35,6 +37,8 @@ public class ChromeRequest implements Request {
     private transient CDPSession session;
 
     private transient Network network;
+
+    private transient Fetch fetch;
 
     private ChromeFrame frame;
 
@@ -54,8 +58,6 @@ public class ChromeRequest implements Request {
 
     private String postData;
 
-    private RequestStatus status;
-
     /**
      * 此处记录下一个请求, 也就是如果存在redirect的话, 此处会是一个链表
      */
@@ -64,6 +66,9 @@ public class ChromeRequest implements Request {
 
     @Setter
     private ChromeResponse response;
+
+    @Setter
+    private String interceptorId;
 
     @Override
     public ChromeFrame frame() {
@@ -125,12 +130,44 @@ public class ChromeRequest implements Request {
     }
 
     @Override
-    public void abort() {
-        this.status = RequestStatus.ABORTED;
+    public void abort() throws Exception {
+        if (StringUtils.isEmpty(interceptorId)) {
+            throw new RuntimeException("interceptorId undefined");
+        }
+        FailRequestRequest request = new FailRequestRequest();
+        request.setRequestId(interceptorId);
+        request.setErrorReason(ErrorReason.ABORTED.getValue());
+        fetch.failRequest(request, DEFAULT_TIMEOUT);
     }
 
     @Override
-    public void continues() {
-        this.status = RequestStatus.CONTINUE;
+    public void continues(Request request) throws Exception {
+        if (StringUtils.isEmpty(interceptorId)) {
+            throw new RuntimeException("interceptorId undefined");
+        }
+        ContinueRequestRequest req = new ContinueRequestRequest();
+        req.setRequestId(interceptorId);
+        if (request != null) {
+            if (request.url() != null) {
+                req.setUrl(request.url().toString());
+            }
+            if (request.method() != null) {
+                req.setMethod(request.method());
+            }
+            if (request.postData() != null) {
+                req.setPostData(request.postData());
+            }
+            if (CollectionUtils.isNotEmpty(request.headers())) {
+                List<HeaderEntry> entries = new ArrayList<>();
+                for (Header header : request.headers()) {
+                    HeaderEntry entry = new HeaderEntry();
+                    entry.setName(header.getName());
+                    entry.setValue(StringUtils.join(header.getValues(), System.lineSeparator()));
+                    entries.add(entry);
+                }
+                req.setHeaders(entries);
+            }
+        }
+        fetch.continueRequest(req, DEFAULT_TIMEOUT);
     }
 }
