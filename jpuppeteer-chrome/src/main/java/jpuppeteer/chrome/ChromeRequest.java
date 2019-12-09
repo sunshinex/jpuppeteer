@@ -1,7 +1,9 @@
 package jpuppeteer.chrome;
 
+import com.google.common.base.Charsets;
 import jpuppeteer.api.browser.Header;
 import jpuppeteer.api.browser.Request;
+import jpuppeteer.api.browser.Response;
 import jpuppeteer.api.constant.ResourceType;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.constant.network.ErrorReason;
@@ -9,6 +11,7 @@ import jpuppeteer.cdp.cdp.domain.Fetch;
 import jpuppeteer.cdp.cdp.domain.Network;
 import jpuppeteer.cdp.cdp.entity.fetch.ContinueRequestRequest;
 import jpuppeteer.cdp.cdp.entity.fetch.FailRequestRequest;
+import jpuppeteer.cdp.cdp.entity.fetch.FulfillRequestRequest;
 import jpuppeteer.cdp.cdp.entity.fetch.HeaderEntry;
 import jpuppeteer.cdp.cdp.entity.network.GetRequestPostDataRequest;
 import jpuppeteer.cdp.cdp.entity.network.GetRequestPostDataResponse;
@@ -132,18 +135,22 @@ public class ChromeRequest implements Request {
     @Override
     public void abort() throws Exception {
         if (StringUtils.isEmpty(interceptorId)) {
-            throw new RuntimeException("interceptorId undefined");
+            logger.warn("interceptorId undefined, requestId={}", requestId);
+            return;
         }
         FailRequestRequest request = new FailRequestRequest();
         request.setRequestId(interceptorId);
         request.setErrorReason(ErrorReason.ABORTED.getValue());
         fetch.failRequest(request, DEFAULT_TIMEOUT);
+        //终止请求成功之后, 置空拦截ID
+        this.interceptorId = null;
     }
 
     @Override
     public void continues(Request request) throws Exception {
         if (StringUtils.isEmpty(interceptorId)) {
-            throw new RuntimeException("interceptorId undefined");
+            logger.warn("interceptorId undefined, requestId={}", requestId);
+            return;
         }
         ContinueRequestRequest req = new ContinueRequestRequest();
         req.setRequestId(interceptorId);
@@ -169,5 +176,35 @@ public class ChromeRequest implements Request {
             }
         }
         fetch.continueRequest(req, DEFAULT_TIMEOUT);
+        //放行请求成功之后, 置空拦截ID
+        this.interceptorId = null;
+    }
+
+    @Override
+    public void respond(int statusCode, List<Header> headers, String body) throws Exception {
+        if (StringUtils.isEmpty(interceptorId)) {
+            logger.warn("interceptorId undefined, requestId={}", requestId);
+            return;
+        }
+        FulfillRequestRequest request = new FulfillRequestRequest();
+        request.setRequestId(interceptorId);
+        request.setResponseCode(statusCode);
+        request.setResponsePhrase("OK");
+        if (CollectionUtils.isNotEmpty(headers)) {
+            List<HeaderEntry> entries = new ArrayList<>(headers.size());
+            for(Header header : headers) {
+                HeaderEntry entry = new HeaderEntry();
+                entry.setName(header.getName());
+                entry.setValue(StringUtils.join(header.getValues(), System.lineSeparator()));
+                entries.add(entry);
+            }
+            request.setResponseHeaders(entries);
+        }
+        if (body != null) {
+            request.setBody(body);
+        }
+        fetch.fulfillRequest(request, DEFAULT_TIMEOUT);
+        //完成请求成功之后, 置空拦截ID
+        this.interceptorId = null;
     }
 }

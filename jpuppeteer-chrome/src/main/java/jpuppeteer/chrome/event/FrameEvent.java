@@ -24,16 +24,21 @@ public class FrameEvent<E> extends AbstractEvent<E> {
 
     public static final FrameEvent<ChromeRequestFailed> REQUESTFAILED = new FrameEvent<>(ChromeRequestFailed.class);
 
-    public static final FrameEvent<ChromeRequest> REQUESTFINISHED = new FrameEvent<>(ChromeRequest.class);
+    public static final FrameEvent<ChromeRequest> REQUESTFINISHED = new FrameEvent<>("RequestFinished", ChromeRequest.class);
 
     protected FrameEvent(Class<E> eventClass) {
         super(eventClass);
     }
 
+    protected FrameEvent(String eventName, Class<E> eventClass) {
+        super(eventName, eventClass);
+    }
+
     @Override
     public String toString() {
         return "FrameEvent{" +
-                "eventClass=" + eventClass +
+                "eventName='" + eventName + '\'' +
+                ", eventClass=" + eventClass +
                 '}';
     }
 }

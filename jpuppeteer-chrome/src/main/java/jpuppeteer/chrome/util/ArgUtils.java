@@ -1,9 +1,6 @@
 package jpuppeteer.chrome.util;
 
-import jpuppeteer.api.browser.Browser;
-import jpuppeteer.api.browser.BrowserObject;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
-import jpuppeteer.chrome.ChromeBrowser;
 import jpuppeteer.chrome.ChromeBrowserObject;
 
 public class ArgUtils {

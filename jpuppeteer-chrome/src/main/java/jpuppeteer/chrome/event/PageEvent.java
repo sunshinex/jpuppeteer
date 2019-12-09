@@ -44,10 +44,15 @@ public final class PageEvent<E> extends FrameEvent<E> {
         super(eventClass);
     }
 
+    private PageEvent(String eventName, Class<E> eventClass) {
+        super(eventName, eventClass);
+    }
+
     @Override
     public String toString() {
         return "PageEvent{" +
-                "eventClass=" + eventClass +
+                "eventName='" + eventName + '\'' +
+                ", eventClass=" + eventClass +
                 '}';
     }
 }

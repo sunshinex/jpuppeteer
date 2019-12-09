@@ -16,6 +16,12 @@ public interface Request {
         continues(null);
     }
 
+    void respond(int statusCode, List<Header> headers, String body) throws Exception;
+
+    default void respond(int statusCode) throws Exception {
+        respond(statusCode, null, null);
+    }
+
     <R extends Frame> R frame();
 
     List<Header> headers();

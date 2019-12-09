@@ -4,7 +4,6 @@ import jpuppeteer.api.constant.MediaType;
 import jpuppeteer.api.constant.MouseDefinition;
 import jpuppeteer.api.constant.USKeyboardDefinition;
 
-import java.io.InputStream;
 import java.util.List;
 
 public interface Page<T> extends Frame<T> {

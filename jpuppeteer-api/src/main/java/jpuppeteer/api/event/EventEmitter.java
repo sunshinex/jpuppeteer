@@ -1,6 +1,5 @@
 package jpuppeteer.api.event;
 
-import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Predicate;

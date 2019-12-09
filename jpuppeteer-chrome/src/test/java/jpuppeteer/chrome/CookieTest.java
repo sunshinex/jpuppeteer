@@ -1,10 +1,10 @@
 package jpuppeteer.chrome;
 
+import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.*;
 import jpuppeteer.api.httpclient.SharedCookieStore;
 import jpuppeteer.cdp.cdp.entity.page.DomContentEventFiredEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
-import jpuppeteer.chrome.ChromeLauncher;
 import jpuppeteer.chrome.event.FrameEvent;
 import jpuppeteer.chrome.event.PageEvent;
 import jpuppeteer.chrome.util.ArgUtils;
@@ -21,9 +21,9 @@ import org.apache.http.message.BasicHeader;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -103,14 +103,20 @@ public class CookieTest {
         Browser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
         ChromePage page = browser.defaultContext().newPage();
         //page.enableRequestInterception(true);
-        page.authenticate("test", "test");
-////        page.enableRequestInterception();
+        //page.authenticate("test", "test");
+        page.enableRequestInterception();
         page.addListener(FrameEvent.REQUEST, request -> {
             try {
-                if (request.url().getHost().equals("10.199.215.216") && request.url().getPath().equals("/")) {
-                    request.continues(ChromeRequest.builder()
-                            .url(new URL("https://www.baidu.com/"))
-                            .build());
+                if (request.url().getHost().equals("www.baidu.com")) {
+//                    request.continues(ChromeRequest.builder()
+//                            .headers(Lists.newArrayList(new Header("User-Agent", "Android")))
+//                            .build());
+                    String body = "<h1>OK</h1>";
+                    body = Base64.getEncoder().encodeToString(body.getBytes());
+                    List<Header> headers = new ArrayList<>();
+                    headers.add(new Header("Content-Type", "text/html; charset=UTF8"));
+                    headers.add(new Header("Content-Length", String.valueOf(body.length())));
+                    request.respond(200, headers, body);
                 } else {
                     request.continues();
                 }
@@ -118,8 +124,8 @@ public class CookieTest {
                 e.printStackTrace();
             }
         });
-        page.navigate("http://10.199.215.216/");
-        //page.navigate("https://a.vpimg2.com/upload/merchandise/pdcvis/105933/2019/0801/199/00f173d5-e504-4982-b2af-b92f5071f33c.jpg");
+        //page.navigate("http://10.199.215.216/");
+        page.navigate("https://www.baidu.com/");
         TimeUnit.HOURS.sleep(1);
     }
 }

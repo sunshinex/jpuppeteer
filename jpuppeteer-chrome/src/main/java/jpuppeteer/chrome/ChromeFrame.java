@@ -2,9 +2,7 @@ package jpuppeteer.chrome;
 
 import com.alibaba.fastjson.TypeReference;
 import jpuppeteer.api.browser.Frame;
-import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.EventType;
-import jpuppeteer.api.event.GenericEventEmitter;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
