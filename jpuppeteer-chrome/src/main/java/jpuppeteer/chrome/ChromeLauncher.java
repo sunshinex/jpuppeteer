@@ -3,6 +3,7 @@ package jpuppeteer.chrome;
 import jpuppeteer.api.browser.Launcher;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.WebSocketConnection;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +87,9 @@ public class ChromeLauncher implements Launcher {
                 while (process.isAlive()) {
                     try {
                         String line = reader.readLine();
-                        logger.debug("chrome process stderr message={}", line);
+                        if (StringUtils.isNotEmpty(line)) {
+                            logger.debug("chrome process stderr message={}", line);
+                        }
                     } catch (IOException e) {
                         logger.error("chrome process stderr read error, error={}", e.getMessage(), e);
                     }
