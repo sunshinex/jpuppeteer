@@ -1,6 +1,7 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
+import com.sun.webkit.network.data.Handler;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.browser.*;
@@ -56,6 +57,8 @@ import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLStreamHandler;
+import java.net.URLStreamHandlerFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -107,6 +110,37 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
     private String username;
 
     private String password;
+
+    static {
+        URL.setURLStreamHandlerFactory(new Factory());
+    }
+
+    private static class Factory implements URLStreamHandlerFactory {
+
+        private static String[] PACKAGES = {"sun.net.www.protocol", "com.sun.webkit.network"};
+
+        private URLStreamHandler create(String pkg, String protocol) {
+            String className = pkg + "." + protocol + ".Handler";
+            try {
+                Class clazz = Class.forName(className);
+                return (URLStreamHandler)clazz.newInstance();
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException("could not load " + protocol + " webkit protocol handler", e);
+            }
+        }
+
+        @Override
+        public URLStreamHandler createURLStreamHandler(String protocol) {
+            for(String pkg : PACKAGES) {
+                try {
+                    return create(pkg, protocol);
+                } catch (Exception e) {
+                    //do nth...
+                }
+            }
+            throw new RuntimeException("could not load " + protocol + " protocol handler");
+        }
+    }
 
     public ChromePage(ChromeContext browserContext, CDPSession session, String targetId, ChromePage opener) throws Exception {
         super(
@@ -666,9 +700,10 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         String fragment = req.getUrlFragment();
         URL url = null;
         try {
-            url = new URL(urlStr + (fragment != null ? fragment : ""));
+            url = new URL(null, urlStr + (fragment != null ? fragment : ""));
         } catch (MalformedURLException e) {
             //do nth... 解析不了的url, 跳过就算了
+            logger.error("url parse failed, error={}", e.getMessage(), e);
         }
         ChromeRequest request = ChromeRequest.builder()
                 .session(session)
@@ -694,11 +729,11 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
         @Override
         public void accept(CDPEvent event) {
-            if (requestInterceptionEnabled) {
-                //如果启动了拦截器, 则直接忽略request事件
+            RequestWillBeSentEvent evt = event.getParams().toJavaObject(RequestWillBeSentEvent.class);
+            if (requestInterceptionEnabled && !evt.getRequest().getUrl().startsWith("data:")) {
+                //如果启动了拦截器, 则直接忽略所有非data:协议的请求(因为data:协议的请求不会被拦截, 必须到这里放行)
                 return;
             }
-            RequestWillBeSentEvent evt = event.getParams().toJavaObject(RequestWillBeSentEvent.class);
             handleRequestEvent(RequestEvent.builder()
                     .frameId(evt.getFrameId())
                     .loaderId(evt.getLoaderId())
@@ -970,6 +1005,11 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
                 //不存在interceptorId 直接返回
                 return;
             }
+            if (StringUtils.isEmpty(requestId)) {
+                //没有requestId的不拦截, 直接放行
+                continueRequest(interceptorId);
+                return;
+            }
             RequestEvent requestEvent = RequestEvent.builder()
                     .requestId(requestId)
                     .loaderId(requestId)
@@ -978,29 +1018,8 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
                     .request(evt.getRequest())
                     .resourceType(ResourceType.findByValue(evt.getResourceType()))
                     .build();
-            ChromeRequest request = null;
-            if (StringUtils.isNotEmpty(requestId)) {
-                request = requestMap.get(requestId);
-            }
-            if (request != null && StringUtils.isNotEmpty(interceptorId)) {
-                request.setInterceptorId(interceptorId);
-            }
-            //没有interceptorId的请求, 一般情况下是已经override过的请求
-            if (StringUtils.isNotEmpty(interceptorId) && StringUtils.isNotEmpty(requestId)) {
-                //两者同时存在, 就是一个正常的请求
-                //如果请求没查到, 则直接继续请求, 否则触发REQUEST事件
-                if (request == null) {
-                    continueRequest(interceptorId);
-                } else {
-                    emit(REQUEST, request);
-                }
-            } else if (StringUtils.isEmpty(interceptorId) && request != null) {
-                //如果interceptorId以及request不为空, 则触发REQUEST事件
-                emit(REQUEST, request);
-            } else if (StringUtils.isEmpty(requestId)) {
-                //对于data:协议, 是没有requestId的, 直接继续请求
-                continueRequest(interceptorId);
-            }
+
+            handleRequestEvent(requestEvent);
         }
     }
 

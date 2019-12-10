@@ -1,5 +1,7 @@
 package jpuppeteer.chrome;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.*;
 import jpuppeteer.api.httpclient.SharedCookieStore;
@@ -19,7 +21,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.misc.IOUtils;
 
 import java.io.File;
@@ -101,6 +106,12 @@ public class CookieTest {
         Assert.assertFalse(CollectionUtils.isEmpty(cookies));
     }
 
+    @BeforeClass
+    public static void setUp() {
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        context.getLogger("root").setLevel(Level.INFO);
+    }
+
     @Test
     public void test2() throws Exception {
         Browser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
@@ -112,7 +123,7 @@ public class CookieTest {
         page.enableRequestInterception();
         page.addListener(FrameEvent.REQUEST, request -> {
             try {
-                if (request.url().getQuery() != null && request.url().getQuery().startsWith("?tm/detail-b/4.2.24/mods/")) {
+                if (request.url() != null && request.url().getQuery() != null && request.url().getQuery().startsWith("?tm/detail-b/4.2.24/mods/")) {
                     request.abort();
                 } else {
                     request.continues();
