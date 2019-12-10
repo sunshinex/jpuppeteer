@@ -62,16 +62,16 @@ public class ChromeRequest implements Request {
 
     private String postData;
 
-    /**
-     * 此处记录下一个请求, 也就是如果存在redirect的话, 此处会是一个链表
-     */
-    @Setter
-    private ChromeRequest prev;
+//    暂时不处理redirect chain, 后续处理
+//    /**
+//     * 此处记录下一个请求, 也就是如果存在redirect的话, 此处会是一个链表
+//     */
+//    @Setter
+//    private ChromeRequest prev;
 
     @Setter
     private ChromeResponse response;
 
-    @Setter
     private String interceptorId;
 
     static {
@@ -179,11 +179,11 @@ public class ChromeRequest implements Request {
         }
         return postData;
     }
-
-    @Override
-    public Request prev() {
-        return prev;
-    }
+//
+//    @Override
+//    public Request prev() {
+//        return prev;
+//    }
 
     @Override
     public ResourceType resourceType() {

@@ -32,10 +32,10 @@ public interface Request {
 
     String postData();
 
-    /**
-     * @return 当前请求的重定向来源
-     */
-    <R extends Request> R prev();
+//    /**
+//     * @return 当前请求的重定向来源
+//     */
+//    <R extends Request> R prev();
 
     ResourceType resourceType();
 

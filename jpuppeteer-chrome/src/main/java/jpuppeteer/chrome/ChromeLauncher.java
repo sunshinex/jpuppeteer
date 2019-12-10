@@ -67,7 +67,9 @@ public class ChromeLauncher implements Launcher {
                 }
             }
         }));
-        process = Runtime.getRuntime().exec(chromeArguments.getCommand());
+        String[] command = chromeArguments.getCommand();
+        logger.info("command line: {}", StringUtils.join(command, " "));
+        process = Runtime.getRuntime().exec(command);
         CDPConnection connection;
         if (!chromeArguments.isPipe()) {
             //等待chrome启动成功的debug listening输出

@@ -45,6 +45,7 @@ import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
 import jpuppeteer.chrome.entity.CookieEvent;
+import jpuppeteer.chrome.entity.RequestEvent;
 import jpuppeteer.chrome.util.ChromeObjectUtils;
 import jpuppeteer.chrome.util.CookieUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -189,6 +190,8 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         request.setPatterns(Lists.newArrayList(pattern));
         request.setHandleAuthRequests(handleAuthRequest);
         fetch.enable(request, DEFAULT_TIMEOUT);
+        //启动拦截器的同时需要禁用缓存
+        setCacheEnable(false);
         this.requestInterceptionEnabled = true;
     }
 
@@ -652,57 +655,57 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         }
     }
 
+    private void handleRequestEvent(RequestEvent event) {
+        jpuppeteer.cdp.cdp.entity.network.Request req = event.getRequest();
+        ChromeFrame frame = find(frameId);
+        if (frame == null) {
+            //对于找不到frame的请求事件, 丢弃...
+            return;
+        }
+        String urlStr = req.getUrl();
+        String fragment = req.getUrlFragment();
+        URL url = null;
+        try {
+            url = new URL(urlStr + (fragment != null ? fragment : ""));
+        } catch (MalformedURLException e) {
+            //do nth... 解析不了的url, 跳过就算了
+        }
+        ChromeRequest request = ChromeRequest.builder()
+                .session(session)
+                .network(network)
+                .fetch(fetch)
+                .frame(frame)
+                .loaderId(event.getLoaderId())
+                .requestId(event.getRequestId())
+                .interceptorId(event.getInterceptorId())
+                .method(req.getMethod())
+                .url(url)
+                .resourceType(event.getResourceType())
+                .headers(parseHeader(req.getHeaders()))
+                .hasPostData(Boolean.TRUE.equals(req.getHasPostData()))
+                //postData的内容需要的时候调用接口拿回来, 省内存
+                //.postData(req.getPostData())
+                .build();
+        requestMap.put(event.getRequestId(), request);
+        emit(REQUEST, request);
+    }
+
     private class RequestHandler implements Consumer<CDPEvent> {
 
         @Override
         public void accept(CDPEvent event) {
-            RequestWillBeSentEvent evt = event.getParams().toJavaObject(RequestWillBeSentEvent.class);
-            jpuppeteer.cdp.cdp.entity.network.Request req = evt.getRequest();
-            ChromeFrame frame = find(evt.getFrameId());
-            if (frame == null) {
-                //对于找不到frame的请求事件, 丢弃...
+            if (requestInterceptionEnabled) {
+                //如果启动了拦截器, 则直接忽略request事件
                 return;
             }
-            String urlStr = req.getUrl();
-            String fragment = req.getUrlFragment();
-            URL url = null;
-            try {
-                url = new URL(urlStr + (fragment != null ? fragment : ""));
-            } catch (MalformedURLException e) {
-                //do nth... 解析不了的url, 跳过就算了
-            }
-            String requestId = evt.getRequestId();
-            //处理redirect
-            ChromeRequest prev = requestMap.get(requestId);
-            ChromeRequest request = ChromeRequest.builder()
-                    .session(session)
-                    .network(network)
-                    .fetch(fetch)
-                    .frame(frame)
+            RequestWillBeSentEvent evt = event.getParams().toJavaObject(RequestWillBeSentEvent.class);
+            handleRequestEvent(RequestEvent.builder()
+                    .frameId(evt.getFrameId())
                     .loaderId(evt.getLoaderId())
                     .requestId(evt.getRequestId())
-                    .method(req.getMethod())
-                    .url(url)
                     .resourceType(ResourceType.findByValue(evt.getType()))
-                    .headers(parseHeader(req.getHeaders()))
-                    .hasPostData(Boolean.TRUE.equals(req.getHasPostData()))
-                    .prev(prev)
-                    //postData的内容需要的时候调用接口拿回来, 省内存
-                    //.postData(req.getPostData())
-                    .build();
-            //每个请求的request都记录下来, 后续会用到
-            if (requestMap.putIfAbsent(requestId, request) != null) {
-                //此处用乐观锁
-                while(!requestMap.replace(requestId, prev, request)) {
-                    prev = requestMap.get(requestId);
-                    request.setPrev(prev);
-                }
-            }
-            //frame.emit(REQUEST, request);
-            if (!requestInterceptionEnabled) {
-                //如果启动请求拦截, 则不在此处触发REQUEST事件, 转到拦截器处触发REQUEST事件
-                emit(REQUEST, request);
-            }
+                    .request(evt.getRequest())
+                    .build());
         }
     }
 
@@ -963,6 +966,18 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
             logger.info("request intercepted, requestId={}, interceptorId={}", evt.getNetworkId(), evt.getRequestId());
             String interceptorId = evt.getRequestId();
             String requestId = evt.getNetworkId();
+            if (StringUtils.isEmpty(interceptorId)) {
+                //不存在interceptorId 直接返回
+                return;
+            }
+            RequestEvent requestEvent = RequestEvent.builder()
+                    .requestId(requestId)
+                    .loaderId(requestId)
+                    .interceptorId(interceptorId)
+                    .frameId(evt.getFrameId())
+                    .request(evt.getRequest())
+                    .resourceType(ResourceType.findByValue(evt.getResourceType()))
+                    .build();
             ChromeRequest request = null;
             if (StringUtils.isNotEmpty(requestId)) {
                 request = requestMap.get(requestId);

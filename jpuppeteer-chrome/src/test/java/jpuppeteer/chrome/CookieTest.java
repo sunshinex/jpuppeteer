@@ -22,6 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import sun.misc.IOUtils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -104,20 +105,15 @@ public class CookieTest {
     public void test2() throws Exception {
         Browser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
         ChromePage page = browser.defaultContext().newPage();
+        page.setUserAgent(new UserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"));
+        page.setDevice(Device.builder().width(375).height(667).deviceScaleFactor(1.0).isMobile(true).hasTouch(true).isLandscape(false).build());
         //page.enableRequestInterception(true);
         //page.authenticate("test", "test");
         page.enableRequestInterception();
         page.addListener(FrameEvent.REQUEST, request -> {
             try {
-                if (request.url().getPath().equals("/")) {
-//                    request.continues(ChromeRequest.builder()
-//                            .headers(Lists.newArrayList(new Header("User-Agent", "Android")))
-//                            .build());
-//                    FileInputStream is = new FileInputStream("D:\\bd_logo1.png");
-                    String body = "<script type='text/javascript'>alert(prompt('123', '456'));</script>";
-                    List<Header> headers = new ArrayList<>();
-                    headers.add(new Header("Content-Type", "text/html; charset=utf-8"));
-                    request.respond(200, headers, body.getBytes());
+                if (request.url().getQuery() != null && request.url().getQuery().startsWith("?tm/detail-b/4.2.24/mods/")) {
+                    request.abort();
                 } else {
                     request.continues();
                 }
@@ -125,14 +121,8 @@ public class CookieTest {
                 e.printStackTrace();
             }
         });
-        page.addListener(PageEvent.DIALOG, event -> {
-            try {
-                event.accept("test");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        page.navigate("http://10.199.215.216/");
+
+        page.navigate("http://detail.tmall.com/item.htm?id=584529359954&skuId=4272288400200");
         TimeUnit.HOURS.sleep(1);
     }
 }
