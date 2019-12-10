@@ -20,7 +20,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.junit.Assert;
 import org.junit.Test;
+import sun.misc.IOUtils;
 
+import java.io.FileInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -107,16 +109,14 @@ public class CookieTest {
         page.enableRequestInterception();
         page.addListener(FrameEvent.REQUEST, request -> {
             try {
-                if (request.url().getHost().equals("www.baidu.com")) {
+                if (request.url().getPath().startsWith("/upload/")) {
 //                    request.continues(ChromeRequest.builder()
 //                            .headers(Lists.newArrayList(new Header("User-Agent", "Android")))
 //                            .build());
-                    String body = "<h1>OK</h1>";
-                    body = Base64.getEncoder().encodeToString(body.getBytes());
+                    FileInputStream is = new FileInputStream("D:\\bd_logo1.png");
                     List<Header> headers = new ArrayList<>();
-                    headers.add(new Header("Content-Type", "text/html; charset=UTF8"));
-                    headers.add(new Header("Content-Length", String.valueOf(body.length())));
-                    request.respond(200, headers, body);
+                    headers.add(new Header("Content-Type", "image/png"));
+                    request.respond(200, headers, IOUtils.readFully(is, is.available(), false));
                 } else {
                     request.continues();
                 }
@@ -125,7 +125,7 @@ public class CookieTest {
             }
         });
         //page.navigate("http://10.199.215.216/");
-        page.navigate("https://www.baidu.com/");
+        page.navigate("https://a.vpimg2.com/upload/merchandise/pdcvis/105933/2019/0801/199/00f173d5-e504-4982-b2af-b92f5071f33c.jpg");
         TimeUnit.HOURS.sleep(1);
     }
 }
