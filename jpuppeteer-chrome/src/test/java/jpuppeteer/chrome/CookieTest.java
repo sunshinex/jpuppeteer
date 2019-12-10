@@ -109,14 +109,15 @@ public class CookieTest {
         page.enableRequestInterception();
         page.addListener(FrameEvent.REQUEST, request -> {
             try {
-                if (request.url().getPath().startsWith("/upload/")) {
+                if (request.url().getPath().equals("/")) {
 //                    request.continues(ChromeRequest.builder()
 //                            .headers(Lists.newArrayList(new Header("User-Agent", "Android")))
 //                            .build());
-                    FileInputStream is = new FileInputStream("D:\\bd_logo1.png");
+//                    FileInputStream is = new FileInputStream("D:\\bd_logo1.png");
+                    String body = "<script type='text/javascript'>alert(prompt('123', '456'));</script>";
                     List<Header> headers = new ArrayList<>();
-                    headers.add(new Header("Content-Type", "image/png"));
-                    request.respond(200, headers, IOUtils.readFully(is, is.available(), false));
+                    headers.add(new Header("Content-Type", "text/html; charset=utf-8"));
+                    request.respond(200, headers, body.getBytes());
                 } else {
                     request.continues();
                 }
@@ -124,8 +125,14 @@ public class CookieTest {
                 e.printStackTrace();
             }
         });
-        //page.navigate("http://10.199.215.216/");
-        page.navigate("https://a.vpimg2.com/upload/merchandise/pdcvis/105933/2019/0801/199/00f173d5-e504-4982-b2af-b92f5071f33c.jpg");
+        page.addListener(PageEvent.DIALOG, event -> {
+            try {
+                event.accept("test");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        page.navigate("http://10.199.215.216/");
         TimeUnit.HOURS.sleep(1);
     }
 }

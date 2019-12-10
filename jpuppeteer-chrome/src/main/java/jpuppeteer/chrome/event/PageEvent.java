@@ -8,6 +8,7 @@ import jpuppeteer.cdp.cdp.entity.page.LoadEventFiredEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ExceptionThrownEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
+import jpuppeteer.chrome.ChromeDialog;
 import jpuppeteer.chrome.ChromePage;
 import jpuppeteer.chrome.entity.CookieEvent;
 
@@ -31,7 +32,7 @@ public final class PageEvent<E> extends FrameEvent<E> {
 
     public static final PageEvent<EntryAddedEvent> CONSOLE = new PageEvent<>(EntryAddedEvent.class);
 
-    public static final PageEvent<JavascriptDialogOpeningEvent> DIALOG = new PageEvent<>(JavascriptDialogOpeningEvent.class);
+    public static final PageEvent<ChromeDialog> DIALOG = new PageEvent<>(ChromeDialog.class);
 
     public static final PageEvent<ChromePage> OPENPAGE = new PageEvent<>(ChromePage.class);
 

@@ -151,7 +151,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         session.addListener(PAGE_DOMCONTENTEVENTFIRED, ev -> emit(DOMCONTENTLOADED, ev.getParams().toJavaObject(DOMCONTENTLOADED.eventClass())));
         session.addListener(PAGE_LOADEVENTFIRED, ev -> emit(LOAD, ev.getParams().toJavaObject(LOAD.eventClass())));
         session.addListener(LOG_ENTRYADDED, new ConsoleHandler());
-        session.addListener(PAGE_JAVASCRIPTDIALOGOPENING, ev -> emit(DIALOG, ev.getParams().toJavaObject(DIALOG.eventClass())));
+        session.addListener(PAGE_JAVASCRIPTDIALOGOPENING, new DialogHandler());
         //session.addListener(PAGE_WINDOWOPEN, ev -> emit(POPUP, ev.getParams().toJavaObject(POPUP.eventClass())));
         session.addListener(RUNTIME_EXCEPTIONTHROWN, ev -> emit(PAGEERROR, ev.getParams().toJavaObject(PAGEERROR.eventClass())));
         session.addListener(NETWORK_REQUESTWILLBESENT, new RequestHandler());
@@ -1011,6 +1011,16 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
             } catch (Exception e) {
                 logger.error("auth failed, error={}", e.getMessage(), e);
             }
+        }
+    }
+
+    private class DialogHandler implements Consumer<CDPEvent> {
+
+        @Override
+        public void accept(CDPEvent event) {
+            JavascriptDialogOpeningEvent dlg = event.getParams().toJavaObject(JavascriptDialogOpeningEvent.class);
+            ChromeDialog dialog = new ChromeDialog(page, dlg.getType(), dlg.getMessage(), dlg.getDefaultPrompt());
+            emit(DIALOG, dialog);
         }
     }
 }
