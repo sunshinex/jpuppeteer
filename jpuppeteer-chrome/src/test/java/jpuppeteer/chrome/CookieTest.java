@@ -2,6 +2,7 @@ package jpuppeteer.chrome;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.*;
 import jpuppeteer.api.httpclient.SharedCookieStore;
@@ -120,20 +121,48 @@ public class CookieTest {
         page.setDevice(Device.builder().width(375).height(667).deviceScaleFactor(1.0).isMobile(true).hasTouch(true).isLandscape(false).build());
         //page.enableRequestInterception(true);
         //page.authenticate("test", "test");
-        page.enableRequestInterception();
-        page.addListener(FrameEvent.REQUEST, request -> {
+//        page.enableRequestInterception();
+//        page.addListener(FrameEvent.REQUEST, request -> {
+//            try {
+//                if (request.url() != null && request.url().getQuery() != null && request.url().getQuery().startsWith("?tm/detail-b/4.2.24/mods/")) {
+//                    request.abort();
+//                } else {
+//                    request.continues();
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
+
+        page.addListener(PageEvent.DOMCONTENTLOADED, event -> {
+            String script = "async function abc(){\n" +
+                    "\treturn new Promise((resolve, reject) => {\n" +
+                    "\t\tsetTimeout(function(){\n" +
+                    "\t\t\treject(new Error(\"timeout\"))\n" +
+                    "\t\t}, 10000);\n" +
+                    "\t\tapp.product.onLoad(['price'], function(price){\n" +
+                    "\t\t\tresolve(price);\n" +
+                    "\t\t});\n" +
+                    "\t});\n" +
+                    "}";
             try {
-                if (request.url() != null && request.url().getQuery() != null && request.url().getQuery().startsWith("?tm/detail-b/4.2.24/mods/")) {
-                    request.abort();
-                } else {
-                    request.continues();
-                }
+                JSONObject price = page.evaluate(script, JSONObject.class);
+                System.out.println(price);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+//            try {
+//                if (!page.url().getHost().equals("detail.m.tmall.com")) {
+//                    return;
+//                }
+//                byte[] screenshot = page.screenshot();
+//                page.navigate("data:image/png;base64,"+Base64.getEncoder().encodeToString(screenshot));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
         });
 
-        page.navigate("http://detail.tmall.com/item.htm?id=584529359954&skuId=4272288400200");
+        page.navigate("http://detail.m.tmall.com/item.htm?id=584529359954&skuId=4272288400200");
         TimeUnit.HOURS.sleep(1);
     }
 }
