@@ -1,7 +1,6 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
-import com.sun.webkit.network.data.Handler;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.browser.*;
@@ -794,6 +793,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
                     .securityDetails(securityDetails)
                     .build();
 
+            /* 原始的Response对象中不存在cookie, 按照现在的浏览器存储cookie的方式也不再需要cookie事件, 可以去掉
             Optional<Header> header = headers.stream().filter(h -> StringUtils.equalsIgnoreCase(CookieUtils.SET_COOKIE, h.getName())).findFirst();
             if (header.isPresent()) {
                 try {
@@ -802,6 +802,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
                     logger.warn("emit cookie event failed, error={}", t.getMessage(), t);
                 }
             }
+             */
 
             request.setResponse(response);
             //frame.emit(RESPONSE, response);

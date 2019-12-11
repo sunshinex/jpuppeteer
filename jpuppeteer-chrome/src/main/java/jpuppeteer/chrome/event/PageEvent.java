@@ -38,7 +38,7 @@ public final class PageEvent<E> extends FrameEvent<E> {
 
     public static final PageEvent<ExceptionThrownEvent> PAGEERROR = new PageEvent<>(ExceptionThrownEvent.class);
 
-    public static final PageEvent<CookieEvent> COOKIE = new PageEvent<>(CookieEvent.class);
+//    public static final PageEvent<CookieEvent> COOKIE = new PageEvent<>(CookieEvent.class);
 
 
     private PageEvent(Class<E> eventClass) {
