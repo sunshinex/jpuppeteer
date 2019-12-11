@@ -38,7 +38,6 @@ public class ChromeExecutionContext implements ExecutionContext<CallArgument> {
         request.setFunctionDeclaration(expression);
         request.setArguments(Lists.newArrayList(args));
         request.setExecutionContextId(executionContextId);
-        request.setReturnByValue(true);
         request.setUserGesture(true);
         request.setReturnByValue(returnJSON);
         request.setAwaitPromise(true);
