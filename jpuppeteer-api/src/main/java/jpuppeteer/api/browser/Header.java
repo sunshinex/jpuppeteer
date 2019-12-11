@@ -36,4 +36,13 @@ public class Header {
         String[] tmp = new String[values.size()];
         return values.toArray(tmp);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(name);
+        sb.append(" -> ");
+        sb.append(values.toString());
+        return sb.toString();
+    }
 }
