@@ -908,7 +908,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
                 return;
             }
             frame.createExecutionContext(evt.getContext().getId());
-            logger.info("frame {} init execution with id:{}", frameId, evt.getContext().getId());
+            logger.info("frame {} execution created with id:{}", frameId, evt.getContext().getId());
         }
     }
 
@@ -925,6 +925,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
             if (frame == null) {
                 return;
             }
+            logger.info("frame {} execution destroyed with id:{}", frame.frameId(), evt.getExecutionContextId());
             frame.destroyExecutionContext();
         }
     }
