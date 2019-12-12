@@ -1,6 +1,7 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
+import com.sun.webkit.network.data.Handler;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.browser.*;
@@ -44,7 +45,6 @@ import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
-import jpuppeteer.chrome.entity.CookieEvent;
 import jpuppeteer.chrome.entity.RequestEvent;
 import jpuppeteer.chrome.util.ChromeObjectUtils;
 import jpuppeteer.chrome.util.CookieUtils;
@@ -56,8 +56,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLStreamHandler;
-import java.net.URLStreamHandlerFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -73,6 +71,8 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
     private static final Logger logger = LoggerFactory.getLogger(ChromePage.class);
 
     private static final List<TouchPoint> EMPTY_TOUCHPOINTS = Lists.newArrayListWithCapacity(0);
+
+    private static final Handler DATA_PROTOCOL_HANDLER = new Handler();
 
     private final ChromePage opener;
 
@@ -109,37 +109,6 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
     private String username;
 
     private String password;
-
-    static {
-        URL.setURLStreamHandlerFactory(new Factory());
-    }
-
-    private static class Factory implements URLStreamHandlerFactory {
-
-        private static String[] PACKAGES = {"sun.net.www.protocol", "com.sun.webkit.network"};
-
-        private URLStreamHandler create(String pkg, String protocol) {
-            String className = pkg + "." + protocol + ".Handler";
-            try {
-                Class clazz = Class.forName(className);
-                return (URLStreamHandler)clazz.newInstance();
-            } catch (ReflectiveOperationException e) {
-                throw new RuntimeException("could not load " + protocol + " webkit protocol handler", e);
-            }
-        }
-
-        @Override
-        public URLStreamHandler createURLStreamHandler(String protocol) {
-            for(String pkg : PACKAGES) {
-                try {
-                    return create(pkg, protocol);
-                } catch (Exception e) {
-                    //do nth...
-                }
-            }
-            throw new RuntimeException("could not load " + protocol + " protocol handler");
-        }
-    }
 
     public ChromePage(ChromeContext browserContext, CDPSession session, String targetId, ChromePage opener) throws Exception {
         super(
@@ -699,7 +668,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         String fragment = req.getUrlFragment();
         URL url = null;
         try {
-            url = new URL(null, urlStr + (fragment != null ? fragment : ""));
+            url = new URL(null, urlStr + (fragment != null ? fragment : ""), DATA_PROTOCOL_HANDLER);
         } catch (MalformedURLException e) {
             //do nth... 解析不了的url, 跳过就算了
             logger.error("url parse failed, error={}", e.getMessage(), e);
@@ -760,7 +729,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
             URL url = null;
             try {
-                url = new URL(res.getUrl());
+                url = new URL(null, res.getUrl(), DATA_PROTOCOL_HANDLER);
             } catch (MalformedURLException e) {
                 //do nth... 解析不了的url, 跳过就算了
             }
@@ -894,13 +863,13 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
             URL url = null;
             URL unreachableUrl = null;
             try {
-                url = new URL(evt.getFrame().getUrl());
+                url = new URL(null, evt.getFrame().getUrl(), DATA_PROTOCOL_HANDLER);
             } catch (MalformedURLException e) {
                 //do nth...
             }
             if (StringUtils.isNotEmpty(evt.getFrame().getUnreachableUrl())) {
                 try {
-                    unreachableUrl = new URL(evt.getFrame().getUnreachableUrl());
+                    unreachableUrl = new URL(null, evt.getFrame().getUnreachableUrl(), DATA_PROTOCOL_HANDLER);
                 } catch (MalformedURLException e) {
                     //do nth...
                 }
