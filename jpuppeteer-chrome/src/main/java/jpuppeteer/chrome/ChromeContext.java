@@ -2,6 +2,7 @@ package jpuppeteer.chrome;
 
 import com.alibaba.fastjson.JSON;
 import jpuppeteer.api.browser.BrowserContext;
+import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.constant.PermissionType;
 import jpuppeteer.api.future.DefaultPromise;
 import jpuppeteer.api.future.Promise;
@@ -182,8 +183,8 @@ public class ChromeContext implements BrowserContext {
     }
 
     @Override
-    public List<ChromePage> pages() throws Exception {
-        List<ChromePage> pages = new ArrayList<>(pageMap.size());
+    public List<Page> pages() throws Exception {
+        List<Page> pages = new ArrayList<>(pageMap.size());
         for(Future<ChromePage> promise : pageMap.values()) {
             pages.add(promise.get());
         }
