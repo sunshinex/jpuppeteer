@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface Response {
 
-    <R extends Frame> R frame();
+    Frame frame();
 
     boolean fromCache();
 
@@ -16,7 +16,7 @@ public interface Response {
 
     String remoteAddress();
 
-    <R extends Request> R request();
+    Request request();
 
     SecurityDetails securityDetails();
 

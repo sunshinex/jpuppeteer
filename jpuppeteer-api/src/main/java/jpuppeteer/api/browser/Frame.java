@@ -11,13 +11,13 @@ public interface Frame<P> extends EventEmitter, ExecutionContext<P> {
 
     String frameId();
 
-    <R extends Frame<P>> R parent();
+    Frame<P> parent();
 
     /**
      * child frames
      * @return
      */
-    <R extends Frame<P>> R[] children();
+    Frame<P>[] children();
 
     String content() throws Exception;
 
@@ -35,17 +35,17 @@ public interface Frame<P> extends EventEmitter, ExecutionContext<P> {
         navigate(url, null);
     }
 
-    <R extends Element<P>> R querySelector(String selector) throws Exception;
+    Element<P> querySelector(String selector) throws Exception;
 
-    <R extends Element<P>> List<R> querySelectorAll(String selector) throws Exception;
+    List<? extends Element<P>> querySelectorAll(String selector) throws Exception;
 
-    <R extends BrowserObject<P>> R wait(String expression, int timeout, TimeUnit unit, P... args) throws Exception;
+    BrowserObject<P> wait(String expression, int timeout, TimeUnit unit, P... args) throws Exception;
 
     <R> R wait(String expression, int timeout, TimeUnit unit, Class<R> clazz, P... args) throws Exception;
 
     <R> R wait(String expression, int timeout, TimeUnit unit, TypeReference<R> type, P... args) throws Exception;
 
-    <R extends Element<P>> R waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
+    Element<P> waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
 
 }
 

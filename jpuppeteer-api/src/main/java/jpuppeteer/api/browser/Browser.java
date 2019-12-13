@@ -28,7 +28,7 @@ public interface Browser extends EventEmitter {
      * 如果浏览器存在默认的上下文, 则返回默认的上下文, 否则返回null
      * @return
      */
-    <R extends BrowserContext> R defaultContext();
+    BrowserContext defaultContext();
 
     //@TODO 目前只支持集成启动命令行的模式, 不需要connect, 先屏蔽
 //    void disconnect() throws Exception;

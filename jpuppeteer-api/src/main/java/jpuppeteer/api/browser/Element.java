@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface Element<P> extends BrowserObject<P> {
 
-    <R extends Frame<P>> R frame();
+    Frame<P> frame();
 
     Element<P> querySelector(String selector) throws Exception;
 
-    <R extends Element<P>> List<R> querySelectorAll(String selector) throws Exception;
+    List<? extends Element<P>> querySelectorAll(String selector) throws Exception;
 
     BoundingBox boundingBox() throws Exception;
 

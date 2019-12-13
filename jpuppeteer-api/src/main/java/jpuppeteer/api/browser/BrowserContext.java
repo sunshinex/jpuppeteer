@@ -8,7 +8,7 @@ public interface BrowserContext {
 
     //TODO 后续支持创建context之后, context需要支持事件, 暂时可不支持
 
-    <R extends Browser> R browser();
+    Browser browser();
 
     void resetPermissions() throws Exception;
 
@@ -19,8 +19,8 @@ public interface BrowserContext {
     /**
      * 等同于创建标签页
      */
-    <R extends Page> R newPage() throws Exception;
+    Page newPage() throws Exception;
 
-    <R extends Page> List<R> pages() throws Exception;
+    List<? extends Page> pages() throws Exception;
 
 }

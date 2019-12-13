@@ -22,7 +22,7 @@ public interface Request {
         respond(statusCode, null, null);
     }
 
-    <R extends Frame> R frame();
+    Frame frame();
 
     List<Header> headers();
 
@@ -39,7 +39,7 @@ public interface Request {
 
     ResourceType resourceType();
 
-    <R extends Response> R response();
+    Response response();
 
     URL url();
 

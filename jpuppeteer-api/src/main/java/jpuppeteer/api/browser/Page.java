@@ -10,7 +10,7 @@ public interface Page<P> extends Frame<P> {
 
     void authenticate(String username, String password) throws Exception;
 
-    <R extends Page<P>> R opener();
+    Page<P> opener();
 
     void setCookie(Cookie... cookies) throws Exception;
 
@@ -20,7 +20,7 @@ public interface Page<P> extends Frame<P> {
 
     void bringToFront() throws Exception;
 
-    <R extends BrowserContext> R browserContext();
+    BrowserContext browserContext();
 
     void close();
 

@@ -78,9 +78,8 @@ public class ChromeBrowserObject implements BrowserObject<CallArgument> {
     }
 
     @Override
-    @SuppressWarnings({"unchecked"})
-    public <R extends BrowserObject<CallArgument>> R evaluate(String expression, CallArgument... args) throws Exception {
-        return (R) executionContext.evaluate(SCRIPT_EVALUATE, fillArgs(expression, args));
+    public BrowserObject<CallArgument> evaluate(String expression, CallArgument... args) throws Exception {
+        return executionContext.evaluate(SCRIPT_EVALUATE, fillArgs(expression, args));
     }
 
     @Override
