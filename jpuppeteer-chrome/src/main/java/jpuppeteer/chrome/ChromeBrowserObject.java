@@ -78,12 +78,12 @@ public class ChromeBrowserObject implements BrowserObject<CallArgument> {
     }
 
     @Override
-    public BrowserObject<CallArgument> evaluate(String expression, CallArgument... args) throws Exception {
+    public ChromeBrowserObject evaluate(String expression, CallArgument... args) throws Exception {
         return executionContext.evaluate(SCRIPT_EVALUATE, fillArgs(expression, args));
     }
 
     @Override
-    public ExecutionContext executionContext() {
+    public ChromeExecutionContext executionContext() {
         return executionContext;
     }
 
