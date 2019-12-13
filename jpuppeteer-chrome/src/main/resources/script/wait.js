@@ -6,11 +6,15 @@ async function wait(expression, timeout) {
             return reject("expression is not a vaild function");
         }
         const timer = setInterval(async function(){
-            let result;
-            if (func.constructor.name == "AsyncFunction") {
-                result = await func.apply(undefined, args);
-            } else {
-                result = func.apply(undefined, args);
+            let result = undefined;
+            try {
+                if (func.constructor.name == "AsyncFunction") {
+                    result = await func.apply(undefined, args);
+                } else {
+                    result = func.apply(undefined, args);
+                }
+            } catch (e) {
+                //do nth...
             }
             if (result === null || result === undefined) {
                 return;

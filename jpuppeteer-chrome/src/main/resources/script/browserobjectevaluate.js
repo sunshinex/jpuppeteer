@@ -5,11 +5,15 @@ async function evaluate(self, expression) {
         if (!func instanceof Function) {
             return reject("expression is not a vaild function");
         }
-        if (func.constructor.name == "AsyncFunction") {
-            result = await func.apply(self, args);
-        } else {
-            result = func.apply(self, args);
+        try {
+            if (func.constructor.name == "AsyncFunction") {
+                result = await func.apply(self, args);
+            } else {
+                result = func.apply(self, args);
+            }
+            resolve(result);
+        } catch (e) {
+            reject(e);
         }
-        resolve(result);
     });
 }
