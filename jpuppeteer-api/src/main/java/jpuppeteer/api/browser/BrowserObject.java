@@ -7,13 +7,13 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-public interface BrowserObject {
+public interface BrowserObject<P> extends ExecutionContext<P> {
 
-    <R extends ExecutionContext> R executionContext();
+    <R extends ExecutionContext<P>> R executionContext();
 
-    <R extends BrowserObject> List<R> getProperties() throws Exception;
+    <R extends BrowserObject<P>> List<R> getProperties() throws Exception;
 
-    <R extends BrowserObject> R getProperty(String name) throws Exception;
+    <R extends BrowserObject<P>> R getProperty(String name) throws Exception;
 
     void release() throws Exception;
 

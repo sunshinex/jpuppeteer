@@ -5,13 +5,13 @@ import jpuppeteer.api.constant.MouseDefinition;
 import java.io.File;
 import java.util.List;
 
-public interface Element extends BrowserObject {
+public interface Element<P> extends BrowserObject<P> {
 
-    Frame frame();
+    <R extends Frame<P>> R frame();
 
-    Element querySelector(String selector) throws Exception;
+    Element<P> querySelector(String selector) throws Exception;
 
-    <T extends Element> List<T> querySelectorAll(String selector) throws Exception;
+    <R extends Element<P>> List<R> querySelectorAll(String selector) throws Exception;
 
     BoundingBox boundingBox() throws Exception;
 

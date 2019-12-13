@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
-public class ChromeElement extends ChromeBrowserObject implements Element {
+public class ChromeElement extends ChromeBrowserObject implements Element<CallArgument> {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeElement.class);
 

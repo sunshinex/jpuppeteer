@@ -7,17 +7,17 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public interface Frame<T> extends EventEmitter, ExecutionContext<T> {
+public interface Frame<P> extends EventEmitter, ExecutionContext<P> {
 
     String frameId();
 
-    Frame parent();
+    <R extends Frame<P>> R parent();
 
     /**
      * child frames
      * @return
      */
-    Frame[] children();
+    <R extends Frame<P>> R[] children();
 
     String content() throws Exception;
 
@@ -35,17 +35,17 @@ public interface Frame<T> extends EventEmitter, ExecutionContext<T> {
         navigate(url, null);
     }
 
-    <R extends Element> R querySelector(String selector) throws Exception;
+    <R extends Element<P>> R querySelector(String selector) throws Exception;
 
-    <R extends Element> List<R> querySelectorAll(String selector) throws Exception;
+    <R extends Element<P>> List<R> querySelectorAll(String selector) throws Exception;
 
-    <R extends BrowserObject> R wait(String expression, int timeout, TimeUnit unit, T... args) throws Exception;
+    <R extends BrowserObject<P>> R wait(String expression, int timeout, TimeUnit unit, P... args) throws Exception;
 
-    <R> R wait(String expression, int timeout, TimeUnit unit, Class<R> clazz, T... args) throws Exception;
+    <R> R wait(String expression, int timeout, TimeUnit unit, Class<R> clazz, P... args) throws Exception;
 
-    <R> R wait(String expression, int timeout, TimeUnit unit, TypeReference<R> type, T... args) throws Exception;
+    <R> R wait(String expression, int timeout, TimeUnit unit, TypeReference<R> type, P... args) throws Exception;
 
-    <R extends Element> R waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
+    <R extends Element<P>> R waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
 
 }
 

@@ -7,6 +7,7 @@ import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.cdp.cdp.entity.runtime.CallFunctionOnRequest;
 import jpuppeteer.cdp.cdp.entity.runtime.CallFunctionOnResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,14 @@ public class ChromeExecutionContext implements ExecutionContext<CallArgument> {
         request.setAwaitPromise(true);
         CallFunctionOnResponse response = runtime.callFunctionOn(request, DEFAULT_TIMEOUT);
         if (response.getExceptionDetails() != null) {
-            throw new Exception(response.getExceptionDetails().getException().getDescription());
+            String error = "null";
+            if (StringUtils.isNotEmpty(response.getExceptionDetails().getText())) {
+                error = response.getExceptionDetails().getText();
+            }
+            if (response.getExceptionDetails().getException() != null && StringUtils.isNotEmpty(response.getExceptionDetails().getException().getDescription())) {
+                error = response.getExceptionDetails().getException().getDescription();
+            }
+            throw new Exception(error);
         }
         return new ChromeBrowserObject(runtime, this, response.getResult());
     }

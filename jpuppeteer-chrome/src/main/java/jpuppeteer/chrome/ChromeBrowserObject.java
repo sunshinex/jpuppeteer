@@ -10,6 +10,8 @@ import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
 import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.entity.runtime.*;
 import jpuppeteer.chrome.util.ArgUtils;
+import jpuppeteer.chrome.util.ScriptUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
@@ -20,7 +22,9 @@ import java.util.List;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
-public class ChromeBrowserObject implements BrowserObject {
+public class ChromeBrowserObject implements BrowserObject<CallArgument> {
+
+    private static final String SCRIPT_EVALUATE = ScriptUtils.load("browserobjectevaluate.js");
 
     private static final String NEGATIVE_ZERO = "-0";
 
@@ -53,6 +57,30 @@ public class ChromeBrowserObject implements BrowserObject {
 
     public String getObjectId() {
         return objectId;
+    }
+
+    private CallArgument[] fillArgs(String expression, CallArgument[] args) {
+        CallArgument[] fullArgs = new CallArgument[args.length + 2];
+        fullArgs[0] = ArgUtils.createFromObject(this);
+        fullArgs[1] = ArgUtils.createFromValue(expression);
+        System.arraycopy(args, 0, fullArgs, 2, args.length);
+        return fullArgs;
+    }
+
+    @Override
+    public <R> R evaluate(String expression, Class<R> clazz, CallArgument... args) throws Exception {
+        return executionContext.evaluate(SCRIPT_EVALUATE, clazz, fillArgs(expression, args));
+    }
+
+    @Override
+    public <R> R evaluate(String expression, TypeReference<R> type, CallArgument... args) throws Exception {
+        return executionContext.evaluate(SCRIPT_EVALUATE, type, fillArgs(expression, args));
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked"})
+    public <R extends BrowserObject<CallArgument>> R evaluate(String expression, CallArgument... args) throws Exception {
+        return (R) executionContext.evaluate(SCRIPT_EVALUATE, fillArgs(expression, args));
     }
 
     @Override
