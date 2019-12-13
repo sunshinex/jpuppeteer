@@ -45,7 +45,9 @@ import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
+import jpuppeteer.chrome.constant.ScriptConstants;
 import jpuppeteer.chrome.entity.RequestEvent;
+import jpuppeteer.chrome.util.ArgUtils;
 import jpuppeteer.chrome.util.ChromeObjectUtils;
 import jpuppeteer.chrome.util.CookieUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -595,6 +597,11 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         request.setFormat("png");
         CaptureScreenshotResponse response = page.captureScreenshot(request, DEFAULT_TIMEOUT);
         return Base64.getDecoder().decode(response.getData());
+    }
+
+    @Override
+    public void scroll(int x, int y) throws Exception {
+        evaluate(ScriptConstants.SCROLL, ArgUtils.createFromValue(null), ArgUtils.createFromValue(x), ArgUtils.createFromValue(y));
     }
 
     private static List<Header> parseHeader(Map<String, Object> headerMap) {

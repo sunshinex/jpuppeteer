@@ -4,14 +4,12 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.util.TypeUtils;
 import jpuppeteer.api.browser.BrowserObject;
-import jpuppeteer.api.browser.ExecutionContext;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
 import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.entity.runtime.*;
+import jpuppeteer.chrome.constant.ScriptConstants;
 import jpuppeteer.chrome.util.ArgUtils;
-import jpuppeteer.chrome.util.ScriptUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
@@ -23,8 +21,6 @@ import java.util.List;
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
 public class ChromeBrowserObject implements BrowserObject<CallArgument> {
-
-    private static final String SCRIPT_EVALUATE = ScriptUtils.load("browserobjectevaluate.js");
 
     private static final String NEGATIVE_ZERO = "-0";
 
@@ -69,17 +65,17 @@ public class ChromeBrowserObject implements BrowserObject<CallArgument> {
 
     @Override
     public <R> R evaluate(String expression, Class<R> clazz, CallArgument... args) throws Exception {
-        return executionContext.evaluate(SCRIPT_EVALUATE, clazz, fillArgs(expression, args));
+        return executionContext.evaluate(ScriptConstants.BROWSER_OBJECT_EVALUATE, clazz, fillArgs(expression, args));
     }
 
     @Override
     public <R> R evaluate(String expression, TypeReference<R> type, CallArgument... args) throws Exception {
-        return executionContext.evaluate(SCRIPT_EVALUATE, type, fillArgs(expression, args));
+        return executionContext.evaluate(ScriptConstants.BROWSER_OBJECT_EVALUATE, type, fillArgs(expression, args));
     }
 
     @Override
     public ChromeBrowserObject evaluate(String expression, CallArgument... args) throws Exception {
-        return executionContext.evaluate(SCRIPT_EVALUATE, fillArgs(expression, args));
+        return executionContext.evaluate(ScriptConstants.BROWSER_OBJECT_EVALUATE, fillArgs(expression, args));
     }
 
     @Override

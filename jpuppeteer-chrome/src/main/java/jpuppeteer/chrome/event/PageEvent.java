@@ -3,14 +3,12 @@ package jpuppeteer.chrome.event;
 
 import jpuppeteer.cdp.cdp.entity.log.EntryAddedEvent;
 import jpuppeteer.cdp.cdp.entity.page.DomContentEventFiredEvent;
-import jpuppeteer.cdp.cdp.entity.page.JavascriptDialogOpeningEvent;
 import jpuppeteer.cdp.cdp.entity.page.LoadEventFiredEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ExceptionThrownEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
 import jpuppeteer.chrome.ChromeDialog;
 import jpuppeteer.chrome.ChromePage;
-import jpuppeteer.chrome.entity.CookieEvent;
 
 public final class PageEvent<E> extends FrameEvent<E> {
 

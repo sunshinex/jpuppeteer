@@ -15,9 +15,9 @@ import jpuppeteer.cdp.cdp.entity.dom.SetFileInputFilesRequest;
 import jpuppeteer.cdp.cdp.entity.input.InsertTextRequest;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
+import jpuppeteer.chrome.constant.ScriptConstants;
 import jpuppeteer.chrome.util.ArgUtils;
 import jpuppeteer.chrome.util.MathUtils;
-import jpuppeteer.chrome.util.ScriptUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,12 +33,6 @@ import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 public class ChromeElement extends ChromeBrowserObject implements Element<CallArgument> {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeElement.class);
-
-    private static final String SCRIPT_SELECT = ScriptUtils.load("select.js");
-
-    private static final String SCRIPT_IS_INTERSECTING_VIEWPORT = ScriptUtils.load("isintersectingviewport.js");
-
-    private static final String SCRIPT_SCROLL_INTO_VIEW = ScriptUtils.load("scrollintoview.js");
 
     protected ChromePage page;
 
@@ -89,7 +83,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
 
     @Override
     public boolean isIntersectingViewport() throws Exception {
-        return frame.evaluate(SCRIPT_IS_INTERSECTING_VIEWPORT, Boolean.class, ArgUtils.createFromObjectId(objectId));
+        return frame.evaluate(ScriptConstants.ELEMENT_IS_INTERSECTING_VIEWPORT, Boolean.class, ArgUtils.createFromObjectId(objectId));
     }
 
     @Override
@@ -167,7 +161,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
 
     @Override
     public void scrollIntoView() throws Exception {
-        ChromeBrowserObject object = executionContext.evaluate(SCRIPT_SCROLL_INTO_VIEW, ArgUtils.createFromObjectId(objectId));
+        ChromeBrowserObject object = executionContext.evaluate(ScriptConstants.ELEMENT_SCROLL_INTO_VIEW, ArgUtils.createFromObjectId(objectId));
         object.release();
     }
 
@@ -229,6 +223,11 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
     public void select(String... values) throws Exception {
         CallArgument parent = ArgUtils.createFromObjectId(objectId);
         CallArgument argValues = ArgUtils.createFromValue(values);
-        frame.evaluate(SCRIPT_SELECT, parent, argValues);
+        frame.evaluate(ScriptConstants.ELEMENT_SELECT, parent, argValues);
+    }
+
+    @Override
+    public void scroll(int x, int y) throws Exception {
+        evaluate(ScriptConstants.SCROLL, ArgUtils.createFromObject(this), ArgUtils.createFromValue(x), ArgUtils.createFromValue(y));
     }
 }

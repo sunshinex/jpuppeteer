@@ -2,22 +2,11 @@ package jpuppeteer.chrome.util;
 
 import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.Cookie;
-import jpuppeteer.api.browser.Header;
 import jpuppeteer.cdp.cdp.entity.network.CookieParam;
 import jpuppeteer.cdp.cdp.entity.network.SetCookiesRequest;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.ref.SoftReference;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.text.ParseException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Date;
+import java.util.List;
 
 public class CookieUtils {
 

@@ -17,10 +17,10 @@ import jpuppeteer.cdp.cdp.entity.dom.ResolveNodeResponse;
 import jpuppeteer.cdp.cdp.entity.page.NavigateRequest;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
+import jpuppeteer.chrome.constant.ScriptConstants;
 import jpuppeteer.chrome.event.FrameEvent;
 import jpuppeteer.chrome.util.ArgUtils;
 import jpuppeteer.chrome.util.ChromeObjectUtils;
-import jpuppeteer.chrome.util.ScriptUtils;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -41,12 +41,6 @@ import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 public class ChromeFrame implements Frame<CallArgument> {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeFrame.class);
-
-    private static final String SCRIPT_WAIT = ScriptUtils.load("wait.js");
-
-    private static final String SCRIPT_SET_CONTENT = ScriptUtils.load("setcontent.js");
-
-    private static final String SCRIPT_WAIT_SELECTOR = ScriptUtils.load("waitselector.js");
 
     protected String frameId;
 
@@ -258,7 +252,7 @@ public class ChromeFrame implements Frame<CallArgument> {
     @Override
     public void setContent(String content) throws Exception {
         CallArgument html = ArgUtils.createFromValue(content);
-        evaluate(SCRIPT_SET_CONTENT, html);
+        evaluate(ScriptConstants.SET_CONTENT, html);
     }
 
     @Override
@@ -295,25 +289,25 @@ public class ChromeFrame implements Frame<CallArgument> {
     @Override
     public ChromeBrowserObject wait(String expression, int timeout, TimeUnit unit, CallArgument... args) throws Exception {
         CallArgument[] callArgs = buildWaitArgs(expression, timeout, unit, args);
-        return evaluate(SCRIPT_WAIT, callArgs);
+        return evaluate(ScriptConstants.WAIT, callArgs);
     }
 
     @Override
     public <R> R wait(String expression, int timeout, TimeUnit unit, Class<R> clazz, CallArgument... args) throws Exception {
         CallArgument[] callArgs = buildWaitArgs(expression, timeout, unit, args);
-        return evaluate(SCRIPT_WAIT, clazz, callArgs);
+        return evaluate(ScriptConstants.WAIT, clazz, callArgs);
     }
 
     @Override
     public <R> R wait(String expression, int timeout, TimeUnit unit, TypeReference<R> type, CallArgument... args) throws Exception {
         CallArgument[] callArgs = buildWaitArgs(expression, timeout, unit, args);
-        return evaluate(SCRIPT_WAIT, type, callArgs);
+        return evaluate(ScriptConstants.WAIT, type, callArgs);
     }
 
     @Override
     public ChromeElement waitSelector(String selector, int timeout, TimeUnit unit) throws Exception {
         CallArgument argSelector = ArgUtils.createFromValue(selector);
-        ChromeBrowserObject object = wait(SCRIPT_WAIT_SELECTOR, timeout, unit, argSelector);
+        ChromeBrowserObject object = wait(ScriptConstants.WAIT_SELECTOR, timeout, unit, argSelector);
         if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
             return null;
         }
