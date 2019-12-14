@@ -54,5 +54,5 @@ public interface Element<P> extends BrowserObject<P> {
     //select event
     void select(String... values) throws Exception;
 
-    void scroll(int x, int y) throws Exception;
+    Coordinate scroll(int x, int y) throws Exception;
 }

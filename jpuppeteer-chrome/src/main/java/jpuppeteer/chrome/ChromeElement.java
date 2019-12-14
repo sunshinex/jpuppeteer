@@ -1,5 +1,6 @@
 package jpuppeteer.chrome;
 
+import com.alibaba.fastjson.JSONObject;
 import jpuppeteer.api.browser.BoundingBox;
 import jpuppeteer.api.browser.BoxModel;
 import jpuppeteer.api.browser.Coordinate;
@@ -227,7 +228,8 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
     }
 
     @Override
-    public void scroll(int x, int y) throws Exception {
-        evaluate(ScriptConstants.SCROLL, ArgUtils.createFromObject(this), ArgUtils.createFromValue(x), ArgUtils.createFromValue(y));
+    public Coordinate scroll(int x, int y) throws Exception {
+        JSONObject offset = evaluate(ScriptConstants.SCROLL, JSONObject.class, ArgUtils.createFromObject(this), ArgUtils.createFromValue(x), ArgUtils.createFromValue(y));
+        return new Coordinate(offset.getDouble("scrollX"), offset.getDouble("scrollY"));
     }
 }

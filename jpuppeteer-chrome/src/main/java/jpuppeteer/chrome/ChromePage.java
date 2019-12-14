@@ -1,5 +1,6 @@
 package jpuppeteer.chrome;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.sun.webkit.network.data.Handler;
 import jpuppeteer.api.browser.Cookie;
@@ -600,8 +601,9 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
     }
 
     @Override
-    public void scroll(int x, int y) throws Exception {
-        evaluate(ScriptConstants.SCROLL, ArgUtils.createFromValue(null), ArgUtils.createFromValue(x), ArgUtils.createFromValue(y));
+    public Coordinate scroll(int x, int y) throws Exception {
+        JSONObject offset = evaluate(ScriptConstants.SCROLL, JSONObject.class, ArgUtils.createFromValue(null), ArgUtils.createFromValue(x), ArgUtils.createFromValue(y));
+        return new Coordinate(offset.getDouble("scrollX"), offset.getDouble("scrollY"));
     }
 
     private static List<Header> parseHeader(Map<String, Object> headerMap) {

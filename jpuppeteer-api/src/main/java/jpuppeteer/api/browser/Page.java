@@ -112,6 +112,6 @@ public interface Page<P> extends Frame<P> {
      */
     byte[] screenshot() throws Exception;
 
-    void scroll(int x, int y) throws Exception;
+    Coordinate scroll(int x, int y) throws Exception;
 
 }
