@@ -25,7 +25,7 @@ async function scrollIntoView(element) {
             threshold : [0, 0.1]
         });
         observer.observe(element);
-        element.scrollIntoView();
+        element.scrollIntoView({block: "center", inline:"center", behavior:"instant"});
 
         const timeout = setInterval(function(){
             if (Date.now() - lastTime > 1000) {

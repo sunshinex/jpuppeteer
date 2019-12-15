@@ -1,6 +1,7 @@
 package jpuppeteer.chrome;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.BoundingBox;
 import jpuppeteer.api.browser.BoxModel;
 import jpuppeteer.api.browser.Coordinate;
@@ -9,16 +10,15 @@ import jpuppeteer.api.constant.MouseDefinition;
 import jpuppeteer.api.constant.USKeyboardDefinition;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
-import jpuppeteer.cdp.cdp.entity.dom.FocusRequest;
-import jpuppeteer.cdp.cdp.entity.dom.GetBoxModelRequest;
-import jpuppeteer.cdp.cdp.entity.dom.GetBoxModelResponse;
-import jpuppeteer.cdp.cdp.entity.dom.SetFileInputFilesRequest;
+import jpuppeteer.cdp.cdp.entity.dom.*;
 import jpuppeteer.cdp.cdp.entity.input.InsertTextRequest;
+import jpuppeteer.cdp.cdp.entity.page.GetLayoutMetricsResponse;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.chrome.constant.ScriptConstants;
 import jpuppeteer.chrome.util.ArgUtils;
 import jpuppeteer.chrome.util.MathUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
@@ -130,14 +131,6 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
         return coordinates;
     }
 
-    private Coordinate getCenter() throws Exception {
-        BoundingBox box = boundingBox();
-        return new Coordinate(
-                box.getX() + box.getWidth() / 2,
-                box.getY() + box.getHeight() / 2
-        );
-    }
-
     @Override
     public void uploadFile(File... files) throws Exception {
         List<String> names = Arrays.stream(files).map(file -> file.getAbsolutePath()).collect(Collectors.toList());
@@ -156,7 +149,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
 
     @Override
     public void hover() throws Exception {
-        Coordinate center = getCenter();
+        Coordinate center = clickable();
         page.mouseMove(center.getX(), center.getY(), 1);
     }
 
@@ -170,6 +163,50 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
         InsertTextRequest request = new InsertTextRequest();
         request.setText(text);
         frame.input.insertText(request, DEFAULT_TIMEOUT);
+    }
+
+    private Coordinate clickable() throws Exception {
+        GetContentQuadsRequest contentQuadsRequest = new GetContentQuadsRequest();
+        contentQuadsRequest.setObjectId(objectId);
+        GetContentQuadsResponse contentQuads = frame.dom.getContentQuads(contentQuadsRequest, DEFAULT_TIMEOUT);
+        GetLayoutMetricsResponse layout = frame.page.getLayoutMetrics(DEFAULT_TIMEOUT);
+        if (contentQuads == null || CollectionUtils.isEmpty(contentQuads.getQuads())) {
+            throw new Exception("Node is either not visible or not an HTMLElement");
+        }
+        int clientWidth = layout.getLayoutViewport().getClientWidth();
+        int clientHeight = layout.getLayoutViewport().getClientHeight();
+        List<List<Coordinate>> quads = contentQuads.getQuads().stream()
+                .map(quad -> Lists.newArrayList(
+                        new Coordinate(quad.get(0), quad.get(1)),
+                        new Coordinate(quad.get(2), quad.get(3)),
+                        new Coordinate(quad.get(4), quad.get(5)),
+                        new Coordinate(quad.get(6), quad.get(7))
+                ))
+                .map((Function<List<Coordinate>, List<Coordinate>>) coordinates -> coordinates.stream().map(coordinate -> new Coordinate(
+                        Math.min(Math.max(coordinate.getX(), 0), clientWidth),
+                        Math.min(Math.max(coordinate.getY(), 0), clientHeight)
+                )).collect(Collectors.toList()))
+                .filter(coordinates -> {
+                    int area = 0;
+                    for (int i = 0; i < coordinates.size(); ++i) {
+                        Coordinate p1 = coordinates.get(i);
+                        Coordinate p2 = coordinates.get((i + 1) % coordinates.size());
+                        area += (p1.getX() * p2.getY() - p2.getX() * p1.getY()) / 2;
+                    }
+                    return Math.abs(area) > 1;
+                })
+                .collect(Collectors.toList());
+        if (quads == null || CollectionUtils.isEmpty(quads)) {
+            throw new Exception("Node is either not visible or not an HTMLElement");
+        }
+        List<Coordinate> quad = quads.get(0);
+        int x = 0;
+        int y = 0;
+        for(Coordinate coord : quad) {
+            x += coord.getX();
+            y += coord.getY();
+        }
+        return new Coordinate(x / 4, y / 4);
     }
 
     @Override
@@ -186,7 +223,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
     @Override
     public void tap(int delay) throws Exception {
         scrollIntoView();
-        Coordinate center = getCenter();
+        Coordinate center = clickable();
         page.touchStart(center.getX(), center.getY());
         if (delay > 0) {
             TimeUnit.MILLISECONDS.sleep(delay);
