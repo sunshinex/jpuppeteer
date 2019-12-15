@@ -232,4 +232,14 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
         JSONObject offset = evaluate(ScriptConstants.SCROLL, JSONObject.class, ArgUtils.createFromObject(this), ArgUtils.createFromValue(x), ArgUtils.createFromValue(y));
         return new Coordinate(offset.getDouble("scrollX"), offset.getDouble("scrollY"));
     }
+
+    @Override
+    public String html() throws Exception {
+        return evaluate(ScriptConstants.ELEMENT_HTML, String.class);
+    }
+
+    @Override
+    public String text() throws Exception {
+        return evaluate(ScriptConstants.ELEMENT_TEXT, String.class);
+    }
 }

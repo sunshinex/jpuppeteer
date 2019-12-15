@@ -55,4 +55,8 @@ public interface Element<P> extends BrowserObject<P> {
     void select(String... values) throws Exception;
 
     Coordinate scroll(int x, int y) throws Exception;
+
+    String html() throws Exception;
+
+    String text() throws Exception;
 }

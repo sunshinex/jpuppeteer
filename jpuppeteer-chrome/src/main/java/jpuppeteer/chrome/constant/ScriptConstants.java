@@ -20,4 +20,8 @@ public class ScriptConstants {
 
     public static final String WAIT_SELECTOR = ScriptUtils.load("waitselector.js");
 
+    public static final String ELEMENT_HTML = ScriptUtils.load("elementhtml.js");
+
+    public static final String ELEMENT_TEXT = ScriptUtils.load("elementtext.js");
+
 }
