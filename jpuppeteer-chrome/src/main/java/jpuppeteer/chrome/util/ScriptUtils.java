@@ -20,16 +20,16 @@ public class ScriptUtils {
         }
         try {
             InputStreamReader reader = new InputStreamReader(is);
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             while (true) {
                 char[] chars = new char[8192];
                 int size = reader.read(chars);
                 if (size == -1) {
                     break;
                 }
-                buffer.append(chars, 0, size);
+                sb.append(chars, 0, size);
             }
-            return buffer.toString();
+            return sb.toString();
         } catch (Throwable cause) {
             return null;
         }
