@@ -1,11 +1,12 @@
 async function wait(expression, timeout) {
     return await new Promise(async (resolve, reject) => {
+        let isTimeout = false;
         const args = Array.prototype.slice.call(arguments, 2);
         const func = eval("(" + expression + ")");
         if (!func instanceof Function) {
             return reject("expression is not a vaild function");
         }
-        const timer = setInterval(async function(){
+        async function handler() {
             let result = undefined;
             try {
                 if (func.constructor.name == "AsyncFunction") {
@@ -13,17 +14,24 @@ async function wait(expression, timeout) {
                 } else {
                     result = func.apply(undefined, args);
                 }
+                if (isTimeout) {
+                    //执行超时, 不需要往后执行
+                    return;
+                }
+                if (result === null || result === undefined) {
+                    //未取得结果, 需要继续轮询
+                    return setTimeout(handler, 100);
+                }
+                //成功取得轮询结果
+                return resolve(result);
             } catch (e) {
-                //do nth...
+                //执行异常
+                return reject(e);
             }
-            if (result === null || result === undefined) {
-                return;
-            }
-            clearInterval(timer);
-            resolve(result);
-        }, 100);
+        }
+        setTimeout(handler, 100);
         setTimeout(function(){
-            clearInterval(timer);
+            isTimeout = true;
             reject(new Error("timeout"));
         }, timeout);
     });
