@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
@@ -149,7 +148,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
 
     @Override
     public void hover() throws Exception {
-        Coordinate center = clickable();
+        Coordinate center = clickablePoint();
         page.mouseMove(center.getX(), center.getY(), 1);
     }
 
@@ -165,7 +164,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
         frame.input.insertText(request, DEFAULT_TIMEOUT);
     }
 
-    private Coordinate clickable() throws Exception {
+    public Coordinate clickablePoint() throws Exception {
         GetContentQuadsRequest contentQuadsRequest = new GetContentQuadsRequest();
         contentQuadsRequest.setObjectId(objectId);
         GetContentQuadsResponse contentQuads = frame.dom.getContentQuads(contentQuadsRequest, DEFAULT_TIMEOUT);
@@ -182,7 +181,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
                         new Coordinate(quad.get(4), quad.get(5)),
                         new Coordinate(quad.get(6), quad.get(7))
                 ))
-                .map((Function<List<Coordinate>, List<Coordinate>>) coordinates -> coordinates.stream().map(coordinate -> new Coordinate(
+                .map(coordinates -> coordinates.stream().map(coordinate -> new Coordinate(
                         Math.min(Math.max(coordinate.getX(), 0), clientWidth),
                         Math.min(Math.max(coordinate.getY(), 0), clientHeight)
                 )).collect(Collectors.toList()))
@@ -223,7 +222,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
     @Override
     public void tap(int delay) throws Exception {
         scrollIntoView();
-        Coordinate center = clickable();
+        Coordinate center = clickablePoint();
         page.touchStart(center.getX(), center.getY());
         if (delay > 0) {
             TimeUnit.MILLISECONDS.sleep(delay);
