@@ -74,9 +74,6 @@ public class ChromeLauncher implements Launcher {
         if (!chromeArguments.isPipe()) {
             //等待chrome启动成功的debug listening输出
             URI uri = waitForListening();
-            if (uri == null) {
-                throw new RuntimeException("parse listening error");
-            }
             connection = new WebSocketConnection(uri);
         } else {
             throw new Exception("unsupport pipe debug mode");
