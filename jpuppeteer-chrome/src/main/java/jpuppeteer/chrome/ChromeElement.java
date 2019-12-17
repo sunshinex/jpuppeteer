@@ -154,8 +154,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
 
     @Override
     public void scrollIntoView() throws Exception {
-        ChromeBrowserObject object = executionContext.evaluate(ScriptConstants.ELEMENT_SCROLL_INTO_VIEW, ArgUtils.createFromObjectId(objectId));
-        object.release();
+        executionContext.evaluate(ScriptConstants.ELEMENT_SCROLL_INTO_VIEW, ArgUtils.createFromObjectId(objectId));
     }
 
     private void insertText(String text) throws Exception {
