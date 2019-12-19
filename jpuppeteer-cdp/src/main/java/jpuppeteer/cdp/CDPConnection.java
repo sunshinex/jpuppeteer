@@ -85,6 +85,8 @@ public abstract class CDPConnection implements Closeable {
         try {
             sendInternal(json);
         } catch (IOException ioe) {
+            //发送请求的过程中发生异常, 需要remove
+            requestMap.remove(id);
             promise.setFailure(ioe);
             logger.error("internal send error, error={}", ioe.getMessage(), ioe);
         }
