@@ -3,9 +3,11 @@ package jpuppeteer.cdp;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.google.common.collect.MapMaker;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.GenericEventEmitter;
 import jpuppeteer.api.future.DefaultPromise;
+import jpuppeteer.api.future.Promise;
 import jpuppeteer.cdp.cdp.CDPEventType;
 import jpuppeteer.cdp.constant.TargetType;
 import org.apache.commons.collections4.MapUtils;
@@ -15,7 +17,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -38,15 +43,16 @@ public abstract class CDPConnection implements Closeable {
 
     private final AtomicInteger messageId;
 
-    protected final Map<Integer, RequestFuture> requestMap;
+    protected final Map<Integer, Promise<JSONObject>> requestMap;
 
     private volatile Map<String/*sessionId*/, CDPSession> sessionMap;
 
     protected CDPConnection() {
         this.events = new GenericEventEmitter();
         this.messageId = new AtomicInteger(0);
-        this.requestMap = new ConcurrentHashMap<>();
-        this.sessionMap = new ConcurrentHashMap<>();
+        MapMaker mapMaker = new MapMaker().weakValues().concurrencyLevel(16);
+        this.requestMap = mapMaker.makeMap();
+        this.sessionMap = mapMaker.makeMap();
     }
 
     public CDPSession createSession(String sessionId) {
@@ -60,11 +66,10 @@ public abstract class CDPConnection implements Closeable {
     }
 
     private JSONObject sendBase(String method, Object params, Map<String, Object> extra, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
-        RequestFuture future = send0(method, params, extra);
-        return future.get(timeout, TimeUnit.SECONDS);
+        return send0(method, params, extra).get(timeout, TimeUnit.SECONDS);
     }
 
-    private RequestFuture send0(String method, Object params, Map<String, Object> extra) {
+    private Future<JSONObject> send0(String method, Object params, Map<String, Object> extra) {
         JSONObject json = new JSONObject();
         int id = messageId.getAndIncrement();
         //避免extra中的内容会覆盖ID, METHOD, PARAMS, 所以在前面先put进去
@@ -74,16 +79,16 @@ public abstract class CDPConnection implements Closeable {
         json.put(ID, id);
         json.put(METHOD, method);
         json.put(PARAMS, params);
-        RequestFuture future = new RequestFuture(id);
-        requestMap.put(id, future);
+        Promise<JSONObject> promise = new DefaultPromise<>();
+        requestMap.put(id, promise);
         logger.debug("==> send method={}, id={}, extra={}, params={}", method, id, JSON.toJSONString(extra), JSON.toJSONString(params));
         try {
             sendInternal(json);
         } catch (IOException ioe) {
-            future.setFailure(ioe);
+            promise.setFailure(ioe);
             logger.error("internal send error, error={}", ioe.getMessage(), ioe);
         }
-        return future;
+        return promise;
     }
 
     public void addListener(CDPEventType eventType, Consumer<CDPEvent> consumer) {
@@ -167,47 +172,22 @@ public abstract class CDPConnection implements Closeable {
             throw new IllegalArgumentException("attribute \"id\" can not be null");
         }
         Integer id = json.getInteger(ID);
-        RequestFuture future = requestMap.get(id);
-        if (future == null) {
+        Promise<JSONObject> promise = requestMap.get(id);
+        if (promise == null) {
             throw new RuntimeException("invalid id="+id);
         }
+        //接收成功之后删除requestMap中对应的节点
+        requestMap.remove(id);
         if (json.containsKey(ERROR)) {
             JSONObject error = json.getJSONObject(ERROR);
-            future.setFailure(new CDPException(error.getIntValue("code"), error.getString("message")));
+            promise.setFailure(new CDPException(error.getIntValue("code"), error.getString("message")));
         } else {
-            future.setSuccess(json.getJSONObject(RESULT));
+            promise.setSuccess(json.getJSONObject(RESULT));
         }
     }
 
     public abstract void open() throws IOException, InterruptedException;
 
     protected abstract void sendInternal(JSONObject request) throws IOException;
-
-    class RequestFuture extends DefaultPromise<JSONObject> {
-
-        private final int id;
-
-        public RequestFuture(int id) {
-            this.id = id;
-        }
-
-        @Override
-        public JSONObject get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-            try {
-                return super.get(timeout, unit);
-            } finally {
-                requestMap.remove(id);
-            }
-        }
-
-        @Override
-        public JSONObject get() throws InterruptedException, ExecutionException {
-            try {
-                return super.get();
-            } finally {
-                requestMap.remove(id);
-            }
-        }
-    }
 
 }
