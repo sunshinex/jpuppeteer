@@ -158,6 +158,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         enableDom();
 
         //绑定事件
+        session.addListener(TARGET_TARGETINFOCHANGED, event -> clear());
         session.addListener(TARGET_TARGETCRASHED, new CrashedHandler());
         session.addListener(TARGET_TARGETDESTROYED, new DestroyedHandler());
         session.addListener(PAGE_LIFECYCLEEVENT, new LifecycleHandler());
@@ -614,14 +615,17 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
     }
 
     @Override
-    public void clear() throws Exception {
+    public void clear() {
         children.clear();
         //清空所有的request
         requestMap.clear();
         //清空按键事件
         pressedKeys.clear();
-        //清空功能按键
+        //重置功能按键
         keyModifiers = 0;
+        //重置鼠标位置
+        mouseX = 0;
+        mouseY = 0;
         logger.info("clear page success, frameId={}", frameId);
     }
 
