@@ -1,6 +1,8 @@
 package jpuppeteer.chrome;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
+import com.google.common.collect.MapMaker;
 import jpuppeteer.api.browser.BrowserContext;
 import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.constant.PermissionType;
@@ -15,17 +17,14 @@ import jpuppeteer.cdp.cdp.entity.target.CloseTargetRequest;
 import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
 import jpuppeteer.cdp.constant.TargetType;
 import jpuppeteer.chrome.event.PageEvent;
-import jpuppeteer.chrome.util.ImmediateFuture;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -42,17 +41,21 @@ public class ChromeContext implements BrowserContext {
 
     private String browserContextId;
 
-    private Map<String, Future<ChromePage>> pageMap;
+    private Map<String, ChromePage> pageMap;
 
     private Browser domainBrowser;
 
     private Target target;
 
+    private Map<String, Promise<ChromePage>> promiseMap;
+
     public ChromeContext(CDPConnection connection, ChromeBrowser browser, String browserContextId) {
         this.connection = connection;
         this.browser = browser;
         this.browserContextId = browserContextId;
-        this.pageMap = new ConcurrentHashMap<>();
+        MapMaker mapMaker = new MapMaker().weakValues().concurrencyLevel(16);
+        this.pageMap = mapMaker.makeMap();
+        this.promiseMap = new ConcurrentHashMap<>();
         this.domainBrowser = new Browser(connection);
         this.target = new Target(connection);
         browser.addListener(TARGETCREATED, event -> {
@@ -79,34 +82,31 @@ public class ChromeContext implements BrowserContext {
             String openerId = target.getOpenerId();
             ChromePage opener = null;
             if (StringUtils.isNotEmpty(openerId)) {
-                if (!pageMap.containsKey(openerId)) {
-                    logger.error("opener not found");
+                opener = pageMap.get(openerId);
+                if (opener == null) {
+                    logger.error("opener not found, openerId={}", openerId);
                     return;
-                } else {
-                    try {
-                        opener = pageMap.get(openerId).get(30, TimeUnit.SECONDS);
-                    } catch (Exception e) {
-                        logger.error("opener future get failed, error={}", e.getMessage(), e);
-                        return;
-                    }
                 }
             }
+            Promise<ChromePage> promise = promiseMap.get(targetId);
             try {
                 ChromePage page = new ChromePage(this, connection.createSession(sessionId), targetId, opener);
+                synchronized (pageMap) {
+                    if (pageMap.containsKey(targetId)) {
+                        logger.warn("page exists, will be cover");
+                    }
+                    pageMap.put(targetId, page);
+                }
+                if (promise != null) {
+                    promise.setSuccess(page);
+                }
                 if (opener != null) {
                     opener.emit(PageEvent.OPENPAGE, page);
                 }
-                Future<ChromePage> future;
-                synchronized (pageMap) {
-                    future = pageMap.get(targetId);
-                }
-                if (future != null) {
-                    Promise<ChromePage> promise = (Promise<ChromePage>) future;
-                    promise.setSuccess(page);
-                } else {
-                    pageMap.put(targetId, new ImmediateFuture<>(page));
-                }
             } catch (Exception e) {
+                if (promise != null) {
+                    promise.setFailure(e);
+                }
                 logger.error("create page failed, error={}", e.getMessage(), e);
             }
         });
@@ -116,16 +116,7 @@ public class ChromeContext implements BrowserContext {
     }
 
     private void cleanUp(String targetId) {
-        Future<ChromePage> future = pageMap.get(targetId);
-        if (future == null) {
-            return;
-        }
-        ChromePage page = null;
-        try {
-            page = future.get();
-        } catch (Exception e) {
-            logger.error("page future error, targetId={}, error={}", targetId, e.getMessage(), e);
-        }
+        ChromePage page = pageMap.get(targetId);
         if (page == null) {
             return;
         }
@@ -166,28 +157,22 @@ public class ChromeContext implements BrowserContext {
     @Override
     public ChromePage newPage() throws Exception {
         Promise<ChromePage> promise = new DefaultPromise<>();
-        String targetId;
-        synchronized (pageMap) {
-            targetId = browser.createTarget(browserContextId);
-            pageMap.put(targetId, promise);
-        }
+        String targetId = browser.createTarget(browserContextId);
+        promiseMap.put(targetId, promise);
         try {
-            return promise.get(30, TimeUnit.SECONDS);
+            return promise.get(5, TimeUnit.SECONDS);
         } catch (Exception e) {
-            //发生异常的时候关闭页面
             CloseTargetRequest request = new CloseTargetRequest();
             request.setTargetId(targetId);
             target.closeTarget(request, DEFAULT_TIMEOUT);
             throw e;
+        } finally {
+            promiseMap.remove(targetId);
         }
     }
 
     @Override
     public List<Page> pages() throws Exception {
-        List<Page> pages = new ArrayList<>(pageMap.size());
-        for(Future<ChromePage> promise : pageMap.values()) {
-            pages.add(promise.get());
-        }
-        return pages;
+        return Lists.newArrayList(pageMap.values());
     }
 }

@@ -46,6 +46,7 @@ import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
+import jpuppeteer.cdp.cdp.entity.target.TargetInfoChangedEvent;
 import jpuppeteer.chrome.constant.ScriptConstants;
 import jpuppeteer.chrome.entity.RequestEvent;
 import jpuppeteer.chrome.util.ArgUtils;
@@ -91,6 +92,12 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     protected Fetch fetch;
 
+    /**
+     * 此处从ConcurrentHashMap改为Weak Value HashMap修复了导致内存泄漏的问题,
+     * 但是引入了另外一个问题, 就是requestFail/requestFinished/response事件会找不到之前的request
+     * 所以暂时的处理方案是在Target.targetInfoChanged的时候将requestMap清空, 但是还是可能会存在chrome不发送事件的情况
+     * 还是会造成泄漏
+     */
     private volatile Map<String/*requestId*/, ChromeRequest> requestMap;
 
     private UserAgent userAgent;
@@ -131,7 +138,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         this.network = new Network(session);
         this.fetch = new Fetch(session);
 
-        this.requestMap = new ConcurrentHashMap<>();
+        this.requestMap = new ConcurrentHashMap<>();//new MapMaker().weakValues().concurrencyLevel(16).makeMap();
         this.userAgent = null;
         this.device = null;
         this.close = false;
@@ -151,6 +158,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         enableDom();
 
         //绑定事件
+        session.addListener(TARGET_TARGETINFOCHANGED, new ChangedHandler());
         session.addListener(TARGET_TARGETCRASHED, new CrashedHandler());
         session.addListener(TARGET_TARGETDESTROYED, new DestroyedHandler());
         session.addListener(PAGE_LIFECYCLEEVENT, new LifecycleHandler());
@@ -626,6 +634,18 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
             }
         }
         return headers;
+    }
+
+    private class ChangedHandler implements Consumer<CDPEvent> {
+
+        @Override
+        public void accept(CDPEvent event) {
+            TargetInfoChangedEvent evt = event.getParams().toJavaObject(TargetInfoChangedEvent.class);
+            if (!frameId.equals(evt.getTargetInfo().getTargetId())) {
+                return;
+            }
+            requestMap.clear();
+        }
     }
 
     private class DestroyedHandler implements Consumer<CDPEvent> {
