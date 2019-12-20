@@ -592,8 +592,10 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
     }
 
     @Override
-    public void reload() throws Exception {
-        page.reload(null, DEFAULT_TIMEOUT);
+    public void reload(boolean force) throws Exception {
+        ReloadRequest request = new ReloadRequest();
+        request.setIgnoreCache(force);
+        page.reload(request, DEFAULT_TIMEOUT);
     }
 
     public void crash() throws Exception {

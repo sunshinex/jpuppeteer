@@ -34,7 +34,16 @@ public interface Page<P> extends Frame<P> {
 
     boolean isClosed();
 
-    void reload() throws Exception;
+    /**
+     * 重新加载
+     * @param force true=disable cache/false=enable cache
+     * @throws Exception
+     */
+    void reload(boolean force) throws Exception;
+
+    default void reload() throws Exception {
+        reload(false);
+    }
 
     void setByPassCSP(boolean enable) throws Exception;
 
