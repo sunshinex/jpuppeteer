@@ -50,9 +50,8 @@ public abstract class CDPConnection implements Closeable {
     protected CDPConnection() {
         this.events = new GenericEventEmitter();
         this.messageId = new AtomicInteger(0);
-        MapMaker mapMaker = new MapMaker().weakValues().concurrencyLevel(16);
-        this.requestMap = mapMaker.makeMap();
-        this.sessionMap = mapMaker.makeMap();
+        this.requestMap = new MapMaker().weakValues().concurrencyLevel(16).makeMap();
+        this.sessionMap = new ConcurrentHashMap<>();
     }
 
     public CDPSession createSession(String sessionId) {
