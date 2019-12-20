@@ -158,7 +158,6 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         enableDom();
 
         //绑定事件
-        session.addListener(TARGET_TARGETINFOCHANGED, new ChangedHandler());
         session.addListener(TARGET_TARGETCRASHED, new CrashedHandler());
         session.addListener(TARGET_TARGETDESTROYED, new DestroyedHandler());
         session.addListener(PAGE_LIFECYCLEEVENT, new LifecycleHandler());
@@ -614,6 +613,18 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         return new Coordinate(offset.getDouble("scrollX"), offset.getDouble("scrollY"));
     }
 
+    @Override
+    public void clear() throws Exception {
+        children.clear();
+        //清空所有的request
+        requestMap.clear();
+        //清空按键事件
+        pressedKeys.clear();
+        //清空功能按键
+        keyModifiers = 0;
+        logger.info("clear page success, frameId={}", frameId);
+    }
+
     private static List<Header> parseHeader(Map<String, Object> headerMap) {
         List<Header> headers = Lists.newArrayListWithCapacity(0);
         if (MapUtils.isNotEmpty(headerMap)) {
@@ -634,18 +645,6 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
             }
         }
         return headers;
-    }
-
-    private class ChangedHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            TargetInfoChangedEvent evt = event.getParams().toJavaObject(TargetInfoChangedEvent.class);
-            if (!frameId.equals(evt.getTargetInfo().getTargetId())) {
-                return;
-            }
-            requestMap.clear();
-        }
     }
 
     private class DestroyedHandler implements Consumer<CDPEvent> {
@@ -804,7 +803,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
             request.setResponse(response);
             //frame.emit(RESPONSE, response);
-            emit(RESPONSE, response);
+            //emit(RESPONSE, response);
         }
     }
 
@@ -817,16 +816,16 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
             if (request == null) {
                 return;
             }
-            ChromeFrame frame = find(request.getFrame().frameId);
-            if (frame == null) {
-                return;
-            }
-            ChromeRequestFailed requestFailed = new ChromeRequestFailed();
-            requestFailed.setRequest(request);
-            requestFailed.setCanceled(evt.getCanceled());
-            requestFailed.setBlockedReason(BlockedReason.findByValue(evt.getBlockedReason()));
-            requestFailed.setErrorText(evt.getErrorText());
             try {
+                ChromeFrame frame = find(request.getFrame().frameId);
+                if (frame == null) {
+                    return;
+                }
+                ChromeRequestFailed requestFailed = new ChromeRequestFailed();
+                requestFailed.setRequest(request);
+                requestFailed.setCanceled(evt.getCanceled());
+                requestFailed.setBlockedReason(BlockedReason.findByValue(evt.getBlockedReason()));
+                requestFailed.setErrorText(evt.getErrorText());
                 //frame.emit(REQUESTFAILED, requestFailed);
                 emit(REQUESTFAILED, requestFailed);
             } finally {
@@ -844,12 +843,16 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
             if (request == null) {
                 return;
             }
-            ChromeFrame frame = find(request.getFrame().frameId);
-            if (frame == null) {
-                return;
+            try {
+                ChromeFrame frame = find(request.getFrame().frameId);
+                if (frame == null) {
+                    return;
+                }
+                //frame.emit(REQUESTFINISHED, request);
+                emit(REQUESTFINISHED, request);
+            } finally {
+                requestMap.remove(evt.getRequestId());
             }
-            //frame.emit(REQUESTFINISHED, request);
-            emit(REQUESTFINISHED, request);
         }
     }
 

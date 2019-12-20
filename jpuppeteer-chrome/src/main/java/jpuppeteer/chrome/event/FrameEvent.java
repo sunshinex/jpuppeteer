@@ -20,7 +20,7 @@ public class FrameEvent<E> extends AbstractEvent<E> {
 
     public static final FrameEvent<ChromeRequest> REQUEST = new FrameEvent<>(ChromeRequest.class);
 
-    public static final FrameEvent<ChromeResponse> RESPONSE = new FrameEvent<>(ChromeResponse.class);
+    //public static final FrameEvent<ChromeResponse> RESPONSE = new FrameEvent<>(ChromeResponse.class);
 
     public static final FrameEvent<ChromeRequestFailed> REQUESTFAILED = new FrameEvent<>(ChromeRequestFailed.class);
 
