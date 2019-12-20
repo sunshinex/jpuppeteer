@@ -673,6 +673,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
             if (!frameId.equals(evt.getTargetId())) {
                 return;
             }
+            clear();
             emit(ERROR, evt);
         }
     }
