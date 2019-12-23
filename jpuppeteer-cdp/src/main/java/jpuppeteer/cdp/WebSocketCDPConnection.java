@@ -9,16 +9,16 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URI;
 
-public class WebSocketConnection extends CDPConnection {
+public class WebSocketCDPConnection extends CDPConnection {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketConnection.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketCDPConnection.class);
 
     private URI uri;
 
     private WebSocketClient client;
 
-    public WebSocketConnection(URI uri) {
-        super();
+    public WebSocketCDPConnection(URI uri) {
+        super(uri.getHost() + ":" + uri.getPort());
         this.uri = uri;
         this.client = new CDPWebSocketClient(this.uri);
     }

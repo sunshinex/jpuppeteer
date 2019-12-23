@@ -5,7 +5,7 @@ import jpuppeteer.api.event.EventEmitter;
 
 import java.util.List;
 
-public interface BrowserContext extends EventEmitter {
+public interface BrowserContext<E extends Enum<E>> extends EventEmitter<E> {
 
     //TODO 后续支持创建context之后, context需要支持事件, 暂时可不支持
 

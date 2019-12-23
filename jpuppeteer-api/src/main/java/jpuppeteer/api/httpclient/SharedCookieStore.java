@@ -57,7 +57,8 @@ public class SharedCookieStore implements CookieStore {
     public List<Cookie> getCookies() {
         List<Cookie> cookies = null;
         try {
-            cookies = browser.cookies().stream().map(cookie -> {
+            List<jpuppeteer.api.browser.Cookie> cookieList = browser.cookies();
+            cookies = cookieList.stream().map(cookie -> {
                 BasicClientCookie basicClientCookie = new BasicClientCookie(cookie.getName(), cookie.getValue());
                 basicClientCookie.setDomain(cookie.getDomain());
                 basicClientCookie.setPath(cookie.getPath());
@@ -87,7 +88,8 @@ public class SharedCookieStore implements CookieStore {
     public boolean clearExpired(Date date) {
         boolean success = true;
         try {
-            List<jpuppeteer.api.browser.Cookie> expired = browser.cookies().stream()
+            List<jpuppeteer.api.browser.Cookie> cookieList = browser.cookies();
+            List<jpuppeteer.api.browser.Cookie> expired = cookieList.stream()
                     .filter(cookie -> cookie.getExpires() != null ? cookie.getExpires().before(date) : false)
                     .collect(Collectors.toList());
             if (expired != null && expired.size() > 0) {

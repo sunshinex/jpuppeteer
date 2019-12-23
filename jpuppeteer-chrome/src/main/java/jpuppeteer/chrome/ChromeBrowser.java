@@ -8,7 +8,7 @@ import jpuppeteer.api.event.EventType;
 import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPSession;
-import jpuppeteer.cdp.WebSocketConnection;
+import jpuppeteer.cdp.WebSocketCDPConnection;
 import jpuppeteer.cdp.cdp.domain.Network;
 import jpuppeteer.cdp.cdp.domain.Target;
 import jpuppeteer.cdp.cdp.entity.browser.GetVersionResponse;
@@ -219,7 +219,7 @@ public class ChromeBrowser implements Browser {
 
     @Override
     public URI wsEndpoint() {
-        return connection instanceof WebSocketConnection ? ((WebSocketConnection) connection).uri() : null;
+        return connection instanceof WebSocketCDPConnection ? ((WebSocketCDPConnection) connection).uri() : null;
     }
 
     @Override

@@ -2,22 +2,17 @@ package jpuppeteer.cdp;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import jpuppeteer.api.event.EventEmitter;
-import jpuppeteer.api.event.AbstractEventEmitter;
-import jpuppeteer.cdp.cdp.CDPEventType;
 import jpuppeteer.cdp.constant.TargetType;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
 
-public class CDPSession extends AbstractEventEmitter implements EventEmitter {
+public class CDPSession {
 
-    private static final String SESSION_ID = "sessionId";
+    protected static final String SESSION_ID = "sessionId";
 
     private CDPConnection connection;
 
@@ -28,7 +23,6 @@ public class CDPSession extends AbstractEventEmitter implements EventEmitter {
     private Map<String, Object> extra;
 
     public CDPSession(CDPConnection connection, TargetType type, String sessionId) {
-        super(Executors.newSingleThreadExecutor(THREAD_FACTORY));
         this.connection = connection;
         this.type = type;
         this.sessionId = sessionId;
@@ -38,18 +32,6 @@ public class CDPSession extends AbstractEventEmitter implements EventEmitter {
 
     public String getSessionId() {
         return sessionId;
-    }
-
-    public void addListener(CDPEventType eventType, Consumer<CDPEvent> consumer) {
-        addListener(CDPEventWrapper.wrap(eventType), consumer);
-    }
-
-    public void removeListener(CDPEventType eventType, Consumer<CDPEvent> consumer) {
-        removeListener(CDPEventWrapper.wrap(eventType), consumer);
-    }
-
-    public void emit(CDPEventType eventType, CDPEvent event) {
-        emit(CDPEventWrapper.wrap(eventType), event);
     }
 
     public final <T> T send(String method, Object params, Class<T> clazz, int timeout) throws InterruptedException, ExecutionException, TimeoutException {

@@ -2,7 +2,7 @@ package jpuppeteer.chrome;
 
 import jpuppeteer.api.browser.Launcher;
 import jpuppeteer.cdp.CDPConnection;
-import jpuppeteer.cdp.WebSocketConnection;
+import jpuppeteer.cdp.WebSocketCDPConnection;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +75,7 @@ public class ChromeLauncher implements Launcher {
         if (!chromeArguments.isPipe()) {
             //等待chrome启动成功的debug listening输出
             URI uri = waitForListening();
-            connection = new WebSocketConnection(uri);
+            connection = new WebSocketCDPConnection(uri);
         } else {
             throw new Exception("unsupport pipe debug mode");
         }

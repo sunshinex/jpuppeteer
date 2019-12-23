@@ -5,7 +5,7 @@ import jpuppeteer.api.event.EventEmitter;
 import java.net.URI;
 import java.util.List;
 
-public interface Browser extends EventEmitter {
+public interface Browser<E extends Enum<E>> extends EventEmitter<E> {
 
     void close() throws Exception;
 

@@ -7,17 +7,17 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public interface Frame<P> extends EventEmitter, ExecutionContext<P> {
+public interface Frame<E extends Enum<E>, P> extends EventEmitter<E>, ExecutionContext<P> {
 
     String frameId();
 
-    Frame<P> parent();
+    Frame<E, P> parent();
 
     /**
      * child frames
      * @return
      */
-    Frame<P>[] children();
+    Frame<E, P>[] children();
 
     String content() throws Exception;
 
@@ -35,9 +35,9 @@ public interface Frame<P> extends EventEmitter, ExecutionContext<P> {
         navigate(url, null);
     }
 
-    Element<P> querySelector(String selector) throws Exception;
+    Element<E, P> querySelector(String selector) throws Exception;
 
-    List<? extends Element<P>> querySelectorAll(String selector) throws Exception;
+    List<? extends Element<E, P>> querySelectorAll(String selector) throws Exception;
 
     BrowserObject<P> wait(String expression, int timeout, TimeUnit unit, P... args) throws Exception;
 
@@ -45,7 +45,7 @@ public interface Frame<P> extends EventEmitter, ExecutionContext<P> {
 
     <R> R wait(String expression, int timeout, TimeUnit unit, TypeReference<R> type, P... args) throws Exception;
 
-    Element<P> waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
+    Element<E, P> waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
 
 }
 

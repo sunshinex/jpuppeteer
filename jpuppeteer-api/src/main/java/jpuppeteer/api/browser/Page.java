@@ -6,11 +6,11 @@ import jpuppeteer.api.constant.USKeyboardDefinition;
 
 import java.util.List;
 
-public interface Page<P> extends Frame<P> {
+public interface Page<E extends Enum<E>, P> extends Frame<E, P> {
 
     void authenticate(String username, String password) throws Exception;
 
-    Page<P> opener();
+    Page<E, P> opener();
 
     void setCookie(Cookie... cookies) throws Exception;
 

@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.MapMaker;
-import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.AbstractEventEmitter;
+import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.future.DefaultPromise;
 import jpuppeteer.api.future.Promise;
 import jpuppeteer.cdp.cdp.CDPEventType;
@@ -20,9 +20,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
-public abstract class CDPConnection implements Closeable {
+public abstract class CDPConnection extends AbstractEventEmitter<CDPEventType> implements Closeable {
 
     private static final Logger logger = LoggerFactory.getLogger(CDPConnection.class);
 
@@ -36,29 +35,14 @@ public abstract class CDPConnection implements Closeable {
 
     protected static final String RESULT = "result";
 
-    private EventEmitter events;
-
     private final AtomicInteger messageId;
 
     protected final Map<Integer, Promise<JSONObject>> requestMap;
 
-    private volatile Map<String/*sessionId*/, CDPSession> sessionMap;
-
-    protected CDPConnection() {
-        this.events = new AbstractEventEmitter();
+    protected CDPConnection(String flag) {
+        super(Executors.newSingleThreadExecutor(r -> new Thread(r, "CDPConnection["+flag+"]")));
         this.messageId = new AtomicInteger(0);
         this.requestMap = new MapMaker().weakValues().concurrencyLevel(16).makeMap();
-        this.sessionMap = new ConcurrentHashMap<>();
-    }
-
-    public CDPSession createSession(String sessionId) {
-        CDPSession session = new CDPSession(this, TargetType.PAGE, sessionId);
-        sessionMap.put(sessionId, session);
-        return session;
-    }
-
-    public void removeSession(String sessionId) {
-        sessionMap.remove(sessionId);
     }
 
     private JSONObject sendBase(String method, Object params, Map<String, Object> extra, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
@@ -87,18 +71,6 @@ public abstract class CDPConnection implements Closeable {
             logger.error("internal send error, error={}", ioe.getMessage(), ioe);
         }
         return promise;
-    }
-
-    public void addListener(CDPEventType eventType, Consumer<CDPEvent> consumer) {
-        events.addListener(CDPEventWrapper.wrap(eventType), consumer);
-    }
-
-    public void removeListener(CDPEventType eventType, Consumer<CDPEvent> consumer) {
-        events.removeListener(CDPEventWrapper.wrap(eventType), consumer);
-    }
-
-    public void emit(CDPEventType eventType, CDPEvent event) {
-        events.emit(CDPEventWrapper.wrap(eventType), event);
     }
 
     public final <T> T send(String method, Object params, Map<String, Object> extra, Class<T> clazz, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
@@ -135,26 +107,15 @@ public abstract class CDPConnection implements Closeable {
 
     private void handleEvent(JSONObject json) {
         String method = json.getString(METHOD);
-        CDPEventType eventType = CDPEventType.findByValue(method);
+        CDPEventType eventType = CDPEventType.findByName(method);
         if (eventType == null) {
             logger.error("discard unknown event [{}]", method);
             return;
         }
-        CDPEvent event = json.toJavaObject(CDPEvent.class);
-        String sessionId = event.getSessionId();
+        Object event = json.getObject(PARAMS, eventType.getClazz());
         //所有的事件都dispatch到connection上
         emit(eventType, event);
-        if (StringUtils.isNotEmpty(sessionId)) {
-            CDPSession session = sessionMap.get(sessionId);
-            if (session == null) {
-                logger.error("unable find session, id={}", sessionId);
-            } else {
-                session.emit(eventType, event);
-            }
-        } else {
-            //通用事件dispatch到所有的session上
-            sessionMap.values().iterator().forEachRemaining(session -> session.emit(eventType, event));
-        }
+        System.out.println(event);
     }
 
     protected void recv(String message) {
