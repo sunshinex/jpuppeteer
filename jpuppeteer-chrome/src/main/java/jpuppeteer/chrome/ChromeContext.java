@@ -6,6 +6,7 @@ import com.google.common.collect.MapMaker;
 import jpuppeteer.api.browser.BrowserContext;
 import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.constant.PermissionType;
+import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.api.future.DefaultPromise;
 import jpuppeteer.api.future.Promise;
 import jpuppeteer.cdp.CDPConnection;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 import static jpuppeteer.chrome.event.BrowserEvent.*;
 
-public class ChromeContext implements BrowserContext {
+public class ChromeContext extends AbstractEventEmitter implements BrowserContext {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeContext.class);
 

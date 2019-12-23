@@ -1,10 +1,11 @@
 package jpuppeteer.api.browser;
 
 import jpuppeteer.api.constant.PermissionType;
+import jpuppeteer.api.event.EventEmitter;
 
 import java.util.List;
 
-public interface BrowserContext {
+public interface BrowserContext extends EventEmitter {
 
     //TODO 后续支持创建context之后, context需要支持事件, 暂时可不支持
 

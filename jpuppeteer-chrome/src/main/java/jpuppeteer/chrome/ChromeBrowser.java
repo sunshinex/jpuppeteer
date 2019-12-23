@@ -5,7 +5,7 @@ import jpuppeteer.api.browser.Browser;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.EventType;
-import jpuppeteer.api.event.GenericEventEmitter;
+import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.WebSocketConnection;
@@ -60,7 +60,7 @@ public class ChromeBrowser implements Browser {
 
     public ChromeBrowser(Process process, CDPConnection connection) throws Exception {
         connection.open();
-        this.events = new GenericEventEmitter();
+        this.events = new AbstractEventEmitter();
         this.process = process;
         this.connection = connection;
         this.browser = new jpuppeteer.cdp.cdp.domain.Browser(connection);

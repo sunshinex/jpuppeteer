@@ -3,7 +3,7 @@ package jpuppeteer.cdp;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import jpuppeteer.api.event.EventEmitter;
-import jpuppeteer.api.event.GenericEventEmitter;
+import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.cdp.cdp.CDPEventType;
 import jpuppeteer.cdp.constant.TargetType;
 
@@ -15,7 +15,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
-public class CDPSession extends GenericEventEmitter implements EventEmitter {
+public class CDPSession extends AbstractEventEmitter implements EventEmitter {
 
     private static final String SESSION_ID = "sessionId";
 

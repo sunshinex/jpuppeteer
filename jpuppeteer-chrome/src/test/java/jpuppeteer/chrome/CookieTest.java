@@ -5,6 +5,7 @@ import ch.qos.logback.classic.LoggerContext;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.*;
+import jpuppeteer.api.event.EventType;
 import jpuppeteer.api.httpclient.SharedCookieStore;
 import jpuppeteer.cdp.cdp.entity.page.DomContentEventFiredEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
@@ -110,13 +111,13 @@ public class CookieTest {
     @BeforeClass
     public static void setUp() {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-        context.getLogger("root").setLevel(Level.INFO);
+        //context.getLogger("root").setLevel(Level.INFO);
     }
 
     @Test
     public void test2() throws Exception {
         Browser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
-        ChromePage page = browser.defaultContext().newPage();
+        Page<CallArgument> page = browser.defaultContext().newPage();
         page.setUserAgent(new UserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"));
         page.setDevice(Device.builder().width(375).height(667).deviceScaleFactor(1.0).isMobile(true).hasTouch(true).isLandscape(false).build());
         //page.enableRequestInterception(true);
@@ -134,32 +135,36 @@ public class CookieTest {
 //            }
 //        });
 
-        page.addListener(PageEvent.DOMCONTENTLOADED, event -> {
-            String script = "async function abc(){\n" +
-                    "\treturn new Promise((resolve, reject) => {\n" +
-                    "\t\tsetTimeout(function(){\n" +
-                    "\t\t\treject(new Error(\"timeout\"))\n" +
-                    "\t\t}, 10000);\n" +
-                    "\t\tapp.product.onLoad(['price'], function(price){\n" +
-                    "\t\t\tresolve(price);\n" +
-                    "\t\t});\n" +
-                    "\t});\n" +
-                    "}";
-            try {
-                JSONObject price = page.evaluate(script, JSONObject.class);
-                System.out.println(price);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//        page.addListener(PageEvent.DOMCONTENTLOADED, event -> {
+//            String script = "async function abc(){\n" +
+//                    "\treturn new Promise((resolve, reject) => {\n" +
+//                    "\t\tsetTimeout(function(){\n" +
+//                    "\t\t\treject(new Error(\"timeout\"))\n" +
+//                    "\t\t}, 10000);\n" +
+//                    "\t\tapp.product.onLoad(['price'], function(price){\n" +
+//                    "\t\t\tresolve(price);\n" +
+//                    "\t\t});\n" +
+//                    "\t});\n" +
+//                    "}";
 //            try {
-//                if (!page.url().getHost().equals("detail.m.tmall.com")) {
-//                    return;
-//                }
-//                byte[] screenshot = page.screenshot();
-//                page.navigate("data:image/png;base64,"+Base64.getEncoder().encodeToString(screenshot));
+//                JSONObject price = page.evaluate(script, JSONObject.class);
+//                System.out.println(price);
 //            } catch (Exception e) {
 //                e.printStackTrace();
 //            }
+////            try {
+////                if (!page.url().getHost().equals("detail.m.tmall.com")) {
+////                    return;
+////                }
+////                byte[] screenshot = page.screenshot();
+////                page.navigate("data:image/png;base64,"+Base64.getEncoder().encodeToString(screenshot));
+////            } catch (Exception e) {
+////                e.printStackTrace();
+////            }
+//        });
+
+        page.addListener(PageEvent.LOAD, evt -> {
+            System.out.println(evt);
         });
 
         page.navigate("http://detail.m.tmall.com/item.htm?id=584529359954&skuId=4272288400200");

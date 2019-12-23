@@ -1,19 +1,13 @@
 package jpuppeteer.api.event;
 
-import java.util.concurrent.Future;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
-public interface EventEmitter {
+public interface EventEmitter<E extends Enum<E>> {
 
-    <E> void addListener(EventType<E> eventType, Consumer<E> consumer);
+    void addListener(E type, Consumer<?> consumer);
 
-    <E> void removeListener(EventType<E> eventType, Consumer<E> consumer);
+    void removeListener(E type, Consumer<?> consumer);
 
-    <E> Future<E> await(EventType<E> eventType);
-
-    <E> Future<E> await(EventType<E> eventType, Predicate<E> predicate);
-
-    <E> void emit(EventType<E> eventType, E event);
+    void emit(E type, Object event);
 
 }

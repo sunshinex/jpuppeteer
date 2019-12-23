@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.MapMaker;
 import jpuppeteer.api.event.EventEmitter;
-import jpuppeteer.api.event.GenericEventEmitter;
+import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.api.future.DefaultPromise;
 import jpuppeteer.api.future.Promise;
 import jpuppeteer.cdp.cdp.CDPEventType;
@@ -17,10 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -48,7 +45,7 @@ public abstract class CDPConnection implements Closeable {
     private volatile Map<String/*sessionId*/, CDPSession> sessionMap;
 
     protected CDPConnection() {
-        this.events = new GenericEventEmitter();
+        this.events = new AbstractEventEmitter();
         this.messageId = new AtomicInteger(0);
         this.requestMap = new MapMaker().weakValues().concurrencyLevel(16).makeMap();
         this.sessionMap = new ConcurrentHashMap<>();
