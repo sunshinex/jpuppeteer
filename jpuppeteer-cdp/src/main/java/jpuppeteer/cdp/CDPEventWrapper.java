@@ -26,7 +26,7 @@ public class CDPEventWrapper implements EventType<CDPEvent> {
         return CDPEvent.class;
     }
 
-    public static CDPEventWrapper wrap(CDPEventType eventType) {
+    public static synchronized CDPEventWrapper wrap(CDPEventType eventType) {
         CDPEventWrapper wrapper;
         if (!wrapperMap.containsKey(eventType)) {
             wrapper = new CDPEventWrapper(eventType);
