@@ -72,10 +72,12 @@ public class ChromeLauncher implements Launcher {
         logger.info("command line: {}", StringUtils.join(command, " "));
         process = Runtime.getRuntime().exec(command, null, exec.getParentFile());
         CDPConnection connection;
+        URI uri;
         if (!chromeArguments.isPipe()) {
             //等待chrome启动成功的debug listening输出
-            URI uri = waitForListening();
+            uri = waitForListening();
             connection = new WebSocketCDPConnection(uri);
+            connection.open();
         } else {
             throw new Exception("unsupport pipe debug mode");
         }
@@ -96,7 +98,7 @@ public class ChromeLauncher implements Launcher {
                 }
             }
         }.start();
-        browser = new ChromeBrowser(process, connection);
+        browser = new ChromeBrowser(uri.getHost() + ":" + uri.getPort(), process, connection);
         return browser;
     }
 

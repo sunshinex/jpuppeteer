@@ -5,35 +5,21 @@ import jpuppeteer.api.util.ConcurrentHashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-public abstract class AbstractEventEmitter<E extends Enum<E>> implements EventEmitter<E> {
+public class DefaultEventEmitter<E extends Enum<E>> implements EventEmitter<E> {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractEventEmitter.class);
-
-    private static final AtomicInteger threadCounter = new AtomicInteger(0);
-
-    protected static final ThreadFactory THREAD_FACTORY = r -> new Thread(r, "EventExecutor-" + threadCounter.getAndIncrement());
-
-    private static final Executor EXECUTOR = Executors.newSingleThreadExecutor(THREAD_FACTORY);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultEventEmitter.class);
 
     private final Executor executor;
 
     private final Map<Enum<E>, Set<Consumer>> listenerMap;
 
-    public AbstractEventEmitter() {
-        this(EXECUTOR);
-    }
-
-    public AbstractEventEmitter(Executor executor) {
+    public DefaultEventEmitter(Executor executor) {
         this.executor = executor;
         this.listenerMap = new ConcurrentHashMap<>();
     }

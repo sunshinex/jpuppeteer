@@ -3,10 +3,9 @@ package jpuppeteer.chrome;
 import com.alibaba.fastjson.JSONObject;
 import jpuppeteer.api.browser.Browser;
 import jpuppeteer.api.browser.Cookie;
-import jpuppeteer.api.event.EventEmitter;
-import jpuppeteer.api.event.EventType;
-import jpuppeteer.api.event.AbstractEventEmitter;
+import jpuppeteer.api.event.DefaultEventEmitter;
 import jpuppeteer.cdp.CDPConnection;
+import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.WebSocketCDPConnection;
 import jpuppeteer.cdp.cdp.domain.Network;
@@ -17,7 +16,7 @@ import jpuppeteer.cdp.cdp.entity.network.GetAllCookiesResponse;
 import jpuppeteer.cdp.cdp.entity.network.SetCookiesRequest;
 import jpuppeteer.cdp.cdp.entity.target.*;
 import jpuppeteer.cdp.constant.TargetType;
-import jpuppeteer.chrome.event.BrowserEvent;
+import jpuppeteer.chrome.event.type.ChromeBrowserEvent;
 import jpuppeteer.chrome.util.CookieUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,16 +24,12 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static jpuppeteer.cdp.cdp.CDPEventType.*;
-import static jpuppeteer.chrome.event.BrowserEvent.*;
-
-public class ChromeBrowser implements Browser {
+public class ChromeBrowser extends DefaultEventEmitter<ChromeBrowserEvent> implements Browser {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeBrowser.class);
 
@@ -42,7 +37,7 @@ public class ChromeBrowser implements Browser {
 
     public static final int DEFAULT_TIMEOUT = 30;
 
-    private EventEmitter events;
+    private String name;
 
     private CDPConnection connection;
 
@@ -58,9 +53,9 @@ public class ChromeBrowser implements Browser {
 
     private Network network;
 
-    public ChromeBrowser(Process process, CDPConnection connection) throws Exception {
-        connection.open();
-        this.events = new AbstractEventEmitter();
+    public ChromeBrowser(String name, Process process, CDPConnection connection) throws Exception {
+        super(Executors.newSingleThreadExecutor(r -> new Thread(r, "ChromeBrowser["+name+"]")));
+        this.name = name;
         this.process = process;
         this.connection = connection;
         this.browser = new jpuppeteer.cdp.cdp.domain.Browser(connection);
@@ -68,13 +63,9 @@ public class ChromeBrowser implements Browser {
         this.setDiscoverTargets(true);
         this.defaultContext = new ChromeContext(connection, this, null);
         //绑定事件
-        connection.addListener(TARGET_TARGETCREATED, ev -> emit(TARGETCREATED, ev.getParams().toJavaObject(TARGETCREATED.eventClass())));
-        connection.addListener(TARGET_TARGETINFOCHANGED, ev -> emit(TARGETINFOCHANGED, ev.getParams().toJavaObject(TARGETINFOCHANGED.eventClass())));
-        connection.addListener(TARGET_TARGETDESTROYED, ev -> emit(TARGETDESTROYED, ev.getParams().toJavaObject(TARGETDESTROYED.eventClass())));
-        connection.addListener(TARGET_TARGETCRASHED, ev -> emit(TARGETCRASHED, ev.getParams().toJavaObject(TARGETCRASHED.eventClass())));
-        connection.addListener(TARGET_ATTACHEDTOTARGET, ev -> emit(ATTACHEDTOTARGET, ev.getParams().toJavaObject(ATTACHEDTOTARGET.eventClass())));
-        connection.addListener(TARGET_DETACHEDFROMTARGET, ev -> emit(DETACHEDFROMTARGET, ev.getParams().toJavaObject(DETACHEDFROMTARGET.eventClass())));
-        connection.addListener(TARGET_RECEIVEDMESSAGEFROMTARGET, ev -> emit(RECEIVEDMESSAGEFROMTARGET, ev.getParams().toJavaObject(RECEIVEDMESSAGEFROMTARGET.eventClass())));
+        for(ChromeBrowserEvent event : ChromeBrowserEvent.values()) {
+            connection.addListener(event.getEventType(), (CDPEvent object) -> emit(event, object));
+        }
         //找到默认的标签页
         String defaultTargetId = null;
         for(TargetInfo targetInfo : getTargets()) {
@@ -93,40 +84,8 @@ public class ChromeBrowser implements Browser {
         this.network = new Network(defaultSession);
     }
 
-    private static <E> void checkEventType(EventType<E> eventType) {
-        if (!(eventType instanceof BrowserEvent)) {
-            throw new IllegalArgumentException("eventType必须是BrowserEvent的子类");
-        }
-    }
-
-    @Override
-    public <E> void addListener(EventType<E> eventType, Consumer<E> consumer) {
-        checkEventType(eventType);
-        events.addListener(eventType, consumer);
-    }
-
-    @Override
-    public <E> void removeListener(EventType<E> eventType, Consumer<E> consumer) {
-        checkEventType(eventType);
-        events.removeListener(eventType, consumer);
-    }
-
-    @Override
-    public <E> Future<E> await(EventType<E> eventType) {
-        checkEventType(eventType);
-        return events.await(eventType);
-    }
-
-    @Override
-    public <E> Future<E> await(EventType<E> eventType, Predicate<E> predicate) {
-        checkEventType(eventType);
-        return events.await(eventType, predicate);
-    }
-
-    @Override
-    public <E> void emit(EventType<E> eventType, E event) {
-        checkEventType(eventType);
-        events.emit(eventType, event);
+    public String getName() {
+        return name;
     }
 
     /**

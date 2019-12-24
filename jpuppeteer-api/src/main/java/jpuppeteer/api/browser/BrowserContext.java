@@ -5,7 +5,7 @@ import jpuppeteer.api.event.EventEmitter;
 
 import java.util.List;
 
-public interface BrowserContext<E extends Enum<E>> extends EventEmitter<E> {
+public interface BrowserContext {
 
     //TODO 后续支持创建context之后, context需要支持事件, 暂时可不支持
 
@@ -22,6 +22,6 @@ public interface BrowserContext<E extends Enum<E>> extends EventEmitter<E> {
      */
     Page newPage() throws Exception;
 
-    List<Page> pages() throws Exception;
+    Page[] pages() throws Exception;
 
 }

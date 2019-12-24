@@ -10,6 +10,8 @@ import jpuppeteer.api.constant.MediaType;
 import jpuppeteer.api.constant.MouseDefinition;
 import jpuppeteer.api.constant.ResourceType;
 import jpuppeteer.api.constant.USKeyboardDefinition;
+import jpuppeteer.api.event.DefaultEventEmitter;
+import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.util.ConcurrentHashSet;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.CDPSession;
@@ -46,9 +48,11 @@ import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
-import jpuppeteer.cdp.cdp.entity.target.TargetInfoChangedEvent;
 import jpuppeteer.chrome.constant.ScriptConstants;
 import jpuppeteer.chrome.entity.RequestEvent;
+import jpuppeteer.chrome.event.Request;
+import jpuppeteer.chrome.event.type.ChromeBrowserEvent;
+import jpuppeteer.chrome.event.type.ChromePageEvent;
 import jpuppeteer.chrome.util.ArgUtils;
 import jpuppeteer.chrome.util.ChromeObjectUtils;
 import jpuppeteer.chrome.util.CookieUtils;
@@ -62,7 +66,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -70,17 +76,21 @@ import static jpuppeteer.cdp.cdp.CDPEventType.*;
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 import static jpuppeteer.chrome.event.PageEvent.*;
 
-public class ChromePage extends ChromeFrame implements Page<CallArgument> {
+public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEvent>, Page<CallArgument> {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromePage.class);
 
     private static final List<TouchPoint> EMPTY_TOUCHPOINTS = Lists.newArrayListWithCapacity(0);
 
-    private static final Handler DATA_PROTOCOL_HANDLER = new Handler();
+    private static final AtomicInteger COUNTER = new AtomicInteger(0);
+
+    private final EventEmitter<ChromePageEvent> events;
 
     private final ChromePage opener;
 
-    private ChromeContext browserContext;
+    protected final String sessionId;
+
+    private BrowserContext browserContext;
 
     protected Performance performance;
 
@@ -92,13 +102,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     protected Fetch fetch;
 
-    /**
-     * 此处从ConcurrentHashMap改为Weak Value HashMap修复了导致内存泄漏的问题,
-     * 但是引入了另外一个问题, 就是requestFail/requestFinished/response事件会找不到之前的request
-     * 所以暂时的处理方案是在Target.targetInfoChanged的时候将requestMap清空, 但是还是可能会存在chrome不发送事件的情况
-     * 还是会造成泄漏
-     */
-    private volatile Map<String/*requestId*/, ChromeRequest> requestMap;
+    private volatile Map<String/*requestId*/, Request> requestMap;
 
     private UserAgent userAgent;
 
@@ -120,8 +124,9 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     private String password;
 
-    public ChromePage(ChromeContext browserContext, CDPSession session, String targetId, ChromePage opener) throws Exception {
+    public ChromePage(String browserName, BrowserContext browserContext, CDPSession session, String targetId, ChromePage opener, String sessionId) throws Exception {
         super(
+                Executors.newSingleThreadExecutor(r -> new Thread(r, "ChromePage["+browserName+"]:" + COUNTER.getAndIncrement())),
                 null,
                 targetId,
                 session,
@@ -130,7 +135,9 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
                 new DOM(session),
                 new Input(session)
         );
+        this.events = new DefaultEventEmitter<>(executor);
         this.opener = opener;
+        this.sessionId = sessionId;
         this.browserContext = browserContext;
         this.performance = new Performance(session);
         this.log = new Log(session);
@@ -138,7 +145,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         this.network = new Network(session);
         this.fetch = new Fetch(session);
 
-        this.requestMap = new ConcurrentHashMap<>();//new MapMaker().weakValues().concurrencyLevel(16).makeMap();
+        this.requestMap = new ConcurrentHashMap<>();
         this.userAgent = null;
         this.device = null;
         this.close = false;
@@ -156,6 +163,8 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         enableLog();
         enableRuntime();
         enableDom();
+
+        browserContext.addListener(ChromeBrowserEvent.TARGETCRASHED, );
 
         //绑定事件
         session.addListener(TARGET_TARGETINFOCHANGED, event -> clear());
@@ -185,6 +194,20 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         session.addListener(FETCH_AUTHREQUIRED, new AuthHandler());
     }
 
+    @Override
+    public void addListener(ChromePageEvent type, Consumer<?> consumer) {
+        events.addListener(type, consumer);
+    }
+
+    @Override
+    public void removeListener(ChromePageEvent type, Consumer<?> consumer) {
+        events.removeListener(type, consumer);
+    }
+
+    @Override
+    public void emit(ChromePageEvent type, Object event) {
+        events.emit(type, event);
+    }
 
     @Override
     public void authenticate(String username, String password) throws Exception {
@@ -274,6 +297,12 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
 
     protected void enableDom() throws Exception {
         dom.enable(DEFAULT_TIMEOUT);
+    }
+
+    protected void addRequest()
+
+    protected Request getRequest(String requestId) {
+        return requestMap.get(requestId);
     }
 
     private static int getModifier(USKeyboardDefinition key) {
@@ -631,27 +660,7 @@ public class ChromePage extends ChromeFrame implements Page<CallArgument> {
         logger.info("clear page success, frameId={}", frameId);
     }
 
-    private static List<Header> parseHeader(Map<String, Object> headerMap) {
-        List<Header> headers = Lists.newArrayListWithCapacity(0);
-        if (MapUtils.isNotEmpty(headerMap)) {
-            for (Map.Entry<String, Object> entry : headerMap.entrySet()) {
-                String[] items = entry.getValue().toString().split("\n");
-                Header header = null;
-                for (String item : items) {
-                    if (header == null) {
-                        header = new Header(entry.getKey(), item);
-                    } else {
-                        header.add(item);
-                    }
-                }
-                if (header == null) {
-                    continue;
-                }
-                headers.add(header);
-            }
-        }
-        return headers;
-    }
+
 
     private class DestroyedHandler implements Consumer<CDPEvent> {
 

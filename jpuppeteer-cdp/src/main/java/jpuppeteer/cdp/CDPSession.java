@@ -30,10 +30,6 @@ public class CDPSession {
         this.extra.put(SESSION_ID, sessionId);
     }
 
-    public String getSessionId() {
-        return sessionId;
-    }
-
     public final <T> T send(String method, Object params, Class<T> clazz, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
         return connection.send(method, params, extra, clazz, timeout);
     }
@@ -49,5 +45,4 @@ public class CDPSession {
     public final Future<JSONObject> asyncSend(String method, Object params) {
         return connection.asyncSend(method, params, extra);
     }
-
 }

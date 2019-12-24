@@ -4,14 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.MapMaker;
-import jpuppeteer.api.event.AbstractEventEmitter;
-import jpuppeteer.api.event.EventEmitter;
+import jpuppeteer.api.event.DefaultEventEmitter;
 import jpuppeteer.api.future.DefaultPromise;
 import jpuppeteer.api.future.Promise;
 import jpuppeteer.cdp.cdp.CDPEventType;
-import jpuppeteer.cdp.constant.TargetType;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +18,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class CDPConnection extends AbstractEventEmitter<CDPEventType> implements Closeable {
+public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> implements Closeable {
 
     private static final Logger logger = LoggerFactory.getLogger(CDPConnection.class);
 
@@ -112,10 +109,8 @@ public abstract class CDPConnection extends AbstractEventEmitter<CDPEventType> i
             logger.error("discard unknown event [{}]", method);
             return;
         }
-        Object event = json.getObject(PARAMS, eventType.getClazz());
-        //所有的事件都dispatch到connection上
-        emit(eventType, event);
-        System.out.println(event);
+        //把原始事件dispatch到connection对象上
+        emit(eventType, new CDPEvent(json.getString(CDPSession.SESSION_ID), json.getString(METHOD), json.getJSONObject(PARAMS)));
     }
 
     protected void recv(String message) {
