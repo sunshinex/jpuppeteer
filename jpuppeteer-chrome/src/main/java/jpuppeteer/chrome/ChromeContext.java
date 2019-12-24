@@ -12,19 +12,25 @@ import jpuppeteer.api.future.Promise;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.CDPSession;
+import jpuppeteer.cdp.cdp.constant.network.BlockedReason;
 import jpuppeteer.cdp.cdp.domain.Browser;
 import jpuppeteer.cdp.cdp.domain.Target;
 import jpuppeteer.cdp.cdp.entity.browser.GrantPermissionsRequest;
 import jpuppeteer.cdp.cdp.entity.browser.ResetPermissionsRequest;
 import jpuppeteer.cdp.cdp.entity.log.EntryAddedEvent;
+import jpuppeteer.cdp.cdp.entity.network.LoadingFailedEvent;
+import jpuppeteer.cdp.cdp.entity.network.LoadingFinishedEvent;
 import jpuppeteer.cdp.cdp.entity.network.RequestWillBeSentEvent;
 import jpuppeteer.cdp.cdp.entity.network.ResponseReceivedEvent;
 import jpuppeteer.cdp.cdp.entity.page.*;
 import jpuppeteer.cdp.cdp.entity.target.*;
 import jpuppeteer.cdp.constant.TargetType;
 import jpuppeteer.chrome.entity.RequestEvent;
+import jpuppeteer.chrome.entity.SecurityDetails;
 import jpuppeteer.chrome.event.Dialog;
 import jpuppeteer.chrome.event.Request;
+import jpuppeteer.chrome.event.RequestFailed;
+import jpuppeteer.chrome.event.Response;
 import jpuppeteer.chrome.event.type.ChromeBrowserEvent;
 import jpuppeteer.chrome.event.type.ChromeFrameEvent;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
@@ -70,7 +76,7 @@ public class ChromeContext implements EventEmitter<ChromeBrowserEvent>, BrowserC
 
     private Map<String/*sessionId*/, Map<String/*requestId*/, Request>> requestMap;
 
-    public ChromeContext(CDPConnection connection, ChromeBrowser browser, String browserContextId) {
+    public ChromeContext(ChromeBrowser browser, String browserContextId) {
         this.connection = connection;
         this.browser = browser;
         this.browserContextId = browserContextId;
@@ -125,6 +131,7 @@ public class ChromeContext implements EventEmitter<ChromeBrowserEvent>, BrowserC
                 if (sessionMap.put(sessionId, page) != null) {
                     logger.warn("session exists, sessionId={}", sessionId);
                 }
+                requestMap.put(sessionId, new ConcurrentHashMap<>());
                 if (promise != null) {
                     promise.setSuccess(page);
                 }
@@ -143,6 +150,8 @@ public class ChromeContext implements EventEmitter<ChromeBrowserEvent>, BrowserC
             String targetId = evt.getTargetId();
             ChromePage pg = pageMap.remove(targetId);
             if (pg != null) {
+                sessionMap.remove(pg.sessionId);
+                requestMap.remove(pg.sessionId);
                 pg.emit(ChromePageEvent.CLOSED, null);
                 logger.info("target destroyed, targetId={}", targetId);
             }
@@ -150,9 +159,8 @@ public class ChromeContext implements EventEmitter<ChromeBrowserEvent>, BrowserC
         addListener(TARGETCRASHED, (CDPEvent event) -> {
             TargetCrashedEvent evt = event.getObject(TargetCrashedEvent.class);
             String targetId = evt.getTargetId();
-            ChromePage pg = pageMap.remove(targetId);
+            ChromePage pg = pageMap.get(targetId);
             if (pg != null) {
-                sessionMap.remove(pg.sessionId);
                 pg.emit(ChromePageEvent.CRASHED, event);
                 logger.error("target crashed, targetId={}, sessionId={}", targetId, pg.sessionId);
             }
@@ -229,15 +237,15 @@ public class ChromeContext implements EventEmitter<ChromeBrowserEvent>, BrowserC
                 logger.warn("response event frame not found, requestId={}, frameId={}", evt.getRequestId(), evt.getFrameId());
                 return;
             }
-            Request request = pg.getRequest(evt.getRequestId());
+            Request request = getRequest(pg.sessionId, evt.getRequestId());
             if (request == null) {
-                logger.warn();
+                return;
             }
             jpuppeteer.cdp.cdp.entity.network.Response res = evt.getResponse();
             URL url = URLUtils.parse(res.getUrl());
-            ChromeSecurityDetails securityDetails = null;
+            SecurityDetails securityDetails = null;
             if (res.getSecurityDetails() != null) {
-                securityDetails = ChromeSecurityDetails.builder()
+                securityDetails = SecurityDetails.builder()
                         .issuer(res.getSecurityDetails().getIssuer())
                         .protocol(res.getSecurityDetails().getProtocol())
                         .subjectName(res.getSecurityDetails().getSubjectName())
@@ -246,7 +254,7 @@ public class ChromeContext implements EventEmitter<ChromeBrowserEvent>, BrowserC
                         .build();
             }
             List<Header> headers = HttpUtils.parseHeader(res.getHeaders());
-            ChromeResponse response = ChromeResponse.builder()
+            Response response = Response.builder()
                     .session(pg.session)
                     .network(pg.network)
                     .frame(frame)
@@ -259,7 +267,40 @@ public class ChromeContext implements EventEmitter<ChromeBrowserEvent>, BrowserC
                     .remoteAddress(res.getRemoteIPAddress() + ":" + res.getRemotePort())
                     .securityDetails(securityDetails)
                     .build();
+
+            request.setResponse(response);
+            pg.emit(ChromePageEvent.RESPONSE, response);
         });
+        addSessionListener(LOADINGFAILED, (pg, event) -> {
+            LoadingFailedEvent evt = event.getObject(LoadingFailedEvent.class);
+            Request request = getRequest(pg.sessionId, evt.getRequestId());
+            if (request == null) {
+                return;
+            }
+            pg.emit(ChromePageEvent.REQUESTFAILED, new RequestFailed(request, evt.getErrorText(), evt.getCanceled(), BlockedReason.findByValue(evt.getBlockedReason())));
+        });
+        addSessionListener(LOADINGFINISHED, (pg, event) -> {
+            LoadingFinishedEvent evt = event.getObject(LoadingFinishedEvent.class);
+            Request request = getRequest(pg.sessionId, evt.getRequestId());
+            if (request == null) {
+                return;
+            }
+            pg.emit(ChromePageEvent.REQUESTFINISHED, request);
+        });
+    }
+
+    private Request getRequest(String sessionId, String requestId) {
+        Map<String, Request> map = requestMap.get(sessionId);
+        if (map == null) {
+            logger.error("request map is null, sessionId={}", sessionId);
+            return null;
+        }
+        Request request = map.get(requestId);
+        if (request == null) {
+            logger.error("request for response is null, sessionId={}, requestId={}", sessionId, requestId);
+            return null;
+        }
+        return request;
     }
 
     private void handleRequestEvent(ChromePage pg, RequestEvent event) {
@@ -286,16 +327,8 @@ public class ChromeContext implements EventEmitter<ChromeBrowserEvent>, BrowserC
                 .headers(HttpUtils.parseHeader(req.getHeaders()))
                 .hasPostData(Boolean.TRUE.equals(req.getHasPostData()))
                 .build();
-        requestMap.put(buildRequestId(pg.sessionId, event.getRequestId()), request);
+        //requestMap.put(buildRequestId(pg.sessionId, event.getRequestId()), request);
         pg.emit(ChromePageEvent.REQUEST, request);
-    }
-
-    private static String buildRequestId(String sessionId, String requestId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(sessionId);
-        sb.append(":");
-        sb.append(requestId);
-        return sb.toString();
     }
 
     @FunctionalInterface

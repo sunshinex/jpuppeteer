@@ -1,14 +1,14 @@
-package jpuppeteer.chrome;
+package jpuppeteer.chrome.event;
 
 
 import com.google.common.base.Charsets;
 import jpuppeteer.api.browser.Header;
-import jpuppeteer.api.browser.Response;
 import jpuppeteer.api.browser.SecurityDetails;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.domain.Network;
 import jpuppeteer.cdp.cdp.entity.network.GetResponseBodyRequest;
 import jpuppeteer.cdp.cdp.entity.network.GetResponseBodyResponse;
+import jpuppeteer.chrome.ChromeFrame;
 import lombok.Builder;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,9 +27,9 @@ import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 @Setter
 @ToString
 @Builder
-public class ChromeResponse implements Response {
+public class Response implements jpuppeteer.api.browser.Response {
 
-    private static final Logger logger = LoggerFactory.getLogger(ChromeResponse.class);
+    private static final Logger logger = LoggerFactory.getLogger(Response.class);
 
     private static final Pattern PATTERN_CHARSET = Pattern.compile("charset=(.+)$", Pattern.CASE_INSENSITIVE);
 
@@ -37,7 +37,7 @@ public class ChromeResponse implements Response {
 
     private transient Network network;
 
-    private ChromeRequest request;
+    private Request request;
 
     private ChromeFrame frame;
 
@@ -78,7 +78,7 @@ public class ChromeResponse implements Response {
     }
 
     @Override
-    public ChromeRequest request() {
+    public Request request() {
         return request;
     }
 

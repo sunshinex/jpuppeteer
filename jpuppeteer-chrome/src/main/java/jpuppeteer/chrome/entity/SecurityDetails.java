@@ -1,6 +1,5 @@
-package jpuppeteer.chrome;
+package jpuppeteer.chrome.entity;
 
-import jpuppeteer.api.browser.SecurityDetails;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,7 +9,7 @@ import java.util.Date;
 @Getter
 @ToString
 @Builder
-public class ChromeSecurityDetails implements SecurityDetails {
+public class SecurityDetails implements jpuppeteer.api.browser.SecurityDetails {
 
     private String issuer;
 

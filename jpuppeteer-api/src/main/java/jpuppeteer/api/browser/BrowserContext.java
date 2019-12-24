@@ -24,4 +24,12 @@ public interface BrowserContext {
 
     Page[] pages() throws Exception;
 
+    void setCookie(Cookie... cookies) throws Exception;
+
+    void deleteCookie(Cookie... cookies) throws Exception;
+
+    void clearCookie() throws Exception;
+
+    Cookie[] cookies() throws Exception;
+
 }

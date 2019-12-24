@@ -14,7 +14,6 @@ import jpuppeteer.cdp.cdp.entity.fetch.HeaderEntry;
 import jpuppeteer.cdp.cdp.entity.network.GetRequestPostDataRequest;
 import jpuppeteer.cdp.cdp.entity.network.GetRequestPostDataResponse;
 import jpuppeteer.chrome.ChromeFrame;
-import jpuppeteer.chrome.ChromeResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,7 +63,7 @@ public class Request implements jpuppeteer.api.browser.Request {
     private String postData;
 
     @Setter
-    private ChromeResponse response;
+    private Response response;
 
     private String interceptorId;
 
@@ -185,7 +184,7 @@ public class Request implements jpuppeteer.api.browser.Request {
     }
 
     @Override
-    public ChromeResponse response() {
+    public Response response() {
         return response;
     }
 

@@ -2,7 +2,6 @@ package jpuppeteer.chrome;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
-import com.sun.webkit.network.data.Handler;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.browser.*;
@@ -21,7 +20,6 @@ import jpuppeteer.cdp.cdp.constant.input.DispatchKeyEventRequestType;
 import jpuppeteer.cdp.cdp.constant.input.DispatchMouseEventRequestPointerType;
 import jpuppeteer.cdp.cdp.constant.input.DispatchMouseEventRequestType;
 import jpuppeteer.cdp.cdp.constant.input.DispatchTouchEventRequestType;
-import jpuppeteer.cdp.cdp.constant.network.BlockedReason;
 import jpuppeteer.cdp.cdp.constant.page.SetTouchEmulationEnabledRequestConfiguration;
 import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.domain.*;
@@ -37,7 +35,6 @@ import jpuppeteer.cdp.cdp.entity.input.DispatchKeyEventRequest;
 import jpuppeteer.cdp.cdp.entity.input.DispatchMouseEventRequest;
 import jpuppeteer.cdp.cdp.entity.input.DispatchTouchEventRequest;
 import jpuppeteer.cdp.cdp.entity.input.TouchPoint;
-import jpuppeteer.cdp.cdp.entity.log.EntryAddedEvent;
 import jpuppeteer.cdp.cdp.entity.network.GetCookiesResponse;
 import jpuppeteer.cdp.cdp.entity.network.*;
 import jpuppeteer.cdp.cdp.entity.page.SetTouchEmulationEnabledRequest;
@@ -45,18 +42,12 @@ import jpuppeteer.cdp.cdp.entity.page.*;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextCreatedEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
-import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
-import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
-import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
 import jpuppeteer.chrome.constant.ScriptConstants;
 import jpuppeteer.chrome.entity.RequestEvent;
 import jpuppeteer.chrome.event.Request;
-import jpuppeteer.chrome.event.type.ChromeBrowserEvent;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
 import jpuppeteer.chrome.util.ArgUtils;
-import jpuppeteer.chrome.util.ChromeObjectUtils;
 import jpuppeteer.chrome.util.CookieUtils;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -72,9 +63,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static jpuppeteer.cdp.cdp.CDPEventType.*;
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
-import static jpuppeteer.chrome.event.PageEvent.*;
 
 public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEvent>, Page<CallArgument> {
 
@@ -163,35 +152,6 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         enableLog();
         enableRuntime();
         enableDom();
-
-        browserContext.addListener(ChromeBrowserEvent.TARGETCRASHED, );
-
-        //绑定事件
-        session.addListener(TARGET_TARGETINFOCHANGED, event -> clear());
-        session.addListener(TARGET_TARGETCRASHED, new CrashedHandler());
-        session.addListener(TARGET_TARGETDESTROYED, new DestroyedHandler());
-        session.addListener(PAGE_LIFECYCLEEVENT, new LifecycleHandler());
-        session.addListener(PAGE_DOMCONTENTEVENTFIRED, ev -> emit(DOMCONTENTLOADED, ev.getParams().toJavaObject(DOMCONTENTLOADED.eventClass())));
-        session.addListener(PAGE_LOADEVENTFIRED, ev -> emit(LOAD, ev.getParams().toJavaObject(LOAD.eventClass())));
-        session.addListener(LOG_ENTRYADDED, new ConsoleHandler());
-        session.addListener(PAGE_JAVASCRIPTDIALOGOPENING, new DialogHandler());
-        //session.addListener(PAGE_WINDOWOPEN, ev -> emit(POPUP, ev.getParams().toJavaObject(POPUP.eventClass())));
-        session.addListener(RUNTIME_EXCEPTIONTHROWN, ev -> emit(PAGEERROR, ev.getParams().toJavaObject(PAGEERROR.eventClass())));
-        session.addListener(NETWORK_REQUESTWILLBESENT, new RequestHandler());
-        session.addListener(NETWORK_RESPONSERECEIVED, new ResponseHandler());
-        session.addListener(NETWORK_LOADINGFAILED, new LoadingFailedHandler());
-        session.addListener(NETWORK_LOADINGFINISHED, new LoadingFinishedHandler());
-        //这三个事件用于维护frame tree
-        session.addListener(PAGE_FRAMEATTACHED, new AttachedHandler());
-        session.addListener(PAGE_FRAMEDETACHED, new DetahcedHandler());
-        session.addListener(PAGE_FRAMENAVIGATED, new NavigatedHandler());
-        //这三个事件用于维护execution context
-        session.addListener(RUNTIME_EXECUTIONCONTEXTCREATED, new ExecutionCreatedHandler());
-        session.addListener(RUNTIME_EXECUTIONCONTEXTDESTROYED, new ExecutionDestroyedHandler());
-        session.addListener(RUNTIME_EXECUTIONCONTEXTSCLEARED, new ExecutionClearedHandler());
-        //request interception
-        session.addListener(FETCH_REQUESTPAUSED, new RequestInterceptor());
-        session.addListener(FETCH_AUTHREQUIRED, new AuthHandler());
     }
 
     @Override
@@ -208,6 +168,8 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     public void emit(ChromePageEvent type, Object event) {
         events.emit(type, event);
     }
+
+
 
     @Override
     public void authenticate(String username, String password) throws Exception {
@@ -297,12 +259,6 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
 
     protected void enableDom() throws Exception {
         dom.enable(DEFAULT_TIMEOUT);
-    }
-
-    protected void addRequest()
-
-    protected Request getRequest(String requestId) {
-        return requestMap.get(requestId);
     }
 
     private static int getModifier(USKeyboardDefinition key) {
@@ -488,20 +444,20 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     }
 
     @Override
-    public ChromeContext browserContext() {
+    public BrowserContext browserContext() {
         return browserContext;
     }
 
     @Override
     public void close() {
-        try {
-            ChromeBrowser browser = browserContext.browser();
-            browser.closeTarget(frameId);
-        } catch (Throwable t) {
-            logger.error(t.getMessage(), t);
-        } finally {
-            close = true;
-        }
+//        try {
+//            Browser browser = browserContext.browser();
+//            browser.closeTarget(frameId);
+//        } catch (Throwable t) {
+//            logger.error(t.getMessage(), t);
+//        } finally {
+//            close = true;
+//        }
     }
 
     @Override
@@ -660,249 +616,6 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         logger.info("clear page success, frameId={}", frameId);
     }
 
-
-
-    private class DestroyedHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            TargetDestroyedEvent evt = event.getParams().toJavaObject(TargetDestroyedEvent.class);
-            if (!frameId.equals(evt.getTargetId())) {
-                return;
-            }
-            emit(CLOSE, evt);
-        }
-    }
-
-    private class CrashedHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            TargetCrashedEvent evt = event.getParams().toJavaObject(TargetCrashedEvent.class);
-            if (!frameId.equals(evt.getTargetId())) {
-                return;
-            }
-            clear();
-            emit(ERROR, evt);
-        }
-    }
-
-    private class LifecycleHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            LifecycleEvent evt = event.getParams().toJavaObject(LifecycleEvent.class);
-            ChromeFrame frame = find(evt.getFrameId());
-            if (frame == null) {
-                return;
-            }
-            frame.emit(LIFECYCLEEVENT, evt);
-            //emit(LIFECYCLEEVENT, evt);
-        }
-    }
-
-    private void handleRequestEvent(RequestEvent event) {
-        jpuppeteer.cdp.cdp.entity.network.Request req = event.getRequest();
-        ChromeFrame frame = find(frameId);
-        if (frame == null) {
-            //对于找不到frame的请求事件, 丢弃...
-            return;
-        }
-        String urlStr = req.getUrl();
-        String fragment = req.getUrlFragment();
-        URL url = null;
-        try {
-            url = new URL(null, urlStr + (fragment != null ? fragment : ""), DATA_PROTOCOL_HANDLER);
-        } catch (MalformedURLException e) {
-            //do nth... 解析不了的url, 跳过就算了
-            logger.error("url parse failed, error={}", e.getMessage(), e);
-        }
-        ChromeRequest request = ChromeRequest.builder()
-                .session(session)
-                .network(network)
-                .fetch(fetch)
-                .frame(frame)
-                .loaderId(event.getLoaderId())
-                .requestId(event.getRequestId())
-                .interceptorId(event.getInterceptorId())
-                .method(req.getMethod())
-                .url(url)
-                .resourceType(event.getResourceType())
-                .headers(parseHeader(req.getHeaders()))
-                .hasPostData(Boolean.TRUE.equals(req.getHasPostData()))
-                //postData的内容需要的时候调用接口拿回来, 省内存
-                //.postData(req.getPostData())
-                .build();
-        requestMap.put(event.getRequestId(), request);
-        emit(REQUEST, request);
-    }
-
-    private class RequestHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            RequestWillBeSentEvent evt = event.getParams().toJavaObject(RequestWillBeSentEvent.class);
-            if (requestInterceptionEnabled && !evt.getRequest().getUrl().startsWith("data:")) {
-                //如果启动了拦截器, 则直接忽略所有非data:协议的请求(因为data:协议的请求不会被拦截, 必须到这里放行)
-                return;
-            }
-            handleRequestEvent(RequestEvent.builder()
-                    .frameId(evt.getFrameId())
-                    .loaderId(evt.getLoaderId())
-                    .requestId(evt.getRequestId())
-                    .resourceType(ResourceType.findByValue(evt.getType()))
-                    .request(evt.getRequest())
-                    .build());
-        }
-    }
-
-    private class ResponseHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            ResponseReceivedEvent evt = event.getParams().toJavaObject(ResponseReceivedEvent.class);
-            jpuppeteer.cdp.cdp.entity.network.Response res = evt.getResponse();
-            ChromeRequest request = requestMap.get(evt.getRequestId());
-            if (request == null) {
-                return;
-            }
-            ChromeFrame frame = find(evt.getFrameId());
-            if (frame == null) {
-                return;
-            }
-
-            URL url = null;
-            try {
-                url = new URL(null, res.getUrl(), DATA_PROTOCOL_HANDLER);
-            } catch (MalformedURLException e) {
-                //do nth... 解析不了的url, 跳过就算了
-            }
-
-            //处理securityDetails
-            ChromeSecurityDetails securityDetails = null;
-            if (res.getSecurityDetails() != null) {
-                securityDetails = ChromeSecurityDetails.builder()
-                        .issuer(res.getSecurityDetails().getIssuer())
-                        .protocol(res.getSecurityDetails().getProtocol())
-                        .subjectName(res.getSecurityDetails().getSubjectName())
-                        .vaildFrom(new Date(res.getSecurityDetails().getValidFrom().longValue() * 1000))
-                        .vaildTo(new Date(res.getSecurityDetails().getValidTo().longValue() * 1000))
-                        .build();
-            }
-
-            List<Header> headers = parseHeader(res.getHeaders());
-
-            ChromeResponse response = ChromeResponse.builder()
-                    .session(session)
-                    .network(network)
-                    .frame(frame)
-                    .fromCache(res.getFromDiskCache())
-                    .request(request)
-                    .url(url)
-                    .status(res.getStatus())
-                    .statusText(res.getStatusText())
-                    .headers(headers)
-                    .remoteAddress(res.getRemoteIPAddress() + ":" + res.getRemotePort())
-                    .securityDetails(securityDetails)
-                    .build();
-
-            /* 原始的Response对象中不存在cookie, 按照现在的浏览器存储cookie的方式也不再需要cookie事件, 可以去掉
-            Optional<Header> header = headers.stream().filter(h -> StringUtils.equalsIgnoreCase(CookieUtils.SET_COOKIE, h.getName())).findFirst();
-            if (header.isPresent()) {
-                try {
-                    emit(COOKIE, new CookieEvent(response, CookieUtils.parse(header.get(), url)));
-                } catch (Throwable t) {
-                    logger.warn("emit cookie event failed, error={}", t.getMessage(), t);
-                }
-            }
-             */
-
-            request.setResponse(response);
-            //frame.emit(RESPONSE, response);
-            //emit(RESPONSE, response);
-        }
-    }
-
-    private class LoadingFailedHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            LoadingFailedEvent evt = event.getParams().toJavaObject(LoadingFailedEvent.class);
-            ChromeRequest request = requestMap.get(evt.getRequestId());
-            if (request == null) {
-                return;
-            }
-            try {
-                ChromeFrame frame = find(request.getFrame().frameId);
-                if (frame == null) {
-                    return;
-                }
-                ChromeRequestFailed requestFailed = new ChromeRequestFailed();
-                requestFailed.setRequest(request);
-                requestFailed.setCanceled(evt.getCanceled());
-                requestFailed.setBlockedReason(BlockedReason.findByValue(evt.getBlockedReason()));
-                requestFailed.setErrorText(evt.getErrorText());
-                //frame.emit(REQUESTFAILED, requestFailed);
-                emit(REQUESTFAILED, requestFailed);
-            } finally {
-                requestMap.remove(evt.getRequestId());
-            }
-        }
-    }
-
-    private class LoadingFinishedHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            LoadingFinishedEvent evt = event.getParams().toJavaObject(LoadingFinishedEvent.class);
-            ChromeRequest request = requestMap.get(evt.getRequestId());
-            if (request == null) {
-                return;
-            }
-            try {
-                ChromeFrame frame = find(request.getFrame().frameId);
-                if (frame == null) {
-                    return;
-                }
-                //frame.emit(REQUESTFINISHED, request);
-                emit(REQUESTFINISHED, request);
-            } finally {
-                requestMap.remove(evt.getRequestId());
-            }
-        }
-    }
-
-    private class AttachedHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            FrameAttachedEvent evt = event.getParams().toJavaObject(FrameAttachedEvent.class);
-            ChromeFrame parent = find(evt.getParentFrameId());
-            if (parent == null) {
-                return;
-            }
-            logger.info("frame attached success, parentId={}, frameId={}", parent.frameId, evt.getFrameId());
-            parent.append(evt.getFrameId());
-            parent.emit(FRAMEATTACHED, evt);
-            //emit(FRAMEATTACHED, evt);
-        }
-    }
-
-    private class DetahcedHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            FrameDetachedEvent evt = event.getParams().toJavaObject(FrameDetachedEvent.class);
-            ChromeFrame frame = find(evt.getFrameId());
-            if (frame == null) {
-                return;
-            }
-            frame.remove();
-            frame.parent.emit(FRAMEDETACHED, evt);
-            //emit(FRAMEDETACHED, evt);
-        }
-    }
-
     private class NavigatedHandler implements Consumer<CDPEvent> {
 
         @Override
@@ -911,13 +624,13 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
             URL url = null;
             URL unreachableUrl = null;
             try {
-                url = new URL(null, evt.getFrame().getUrl(), DATA_PROTOCOL_HANDLER);
+                url = new URL(null, evt.getFrame().getUrl());
             } catch (MalformedURLException e) {
                 //do nth...
             }
             if (StringUtils.isNotEmpty(evt.getFrame().getUnreachableUrl())) {
                 try {
-                    unreachableUrl = new URL(null, evt.getFrame().getUnreachableUrl(), DATA_PROTOCOL_HANDLER);
+                    unreachableUrl = new URL(null, evt.getFrame().getUnreachableUrl());
                 } catch (MalformedURLException e) {
                     //do nth...
                 }
@@ -932,7 +645,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
             frame.setUnreachableUrl(unreachableUrl);
             frame.setSecurityOrigin(evt.getFrame().getSecurityOrigin());
             if (!(frame instanceof ChromePage)) {
-                frame.parent.emit(FRAMENAVIGATED, evt);
+                //frame.parent.emit(FRAMENAVIGATED, evt);
             }
             //emit(FRAMENAVIGATED, evt);
         }
@@ -986,22 +699,6 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         }
     }
 
-    private class ConsoleHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            EntryAddedEvent evt = event.getParams().toJavaObject(EntryAddedEvent.class);
-            List<RemoteObject> args = evt.getEntry().getArgs();
-            emit(CONSOLE, evt);
-            if (CollectionUtils.isEmpty(args)) {
-                return;
-            }
-            args.forEach(object -> {
-                if (object != null ) ChromeObjectUtils.releaseObjectQuietly(runtime, object.getObjectId());
-            });
-        }
-    }
-
     private class RequestInterceptor implements Consumer<CDPEvent> {
 
         private void continueRequest(String interceptorId) {
@@ -1038,7 +735,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
                     .resourceType(ResourceType.findByValue(evt.getResourceType()))
                     .build();
 
-            handleRequestEvent(requestEvent);
+            //handleRequestEvent(requestEvent);
         }
     }
 
@@ -1064,16 +761,6 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
             } catch (Exception e) {
                 logger.error("auth failed, error={}", e.getMessage(), e);
             }
-        }
-    }
-
-    private class DialogHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            JavascriptDialogOpeningEvent dlg = event.getParams().toJavaObject(JavascriptDialogOpeningEvent.class);
-            ChromeDialog dialog = new ChromeDialog(page, dlg.getType(), dlg.getMessage(), dlg.getDefaultPrompt());
-            emit(DIALOG, dialog);
         }
     }
 }

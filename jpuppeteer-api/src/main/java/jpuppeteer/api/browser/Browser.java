@@ -7,31 +7,20 @@ public interface Browser {
 
     void close() throws Exception;
 
-//    @TODO 暂不支持创建上下文, 先屏蔽这些接口
-//    List<BrowserContext> browserContexts();
-//
-//    /**
-//     * 等同于创建隐私窗口
-//     * @return
-//     */
-//    BrowserContext createIncognitoContext();
-//
-//    /**
-//     * 等同于创建普通窗口
-//     * @return
-//     */
-//    BrowserContext createContext();
+
+    BrowserContext[] browserContexts();
+
+    /**
+     * 等同于创建普通窗口
+     * @return
+     */
+    BrowserContext createContext() throws Exception;
 
     /**
      * 如果浏览器存在默认的上下文, 则返回默认的上下文, 否则返回null
      * @return
      */
     BrowserContext defaultContext();
-
-    //@TODO 目前只支持集成启动命令行的模式, 不需要connect, 先屏蔽
-//    void disconnect() throws Exception;
-//
-//    boolean isConnected();
 
     String userAgent() throws Exception;
 
@@ -44,13 +33,5 @@ public interface Browser {
      * @return
      */
     Process process();
-
-    void setCookie(Cookie... cookies) throws Exception;
-
-    void deleteCookie(Cookie... cookies) throws Exception;
-
-    void clearCookie() throws Exception;
-
-    List<Cookie> cookies() throws Exception;
 
 }
