@@ -123,10 +123,4 @@ public interface Page<P> extends Frame<P> {
 
     Coordinate scroll(int x, int y) throws Exception;
 
-    /**
-     * 清空页面文件, requestMap, children, pressedKeys, keyModifiers
-     * @throws Exception
-     */
-    void clear();
-
 }

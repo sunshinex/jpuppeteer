@@ -17,8 +17,8 @@ import java.util.*;
 public class CDPGenerator {
 
 //    static String rootDir = "D:\\workspace\\jpuppeteer\\src\\main\\java";
-//    static String rootDir = "D:\\workspace\\jpuppeteer\\jpuppeteer-cdp\\src\\main\\java";
-    static String rootDir = "/Users/user/Documents/workspace/jpuppeteer/jpuppeteer-cdp/src/main/java";
+    static String rootDir = "D:\\workspace\\jpuppeteer\\jpuppeteer-cdp\\src\\main\\java";
+//    static String rootDir = "/Users/user/Documents/workspace/jpuppeteer/jpuppeteer-cdp/src/main/java";
 //    static String rootDir = "/Users/user/Documents/workspace/jpuppeteer/jpuppeteer-cdp/src/main/java";
     static String basePackage = "jpuppeteer.cdp.cdp";
     static String CRLF = "\r\n";
@@ -266,7 +266,7 @@ public class CDPGenerator {
         }
         StringBuffer sb = new StringBuffer();
         //需要判断哪些是session的 哪些是不需要session的
-        Set<String> withoutSessionDomain = Sets.newHashSet("Browser", "Target");
+        Set<String> withoutSessionDomain = Sets.newHashSet("Browser", "Target", "Storage");
 
         sb.append("package ");
         sb.append(pkg);

@@ -65,9 +65,6 @@ public class DefaultEventEmitter<E extends Enum<E>> implements EventEmitter<E> {
         @Override
         public void run() {
             try {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("publish event start, hanler={}, event={}", consumer.getClass().getName(), JSON.toJSONString(event));
-                }
                 consumer.accept(event);
             } catch (Exception e) {
                 logger.error("publish event error, event={}, error={}", JSON.toJSONString(event), e.getMessage(), e);

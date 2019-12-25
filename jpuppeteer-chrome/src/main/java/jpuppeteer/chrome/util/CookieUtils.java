@@ -12,6 +12,11 @@ public class CookieUtils {
 
     public static SetCookiesRequest create(Cookie... cookies) {
         SetCookiesRequest request = new SetCookiesRequest();
+        request.setCookies(toList(cookies));
+        return request;
+    }
+
+    public static List<CookieParam> toList(Cookie... cookies) {
         List<CookieParam> cookieParams = Lists.newArrayListWithCapacity(cookies.length);
         for(Cookie cookie : cookies) {
             CookieParam cookieParam = new CookieParam();
@@ -26,8 +31,7 @@ public class CookieUtils {
             cookieParam.setUrl(cookie.getUrl());
             cookieParams.add(cookieParam);
         }
-        request.setCookies(cookieParams);
-        return request;
+        return cookieParams;
     }
 
     public static Cookie copyOf(jpuppeteer.cdp.cdp.entity.network.Cookie cookie) {

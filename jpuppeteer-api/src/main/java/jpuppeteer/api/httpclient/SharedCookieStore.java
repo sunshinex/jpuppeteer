@@ -1,6 +1,7 @@
 package jpuppeteer.api.httpclient;
 
 import jpuppeteer.api.browser.Browser;
+import jpuppeteer.api.browser.BrowserContext;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.utils.DateUtils;
 import org.apache.http.cookie.Cookie;
@@ -8,6 +9,7 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,10 +20,10 @@ public class SharedCookieStore implements CookieStore {
 
     private static final Logger logger = LoggerFactory.getLogger(SharedCookieStore.class);
 
-    private Browser browser;
+    private BrowserContext browserContext;
 
-    public SharedCookieStore(Browser browser) {
-        this.browser = browser;
+    public SharedCookieStore(BrowserContext browserContext) {
+        this.browserContext = browserContext;
     }
 
     @Override
@@ -47,7 +49,7 @@ public class SharedCookieStore implements CookieStore {
                 .sameSite(null)
                 .build();
         try {
-            browser.setCookie(ck);
+            browserContext.setCookies(ck);
         } catch (Exception e) {
             logger.error("add cookie failed, error={}", e.getMessage(), e);
         }
@@ -57,8 +59,8 @@ public class SharedCookieStore implements CookieStore {
     public List<Cookie> getCookies() {
         List<Cookie> cookies = null;
         try {
-            List<jpuppeteer.api.browser.Cookie> cookieList = browser.cookies();
-            cookies = cookieList.stream().map(cookie -> {
+            jpuppeteer.api.browser.Cookie[] cookieList = browserContext.cookies();
+            cookies = Arrays.stream(cookieList).map(cookie -> {
                 BasicClientCookie basicClientCookie = new BasicClientCookie(cookie.getName(), cookie.getValue());
                 basicClientCookie.setDomain(cookie.getDomain());
                 basicClientCookie.setPath(cookie.getPath());
@@ -86,26 +88,14 @@ public class SharedCookieStore implements CookieStore {
 
     @Override
     public boolean clearExpired(Date date) {
-        boolean success = true;
-        try {
-            List<jpuppeteer.api.browser.Cookie> cookieList = browser.cookies();
-            List<jpuppeteer.api.browser.Cookie> expired = cookieList.stream()
-                    .filter(cookie -> cookie.getExpires() != null ? cookie.getExpires().before(date) : false)
-                    .collect(Collectors.toList());
-            if (expired != null && expired.size() > 0) {
-                browser.deleteCookie(expired.toArray(new jpuppeteer.api.browser.Cookie[expired.size()]));
-            }
-        } catch (Exception e) {
-            success = false;
-            logger.error("delete expired cookies failed, error={}", e.getMessage(), e);
-        }
-        return success;
+        //此处清除过期的cookie交由浏览器管理, 此处不管理
+        return true;
     }
 
     @Override
     public void clear() {
         try {
-            browser.clearCookie();
+            browserContext.clearCookies();
         } catch (Exception e) {
             logger.error("clear cookies failed, error={}", e.getMessage(), e);
         }

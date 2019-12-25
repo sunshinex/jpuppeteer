@@ -15,8 +15,6 @@ public interface BrowserContext {
 
     void grantPermissions(String origin, PermissionType... permissions) throws Exception;
 
-    boolean isIncognito();
-
     /**
      * 等同于创建标签页
      */
@@ -24,11 +22,9 @@ public interface BrowserContext {
 
     Page[] pages() throws Exception;
 
-    void setCookie(Cookie... cookies) throws Exception;
+    void setCookies(Cookie... cookies) throws Exception;
 
-    void deleteCookie(Cookie... cookies) throws Exception;
-
-    void clearCookie() throws Exception;
+    void clearCookies() throws Exception;
 
     Cookie[] cookies() throws Exception;
 

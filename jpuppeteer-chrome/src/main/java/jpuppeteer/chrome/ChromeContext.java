@@ -1,137 +1,99 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.MapMaker;
-import com.sun.webkit.network.data.Handler;
 import jpuppeteer.api.browser.BrowserContext;
-import jpuppeteer.api.browser.Header;
+import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.constant.PermissionType;
-import jpuppeteer.api.constant.ResourceType;
-import jpuppeteer.api.event.EventEmitter;
+import jpuppeteer.api.event.DefaultEventEmitter;
 import jpuppeteer.api.future.DefaultPromise;
 import jpuppeteer.api.future.Promise;
-import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
-import jpuppeteer.cdp.CDPSession;
-import jpuppeteer.cdp.cdp.constant.network.BlockedReason;
-import jpuppeteer.cdp.cdp.domain.Browser;
-import jpuppeteer.cdp.cdp.domain.Target;
-import jpuppeteer.cdp.cdp.entity.browser.GrantPermissionsRequest;
-import jpuppeteer.cdp.cdp.entity.browser.ResetPermissionsRequest;
+import jpuppeteer.cdp.cdp.entity.fetch.AuthRequiredEvent;
+import jpuppeteer.cdp.cdp.entity.fetch.RequestPausedEvent;
 import jpuppeteer.cdp.cdp.entity.log.EntryAddedEvent;
 import jpuppeteer.cdp.cdp.entity.network.LoadingFailedEvent;
 import jpuppeteer.cdp.cdp.entity.network.LoadingFinishedEvent;
 import jpuppeteer.cdp.cdp.entity.network.RequestWillBeSentEvent;
 import jpuppeteer.cdp.cdp.entity.network.ResponseReceivedEvent;
 import jpuppeteer.cdp.cdp.entity.page.*;
-import jpuppeteer.cdp.cdp.entity.target.*;
+import jpuppeteer.cdp.cdp.entity.target.AttachedToTargetEvent;
+import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
+import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
 import jpuppeteer.cdp.constant.TargetType;
-import jpuppeteer.chrome.entity.RequestEvent;
-import jpuppeteer.chrome.entity.SecurityDetails;
 import jpuppeteer.chrome.event.Dialog;
 import jpuppeteer.chrome.event.Request;
 import jpuppeteer.chrome.event.RequestFailed;
 import jpuppeteer.chrome.event.Response;
-import jpuppeteer.chrome.event.type.ChromeBrowserEvent;
-import jpuppeteer.chrome.event.type.ChromeFrameEvent;
+import jpuppeteer.chrome.event.type.ChromeContextEvent;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
-import jpuppeteer.chrome.util.HttpUtils;
+import jpuppeteer.chrome.util.CookieUtils;
 import jpuppeteer.chrome.util.URLUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
-import static jpuppeteer.chrome.event.type.ChromeBrowserEvent.*;
+import static jpuppeteer.chrome.event.type.ChromeContextEvent.*;
 
-public class ChromeContext implements EventEmitter<ChromeBrowserEvent>, BrowserContext {
+public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> implements BrowserContext {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeContext.class);
 
-    private CDPConnection connection;
+    private final String name;
+
+    private final AtomicInteger pageCounter;
 
     private ChromeBrowser browser;
 
     private String browserContextId;
 
-    private Browser domainBrowser;
-
-    private Target target;
-
-    private Map<String/*targetId*/, ChromePage> pageMap;
+    private Map<String/*targetId*/, ChromePage> targetMap;
 
     private Map<String/*sessionId*/, ChromePage> sessionMap;
 
     private Map<String/*targetId*/, Promise<ChromePage>> promiseMap;
 
-    private Map<String/*sessionId*/, Map<String/*requestId*/, Request>> requestMap;
-
-    public ChromeContext(ChromeBrowser browser, String browserContextId) {
-        this.connection = connection;
+    public ChromeContext(String name, ChromeBrowser browser, String browserContextId) throws Exception {
+        super(Executors.newSingleThreadExecutor(r -> new Thread(r, name)));
+        this.name = name;
+        this.pageCounter = new AtomicInteger(0);
         this.browser = browser;
         this.browserContextId = browserContextId;
         MapMaker mapMaker = new MapMaker().weakValues().concurrencyLevel(16);
-        this.pageMap = mapMaker.makeMap();
+        this.targetMap = mapMaker.makeMap();
         this.sessionMap = mapMaker.makeMap();
         this.promiseMap = new ConcurrentHashMap<>();
-        this.requestMap = new ConcurrentHashMap<>();
-        this.domainBrowser = new Browser(connection);
-        this.target = new Target(connection);
 
-        //绑定事件
-        addListener(TARGETCREATED, (CDPEvent event) -> {
-            TargetCreatedEvent evt = event.getObject(TargetCreatedEvent.class);
-            TargetInfo target = evt.getTargetInfo();
-            TargetType targetType = TargetType.findByValue(target.getType());
-            if (!(TargetType.PAGE.equals(targetType))) {
-                logger.debug("target is not page, ignore! target={}", target);
-                return;
-            }
-            String targetId = target.getTargetId();
-            try {
-                //对所有创建的页面, 自动附加
-                String sessionId = browser.attachToTarget(targetId);
-                logger.info("attach target success, targetId={}, sessionId={}", targetId, sessionId);
-            } catch (Exception e) {
-                logger.error("attach target failed, targetId={}, error={}", targetId, e.getMessage(), e);
-            }
-        });
-        addListener(ATTACHEDTOTARGET, (CDPEvent event) -> {
-            AttachedToTargetEvent evt = event.getObject(AttachedToTargetEvent.class);
-            TargetInfo target = evt.getTargetInfo();
+        addListener(ATTACHEDTOTARGET, (AttachedToTargetEvent event) -> {
+            TargetInfo targetInfo = event.getTargetInfo();
+            String targetId = targetInfo.getTargetId();
             String sessionId = event.getSessionId();
-            String targetId = target.getTargetId();
-            TargetType targetType = TargetType.findByValue(target.getType());
-            logger.info("target attached, targetId={}, sessionId={}", targetId, sessionId);
-            String openerId = target.getOpenerId();
             ChromePage opener = null;
+            String openerId = targetInfo.getOpenerId();
             if (StringUtils.isNotEmpty(openerId)) {
-                opener = pageMap.get(openerId);
+                opener = targetMap.get(openerId);
                 if (opener == null) {
                     logger.error("target opener not found, openerId={}, targetId={}", openerId, targetId);
                     return;
                 }
             }
+            TargetType targetType = TargetType.findByValue(targetInfo.getType());
             Promise<ChromePage> promise = promiseMap.get(targetId);
             try {
-                ChromePage page = new ChromePage(browser.getName(), this, new CDPSession(connection, targetType, sessionId), targetId, opener, sessionId);
-                if (pageMap.put(targetId, page) != null) {
+                ChromePage page = new ChromePage(nextPageName(), this, browser.createSession(targetType, sessionId), targetInfo, opener);
+                if (targetMap.put(targetId, page) != null) {
                     logger.warn("target exists, targetId={}", targetId);
                 }
                 if (sessionMap.put(sessionId, page) != null) {
                     logger.warn("session exists, sessionId={}", sessionId);
                 }
-                requestMap.put(sessionId, new ConcurrentHashMap<>());
                 if (promise != null) {
                     promise.setSuccess(page);
                 }
@@ -145,242 +107,136 @@ public class ChromeContext implements EventEmitter<ChromeBrowserEvent>, BrowserC
                 logger.error("create page instance failed, error={}", e.getMessage(), e);
             }
         });
-        addListener(TARGETDESTROYED, (CDPEvent event) -> {
-            TargetDestroyedEvent evt = event.getObject(TargetDestroyedEvent.class);
-            String targetId = evt.getTargetId();
-            ChromePage pg = pageMap.remove(targetId);
+
+        addListener(TARGETDESTROYED, (String targetId) -> {
+            ChromePage pg = targetMap.remove(targetId);
             if (pg != null) {
-                sessionMap.remove(pg.sessionId);
-                requestMap.remove(pg.sessionId);
-                pg.emit(ChromePageEvent.CLOSED, null);
+                //@TODO 此处没有从sessionMap中删除, sessionMap为value弱引用, 理论来说下一次垃圾回收的时候是会被干掉的
                 logger.info("target destroyed, targetId={}", targetId);
             }
         });
-        addListener(TARGETCRASHED, (CDPEvent event) -> {
-            TargetCrashedEvent evt = event.getObject(TargetCrashedEvent.class);
-            String targetId = evt.getTargetId();
-            ChromePage pg = pageMap.get(targetId);
-            if (pg != null) {
-                pg.emit(ChromePageEvent.CRASHED, event);
-                logger.error("target crashed, targetId={}, sessionId={}", targetId, pg.sessionId);
+
+        addListener(TARGETINFOCHANGED, (TargetInfo targetInfo) -> {
+            ChromePage pg = targetMap.get(targetInfo.getTargetId());
+            if (pg == null) {
+                logger.error("target changed failed, targetId={}", targetInfo.getTargetId());
+                return;
             }
+            pg.emit(ChromePageEvent.CHANGED, targetInfo);
         });
-        addListener(TARGETINFOCHANGED, (CDPEvent object) -> {
-            TargetInfoChangedEvent event =  object.getObject(TargetInfoChangedEvent.class);
-            ChromePage pg = pageMap.get(event.getTargetInfo().getTargetId());
-            if (pg != null) {
-                pg.emit(ChromePageEvent.CHANGED, event.getTargetInfo());
+        addListener(TARGETCRASHED, (TargetCrashedEvent event) -> {
+            ChromePage pg = targetMap.get(event.getTargetId());
+            if (pg == null) {
+                logger.error("target crashed failed, targetId={}", event.getTargetId());
+                return;
             }
+            pg.emit(ChromePageEvent.CRASHED, event);
         });
-        addSessionListener(FRAMEATTACHED, (pg, event) -> {
-            FrameAttachedEvent evt = event.getObject(FrameAttachedEvent.class);
-            ChromeFrame parent = pg.find(evt.getParentFrameId());
+
+        handleSessionEvent(FRAMEATTACHED, (pg, event) -> {
+            ChromeFrame parent = pg.find(event.getParentFrameId());
             if (parent == null) {
-                logger.warn("parent frame not found, parentId={}", evt.getParentFrameId());
+                logger.warn("parent frame not found, parentId={}", event.getParentFrameId());
                 return;
             }
-            parent.emit(ChromeFrameEvent.FRAMEATTACHED, evt.getFrameId());
-        });
-        addSessionListener(FRAMEDETACHED, (pg, event) -> {
-            FrameDetachedEvent evt = event.getObject(FrameDetachedEvent.class);
-            ChromeFrame frame = pg.find(evt.getFrameId());
-            if (frame == null) {
-                logger.warn("detached frame not found, frameId={}", evt.getFrameId());
-                return;
-            }
-            frame.parent.emit(ChromeFrameEvent.FRAMEDETACHED, frame);
-        });
-        addSessionListener(FRAMENAVIGATED, (pg, event) -> {
-            FrameNavigatedEvent evt = event.getObject(FrameNavigatedEvent.class);
-            Frame frm = evt.getFrame();
+            pg.emit(ChromePageEvent.FRAMEATTACHED, parent.append(event.getFrameId()));
+        }, FrameAttachedEvent.class);
+
+        handleSessionEvent(FRAMENAVIGATED, (pg, event) -> {
+            Frame frm = event.getFrame();
             ChromeFrame frame = pg.find(frm.getId());
             if (frame == null) {
-                logger.warn("navigated frame not found, frameId={}", frm.getId());
+                logger.warn("frame not found, frameId={}", frm.getId());
                 return;
             }
-            frame.emit(ChromeFrameEvent.FRAMENAVIGATED, frm);
-        });
-        transmitFrameListener(LIFECYCLEEVENT, ChromeFrameEvent.LIFECYCLEEVENT);
-        addSessionListener(DOMCONTENTEVENTFIRED, (pg, event) -> {
-            DomContentEventFiredEvent evt = event.getObject(DomContentEventFiredEvent.class);
-            pg.emit(ChromePageEvent.DOMCONTENTLOADED, evt.getTimestamp());
-        });
-        addSessionListener(LOADEVENTFIRED, (pg, event) -> {
-            LoadEventFiredEvent evt = event.getObject(LoadEventFiredEvent.class);
-            pg.emit(ChromePageEvent.LOAD, evt.getTimestamp());
-        });
-        addSessionListener(ENTRYADDED, (pg, event) -> {
-            EntryAddedEvent evt = event.getObject(EntryAddedEvent.class);
-            pg.emit(ChromePageEvent.CONSOLE, evt.getEntry());
-        });
-        addSessionListener(JAVASCRIPTDIALOGOPENING, (pg, event) -> {
-            JavascriptDialogOpeningEvent evt = event.getObject(JavascriptDialogOpeningEvent.class);
-            pg.emit(ChromePageEvent.DIALOG, new Dialog(pg.page, evt.getType(), evt.getMessage(), evt.getDefaultPrompt()));
-        });
-        transmitPageListener(EXCEPTIONTHROWN, ChromePageEvent.PAGEERROR);
-        //处理请求
-        addSessionListener(REQUESTWILLBESENT, (pg, event) -> {
-            RequestWillBeSentEvent evt = event.getObject(RequestWillBeSentEvent.class);
-            RequestEvent requestEvent = RequestEvent.builder()
-                    .frameId(evt.getFrameId())
-                    .loaderId(evt.getLoaderId())
-                    .requestId(evt.getRequestId())
-                    .resourceType(ResourceType.findByValue(evt.getType()))
-                    .request(evt.getRequest())
-                    .build();
-            handleRequestEvent(pg, requestEvent);
-        });
-        addSessionListener(RESPONSERECEIVED, (pg, event) -> {
-            ResponseReceivedEvent evt = event.getObject(ResponseReceivedEvent.class);
-            ChromeFrame frame = pg.find(evt.getFrameId());
+            frame.setUrl(URLUtils.parse(frm.getUrl()));
+            frame.setName(frm.getName());
+            frame.setMimeType(frm.getMimeType());
+            frame.setUnreachableUrl(URLUtils.parse(frm.getUnreachableUrl()));
+            frame.setSecurityOrigin(frm.getSecurityOrigin());
+            pg.emit(ChromePageEvent.FRAMENAVIGATED, frame);
+        }, FrameNavigatedEvent.class);
+
+        handleSessionEvent(FRAMEDETACHED, (pg, event) -> {
+            ChromeFrame frame = pg.find(event.getFrameId());
             if (frame == null) {
-                logger.warn("response event frame not found, requestId={}, frameId={}", evt.getRequestId(), evt.getFrameId());
+                logger.warn("frame not found, frameId={}", event.getFrameId());
                 return;
             }
-            Request request = getRequest(pg.sessionId, evt.getRequestId());
-            if (request == null) {
-                return;
-            }
-            jpuppeteer.cdp.cdp.entity.network.Response res = evt.getResponse();
-            URL url = URLUtils.parse(res.getUrl());
-            SecurityDetails securityDetails = null;
-            if (res.getSecurityDetails() != null) {
-                securityDetails = SecurityDetails.builder()
-                        .issuer(res.getSecurityDetails().getIssuer())
-                        .protocol(res.getSecurityDetails().getProtocol())
-                        .subjectName(res.getSecurityDetails().getSubjectName())
-                        .vaildFrom(new Date(res.getSecurityDetails().getValidFrom().longValue() * 1000))
-                        .vaildTo(new Date(res.getSecurityDetails().getValidTo().longValue() * 1000))
-                        .build();
-            }
-            List<Header> headers = HttpUtils.parseHeader(res.getHeaders());
-            Response response = Response.builder()
-                    .session(pg.session)
-                    .network(pg.network)
-                    .frame(frame)
-                    .fromCache(res.getFromDiskCache())
-                    .request(request)
-                    .url(url)
-                    .status(res.getStatus())
-                    .statusText(res.getStatusText())
-                    .headers(headers)
-                    .remoteAddress(res.getRemoteIPAddress() + ":" + res.getRemotePort())
-                    .securityDetails(securityDetails)
-                    .build();
+            frame.remove();
+            pg.emit(ChromePageEvent.FRAMEDETACHED, frame);
+        }, FrameDetachedEvent.class);
 
-            request.setResponse(response);
-            pg.emit(ChromePageEvent.RESPONSE, response);
-        });
-        addSessionListener(LOADINGFAILED, (pg, event) -> {
-            LoadingFailedEvent evt = event.getObject(LoadingFailedEvent.class);
-            Request request = getRequest(pg.sessionId, evt.getRequestId());
-            if (request == null) {
-                return;
+        transmitSessionEvent(LIFECYCLEEVENT, ChromePageEvent.LIFECYCLEEVENT);
+        handleSessionEvent(DOMCONTENTEVENTFIRED, (pg, event) -> pg.emit(ChromePageEvent.DOMCONTENTLOADED, event.getTimestamp()), DomContentEventFiredEvent.class);
+        handleSessionEvent(LOADEVENTFIRED, (pg, event) -> pg.emit(ChromePageEvent.LOAD, event.getTimestamp()), LoadEventFiredEvent.class);
+        handleSessionEvent(ENTRYADDED, (pg, event) -> pg.emit(ChromePageEvent.CONSOLE, event.getEntry()), EntryAddedEvent.class);
+        handleSessionEvent(JAVASCRIPTDIALOGOPENING, (pg, event) -> {
+            pg.emit(ChromePageEvent.DIALOG, new Dialog(pg.page, event.getType(), event.getMessage(), event.getDefaultPrompt()));
+        }, JavascriptDialogOpeningEvent.class);
+        transmitSessionEvent(EXCEPTIONTHROWN, ChromePageEvent.PAGEERROR);
+
+        handleSessionEvent(REQUESTWILLBESENT, (pg, event) -> {
+            Request request = pg.handleRequest(event);
+            if (request != null) {
+                pg.emit(ChromePageEvent.REQUEST, request);
             }
-            pg.emit(ChromePageEvent.REQUESTFAILED, new RequestFailed(request, evt.getErrorText(), evt.getCanceled(), BlockedReason.findByValue(evt.getBlockedReason())));
-        });
-        addSessionListener(LOADINGFINISHED, (pg, event) -> {
-            LoadingFinishedEvent evt = event.getObject(LoadingFinishedEvent.class);
-            Request request = getRequest(pg.sessionId, evt.getRequestId());
-            if (request == null) {
-                return;
+        }, RequestWillBeSentEvent.class);
+
+        handleSessionEvent(RESPONSERECEIVED, (pg, event) -> {
+            Response response = pg.handleResponse(event);
+            if (response != null) {
+                pg.emit(ChromePageEvent.RESPONSE, response);
             }
-            pg.emit(ChromePageEvent.REQUESTFINISHED, request);
-        });
+        }, ResponseReceivedEvent.class);
+
+        handleSessionEvent(LOADINGFAILED, (pg, event) -> {
+            RequestFailed requestFailed = pg.handleRequestFailed(event);
+            if (requestFailed != null) {
+                pg.emit(ChromePageEvent.REQUESTFAILED, requestFailed);
+            }
+        }, LoadingFailedEvent.class);
+
+        handleSessionEvent(LOADINGFINISHED, (pg, event) -> {
+            Request request = pg.handleRequestFinished(event);
+            if (request != null) {
+                pg.emit(ChromePageEvent.REQUESTFINISHED, request);
+            }
+        }, LoadingFinishedEvent.class);
+
+        handleSessionEvent(REQUESTPAUSED, (pg, event) -> {
+            Request request = pg.handleRequestInterception(event);
+            if (request != null) {
+                pg.emit(ChromePageEvent.REQUEST, request);
+            }
+        }, RequestPausedEvent.class);
+
+        handleSessionEvent(AUTHREQUIRED, (pg, event) -> pg.doAuthenticate(event.getRequestId()), AuthRequiredEvent.class);
     }
 
-    private Request getRequest(String sessionId, String requestId) {
-        Map<String, Request> map = requestMap.get(sessionId);
-        if (map == null) {
-            logger.error("request map is null, sessionId={}", sessionId);
-            return null;
+    private String nextPageName() {
+        return name + "-Page-" + pageCounter.getAndIncrement();
+    }
+
+    private <T> void handleSessionEvent(ChromeContextEvent eventType, EventHandler<T> handler, Class<T> clazz) {
+        if (!CDPEvent.class.equals(eventType.getClazz())) {
+            throw new IllegalArgumentException("invaild event type:" + eventType.getClazz().getName());
         }
-        Request request = map.get(requestId);
-        if (request == null) {
-            logger.error("request for response is null, sessionId={}, requestId={}", sessionId, requestId);
-            return null;
-        }
-        return request;
-    }
-
-    private void handleRequestEvent(ChromePage pg, RequestEvent event) {
-        jpuppeteer.cdp.cdp.entity.network.Request req = event.getRequest();
-        ChromeFrame frame = pg.find(event.getFrameId());
-        if (frame == null) {
-            logger.warn("request event frame not found, requestId={}, frameId={}", event.getRequestId(), event.getFrameId());
-            return;
-        }
-        String urlStr = req.getUrl();
-        String fragment = req.getUrlFragment();
-        URL url = URLUtils.parse(urlStr + (fragment != null ? fragment : ""));
-        Request request = Request.builder()
-                .session(pg.session)
-                .network(pg.network)
-                .fetch(pg.fetch)
-                .frame(frame)
-                .loaderId(event.getLoaderId())
-                .requestId(event.getRequestId())
-                .interceptorId(event.getInterceptorId())
-                .method(req.getMethod())
-                .url(url)
-                .resourceType(event.getResourceType())
-                .headers(HttpUtils.parseHeader(req.getHeaders()))
-                .hasPostData(Boolean.TRUE.equals(req.getHasPostData()))
-                .build();
-        //requestMap.put(buildRequestId(pg.sessionId, event.getRequestId()), request);
-        pg.emit(ChromePageEvent.REQUEST, request);
-    }
-
-    @FunctionalInterface
-    private interface SessionHandler<T> {
-
-        void accept(ChromePage pg, T event);
-
-    }
-
-    private void addSessionListener(ChromeBrowserEvent from, SessionHandler<CDPEvent> handler) {
-        addListener(from, (CDPEvent object) -> {
-            String sessionId = object.getSessionId();
-            if (StringUtils.isEmpty(sessionId)) {
-                return;
-            }
-            ChromePage pg = sessionMap.get(sessionId);
+        addListener(eventType, (CDPEvent event) -> {
+            ChromePage pg = sessionMap.get(event.getSessionId());
             if (pg == null) {
+                logger.error("handle event failed:session not found, event={} sessionId={}", eventType.name(), event.getSessionId());
                 return;
             }
-            handler.accept(pg, object);
+            T evt = clazz != null ? event.getObject(clazz) : null;
+            handler.handle(pg, evt);
         });
     }
 
-    private <T> void addSessionListener(ChromeBrowserEvent from, SessionHandler<T> handler, Class<T> clazz) {
-        addSessionListener(from, (pg, event) -> {
-            T obj = event.getObject(clazz);
-            handler.accept(pg, obj);
-        });
+    private void transmitSessionEvent(ChromeContextEvent from, ChromePageEvent to) {
+        handleSessionEvent(from, (pg, event) -> pg.emit(to, event), to.getClazz());
     }
 
-    private void transmitPageListener(ChromeBrowserEvent from, ChromePageEvent to) {
-        addSessionListener(from, (pg, event) -> pg.emit(to, event), to.getClazz());
-    }
-
-    private void transmitFrameListener(ChromeBrowserEvent from, ChromeFrameEvent to) {
-        addSessionListener(from, (pg, event) -> pg.emit(to, event), to.getClazz());
-    }
-
-    @Override
-    public void addListener(ChromeBrowserEvent type, Consumer<?> consumer) {
-        browser.addListener(type, consumer);
-    }
-
-    @Override
-    public void removeListener(ChromeBrowserEvent type, Consumer<?> consumer) {
-        browser.removeListener(type, consumer);
-    }
-
-    @Override
-    public void emit(ChromeBrowserEvent type, Object event) {
-        browser.emit(type, event);
-    }
 
     @Override
     public ChromeBrowser browser() {
@@ -389,24 +245,12 @@ public class ChromeContext implements EventEmitter<ChromeBrowserEvent>, BrowserC
 
     @Override
     public void resetPermissions() throws Exception {
-        ResetPermissionsRequest request = new ResetPermissionsRequest();
-        request.setBrowserContextId(browserContextId);
-        domainBrowser.resetPermissions(request, DEFAULT_TIMEOUT);
+        browser.resetPermissions(browserContextId);
     }
 
     @Override
     public void grantPermissions(String origin, PermissionType... permissions) throws Exception {
-        GrantPermissionsRequest request = new GrantPermissionsRequest();
-        request.setBrowserContextId(browserContextId);
-        request.setOrigin(origin);
-        request.setPermissions(Arrays.stream(permissions).map(permission -> permission.getValue()).collect(Collectors.toList()));
-        domainBrowser.grantPermissions(request, DEFAULT_TIMEOUT);
-    }
-
-    @Override
-    public boolean isIncognito() {
-        //暂不支持创建上下文, 故此处直接返回false
-        return false;
+        browser.grantPermissions(browserContextId, origin, permissions);
     }
 
     @Override
@@ -417,9 +261,7 @@ public class ChromeContext implements EventEmitter<ChromeBrowserEvent>, BrowserC
         try {
             return promise.get(5, TimeUnit.SECONDS);
         } catch (Exception e) {
-            CloseTargetRequest request = new CloseTargetRequest();
-            request.setTargetId(targetId);
-            target.closeTarget(request, DEFAULT_TIMEOUT);
+            browser.closeTarget(targetId);
             throw e;
         } finally {
             promiseMap.remove(targetId);
@@ -428,7 +270,34 @@ public class ChromeContext implements EventEmitter<ChromeBrowserEvent>, BrowserC
 
     @Override
     public ChromePage[] pages() throws Exception {
-        ChromePage[] pages = new ChromePage[pageMap.size()];
-        return pageMap.values().toArray(pages);
+        ChromePage[] pages = new ChromePage[targetMap.size()];
+        return targetMap.values().toArray(pages);
+    }
+
+    @Override
+    public void setCookies(Cookie... cookies) throws Exception {
+        browser.setCookies(browserContextId, CookieUtils.toList(cookies));
+    }
+
+    @Override
+    public void clearCookies() throws Exception {
+        browser.clearCookies(browserContextId);
+    }
+
+    @Override
+    public Cookie[] cookies() throws Exception {
+        List<jpuppeteer.cdp.cdp.entity.network.Cookie> cookieList = browser.getCookies(browserContextId);
+        Cookie[] cookies = new Cookie[cookieList.size()];
+        for(int i = 0; i<cookieList.size(); i++) {
+            cookies[i] = CookieUtils.copyOf(cookieList.get(i));
+        }
+        return cookies;
+    }
+
+    @FunctionalInterface
+    private interface EventHandler<T> {
+
+        void handle(ChromePage pg, T event);
+
     }
 }

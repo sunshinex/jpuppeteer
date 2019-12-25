@@ -1,55 +1,50 @@
 package jpuppeteer.chrome;
 
-import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.MapMaker;
 import jpuppeteer.api.browser.Browser;
-import jpuppeteer.api.browser.BrowserContext;
-import jpuppeteer.api.browser.Cookie;
-import jpuppeteer.api.event.DefaultEventEmitter;
-import jpuppeteer.api.future.Promise;
+import jpuppeteer.api.constant.PermissionType;
+import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.WebSocketCDPConnection;
 import jpuppeteer.cdp.cdp.CDPEventType;
-import jpuppeteer.cdp.cdp.domain.Network;
+import jpuppeteer.cdp.cdp.domain.Storage;
 import jpuppeteer.cdp.cdp.domain.Target;
 import jpuppeteer.cdp.cdp.entity.browser.GetVersionResponse;
-import jpuppeteer.cdp.cdp.entity.network.DeleteCookiesRequest;
-import jpuppeteer.cdp.cdp.entity.network.GetAllCookiesResponse;
-import jpuppeteer.cdp.cdp.entity.network.SetCookiesRequest;
+import jpuppeteer.cdp.cdp.entity.browser.GrantPermissionsRequest;
+import jpuppeteer.cdp.cdp.entity.browser.ResetPermissionsRequest;
+import jpuppeteer.cdp.cdp.entity.network.Cookie;
+import jpuppeteer.cdp.cdp.entity.network.CookieParam;
+import jpuppeteer.cdp.cdp.entity.storage.ClearCookiesRequest;
+import jpuppeteer.cdp.cdp.entity.storage.GetCookiesRequest;
+import jpuppeteer.cdp.cdp.entity.storage.GetCookiesResponse;
+import jpuppeteer.cdp.cdp.entity.storage.SetCookiesRequest;
 import jpuppeteer.cdp.cdp.entity.target.*;
 import jpuppeteer.cdp.constant.TargetType;
-import jpuppeteer.chrome.event.type.ChromeBrowserEvent;
-import jpuppeteer.chrome.event.type.ChromePageEvent;
-import jpuppeteer.chrome.util.CookieUtils;
-import org.apache.commons.lang3.StringUtils;
+import jpuppeteer.chrome.event.type.ChromeContextEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static jpuppeteer.cdp.cdp.CDPEventType.*;
 
-public class ChromeBrowser extends DefaultEventEmitter<ChromeBrowserEvent> implements Browser {
+public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeBrowser.class);
 
-    //private static final String DEFAULT_URL = "about:blank";
+    private static final String DEFAULT_URL = "about:blank";
 
     public static final int DEFAULT_TIMEOUT = 30;
 
-    private static final String DEFAULT_CONTEXT_ID = "0";
+    private final String name;
 
-    protected final String name;
+    private final AtomicInteger contextCounter;
 
     private CDPConnection connection;
 
@@ -71,36 +66,56 @@ public class ChromeBrowser extends DefaultEventEmitter<ChromeBrowserEvent> imple
 
     private Target target;
 
+    private ChromeContext defaultContext;
+
+    private Storage storage;
+
     public ChromeBrowser(String name, Process process, CDPConnection connection) throws Exception {
-        super(Executors.newSingleThreadExecutor(r -> new Thread(r, "ChromeBrowser["+name+"]")));
         this.name = name;
+        this.contextCounter = new AtomicInteger(0);
         this.process = process;
         this.connection = connection;
         this.browser = new jpuppeteer.cdp.cdp.domain.Browser(connection);
         this.target = new Target(connection);
-        this.setDiscoverTargets(true);
-        this.contextMap = new ConcurrentHashMap<>();
-        this.contextMap.put(DEFAULT_CONTEXT_ID, new ChromeContext(this, null));
-        this.targetMap = new ConcurrentHashMap<>();
-        this.sessionMap = new ConcurrentHashMap<>();
-        //绑定事件
-        connection.addListener(TARGET_TARGETCREATED, (CDPEvent event) -> {
+        this.storage = new Storage(connection);
+        this.defaultContext = new ChromeContext(nextContextName(), this, null);
+        MapMaker mapMaker = new MapMaker().weakValues().concurrencyLevel(16);
+        this.contextMap = mapMaker.makeMap();
+        this.contextMap.put(getDefaultContextId(), this.defaultContext);
+        this.targetMap = mapMaker.makeMap();
+        this.sessionMap = mapMaker.makeMap();
+        //获取默认的browserContextId
+        //监听事件
+        addListener(TARGET_TARGETCREATED, (CDPEvent event) -> {
             TargetCreatedEvent evt = event.getObject(TargetCreatedEvent.class);
             TargetInfo targetInfo = evt.getTargetInfo();
             TargetType targetType = TargetType.findByValue(targetInfo.getType());
-            if (!(TargetType.PAGE.equals(targetType))) {
+            if (!TargetType.PAGE.equals(targetType)) {
                 logger.debug("target is not page, ignore! type={}, targetId={}, url={}", targetInfo.getType(), targetInfo.getTargetId(), targetInfo.getUrl());
                 return;
             }
-            emit(ChromeBrowserEvent.TARGETCREATED, evt);
             String targetId = targetInfo.getTargetId();
+            String contextId = targetInfo.getBrowserContextId();
+            ChromeContext context = contextMap.get(contextId);
+            if (context == null) {
+                logger.error("target created failed: context not found, targetId={}, contextId={}", targetId, contextId);
+                return;
+            }
+            String sessionId = null;
             try {
                 //对所有创建的页面, 自动附加
-                String sessionId = attachToTarget(targetId);
+                sessionId = attachToTarget(targetId);
+                targetMap.put(targetId, context);
+                sessionMap.put(sessionId, context);
+                context.emit(ChromeContextEvent.TARGETCREATED, targetInfo);
                 logger.info("attach target success, targetId={}, sessionId={}", targetId, sessionId);
             } catch (Exception e) {
                 //当target尝试attach失败的时候关闭target, 因为已经没有用了
                 logger.error("attach target failed, targetId={}, error={}", targetId, e.getMessage(), e);
+                targetMap.remove(targetId);
+                if (sessionId != null) {
+                    sessionMap.remove(sessionId);
+                }
                 try {
                     closeTarget(targetId);
                 } catch (Exception e1) {
@@ -108,87 +123,147 @@ public class ChromeBrowser extends DefaultEventEmitter<ChromeBrowserEvent> imple
                 }
             }
         });
-        connection.addListener(TARGET_ATTACHEDTOTARGET, (CDPEvent event) -> {
+        addListener(TARGET_ATTACHEDTOTARGET, (CDPEvent event) -> {
             AttachedToTargetEvent evt = event.getObject(AttachedToTargetEvent.class);
             TargetInfo target = evt.getTargetInfo();
-            String sessionId = event.getSessionId();
             String targetId = target.getTargetId();
-            TargetType targetType = TargetType.findByValue(target.getType());
-            logger.info("target attached, targetId={}, sessionId={}", targetId, sessionId);
-//
-//            String openerId = target.getOpenerId();
-//            ChromePage opener = null;
-//            if (StringUtils.isNotEmpty(openerId)) {
-//                opener = pageMap.get(openerId);
-//                if (opener == null) {
-//                    logger.error("target opener not found, openerId={}, targetId={}", openerId, targetId);
-//                    return;
-//                }
-//            }
-//            Promise<ChromePage> promise = promiseMap.get(targetId);
-//            try {
-//                ChromePage page = new ChromePage(browser.getName(), this, new CDPSession(connection, targetType, sessionId), targetId, opener, sessionId);
-//                if (pageMap.put(targetId, page) != null) {
-//                    logger.warn("target exists, targetId={}", targetId);
-//                }
-//                if (sessionMap.put(sessionId, page) != null) {
-//                    logger.warn("session exists, sessionId={}", sessionId);
-//                }
-//                requestMap.put(sessionId, new ConcurrentHashMap<>());
-//                if (promise != null) {
-//                    promise.setSuccess(page);
-//                }
-//                if (opener != null) {
-//                    opener.emit(ChromePageEvent.OPENPAGE, page);
-//                }
-//            } catch (Exception e) {
-//                if (promise != null) {
-//                    promise.setFailure(e);
-//                }
-//                logger.error("create page instance failed, error={}", e.getMessage(), e);
-//            }
+            String contextId = target.getBrowserContextId();
+            ChromeContext context = contextMap.get(contextId);
+            if (context == null) {
+                logger.error("target attached failed, context not found, targetId={}, contextId={}", targetId, contextId);
+                return;
+            }
+            context.emit(ChromeContextEvent.ATTACHEDTOTARGET, evt);
+            logger.info("target attached, targetId={}", targetId);
         });
+        addListener(TARGET_TARGETDESTROYED, (CDPEvent event) -> {
+            TargetDestroyedEvent evt = event.getObject(TargetDestroyedEvent.class);
+            String targetId = evt.getTargetId();
+            ChromeContext context = targetMap.get(targetId);
+            if (context == null) {
+                //此处有可能不是page类型的target, 但是无法作出判断, 先忽略错误日志的输出
+                //logger.error("target destroyed failed, context not found, targetId={}", targetId);
+                return;
+            }
+            targetMap.remove(targetId);
+            //@TODO 此处没有从sessionMap中移除, 等gc的时候清除
+            context.emit(ChromeContextEvent.TARGETDESTROYED, targetId);
+            logger.info("target destoryed, targetId={}", targetId);
+        });
+        addListener(TARGET_TARGETINFOCHANGED, (CDPEvent event) -> {
+            TargetInfoChangedEvent evt = event.getObject(TargetInfoChangedEvent.class);
+            TargetInfo targetInfo = evt.getTargetInfo();
+            String targetId = targetInfo.getTargetId();
+            TargetType targetType = TargetType.findByValue(targetInfo.getType());
+            if (!(TargetType.PAGE.equals(targetType))) {
+                logger.debug("target is not page, ignore! type={}, targetId={}, url={}", targetInfo.getType(), targetInfo.getTargetId(), targetInfo.getUrl());
+                return;
+            }
+            ChromeContext context = targetMap.get(targetId);
+            if (context == null) {
+                logger.error("target info changed failed, context not found, targetId={}", targetId);
+                return;
+            }
+            context.emit(ChromeContextEvent.TARGETINFOCHANGED, targetInfo);
+        });
+        addListener(TARGET_TARGETCRASHED, (CDPEvent event) -> {
+            TargetCrashedEvent evt = event.getObject(TargetCrashedEvent.class);
+            String targetId = evt.getTargetId();
+            ChromeContext context = targetMap.get(targetId);
+            if (context == null) {
+                logger.error("target crashed failed, context not found, targetId={}", targetId);
+                return;
+            }
+            context.emit(ChromeContextEvent.TARGETCRASHED, evt);
+            logger.error("target crashed, targetId={}", targetId);
+        });
+        //传递事件
+        transmitSessionEvent(PAGE_LIFECYCLEEVENT, ChromeContextEvent.LIFECYCLEEVENT);
+        transmitSessionEvent(PAGE_DOMCONTENTEVENTFIRED, ChromeContextEvent.DOMCONTENTEVENTFIRED);
+        transmitSessionEvent(PAGE_LOADEVENTFIRED, ChromeContextEvent.LOADEVENTFIRED);
+        transmitSessionEvent(PAGE_FRAMEATTACHED, ChromeContextEvent.FRAMEATTACHED);
+        transmitSessionEvent(PAGE_FRAMEDETACHED, ChromeContextEvent.FRAMEDETACHED);
+        transmitSessionEvent(PAGE_FRAMENAVIGATED, ChromeContextEvent.FRAMENAVIGATED);
+        transmitSessionEvent(PAGE_JAVASCRIPTDIALOGOPENING, ChromeContextEvent.JAVASCRIPTDIALOGOPENING);
+        transmitSessionEvent(NETWORK_REQUESTWILLBESENT, ChromeContextEvent.REQUESTWILLBESENT);
+        transmitSessionEvent(NETWORK_RESPONSERECEIVED, ChromeContextEvent.RESPONSERECEIVED);
+        transmitSessionEvent(NETWORK_LOADINGFAILED, ChromeContextEvent.LOADINGFAILED);
+        transmitSessionEvent(NETWORK_LOADINGFINISHED, ChromeContextEvent.LOADINGFINISHED);
+        transmitSessionEvent(RUNTIME_EXCEPTIONTHROWN, ChromeContextEvent.EXCEPTIONTHROWN);
+        transmitSessionEvent(RUNTIME_EXECUTIONCONTEXTCREATED, ChromeContextEvent.EXECUTIONCONTEXTCREATED);
+        transmitSessionEvent(RUNTIME_EXECUTIONCONTEXTDESTROYED, ChromeContextEvent.EXECUTIONCONTEXTDESTROYED);
+        transmitSessionEvent(RUNTIME_EXECUTIONCONTEXTSCLEARED, ChromeContextEvent.EXECUTIONCONTEXTSCLEARED);
+        transmitSessionEvent(FETCH_REQUESTPAUSED, ChromeContextEvent.REQUESTPAUSED);
+        transmitSessionEvent(FETCH_AUTHREQUIRED, ChromeContextEvent.AUTHREQUIRED);
+        transmitSessionEvent(LOG_ENTRYADDED, ChromeContextEvent.ENTRYADDED);
 
-//        for(ChromeBrowserEvent event : ChromeBrowserEvent.values()) {
-//            connection.addListener(event.getEventType(), (CDPEvent object) -> emit(event, object));
-//        }
-//        //找到默认的标签页
-//        String defaultTargetId = null;
-//        for(TargetInfo targetInfo : getTargets()) {
-//            TargetType targetType = TargetType.findByValue(targetInfo.getType());
-//            if (TargetType.PAGE.equals(targetType)) {
-//                defaultTargetId = targetInfo.getTargetId();
-//            }
-//        }
-//        //如果没有找到默认的标签页, 则创建一个
-//        if (defaultTargetId == null) {
-//            defaultTargetId = createTarget(null);
-//        }
-//        //给默认标签页附加devtools
-//        String sessionId = attachToTarget(defaultTargetId);
-//        defaultSession = new CDPSession(connection, TargetType.PAGE, sessionId);
-//        this.network = new Network(defaultSession);
+        this.setDiscoverTargets(true);
     }
-//
-//    /**
-//     * 只对已经存在的页面生效
-//     * @param autoAttach
-//     * @throws Exception
-//     */
-//    protected void setAutoAttach(boolean autoAttach) throws Exception {
-//        SetAutoAttachRequest request = new SetAutoAttachRequest();
-//        request.setAutoAttach(autoAttach);
-//        request.setFlatten(true);
-//        request.setWaitForDebuggerOnStart(false);
-//        this.target.setAutoAttach(request, DEFAULT_TIMEOUT);
-//    }
-//
-//    protected void activateTarget(String targetId) throws Exception {
-//        ActivateTargetRequest request = new ActivateTargetRequest();
-//        request.setTargetId(targetId);
-//        target.activateTarget(request, DEFAULT_TIMEOUT);
-//    }
-//
+
+
+    @Override
+    public void addListener(CDPEventType type, Consumer<?> consumer) {
+        connection.addListener(type, consumer);
+    }
+
+    @Override
+    public void removeListener(CDPEventType type, Consumer<?> consumer) {
+        connection.addListener(type, consumer);
+    }
+
+    @Override
+    public void emit(CDPEventType type, Object event) {
+        connection.emit(type, event);
+    }
+
+    private void transmitSessionEvent(CDPEventType from, ChromeContextEvent to) {
+        addListener(from, (CDPEvent event) -> {
+            String sessionId = event.getSessionId();
+            ChromeContext context = sessionMap.get(sessionId);
+            if (context == null) {
+                logger.error("transmit event failed:context not found, event={} sessionId={}", from.getName(), sessionId);
+                return;
+            }
+            context.emit(to, event);
+        });
+    }
+
+    private String nextContextName() {
+        return "Context[" + name + "]-" + contextCounter.getAndIncrement();
+    }
+
+    private String getDefaultContextId() throws Exception {
+        Optional<String> browserContextId = getTargets(null).stream()
+                .filter(targetInfo -> TargetType.PAGE.getValue().equals(targetInfo.getType()))
+                .map(targetInfo -> targetInfo.getBrowserContextId())
+                .findFirst();
+        if (browserContextId.isPresent()) {
+            return browserContextId.get();
+        } else {
+            createTarget(null);
+            return getDefaultContextId();
+        }
+    }
+
+    /**
+     * 只对已经存在的页面生效
+     * @param autoAttach 是否自动attach
+     * @throws Exception
+     */
+    protected void setAutoAttach(boolean autoAttach) throws Exception {
+        SetAutoAttachRequest request = new SetAutoAttachRequest();
+        request.setAutoAttach(autoAttach);
+        request.setFlatten(true);
+        request.setWaitForDebuggerOnStart(false);
+        this.target.setAutoAttach(request, DEFAULT_TIMEOUT);
+    }
+
+    protected void setDiscoverTargets(boolean discover) throws Exception {
+        SetDiscoverTargetsRequest request = new SetDiscoverTargetsRequest();
+        request.setDiscover(discover);
+        target.setDiscoverTargets(request, DEFAULT_TIMEOUT);
+    }
+
     protected String attachToTarget(String targetId) throws Exception {
         AttachToTargetRequest request = new AttachToTargetRequest();
         request.setTargetId(targetId);
@@ -203,42 +278,68 @@ public class ChromeBrowser extends DefaultEventEmitter<ChromeBrowserEvent> imple
         CloseTargetResponse response = target.closeTarget(request, DEFAULT_TIMEOUT);
         return response.getSuccess();
     }
-//
-//    protected String createTarget(String browserContextId) throws Exception {
-//        CreateTargetRequest request = new CreateTargetRequest();
-//        request.setUrl(DEFAULT_URL);
-//        request.setBrowserContextId(browserContextId);
-//        CreateTargetResponse response = target.createTarget(request, DEFAULT_TIMEOUT);
-//        return response.getTargetId();
-//    }
-//
-//    protected void detachFromTarget(String sessionId) throws Exception {
-//        DetachFromTargetRequest request = new DetachFromTargetRequest();
-//        request.setSessionId(sessionId);
-//        target.detachFromTarget(request, DEFAULT_TIMEOUT);
-//    }
-//
-//    protected List<TargetInfo> getTargets() throws Exception {
-//        GetTargetsResponse response = target.getTargets(DEFAULT_TIMEOUT);
-//        return response.getTargetInfos();
-//    }
-//
-//    protected void sendMessageToTarget(String sessionId, String message) throws Exception {
-//        SendMessageToTargetRequest request = new SendMessageToTargetRequest();
-//        request.setSessionId(sessionId);
-//        request.setMessage(message);
-//        target.sendMessageToTarget(request, DEFAULT_TIMEOUT);
-//    }
-//
-    protected void setDiscoverTargets(boolean discover) throws Exception {
-        SetDiscoverTargetsRequest request = new SetDiscoverTargetsRequest();
-        request.setDiscover(discover);
-        target.setDiscoverTargets(request, DEFAULT_TIMEOUT);
+
+    protected String createTarget(String browserContextId) throws Exception {
+        CreateTargetRequest request = new CreateTargetRequest();
+        request.setUrl(DEFAULT_URL);
+        request.setBrowserContextId(browserContextId);
+        CreateTargetResponse response = target.createTarget(request, DEFAULT_TIMEOUT);
+        return response.getTargetId();
+    }
+
+    protected List<TargetInfo> getTargets(String browserContextId) throws Exception {
+        GetTargetsResponse response = target.getTargets(DEFAULT_TIMEOUT);
+        if (browserContextId == null) {
+            return response.getTargetInfos();
+        } else {
+            return response.getTargetInfos().stream()
+                    .filter(targetInfo -> Objects.equals(browserContextId, targetInfo.getBrowserContextId()))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    protected void resetPermissions(String browserContextId) throws Exception {
+        ResetPermissionsRequest request = new ResetPermissionsRequest();
+        request.setBrowserContextId(browserContextId);
+        browser.resetPermissions(request, DEFAULT_TIMEOUT);
+    }
+
+    protected void grantPermissions(String browserContextId, String origin, PermissionType... permissions) throws Exception {
+        GrantPermissionsRequest request = new GrantPermissionsRequest();
+        request.setBrowserContextId(browserContextId);
+        request.setOrigin(origin);
+        request.setPermissions(Arrays.stream(permissions)
+                .map(permission -> permission.getValue())
+                .collect(Collectors.toList()));
+        browser.grantPermissions(request, DEFAULT_TIMEOUT);
+    }
+
+    protected void setCookies(String browserContextId, List<CookieParam> cookies) throws Exception {
+        SetCookiesRequest request = new SetCookiesRequest();
+        request.setBrowserContextId(browserContextId);
+        request.setCookies(cookies);
+        storage.setCookies(request, DEFAULT_TIMEOUT);
+    }
+
+    protected void clearCookies(String browserContextId) throws Exception {
+        ClearCookiesRequest request = new ClearCookiesRequest();
+        request.setBrowserContextId(browserContextId);
+        storage.clearCookies(request, DEFAULT_TIMEOUT);
+    }
+
+    protected List<Cookie> getCookies(String browserContextId) throws Exception {
+        GetCookiesRequest request = new GetCookiesRequest();
+        request.setBrowserContextId(browserContextId);
+        GetCookiesResponse response = storage.getCookies(request, DEFAULT_TIMEOUT);
+        return response.getCookies();
+    }
+
+    protected CDPSession createSession(TargetType targetType, String sessionId) {
+        return new CDPSession(connection, targetType, sessionId);
     }
 
     @Override
     public void close() throws Exception {
-        //@TODO 需要先关闭所有的context
         browser.close(DEFAULT_TIMEOUT);
     }
 
@@ -254,7 +355,7 @@ public class ChromeBrowser extends DefaultEventEmitter<ChromeBrowserEvent> imple
         CreateBrowserContextResponse response = target.createBrowserContext(DEFAULT_TIMEOUT);
         String contextId = response.getBrowserContextId();
         try {
-            ChromeContext context = new ChromeContext(this, contextId);
+            ChromeContext context = new ChromeContext(nextContextName(), this, contextId);
             contextMap.put(contextId, context);
             return context;
         } catch (Exception e) {
@@ -267,7 +368,7 @@ public class ChromeBrowser extends DefaultEventEmitter<ChromeBrowserEvent> imple
 
     @Override
     public ChromeContext defaultContext() {
-        return contextMap.get(DEFAULT_CONTEXT_ID);
+        return defaultContext;
     }
 
     @Override
@@ -292,37 +393,4 @@ public class ChromeBrowser extends DefaultEventEmitter<ChromeBrowserEvent> imple
         return this.process;
     }
 
-//    @Override
-//    public void setCookie(Cookie... cookies) throws Exception {
-//        SetCookiesRequest request = CookieUtils.create(cookies);
-//        network.setCookies(request, DEFAULT_TIMEOUT);
-//    }
-//
-//    @Override
-//    public void deleteCookie(Cookie... cookies) throws Exception {
-//        //此处需要异步实现
-//        List<Future<JSONObject>> futures = new ArrayList<>();
-//        for(Cookie cookie : cookies) {
-//            DeleteCookiesRequest request = new DeleteCookiesRequest();
-//            request.setName(cookie.getName());
-//            request.setDomain(cookie.getDomain());
-//            request.setPath(cookie.getPath());
-//            request.setUrl(cookie.getUrl());
-//            futures.add(defaultSession.asyncSend("Network.deleteCookies", request));
-//        }
-//        for(Future<JSONObject> future : futures) {
-//            future.get(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
-//        }
-//    }
-//
-//    @Override
-//    public void clearCookie() throws Exception {
-//        network.clearBrowserCookies(DEFAULT_TIMEOUT);
-//    }
-//
-//    @Override
-//    public List<Cookie> cookies() throws Exception {
-//        GetAllCookiesResponse response = network.getAllCookies(DEFAULT_TIMEOUT);
-//        return response.getCookies().stream().map(cookie -> CookieUtils.copyOf(cookie)).collect(Collectors.toList());
-//    }
 }

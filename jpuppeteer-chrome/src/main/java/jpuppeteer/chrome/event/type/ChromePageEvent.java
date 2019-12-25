@@ -1,15 +1,16 @@
 package jpuppeteer.chrome.event.type;
 
-import jpuppeteer.cdp.cdp.entity.log.EntryAddedEvent;
 import jpuppeteer.cdp.cdp.entity.log.LogEntry;
-import jpuppeteer.cdp.cdp.entity.page.DomContentEventFiredEvent;
-import jpuppeteer.cdp.cdp.entity.page.LoadEventFiredEvent;
+import jpuppeteer.cdp.cdp.entity.page.LifecycleEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ExceptionThrownEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
-import jpuppeteer.cdp.cdp.entity.target.TargetDestroyedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
-import jpuppeteer.chrome.*;
+import jpuppeteer.chrome.ChromeFrame;
+import jpuppeteer.chrome.ChromePage;
 import jpuppeteer.chrome.event.Dialog;
+import jpuppeteer.chrome.event.Request;
+import jpuppeteer.chrome.event.RequestFailed;
+import jpuppeteer.chrome.event.Response;
 
 public enum ChromePageEvent {
 
@@ -17,7 +18,13 @@ public enum ChromePageEvent {
 
     CRASHED(TargetCrashedEvent.class),
 
-    CLOSED(TargetDestroyedEvent.class),
+    FRAMEATTACHED(ChromeFrame.class),
+
+    FRAMEDETACHED(ChromeFrame.class),
+
+    FRAMENAVIGATED(ChromeFrame.class),
+
+    LIFECYCLEEVENT(LifecycleEvent.class),
 
     DOMCONTENTLOADED(Double.class),
 
@@ -31,13 +38,13 @@ public enum ChromePageEvent {
 
     PAGEERROR(ExceptionThrownEvent.class),
 
-    REQUEST(ChromeRequest .class),
+    REQUEST(Request.class),
 
-    RESPONSE(ChromeResponse .class),
+    RESPONSE(Response.class),
 
-    REQUESTFAILED(ChromeRequestFailed .class),
+    REQUESTFAILED(RequestFailed.class),
 
-    REQUESTFINISHED(ChromeRequest.class),
+    REQUESTFINISHED(Request.class),
 
     ;
 

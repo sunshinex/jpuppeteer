@@ -2,7 +2,6 @@ package jpuppeteer.chrome;
 
 import com.alibaba.fastjson.TypeReference;
 import jpuppeteer.api.browser.Frame;
-import jpuppeteer.api.event.DefaultEventEmitter;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
@@ -18,7 +17,6 @@ import jpuppeteer.cdp.cdp.entity.page.NavigateRequest;
 import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.chrome.constant.ScriptConstants;
-import jpuppeteer.chrome.event.type.ChromeFrameEvent;
 import jpuppeteer.chrome.util.ArgUtils;
 import jpuppeteer.chrome.util.ChromeObjectUtils;
 import lombok.Setter;
@@ -30,17 +28,14 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
-public class ChromeFrame extends DefaultEventEmitter<ChromeFrameEvent> implements Frame<CallArgument> {
+public class ChromeFrame implements Frame<CallArgument> {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeFrame.class);
-
-    protected Executor executor;
 
     protected String frameId;
 
@@ -75,9 +70,7 @@ public class ChromeFrame extends DefaultEventEmitter<ChromeFrameEvent> implement
     @Setter
     protected URL unreachableUrl;
 
-    public ChromeFrame(Executor executor, ChromeFrame parent, String frameId, CDPSession session, Page page, Runtime runtime, DOM dom, Input input) {
-        super(executor);
-        this.executor = executor;
+    public ChromeFrame(ChromeFrame parent, String frameId, CDPSession session, Page page, Runtime runtime, DOM dom, Input input) {
         this.parent = parent;
         this.frameId = frameId;
         this.session = session;
@@ -138,7 +131,7 @@ public class ChromeFrame extends DefaultEventEmitter<ChromeFrameEvent> implement
      * @return
      */
     protected ChromeFrame append(String frameId) {
-        ChromeFrame frame = new ChromeFrame(executor,this, frameId, session, page, runtime, dom, input);
+        ChromeFrame frame = new ChromeFrame(this, frameId, session, page, runtime, dom, input);
         this.children.add(frame);
         return frame;
     }

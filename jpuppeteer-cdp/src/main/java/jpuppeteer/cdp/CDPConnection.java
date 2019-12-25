@@ -37,7 +37,7 @@ public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> im
     protected final Map<Integer, Promise<JSONObject>> requestMap;
 
     protected CDPConnection(String name) {
-        super(Executors.newSingleThreadExecutor(r -> new Thread(r, "CDPConnection["+name+"]")));
+        super(Executors.newSingleThreadExecutor(r -> new Thread(r, "Connection["+name+"]")));
         this.messageId = new AtomicInteger(0);
         this.requestMap = new MapMaker().weakValues().concurrencyLevel(16).makeMap();
     }
