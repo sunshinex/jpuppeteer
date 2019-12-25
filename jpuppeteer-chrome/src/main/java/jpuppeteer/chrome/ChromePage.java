@@ -76,9 +76,11 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
 
     private static final List<TouchPoint> EMPTY_TOUCHPOINTS = Lists.newArrayListWithCapacity(0);
 
+    public static final ChromePage PLACEHOLDER = new ChromePage();
+
     private final EventEmitter<ChromePageEvent> events;
 
-    private final ChromePage opener;
+    private ChromePage opener;
 
     private ChromeContext browserContext;
 
@@ -115,6 +117,11 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     private Map<String/*requestId*/, Request> requestMap;
 
     private TargetInfo targetInfo;
+
+    private ChromePage() {
+        super(null, null, null, null, null, null, null);
+        this.events = null;
+    }
 
     public ChromePage(String name, ChromeContext browserContext, CDPSession session, TargetInfo targetInfo, ChromePage opener) throws Exception {
         super(
@@ -155,6 +162,10 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         enableLog();
         enableRuntime();
         enableDom();
+
+        addListener(ChromePageEvent.CHANGED, (TargetInfo tinfo) -> {
+            this.targetInfo = tinfo;
+        });
     }
 
 
@@ -341,6 +352,39 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
             return null;
         }
         return request;
+    }
+
+    protected void handleExecutionCreated(ExecutionContextCreatedEvent event) {
+        if (event ==  null || event.getContext() == null || MapUtils.isEmpty(event.getContext().getAuxData())) {
+            return;
+        }
+        Object frameIdObj = event.getContext().getAuxData().get("frameId");
+        if (frameIdObj == null) {
+            return;
+        }
+        String frameId = (String) frameIdObj;
+        ChromeFrame frame = find(frameId);
+        if (frame == null) {
+            return;
+        }
+        frame.createExecutionContext(event.getContext().getId());
+        logger.info("frame {} execution created with id:{}", frameId, event.getContext().getId());
+    }
+
+    protected void handleExecutionDestroyed(ExecutionContextDestroyedEvent event) {
+        if (event == null || event.getExecutionContextId() == null) {
+            return;
+        }
+        ChromeFrame frame = find(event.getExecutionContextId());
+        if (frame == null) {
+            return;
+        }
+        frame.destroyExecutionContext();
+        logger.info("frame {} execution destroyed with id:{}", frame.frameId(), event.getExecutionContextId());
+    }
+
+    protected void handleExecutionCleared() {
+        logger.info("page execution cleared, targetId={}", frameId);
     }
 
     protected TargetInfo targetInfo() {
@@ -757,53 +801,5 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     public Coordinate scroll(int x, int y) throws Exception {
         JSONObject offset = evaluate(ScriptConstants.SCROLL, JSONObject.class, ArgUtils.createFromValue(null), ArgUtils.createFromValue(x), ArgUtils.createFromValue(y));
         return new Coordinate(offset.getDouble("scrollX"), offset.getDouble("scrollY"));
-    }
-
-    private class ExecutionCreatedHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            ExecutionContextCreatedEvent evt = event.getParams().toJavaObject(ExecutionContextCreatedEvent.class);
-            if (evt ==  null || evt.getContext() == null || MapUtils.isEmpty(evt.getContext().getAuxData())) {
-                return;
-            }
-            Object frameIdObj = evt.getContext().getAuxData().get("frameId");
-            if (frameIdObj == null) {
-                return;
-            }
-            String frameId = (String) frameIdObj;
-            ChromeFrame frame = find(frameId);
-            if (frame == null) {
-                return;
-            }
-            frame.createExecutionContext(evt.getContext().getId());
-            logger.info("frame {} execution created with id:{}", frameId, evt.getContext().getId());
-        }
-    }
-
-    private class ExecutionDestroyedHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            //do nth...
-            ExecutionContextDestroyedEvent evt = event.getParams().toJavaObject(ExecutionContextDestroyedEvent.class);
-            if (evt == null || evt.getExecutionContextId() == null) {
-                return;
-            }
-            ChromeFrame frame = find(evt.getExecutionContextId());
-            if (frame == null) {
-                return;
-            }
-            logger.info("frame {} execution destroyed with id:{}", frame.frameId(), evt.getExecutionContextId());
-            frame.destroyExecutionContext();
-        }
-    }
-
-    private class ExecutionClearedHandler implements Consumer<CDPEvent> {
-
-        @Override
-        public void accept(CDPEvent event) {
-            //do nth...
-        }
     }
 }

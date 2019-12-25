@@ -4,6 +4,7 @@ import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.cdp.entity.target.AttachedToTargetEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
+import jpuppeteer.chrome.ChromePage;
 
 public enum ChromeContextEvent {
 
@@ -43,6 +44,9 @@ public enum ChromeContextEvent {
 
     //log
     ENTRYADDED(CDPEvent.class),
+
+    //open page
+    NEWPAGE(ChromePage.class),//手工创建的页面不会触发此事件
     ;
 
     private Class clazz;
