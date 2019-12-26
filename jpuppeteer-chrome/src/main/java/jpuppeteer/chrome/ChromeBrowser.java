@@ -119,9 +119,6 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         transmitSessionEvent(FETCH_REQUESTPAUSED, ChromeContextEvent.REQUESTPAUSED);
         transmitSessionEvent(FETCH_AUTHREQUIRED, ChromeContextEvent.AUTHREQUIRED);
         transmitSessionEvent(LOG_ENTRYADDED, ChromeContextEvent.ENTRYADDED);
-
-        //@TODO 此处需要考虑改为上下文初始化的时候只创建page, 但是不attach, 而是手动发送一个created的事件给browser
-        emit(TARGET_TARGETCREATED, defaultContext.defaultPage());
     }
 
 
@@ -381,6 +378,8 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         try {
             ChromeContext context = new ChromeContext(nextContextName(), this, contextId);
             contextMap.put(contextId, context);
+            targetMap.put(context.defaultPage().frameId(), context);
+            sessionMap.put(context.defaultPage().sessionId(), context);
             logger.info("browser context created, contextId={}", contextId);
             return context;
         } catch (Exception e) {
