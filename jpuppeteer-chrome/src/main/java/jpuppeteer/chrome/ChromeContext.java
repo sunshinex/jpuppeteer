@@ -241,6 +241,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
             return;
         }
         pg.emit(ChromePageEvent.FRAMEATTACHED, parent.append(event.getFrameId()));
+        logger.info("frame attached, parent={}, frameId={}", event.getParentFrameId(), event.getFrameId());
     }
 
     private void handleFrameNavigated(ChromePage pg, FrameNavigatedEvent event) {
@@ -266,6 +267,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         }
         frame.remove();
         pg.emit(ChromePageEvent.FRAMEDETACHED, frame);
+        logger.info("frame attached, parent={}, frameId={}", frame.parent.frameId, event.getFrameId());
     }
 
     private void createDefaultPage() throws Exception {

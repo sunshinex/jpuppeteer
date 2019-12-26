@@ -12,7 +12,6 @@ import jpuppeteer.api.constant.USKeyboardDefinition;
 import jpuppeteer.api.event.DefaultEventEmitter;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.util.ConcurrentHashSet;
-import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.constant.emulation.ScreenOrientationType;
 import jpuppeteer.cdp.cdp.constant.fetch.AuthChallengeResponseResponse;
@@ -99,7 +98,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
 
     private volatile boolean close;
 
-    private volatile Set<USKeyboardDefinition> pressedKeys;
+    private Set<USKeyboardDefinition> pressedKeys;
 
     private volatile int keyModifiers;
 
@@ -332,7 +331,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     }
 
     protected RequestFailed handleRequestFailed(LoadingFailedEvent event) {
-        Request request = requestMap.get(event.getRequestId());
+        Request request = requestMap.remove(event.getRequestId());
         if (request == null) {
             logger.error("request not found, requestId={}", event.getRequestId());
             return null;
@@ -341,7 +340,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     }
 
     protected Request handleRequestFinished(LoadingFinishedEvent event) {
-        Request request = requestMap.get(event.getRequestId());
+        Request request = requestMap.remove(event.getRequestId());
         if (request == null) {
             logger.error("request not found, requestId={}", event.getRequestId());
             return null;
@@ -379,11 +378,14 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     }
 
     protected void handleExecutionCleared() {
-        logger.info("page execution cleared, targetId={}", frameId);
+        logger.info("frame {} execution cleared", frameId);
     }
 
     private void handleTargetChanged(TargetInfo targetInfo) {
         this.targetInfo = targetInfo;
+        this.keyModifiers = 0;
+        this.mouseX = 0;
+        this.mouseY = 0;
     }
 
     protected TargetInfo targetInfo() {

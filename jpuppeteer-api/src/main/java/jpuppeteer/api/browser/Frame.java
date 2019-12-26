@@ -1,7 +1,6 @@
 package jpuppeteer.api.browser;
 
 import com.alibaba.fastjson.TypeReference;
-import jpuppeteer.api.event.EventEmitter;
 
 import java.net.URL;
 import java.util.List;

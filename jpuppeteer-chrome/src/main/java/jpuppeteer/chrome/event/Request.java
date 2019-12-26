@@ -172,11 +172,6 @@ public class Request implements jpuppeteer.api.browser.Request {
         }
         return postData;
     }
-//
-//    @Override
-//    public Request prev() {
-//        return prev;
-//    }
 
     @Override
     public ResourceType resourceType() {

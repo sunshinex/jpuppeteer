@@ -1,7 +1,6 @@
 package jpuppeteer.api.browser;
 
 import java.net.URI;
-import java.util.List;
 
 public interface Browser {
 

@@ -1,7 +1,6 @@
 package jpuppeteer.api.browser;
 
 import jpuppeteer.api.constant.PermissionType;
-import jpuppeteer.api.event.EventEmitter;
 
 import java.util.List;
 

@@ -1,25 +1,46 @@
 package jpuppeteer.chrome;
 
-import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
-import jpuppeteer.chrome.event.type.ChromeContextEvent;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import jpuppeteer.chrome.event.Request;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
 public class ChromeTest {
 
+    @BeforeClass
+    public static void setUp() {
+        LoggerContext logger = (LoggerContext) LoggerFactory.getILoggerFactory();
+        logger.getLogger("root").setLevel(Level.INFO);
+    }
+
     @Test
     public void test() throws Exception {
         ChromeBrowser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
-        ChromeContext defaultContext = browser.createContext();
-        defaultContext.addListener(ChromeContextEvent.NEWPAGE, (ChromePage page) -> {
-            System.out.println(page);
-            page.close();
+        ChromePage page = browser.defaultContext().defaultPage();
+//        page.addListener(ChromePageEvent.LOAD, event -> {
+//            try {
+//                page.reload();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
+//        page.addListener(ChromePageEvent.FRAMEDETACHED, (ChromeFrame frame) -> {
+//            System.out.println(frame);
+//        });
+        page.addListener(ChromePageEvent.REQUEST, (Request request) -> {
+            System.out.println(request.getRequestId());
         });
-        defaultContext.defaultPage().addListener(ChromePageEvent.CHANGED, (TargetInfo targetInfo) -> {
-            System.out.println(targetInfo);
+        page.addListener(ChromePageEvent.FRAMENAVIGATED, (ChromeFrame frame) -> {
+            System.out.println(frame);
         });
+        page.navigate("https://www.baidu.com/");
+//        browser.createContext();
+//        System.gc();
         //defaultContext.defaultPage().navigate("https://www.jd.com/");
 
 //        context.addListener(ChromeContextEvent.NEWPAGE, (ChromePage page) ->{
