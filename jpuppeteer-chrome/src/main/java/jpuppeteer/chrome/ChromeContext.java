@@ -8,7 +8,6 @@ import jpuppeteer.api.event.DefaultEventEmitter;
 import jpuppeteer.api.future.DefaultPromise;
 import jpuppeteer.api.future.Promise;
 import jpuppeteer.cdp.CDPEvent;
-import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.entity.fetch.AuthRequiredEvent;
 import jpuppeteer.cdp.cdp.entity.fetch.RequestPausedEvent;
 import jpuppeteer.cdp.cdp.entity.log.EntryAddedEvent;
@@ -29,22 +28,17 @@ import jpuppeteer.chrome.event.RequestFailed;
 import jpuppeteer.chrome.event.Response;
 import jpuppeteer.chrome.event.type.ChromeContextEvent;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
-import jpuppeteer.chrome.util.CookieUtils;
 import jpuppeteer.chrome.util.URLUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.event.type.ChromeContextEvent.*;
@@ -52,6 +46,8 @@ import static jpuppeteer.chrome.event.type.ChromeContextEvent.*;
 public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> implements BrowserContext {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeContext.class);
+
+    private static final String NEW_PAGE_URL_PREFIX = "about:blank?uuid=";
 
     private final String name;
 
@@ -65,9 +61,12 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
 
     private Map<String/*sessionId*/, ChromePage> sessionMap;
 
-    private ChromePage defaultPage;
+    /**
+     * @see #newPage()
+     */
+    private Map<String/*uuid*/, Promise<ChromePage>> promiseMap;
 
-    private Lock lock;
+    private ChromePage defaultPage;
 
     public ChromeContext(String name, ChromeBrowser browser, String browserContextId) throws Exception {
         super(Executors.newSingleThreadExecutor(r -> new Thread(r, name)));
@@ -78,7 +77,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         MapMaker mapMaker = new MapMaker().weakValues().concurrencyLevel(16);
         this.targetMap = mapMaker.makeMap();
         this.sessionMap = mapMaker.makeMap();
-        this.lock = new ReentrantLock();
+        this.promiseMap = new ConcurrentHashMap<>();
         this.createDefaultPage();
 
         addListener(ATTACHEDTOTARGET, (AttachedToTargetEvent event) -> handleTargetAttached(event));
@@ -139,8 +138,6 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         }, RequestPausedEvent.class);
 
         handleSessionEvent(AUTHREQUIRED, (pg, event) -> pg.doAuthenticate(event.getRequestId()), AuthRequiredEvent.class);
-
-        //@TODO 需要考虑无用的页面定时关闭, 避免某些页面弹出的窗口无法手动关闭
     }
 
     private String nextPageName() {
@@ -166,15 +163,6 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         handleSessionEvent(from, (pg, event) -> pg.emit(to, event), to.getClazz());
     }
 
-    private ChromePage getPageWithLock(String targetId) {
-        lock.lock();
-        try {
-            return targetMap.get(targetId);
-        } finally {
-            lock.unlock();
-        }
-    }
-
     private void handleTargetAttached(AttachedToTargetEvent event) {
         TargetInfo targetInfo = event.getTargetInfo();
         String targetId = targetInfo.getTargetId();
@@ -189,9 +177,14 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
             }
         }
 
-        if (ChromePage.PLACEHOLDER.equals(getPageWithLock(targetId))) {
-            logger.debug("manual page creation not done, ignore this event targetId={}", targetId);
-            return;
+        String url = targetInfo.getUrl();
+        Promise<ChromePage> promise = null;
+        if (url.startsWith(NEW_PAGE_URL_PREFIX)) {
+            //newPage创建的页面
+            String uuid = url.substring(NEW_PAGE_URL_PREFIX.length());
+            if (StringUtils.isNotEmpty(uuid)) {
+                promise = promiseMap.get(uuid);
+            }
         }
 
         TargetType targetType = TargetType.findByValue(targetInfo.getType());
@@ -200,21 +193,26 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
             ChromePage page = new ChromePage(nextPageName(), this, browser.createSession(targetType, sessionId), targetInfo, opener);
             targetMap.put(targetId, page);
             sessionMap.put(sessionId, page);
-            if (opener != null) {
-                opener.emit(ChromePageEvent.OPENPAGE, page);
-            } else {
+            if (promise != null) {
+                promise.setSuccess(page);
+            }
+            try {
                 emit(NEWPAGE, page);
+                if (opener != null) {
+                    opener.emit(ChromePageEvent.OPENPAGE, page);
+                }
+            } catch (Exception e) {
+                logger.error("emit newpage or openpage event failed, error={}", e.getMessage(), e);
             }
         } catch (Exception e) {
+            if (promise != null) {
+                promise.setFailure(e);
+            }
             logger.error("create page instance failed, error={}", e.getMessage(), e);
         }
     }
 
     private void handleTargetDestroyed(String targetId) {
-        if (ChromePage.PLACEHOLDER.equals(getPageWithLock(targetId))) {
-            logger.debug("manual page creation not done, ignore this event targetId={}", targetId);
-            return;
-        }
         ChromePage pg = targetMap.remove(targetId);
         if (pg != null) {
             //@TODO 此处没有从sessionMap中删除, sessionMap为value弱引用, 理论来说下一次垃圾回收的时候是会被干掉的
@@ -223,29 +221,17 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
     }
 
     private void handleTargetChanged(TargetInfo targetInfo) {
-        if (ChromePage.PLACEHOLDER.equals(getPageWithLock(targetInfo.getTargetId()))) {
-            logger.debug("manual page creation not done, ignore this event targetId={}", targetInfo.getTargetId());
-            return;
-        }
         ChromePage pg = targetMap.get(targetInfo.getTargetId());
-        if (pg == null) {
-            logger.error("target changed failed, targetId={}", targetInfo.getTargetId());
-            return;
+        if (pg != null) {
+            pg.emit(ChromePageEvent.CHANGED, targetInfo);
         }
-        pg.emit(ChromePageEvent.CHANGED, targetInfo);
     }
 
     private void handleTargetCrashed(TargetCrashedEvent event) {
-        if (ChromePage.PLACEHOLDER.equals(getPageWithLock(event.getTargetId()))) {
-            logger.debug("manual page creation not done, ignore this event targetId={}", event.getTargetId());
-            return;
-        }
         ChromePage pg = targetMap.get(event.getTargetId());
-        if (pg == null) {
-            logger.error("target crashed failed, targetId={}", event.getTargetId());
-            return;
+        if (pg != null) {
+            pg.emit(ChromePageEvent.CRASHED, event);
         }
-        pg.emit(ChromePageEvent.CRASHED, event);
     }
 
     private void handleFrameAttached(ChromePage pg, FrameAttachedEvent event) {
@@ -290,7 +276,16 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         if (targets.size() == 0) {
             //没有默认页
             //创建一个
-            targetInfo = doCreateTarget();
+            String targetId = browser.createTarget(browserContextId);
+            try {
+                targetInfo = browser.getTargets(browserContextId).stream()
+                        .filter(tinfo -> targetId.equals(tinfo.getTargetId()))
+                        .findAny()
+                        .get();
+            } catch (Exception e) {
+                browser.closeTarget(targetId);
+                throw e;
+            }
         } else if (targets.size() == 1) {
             //有一个默认页
             targetInfo = targets.get(0);
@@ -307,38 +302,12 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
                 }
             }
         }
-        this.defaultPage = doAttachTarget(targetInfo);
-    }
-
-    private TargetInfo doCreateTarget() throws Exception {
-        String targetId;
-        lock.lock();
-        try {
-            targetId = browser.createTarget(browserContextId);
-            //为了尽量缩短锁的时间, 采用占位符的方式
-            targetMap.put(targetId, ChromePage.PLACEHOLDER);
-        } finally {
-            lock.unlock();
-        }
-        try {
-            return browser.getTargets(browserContextId).stream()
-                    .filter(targetInfo -> targetId.equals(targetInfo.getTargetId()))
-                    .findAny()
-                    .get();
-        } catch (Exception e) {
-            targetMap.remove(targetId);
-            browser.closeTarget(targetId);
-            throw e;
-        }
-    }
-
-    private ChromePage doAttachTarget(TargetInfo targetInfo) throws Exception {
+        TargetType targetType = TargetType.findByValue(targetInfo.getType());
         String sessionId = browser.attachToTarget(targetInfo.getTargetId());
-        ChromePage page = new ChromePage(nextPageName(), this, browser.createSession(TargetType.PAGE, sessionId), targetInfo, null);
+        ChromePage page = new ChromePage(nextPageName(), this, browser.createSession(targetType, sessionId), targetInfo, null);
         targetMap.put(targetInfo.getTargetId(), page);
         sessionMap.put(sessionId, page);
-        logger.info("target attached, targetId={}, sessionId={}", targetInfo.getTargetId(), sessionId);
-        return page;
+        this.defaultPage = page;
     }
 
     protected ChromePage defaultPage() {
@@ -363,12 +332,23 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
 
     @Override
     public ChromePage newPage() throws Exception {
-        TargetInfo targetInfo = doCreateTarget();
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        Promise<ChromePage> promise = new DefaultPromise<>();
+        promiseMap.put(uuid, promise);
+        String targetId = browser.createTarget(browserContextId, uuid);
         try {
-            return doAttachTarget(targetInfo);
+            ChromePage page = promise.get(1, TimeUnit.SECONDS);
+            if (!Objects.equals(targetId, page.targetInfo().getTargetId())) {
+                throw new RuntimeException("targetId not match, expect:" + targetId + ", actual:" + page.targetInfo().getTargetId());
+            }
+            logger.info("page created, targetId={}", targetId);
+            return page;
         } catch (Exception e) {
-            browser.closeTarget(targetInfo.getTargetId());
+            browser.closeTarget(targetId);
+            logger.warn("create page failed, targetId={}", targetId);
             throw e;
+        } finally {
+            promiseMap.remove(uuid);
         }
     }
 
@@ -383,22 +363,44 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
 
     @Override
     public void setCookies(Cookie... cookies) throws Exception {
-        browser.setCookies(browserContextId, CookieUtils.toList(cookies));
+        defaultPage.setCookies(cookies);
+        //browser.setCookies(browserContextId, CookieUtils.toList(cookies));
+    }
+
+    @Override
+    public void deleteCookies(String name, String domain, String path, String url) throws Exception {
+        defaultPage.deleteCookies(name, domain, path, url);
     }
 
     @Override
     public void clearCookies() throws Exception {
-        browser.clearCookies(browserContextId);
+        if (browserContextId == null) {
+            //初始上下文可以使用Network.clearBrowserCookies
+            defaultPage.doClearCookies();
+        } else {
+            //自己创建的上下文需要自己一个一个删除
+            List<Cookie> cookies = cookies();
+            List<Future> futures = new ArrayList<>(cookies.size());
+            for(Cookie cookie : cookies) {
+                futures.add(defaultPage.asyncDeleteCookies(cookie.getName(), cookie.getDomain(), cookie.getPath(), cookie.getUrl()));
+            }
+            for(Future future : futures) {
+                future.get(1, TimeUnit.SECONDS);
+            }
+        }
+        //defaultPage.doClearCookies();
+        //browser.clearCookies(browserContextId);
     }
 
     @Override
-    public Cookie[] cookies() throws Exception {
-        List<jpuppeteer.cdp.cdp.entity.network.Cookie> cookieList = browser.getCookies(browserContextId);
-        Cookie[] cookies = new Cookie[cookieList.size()];
-        for(int i = 0; i<cookieList.size(); i++) {
-            cookies[i] = CookieUtils.copyOf(cookieList.get(i));
-        }
-        return cookies;
+    public List<Cookie> cookies() throws Exception {
+        return defaultPage.doGetCookies();
+//        List<jpuppeteer.cdp.cdp.entity.network.Cookie> cookieList = browser.getCookies(browserContextId);
+//        Cookie[] cookies = new Cookie[cookieList.size()];
+//        for(int i = 0; i<cookieList.size(); i++) {
+//            cookies[i] = CookieUtils.copyOf(cookieList.get(i));
+//        }
+//        return cookies;
     }
 
     @FunctionalInterface

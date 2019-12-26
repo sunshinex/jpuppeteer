@@ -11,44 +11,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
-public class DefaultEventEmitter<E extends Enum<E>> implements EventEmitter<E> {
+public class DefaultEventEmitter<E extends Enum<E>> extends AbstractEventEmitter<E> {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultEventEmitter.class);
 
     private final Executor executor;
 
-    private final Map<Enum<E>, Set<Consumer>> listenerMap;
-
     public DefaultEventEmitter(Executor executor) {
+        super();
         this.executor = executor;
-        this.listenerMap = new ConcurrentHashMap<>();
     }
 
     @Override
-    public void addListener(E type, Consumer<?> consumer) {
-        Set<Consumer> consumers = new ConcurrentHashSet<>();
-        consumers.add(consumer);
-        if (listenerMap.putIfAbsent(type, consumers) != null) {
-            listenerMap.get(type).add(consumer);
-        }
-    }
-
-    @Override
-    public void removeListener(E type, Consumer<?> consumer) {
-        Set<Consumer> consumers = listenerMap.get(type);
-        if (consumers == null || consumers.size() == 0) {
-            return;
-        }
-        consumers.remove(consumer);
-    }
-
-    @Override
-    public void emit(E type, Object event) {
-        Set<Consumer> consumers = listenerMap.get(type);
-        if (consumers == null || consumers.size() == 0) {
-            return;
-        }
-        consumers.iterator().forEachRemaining(consumer -> executor.execute(new EventTask(consumer, event)));
+    protected void emitInternal(Consumer<Object> consumer, Object event) {
+        executor.execute(new EventTask(consumer, event));
     }
 
     static class EventTask implements Runnable {

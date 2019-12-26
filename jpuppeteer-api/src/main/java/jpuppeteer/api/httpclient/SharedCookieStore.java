@@ -1,6 +1,5 @@
 package jpuppeteer.api.httpclient;
 
-import jpuppeteer.api.browser.Browser;
 import jpuppeteer.api.browser.BrowserContext;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.utils.DateUtils;
@@ -9,7 +8,6 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,8 +57,7 @@ public class SharedCookieStore implements CookieStore {
     public List<Cookie> getCookies() {
         List<Cookie> cookies = null;
         try {
-            jpuppeteer.api.browser.Cookie[] cookieList = browserContext.cookies();
-            cookies = Arrays.stream(cookieList).map(cookie -> {
+            cookies = browserContext.cookies().stream().map(cookie -> {
                 BasicClientCookie basicClientCookie = new BasicClientCookie(cookie.getName(), cookie.getValue());
                 basicClientCookie.setDomain(cookie.getDomain());
                 basicClientCookie.setPath(cookie.getPath());

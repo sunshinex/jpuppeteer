@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E> {
 
-    private static final Object PRESENT = new Object();
+    private final Object PRESENT = new Object();
 
     private transient Map<E, Object> map;
 

@@ -12,9 +12,15 @@ public interface Page<P> extends Frame<P> {
 
     Page<P> opener();
 
-    void setCookie(Cookie... cookies) throws Exception;
+    void setCookies(Cookie... cookies) throws Exception;
 
-    void clearCookie() throws Exception;
+    void deleteCookies(String name, String domain, String path, String url) throws Exception;
+
+    default void deleteCookies(String name, String domain) throws Exception {
+        deleteCookies(name, domain, null, null);
+    }
+
+    void clearCookies() throws Exception;
 
     List<Cookie> cookies() throws Exception;
 

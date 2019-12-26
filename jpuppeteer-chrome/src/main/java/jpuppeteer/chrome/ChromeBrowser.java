@@ -4,6 +4,8 @@ import com.google.common.collect.MapMaker;
 import jpuppeteer.api.browser.Browser;
 import jpuppeteer.api.constant.PermissionType;
 import jpuppeteer.api.event.EventEmitter;
+import jpuppeteer.api.future.DefaultPromise;
+import jpuppeteer.api.future.Promise;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.CDPSession;
@@ -23,6 +25,7 @@ import jpuppeteer.cdp.cdp.entity.storage.SetCookiesRequest;
 import jpuppeteer.cdp.cdp.entity.target.*;
 import jpuppeteer.cdp.constant.TargetType;
 import jpuppeteer.chrome.event.type.ChromeContextEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +88,9 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         this.targetMap = mapMaker.makeMap();
         this.sessionMap = mapMaker.makeMap();
 
+        //由于在没有启动目标发现之前就有默认的page, 需要手动注册到map
+        this.targetMap.put(defaultContext.defaultPage().frameId(), defaultContext);
+        this.sessionMap.put(defaultContext.defaultPage().sessionId(), defaultContext);
         //此方法必须等默认上下文创建好了之后才能调用true
         this.setDiscoverTargets(true);
 
@@ -113,6 +119,9 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         transmitSessionEvent(FETCH_REQUESTPAUSED, ChromeContextEvent.REQUESTPAUSED);
         transmitSessionEvent(FETCH_AUTHREQUIRED, ChromeContextEvent.AUTHREQUIRED);
         transmitSessionEvent(LOG_ENTRYADDED, ChromeContextEvent.ENTRYADDED);
+
+        //@TODO 此处需要考虑改为上下文初始化的时候只创建page, 但是不attach, 而是手动发送一个created的事件给browser
+        emit(TARGET_TARGETCREATED, defaultContext.defaultPage());
     }
 
 
@@ -136,7 +145,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
             String sessionId = event.getSessionId();
             ChromeContext context = sessionMap.get(sessionId);
             if (context == null) {
-                logger.error("transmit event failed:context not found, event={} sessionId={}", from.getName(), sessionId);
+                //logger.error("transmit event failed:context not found, event={} sessionId={}", from.getName(), sessionId);
                 return;
             }
             context.emit(to, event);
@@ -155,7 +164,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         String contextId = targetInfo.getBrowserContextId();
         ChromeContext context = contextMap.get(contextId);
         if (context == null) {
-            logger.error("target created failed: context not found, targetId={}, contextId={}", targetId, contextId);
+            //logger.error("target created failed: context not found, targetId={}, contextId={}", targetId, contextId);
             return;
         }
         String sessionId = null;
@@ -188,7 +197,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         String contextId = target.getBrowserContextId();
         ChromeContext context = contextMap.get(contextId);
         if (context == null) {
-            logger.error("target attached failed, context not found, targetId={}, contextId={}", targetId, contextId);
+            //logger.error("target attached failed, context not found, targetId={}, contextId={}", targetId, contextId);
             return;
         }
         context.emit(ChromeContextEvent.ATTACHEDTOTARGET, evt);
@@ -221,7 +230,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         }
         ChromeContext context = targetMap.get(targetId);
         if (context == null) {
-            logger.error("target info changed failed, context not found, targetId={}", targetId);
+            //logger.error("target info changed failed, context not found, targetId={}", targetId);
             return;
         }
         context.emit(ChromeContextEvent.TARGETINFOCHANGED, targetInfo);
@@ -232,7 +241,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         String targetId = evt.getTargetId();
         ChromeContext context = targetMap.get(targetId);
         if (context == null) {
-            logger.error("target crashed failed, context not found, targetId={}", targetId);
+            //logger.error("target crashed failed, context not found, targetId={}", targetId);
             return;
         }
         context.emit(ChromeContextEvent.TARGETCRASHED, evt);
@@ -277,12 +286,27 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         return response.getSuccess();
     }
 
-    protected String createTarget(String browserContextId) throws Exception {
+    /**
+     *
+     * @param browserContextId
+     * @param uuid 需要在创建的时候给定一个唯一的uuid
+     * @return
+     * @throws Exception
+     */
+    protected String createTarget(String browserContextId, String uuid) throws Exception {
         CreateTargetRequest request = new CreateTargetRequest();
-        request.setUrl(DEFAULT_URL);
+        if (StringUtils.isEmpty(uuid)) {
+            request.setUrl(DEFAULT_URL);
+        } else {
+            request.setUrl(DEFAULT_URL + "?uuid=" + uuid);
+        }
         request.setBrowserContextId(browserContextId);
         CreateTargetResponse response = target.createTarget(request, DEFAULT_TIMEOUT);
         return response.getTargetId();
+    }
+
+    protected String createTarget(String browserContextId) throws Exception {
+        return createTarget(browserContextId, null);
     }
 
     protected List<TargetInfo> getTargets(String browserContextId) throws Exception {
@@ -343,9 +367,11 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
 
     @Override
     public ChromeContext[] browserContexts() {
-        Collection<ChromeContext> contextValues = contextMap.values();
-        ChromeContext[] contexts = new ChromeContext[contextValues.size()];
-        return contextValues.toArray(contexts);
+        List<ChromeContext> contextList = contextMap.values().stream()
+                .filter(context -> context != null)
+                .collect(Collectors.toList());
+        ChromeContext[] contexts = new ChromeContext[contextList.size()];
+        return contextList.toArray(contexts);
     }
 
     @Override
@@ -355,11 +381,13 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         try {
             ChromeContext context = new ChromeContext(nextContextName(), this, contextId);
             contextMap.put(contextId, context);
+            logger.info("browser context created, contextId={}", contextId);
             return context;
         } catch (Exception e) {
             DisposeBrowserContextRequest request = new DisposeBrowserContextRequest();
             request.setBrowserContextId(contextId);
             target.disposeBrowserContext(request, DEFAULT_TIMEOUT);
+            logger.warn("create browser context failed, contextId={}", contextId);
             throw e;
         }
     }

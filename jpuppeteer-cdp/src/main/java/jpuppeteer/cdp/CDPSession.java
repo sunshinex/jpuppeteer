@@ -30,6 +30,10 @@ public class CDPSession {
         this.extra.put(SESSION_ID, sessionId);
     }
 
+    public String sessionId() {
+        return sessionId;
+    }
+
     public final <T> T send(String method, Object params, Class<T> clazz, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
         return connection.send(method, params, extra, clazz, timeout);
     }

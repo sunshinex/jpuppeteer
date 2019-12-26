@@ -128,7 +128,8 @@ public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> im
         Integer id = json.getInteger(ID);
         Promise<JSONObject> promise = requestMap.get(id);
         if (promise == null) {
-            throw new RuntimeException("invalid id="+id);
+            logger.warn("request timeout or send failed, id={}", id);
+            return;
         }
         //接收成功之后删除requestMap中对应的节点
         requestMap.remove(id);

@@ -64,6 +64,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -75,8 +76,6 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     private static final Logger logger = LoggerFactory.getLogger(ChromePage.class);
 
     private static final List<TouchPoint> EMPTY_TOUCHPOINTS = Lists.newArrayListWithCapacity(0);
-
-    public static final ChromePage PLACEHOLDER = new ChromePage();
 
     private final EventEmitter<ChromePageEvent> events;
 
@@ -118,11 +117,6 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
 
     private TargetInfo targetInfo;
 
-    private ChromePage() {
-        super(null, null, null, null, null, null, null);
-        this.events = null;
-    }
-
     public ChromePage(String name, ChromeContext browserContext, CDPSession session, TargetInfo targetInfo, ChromePage opener) throws Exception {
         super(
                 null,
@@ -152,7 +146,6 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         this.mouseX = 0;
         this.mouseY = 0;
         this.requestInterceptionEnabled = false;
-
         this.requestMap = new ConcurrentHashMap<>();
 
         enablePage();
@@ -163,9 +156,11 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         enableRuntime();
         enableDom();
 
-        addListener(ChromePageEvent.CHANGED, (TargetInfo tinfo) -> {
-            this.targetInfo = tinfo;
-        });
+        addListener(ChromePageEvent.CHANGED, (TargetInfo tinfo) -> handleTargetChanged(tinfo));
+    }
+
+    protected String sessionId() {
+        return session.sessionId();
     }
 
 
@@ -387,6 +382,10 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         logger.info("page execution cleared, targetId={}", frameId);
     }
 
+    private void handleTargetChanged(TargetInfo targetInfo) {
+        this.targetInfo = targetInfo;
+    }
+
     protected TargetInfo targetInfo() {
         return targetInfo;
     }
@@ -440,20 +439,50 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     }
 
     @Override
-    public void setCookie(Cookie... cookies) throws Exception {
+    public void setCookies(Cookie... cookies) throws Exception {
         SetCookiesRequest request = CookieUtils.create(cookies);
         network.setCookies(request, DEFAULT_TIMEOUT);
     }
 
     @Override
-    public void clearCookie() throws Exception {
-        for(Cookie cookie : cookies()) {
-            DeleteCookiesRequest request = new DeleteCookiesRequest();
-            request.setName(cookie.getName());
-            request.setDomain(cookie.getDomain());
-            request.setPath(cookie.getPath());
-            request.setUrl(cookie.getUrl());
-            network.deleteCookies(request, DEFAULT_TIMEOUT);
+    public void deleteCookies(String name, String domain, String path, String url) throws Exception {
+        DeleteCookiesRequest request = new DeleteCookiesRequest();
+        request.setName(name);
+        request.setDomain(domain);
+        request.setPath(path);
+        request.setUrl(url);
+        network.deleteCookies(request, DEFAULT_TIMEOUT);
+    }
+
+    protected void doClearCookies() throws Exception {
+        network.clearBrowserCookies(DEFAULT_TIMEOUT);
+    }
+
+    protected List<Cookie> doGetCookies() throws Exception {
+        GetAllCookiesResponse response = network.getAllCookies(DEFAULT_TIMEOUT);
+        return response.getCookies().stream()
+                .map(cookie -> CookieUtils.copyOf(cookie))
+                .collect(Collectors.toList());
+    }
+
+    protected Future<JSONObject> asyncDeleteCookies(String name, String domain, String path, String url) {
+        DeleteCookiesRequest request = new DeleteCookiesRequest();
+        request.setName(name);
+        request.setDomain(domain);
+        request.setPath(path);
+        request.setUrl(url);
+        return session.asyncSend("Network.deleteCookies", request);
+    }
+
+    @Override
+    public void clearCookies() throws Exception {
+        List<Cookie> cookies = cookies();
+        List<Future> futures = new ArrayList<>(cookies.size());
+        for(Cookie cookie : cookies) {
+            futures.add(asyncDeleteCookies(cookie.getName(), cookie.getDomain(), cookie.getPath(), cookie.getUrl()));
+        }
+        for(Future future : futures) {
+            future.get(1, TimeUnit.SECONDS);
         }
     }
 
@@ -462,7 +491,9 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         GetCookiesRequest request = new GetCookiesRequest();
         request.setUrls(Lists.newArrayList(url.toString()));
         GetCookiesResponse response = network.getCookies(request, DEFAULT_TIMEOUT);
-        return response.getCookies().stream().map(cookie -> CookieUtils.copyOf(cookie)).collect(Collectors.toList());
+        return response.getCookies().stream()
+                .map(cookie -> CookieUtils.copyOf(cookie))
+                .collect(Collectors.toList());
     }
 
     private static int getModifier(USKeyboardDefinition key) {
@@ -783,10 +814,6 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         ReloadRequest request = new ReloadRequest();
         request.setIgnoreCache(force);
         page.reload(request, DEFAULT_TIMEOUT);
-    }
-
-    public void crash() throws Exception {
-        session.asyncSend("Page.crash", null);
     }
 
     @Override

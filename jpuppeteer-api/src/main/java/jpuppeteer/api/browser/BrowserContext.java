@@ -24,8 +24,14 @@ public interface BrowserContext {
 
     void setCookies(Cookie... cookies) throws Exception;
 
+    void deleteCookies(String name, String domain, String path, String url) throws Exception;
+
+    default void deleteCookies(String name, String domain) throws Exception {
+        deleteCookies(name, domain, null, null);
+    }
+
     void clearCookies() throws Exception;
 
-    Cookie[] cookies() throws Exception;
+    List<Cookie> cookies() throws Exception;
 
 }
