@@ -63,10 +63,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -118,6 +115,8 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
 
     private TargetInfo targetInfo;
 
+    private BlockingQueue<Runnable> eventQueue;
+
     public ChromePage(String name, ChromeContext browserContext, CDPSession session, TargetInfo targetInfo, ChromePage opener) throws Exception {
         super(
                 null,
@@ -129,7 +128,13 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
                 new Input(session)
         );
         this.targetInfo = targetInfo;
-        this.events = new DefaultEventEmitter<>(Executors.newSingleThreadExecutor(r -> new Thread(r, name)));
+        this.eventQueue = new LinkedBlockingQueue<>();
+        this.events = new DefaultEventEmitter<>(
+                new ThreadPoolExecutor(
+                        1, 1, 0,
+                        TimeUnit.SECONDS, eventQueue, r -> new Thread(r, name)
+                )
+        );
         this.opener = opener;
         this.browserContext = browserContext;
         this.performance = new Performance(session);
@@ -157,7 +162,6 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         enableRuntime();
         enableDom();
 
-        addListener(ChromePageEvent.CHANGED, (TargetInfo tinfo) -> handleTargetChanged(tinfo));
     }
 
     protected String sessionId() {
@@ -376,11 +380,13 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         logger.info("frame {} execution cleared", frameId);
     }
 
-    private void handleTargetChanged(TargetInfo targetInfo) {
+    protected void handleTargetChanged(TargetInfo targetInfo) {
         this.targetInfo = targetInfo;
         this.keyModifiers = 0;
         this.mouseX = 0;
         this.mouseY = 0;
+        //在target change的时候清空事件队列, 前面的那些事件都不需要了
+        this.eventQueue.clear();
     }
 
     protected TargetInfo targetInfo() {

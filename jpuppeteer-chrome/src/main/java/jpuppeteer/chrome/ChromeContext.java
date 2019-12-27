@@ -220,6 +220,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
     private void handleTargetChanged(TargetInfo targetInfo) {
         ChromePage pg = targetMap.get(targetInfo.getTargetId());
         if (pg != null) {
+            pg.handleTargetChanged(targetInfo);
             pg.emit(ChromePageEvent.CHANGED, targetInfo);
         }
     }
