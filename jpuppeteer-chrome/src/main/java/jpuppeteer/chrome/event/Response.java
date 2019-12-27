@@ -37,6 +37,13 @@ public class Response implements jpuppeteer.api.browser.Response {
 
     private transient Network network;
 
+    private String requestId;
+
+    private String loaderId;
+
+    private String type;
+
+    //可能会没有request, request不会一直保存, 当进行垃圾回收的时候 会释放request
     private Request request;
 
     private ChromeFrame frame;

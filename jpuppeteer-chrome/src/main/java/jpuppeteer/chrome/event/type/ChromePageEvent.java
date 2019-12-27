@@ -7,10 +7,7 @@ import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
 import jpuppeteer.chrome.ChromeFrame;
 import jpuppeteer.chrome.ChromePage;
-import jpuppeteer.chrome.event.Dialog;
-import jpuppeteer.chrome.event.Request;
-import jpuppeteer.chrome.event.RequestFailed;
-import jpuppeteer.chrome.event.Response;
+import jpuppeteer.chrome.event.*;
 
 public enum ChromePageEvent {
 
@@ -44,7 +41,7 @@ public enum ChromePageEvent {
 
     REQUESTFAILED(RequestFailed.class),
 
-    REQUESTFINISHED(Request.class),
+    REQUESTFINISHED(RequestFinished.class),
 
     ;
 

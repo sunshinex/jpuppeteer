@@ -2,6 +2,7 @@ package jpuppeteer.chrome;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.google.common.collect.MapMaker;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.browser.*;
@@ -48,6 +49,7 @@ import jpuppeteer.chrome.entity.RequestEvent;
 import jpuppeteer.chrome.entity.SecurityDetails;
 import jpuppeteer.chrome.event.Request;
 import jpuppeteer.chrome.event.RequestFailed;
+import jpuppeteer.chrome.event.RequestFinished;
 import jpuppeteer.chrome.event.Response;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
 import jpuppeteer.chrome.util.ArgUtils;
@@ -145,7 +147,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         this.mouseX = 0;
         this.mouseY = 0;
         this.requestInterceptionEnabled = false;
-        this.requestMap = new ConcurrentHashMap<>();
+        this.requestMap = new MapMaker().weakValues().concurrencyLevel(16).makeMap();
 
         enablePage();
         enablePageLifecycleEvent();
@@ -294,10 +296,6 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     protected Response handleResponse(ResponseReceivedEvent event) {
         ChromeFrame frame = find(event.getFrameId());
         Request request = requestMap.get(event.getRequestId());
-        if (request == null) {
-            logger.error("request not found, requestId={}", event.getRequestId());
-            return null;
-        }
         jpuppeteer.cdp.cdp.entity.network.Response res = event.getResponse();
         URL url = URLUtils.parse(res.getUrl());
         SecurityDetails securityDetails = null;
@@ -314,6 +312,9 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         Response response = Response.builder()
                 .session(session)
                 .network(network)
+                .requestId(event.getRequestId())
+                .loaderId(event.getLoaderId())
+                .type(event.getType())
                 .frame(frame)
                 .fromCache(res.getFromDiskCache())
                 .request(request)
@@ -325,27 +326,21 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
                 .securityDetails(securityDetails)
                 .build();
 
-        request.setResponse(response);
+        if (request != null) {
+            request.setResponse(response);
+        }
 
         return response;
     }
 
     protected RequestFailed handleRequestFailed(LoadingFailedEvent event) {
         Request request = requestMap.remove(event.getRequestId());
-        if (request == null) {
-            logger.error("request not found, requestId={}", event.getRequestId());
-            return null;
-        }
-        return new RequestFailed(request, event.getErrorText(), event.getCanceled(), BlockedReason.findByValue(event.getBlockedReason()));
+        return new RequestFailed(event.getRequestId(), request, event.getErrorText(), event.getCanceled(), BlockedReason.findByValue(event.getBlockedReason()));
     }
 
-    protected Request handleRequestFinished(LoadingFinishedEvent event) {
+    protected RequestFinished handleRequestFinished(LoadingFinishedEvent event) {
         Request request = requestMap.remove(event.getRequestId());
-        if (request == null) {
-            logger.error("request not found, requestId={}", event.getRequestId());
-            return null;
-        }
-        return request;
+        return new RequestFinished(event.getRequestId(), request, event.getEncodedDataLength(), event.getShouldReportCorbBlocking());
     }
 
     protected void handleExecutionCreated(ExecutionContextCreatedEvent event) {

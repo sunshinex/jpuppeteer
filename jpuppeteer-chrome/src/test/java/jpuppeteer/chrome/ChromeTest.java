@@ -22,36 +22,21 @@ public class ChromeTest {
     public void test() throws Exception {
         ChromeBrowser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
         ChromePage page = browser.defaultContext().defaultPage();
-//        page.addListener(ChromePageEvent.LOAD, event -> {
-//            try {
-//                page.reload();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        });
-//        page.addListener(ChromePageEvent.FRAMEDETACHED, (ChromeFrame frame) -> {
-//            System.out.println(frame);
-//        });
-        page.addListener(ChromePageEvent.REQUEST, (Request request) -> {
-            System.out.println(request.getRequestId());
+        page.addListener(ChromePageEvent.LOAD, event -> {
+            try {
+                page.reload();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
-        page.addListener(ChromePageEvent.FRAMENAVIGATED, (ChromeFrame frame) -> {
-            System.out.println(frame);
+        page.addListener(ChromePageEvent.CRASHED, event -> {
+            try {
+                page.reload();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
-        page.navigate("https://www.baidu.com/");
-//        browser.createContext();
-//        System.gc();
-        //defaultContext.defaultPage().navigate("https://www.jd.com/");
-
-//        context.addListener(ChromeContextEvent.NEWPAGE, (ChromePage page) ->{
-//            System.out.println(page);
-//        });
-//        for(int i=0; i<10; i++) {
-//            context.cookies();
-//        }
-        //ChromeContext context = browser.defaultContext();
-        //ChromePage page = context.newPage();
-        //page.navigate("https://www.baidu.com");
+        page.navigate("https://www.taobao.com/");
         TimeUnit.DAYS.sleep(1);
     }
 

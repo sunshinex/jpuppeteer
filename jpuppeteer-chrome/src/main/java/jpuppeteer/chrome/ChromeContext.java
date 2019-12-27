@@ -22,10 +22,7 @@ import jpuppeteer.cdp.cdp.entity.target.AttachedToTargetEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
 import jpuppeteer.cdp.constant.TargetType;
-import jpuppeteer.chrome.event.Dialog;
-import jpuppeteer.chrome.event.Request;
-import jpuppeteer.chrome.event.RequestFailed;
-import jpuppeteer.chrome.event.Response;
+import jpuppeteer.chrome.event.*;
 import jpuppeteer.chrome.event.type.ChromeContextEvent;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
 import jpuppeteer.chrome.util.URLUtils;
@@ -124,9 +121,9 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         }, LoadingFailedEvent.class);
 
         handleSessionEvent(LOADINGFINISHED, (pg, event) -> {
-            Request request = pg.handleRequestFinished(event);
-            if (request != null) {
-                pg.emit(ChromePageEvent.REQUESTFINISHED, request);
+            RequestFinished requestFinished = pg.handleRequestFinished(event);
+            if (requestFinished != null) {
+                pg.emit(ChromePageEvent.REQUESTFINISHED, requestFinished);
             }
         }, LoadingFinishedEvent.class);
 
