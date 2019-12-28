@@ -58,7 +58,9 @@ public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> im
         json.put(PARAMS, params);
         Promise<JSONObject> promise = new DefaultPromise<>();
         requestMap.put(id, promise);
-        logger.debug("==> send method={}, id={}, extra={}, params={}", method, id, JSON.toJSONString(extra), JSON.toJSONString(params));
+        if (logger.isDebugEnabled()) {
+            logger.debug("==> send method={}, id={}, extra={}, params={}", method, id, JSON.toJSONString(extra), JSON.toJSONString(params));
+        }
         try {
             sendInternal(json);
         } catch (IOException ioe) {
