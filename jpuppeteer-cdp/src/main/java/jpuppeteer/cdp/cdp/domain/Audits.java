@@ -19,4 +19,9 @@ public class Audits {
         return session.send("Audits.getEncodedResponse", request, jpuppeteer.cdp.cdp.entity.audits.GetEncodedResponseResponse.class, timeout);
     }
 
+
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.audits.GetEncodedResponseResponse> asyncGetEncodedResponse(jpuppeteer.cdp.cdp.entity.audits.GetEncodedResponseRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Audits.getEncodedResponse", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.audits.GetEncodedResponseResponse>(future, jpuppeteer.cdp.cdp.entity.audits.GetEncodedResponseResponse.class);
+    }
 }

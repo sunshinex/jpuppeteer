@@ -20,6 +20,11 @@ public class Animation {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncDisable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Animation.disable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Enables animation domain notifications.
     * experimental
@@ -28,6 +33,11 @@ public class Animation {
         session.send("Animation.enable", null, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncEnable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Animation.enable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Returns the current time of the an animation.
@@ -38,6 +48,11 @@ public class Animation {
     }
 
 
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.animation.GetCurrentTimeResponse> asyncGetCurrentTime(jpuppeteer.cdp.cdp.entity.animation.GetCurrentTimeRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Animation.getCurrentTime", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.animation.GetCurrentTimeResponse>(future, jpuppeteer.cdp.cdp.entity.animation.GetCurrentTimeResponse.class);
+    }
+
     /**
     * Gets the playback rate of the document timeline.
     * experimental
@@ -46,6 +61,11 @@ public class Animation {
         return session.send("Animation.getPlaybackRate", null, jpuppeteer.cdp.cdp.entity.animation.GetPlaybackRateResponse.class, timeout);
     }
 
+
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.animation.GetPlaybackRateResponse> asyncGetPlaybackRate() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Animation.getPlaybackRate");
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.animation.GetPlaybackRateResponse>(future, jpuppeteer.cdp.cdp.entity.animation.GetPlaybackRateResponse.class);
+    }
 
     /**
     * Releases a set of animations to no longer be manipulated.
@@ -56,6 +76,11 @@ public class Animation {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncReleaseAnimations(jpuppeteer.cdp.cdp.entity.animation.ReleaseAnimationsRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Animation.releaseAnimations", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Gets the remote object of the Animation.
     * experimental
@@ -64,6 +89,11 @@ public class Animation {
         return session.send("Animation.resolveAnimation", request, jpuppeteer.cdp.cdp.entity.animation.ResolveAnimationResponse.class, timeout);
     }
 
+
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.animation.ResolveAnimationResponse> asyncResolveAnimation(jpuppeteer.cdp.cdp.entity.animation.ResolveAnimationRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Animation.resolveAnimation", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.animation.ResolveAnimationResponse>(future, jpuppeteer.cdp.cdp.entity.animation.ResolveAnimationResponse.class);
+    }
 
     /**
     * Seek a set of animations to a particular time within each animation.
@@ -74,6 +104,11 @@ public class Animation {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncSeekAnimations(jpuppeteer.cdp.cdp.entity.animation.SeekAnimationsRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Animation.seekAnimations", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Sets the paused state of a set of animations.
     * experimental
@@ -82,6 +117,11 @@ public class Animation {
         session.send("Animation.setPaused", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncSetPaused(jpuppeteer.cdp.cdp.entity.animation.SetPausedRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Animation.setPaused", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Sets the playback rate of the document timeline.
@@ -92,6 +132,11 @@ public class Animation {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncSetPlaybackRate(jpuppeteer.cdp.cdp.entity.animation.SetPlaybackRateRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Animation.setPlaybackRate", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Sets the timing of an animation node.
     * experimental
@@ -100,4 +145,9 @@ public class Animation {
         session.send("Animation.setTiming", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncSetTiming(jpuppeteer.cdp.cdp.entity.animation.SetTimingRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Animation.setTiming", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }

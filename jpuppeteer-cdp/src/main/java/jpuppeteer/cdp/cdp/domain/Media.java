@@ -20,6 +20,11 @@ public class Media {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncEnable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Media.enable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Disables the Media domain.
     * experimental
@@ -28,4 +33,9 @@ public class Media {
         session.send("Media.disable", null, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncDisable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Media.disable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }

@@ -20,6 +20,11 @@ public class Storage {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncClearDataForOrigin(jpuppeteer.cdp.cdp.entity.storage.ClearDataForOriginRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Storage.clearDataForOrigin", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Returns all browser cookies.
     * experimental
@@ -28,6 +33,11 @@ public class Storage {
         return connection.send("Storage.getCookies", request, jpuppeteer.cdp.cdp.entity.storage.GetCookiesResponse.class, timeout);
     }
 
+
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.storage.GetCookiesResponse> asyncGetCookies(jpuppeteer.cdp.cdp.entity.storage.GetCookiesRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Storage.getCookies", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.storage.GetCookiesResponse>(future, jpuppeteer.cdp.cdp.entity.storage.GetCookiesResponse.class);
+    }
 
     /**
     * Sets given cookies.
@@ -38,6 +48,11 @@ public class Storage {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncSetCookies(jpuppeteer.cdp.cdp.entity.storage.SetCookiesRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Storage.setCookies", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Clears cookies.
     * experimental
@@ -46,6 +61,11 @@ public class Storage {
         connection.send("Storage.clearCookies", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncClearCookies(jpuppeteer.cdp.cdp.entity.storage.ClearCookiesRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Storage.clearCookies", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Returns usage and quota in bytes.
@@ -56,6 +76,11 @@ public class Storage {
     }
 
 
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.storage.GetUsageAndQuotaResponse> asyncGetUsageAndQuota(jpuppeteer.cdp.cdp.entity.storage.GetUsageAndQuotaRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Storage.getUsageAndQuota", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.storage.GetUsageAndQuotaResponse>(future, jpuppeteer.cdp.cdp.entity.storage.GetUsageAndQuotaResponse.class);
+    }
+
     /**
     * Registers origin to be notified when an update occurs to its cache storage list.
     * experimental
@@ -64,6 +89,11 @@ public class Storage {
         connection.send("Storage.trackCacheStorageForOrigin", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncTrackCacheStorageForOrigin(jpuppeteer.cdp.cdp.entity.storage.TrackCacheStorageForOriginRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Storage.trackCacheStorageForOrigin", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Registers origin to be notified when an update occurs to its IndexedDB.
@@ -74,6 +104,11 @@ public class Storage {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncTrackIndexedDBForOrigin(jpuppeteer.cdp.cdp.entity.storage.TrackIndexedDBForOriginRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Storage.trackIndexedDBForOrigin", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Unregisters origin from receiving notifications for cache storage.
     * experimental
@@ -83,6 +118,11 @@ public class Storage {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncUntrackCacheStorageForOrigin(jpuppeteer.cdp.cdp.entity.storage.UntrackCacheStorageForOriginRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Storage.untrackCacheStorageForOrigin", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Unregisters origin from receiving notifications for IndexedDB.
     * experimental
@@ -91,4 +131,9 @@ public class Storage {
         connection.send("Storage.untrackIndexedDBForOrigin", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncUntrackIndexedDBForOrigin(jpuppeteer.cdp.cdp.entity.storage.UntrackIndexedDBForOriginRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Storage.untrackIndexedDBForOrigin", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }

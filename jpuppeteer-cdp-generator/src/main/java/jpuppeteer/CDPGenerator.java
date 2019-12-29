@@ -343,8 +343,11 @@ public class CDPGenerator {
             sb.append(CRLF);
             sb.append("    public ");
             Type ret = null;
+            Type param = null;
+            String asyncMethod = "    public java.util.concurrent.Future<";
             if (CollectionUtils.isEmpty(command.returns)) {
                 sb.append("void");
+                asyncMethod += "Void";
             } else {
                 //生成返回值结构体
                 ret = new Type();
@@ -354,24 +357,54 @@ public class CDPGenerator {
                 ret.domain = domain;
                 createType(domain, ret);
                 sb.append(ret.getPackage() + "." + ret.id);
+                asyncMethod += ret.getPackage() + "." + ret.id;
             }
             sb.append(" ");
             sb.append(command.name);
             sb.append("(");
+            asyncMethod += "> ";
+            asyncMethod += "async" + StringUtils.capitalize(command.name);
+            asyncMethod += "(";
             //处理参数
             if (CollectionUtils.isNotEmpty(command.parameters)) {
-                Type param = new Type();
+                param = new Type();
                 param.id = StringUtils.capitalize(command.name) + "Request";
                 param.properties = command.parameters;
                 param.type = TypeType.OBJECT;
                 param.domain = domain;
                 createType(domain, param);
                 sb.append(param.getPackage() + "." + param.id + " request, ");
+                asyncMethod += param.getPackage() + "." + param.id + " request";
             }
+            asyncMethod += ") {";
+            asyncMethod += CRLF;
             sb.append("int timeout");
             sb.append(")");
             sb.append(" throws Exception {");
             sb.append(CRLF);
+            asyncMethod += "        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = " + varName + ".asyncSend(";
+            asyncMethod += "\"" + domain.domain + "." + command.name + "\"";
+            if (param != null) {
+                asyncMethod += ", request";
+            }
+            asyncMethod += ");";
+            asyncMethod += CRLF;
+            asyncMethod += "        return new jpuppeteer.cdp.CDPFuture<";
+            if (ret != null) {
+                asyncMethod += ret.getPackage() + "." + ret.id;
+            } else {
+                asyncMethod += "Void";
+            }
+            asyncMethod += ">";
+            asyncMethod += "(future, ";
+            if (ret != null) {
+                asyncMethod += ret.getPackage() + "." + ret.id + ".class";
+            } else {
+                asyncMethod += "Void.class";
+            }
+            asyncMethod += ");";
+            asyncMethod += CRLF;
+            asyncMethod += "    }";
             if (CollectionUtils.isNotEmpty(command.returns)) {
                 sb.append("        return ");
                 sb.append(varName);
@@ -410,6 +443,13 @@ public class CDPGenerator {
             sb.append(CRLF);
             sb.append("    }");
             sb.append(CRLF);
+
+            //生成异步方法
+
+            sb.append(CRLF);
+            sb.append(CRLF);
+            sb.append(asyncMethod);
+            //sb.append(asyncMethod);
         }
         sb.append(CRLF);
         sb.append("}");

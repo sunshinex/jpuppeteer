@@ -20,6 +20,11 @@ public class BackgroundService {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncStartObserving(jpuppeteer.cdp.cdp.entity.backgroundservice.StartObservingRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("BackgroundService.startObserving", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Disables event updates for the service.
     * experimental
@@ -28,6 +33,11 @@ public class BackgroundService {
         session.send("BackgroundService.stopObserving", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncStopObserving(jpuppeteer.cdp.cdp.entity.backgroundservice.StopObservingRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("BackgroundService.stopObserving", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Set the recording state for the service.
@@ -38,6 +48,11 @@ public class BackgroundService {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncSetRecording(jpuppeteer.cdp.cdp.entity.backgroundservice.SetRecordingRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("BackgroundService.setRecording", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Clears all stored data for the service.
     * experimental
@@ -46,4 +61,9 @@ public class BackgroundService {
         session.send("BackgroundService.clearEvents", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncClearEvents(jpuppeteer.cdp.cdp.entity.backgroundservice.ClearEventsRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("BackgroundService.clearEvents", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }

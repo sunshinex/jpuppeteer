@@ -20,6 +20,11 @@ public class CacheStorage {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncDeleteCache(jpuppeteer.cdp.cdp.entity.cachestorage.DeleteCacheRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("CacheStorage.deleteCache", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Deletes a cache entry.
     * experimental
@@ -28,6 +33,11 @@ public class CacheStorage {
         session.send("CacheStorage.deleteEntry", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncDeleteEntry(jpuppeteer.cdp.cdp.entity.cachestorage.DeleteEntryRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("CacheStorage.deleteEntry", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Requests cache names.
@@ -38,6 +48,11 @@ public class CacheStorage {
     }
 
 
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.cachestorage.RequestCacheNamesResponse> asyncRequestCacheNames(jpuppeteer.cdp.cdp.entity.cachestorage.RequestCacheNamesRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("CacheStorage.requestCacheNames", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.cachestorage.RequestCacheNamesResponse>(future, jpuppeteer.cdp.cdp.entity.cachestorage.RequestCacheNamesResponse.class);
+    }
+
     /**
     * Fetches cache entry.
     * experimental
@@ -47,6 +62,11 @@ public class CacheStorage {
     }
 
 
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.cachestorage.RequestCachedResponseResponse> asyncRequestCachedResponse(jpuppeteer.cdp.cdp.entity.cachestorage.RequestCachedResponseRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("CacheStorage.requestCachedResponse", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.cachestorage.RequestCachedResponseResponse>(future, jpuppeteer.cdp.cdp.entity.cachestorage.RequestCachedResponseResponse.class);
+    }
+
     /**
     * Requests data from cache.
     * experimental
@@ -55,4 +75,9 @@ public class CacheStorage {
         return session.send("CacheStorage.requestEntries", request, jpuppeteer.cdp.cdp.entity.cachestorage.RequestEntriesResponse.class, timeout);
     }
 
+
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.cachestorage.RequestEntriesResponse> asyncRequestEntries(jpuppeteer.cdp.cdp.entity.cachestorage.RequestEntriesRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("CacheStorage.requestEntries", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.cachestorage.RequestEntriesResponse>(future, jpuppeteer.cdp.cdp.entity.cachestorage.RequestEntriesResponse.class);
+    }
 }

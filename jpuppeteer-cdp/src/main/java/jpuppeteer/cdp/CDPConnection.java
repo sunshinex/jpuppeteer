@@ -100,6 +100,14 @@ public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> im
         sendBase(method, params, null, timeout);
     }
 
+    public final Future<JSONObject> asyncSend(String method) {
+        return send0(method, null, null);
+    }
+
+    public final Future<JSONObject> asyncSend(String method, Object params) {
+        return send0(method, params, null);
+    }
+
     public final Future<JSONObject> asyncSend(String method, Object params, Map<String, Object> extra) {
         return send0(method, params, extra);
     }

@@ -18,6 +18,11 @@ public class Browser {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncSetPermission(jpuppeteer.cdp.cdp.entity.browser.SetPermissionRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.setPermission", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Grant specific permissions to the given origin and reject all others.
     */
@@ -25,6 +30,11 @@ public class Browser {
         connection.send("Browser.grantPermissions", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncGrantPermissions(jpuppeteer.cdp.cdp.entity.browser.GrantPermissionsRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.grantPermissions", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Reset all permission management for all origins.
@@ -34,6 +44,11 @@ public class Browser {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncResetPermissions(jpuppeteer.cdp.cdp.entity.browser.ResetPermissionsRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.resetPermissions", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Close browser gracefully.
     */
@@ -41,6 +56,11 @@ public class Browser {
         connection.send("Browser.close", null, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncClose() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.close");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Crashes browser on the main thread.
@@ -50,6 +70,11 @@ public class Browser {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncCrash() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.crash");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Crashes GPU process.
     */
@@ -57,6 +82,11 @@ public class Browser {
         connection.send("Browser.crashGpuProcess", null, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncCrashGpuProcess() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.crashGpuProcess");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Returns version information.
@@ -66,6 +96,11 @@ public class Browser {
     }
 
 
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.browser.GetVersionResponse> asyncGetVersion() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.getVersion");
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.browser.GetVersionResponse>(future, jpuppeteer.cdp.cdp.entity.browser.GetVersionResponse.class);
+    }
+
     /**
     * Returns the command line switches for the browser process if, and only if --enable-automation is on the commandline.
     */
@@ -73,6 +108,11 @@ public class Browser {
         return connection.send("Browser.getBrowserCommandLine", null, jpuppeteer.cdp.cdp.entity.browser.GetBrowserCommandLineResponse.class, timeout);
     }
 
+
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.browser.GetBrowserCommandLineResponse> asyncGetBrowserCommandLine() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.getBrowserCommandLine");
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.browser.GetBrowserCommandLineResponse>(future, jpuppeteer.cdp.cdp.entity.browser.GetBrowserCommandLineResponse.class);
+    }
 
     /**
     * Get Chrome histograms.
@@ -82,6 +122,11 @@ public class Browser {
     }
 
 
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.browser.GetHistogramsResponse> asyncGetHistograms(jpuppeteer.cdp.cdp.entity.browser.GetHistogramsRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.getHistograms", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.browser.GetHistogramsResponse>(future, jpuppeteer.cdp.cdp.entity.browser.GetHistogramsResponse.class);
+    }
+
     /**
     * Get a Chrome histogram by name.
     */
@@ -89,6 +134,11 @@ public class Browser {
         return connection.send("Browser.getHistogram", request, jpuppeteer.cdp.cdp.entity.browser.GetHistogramResponse.class, timeout);
     }
 
+
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.browser.GetHistogramResponse> asyncGetHistogram(jpuppeteer.cdp.cdp.entity.browser.GetHistogramRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.getHistogram", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.browser.GetHistogramResponse>(future, jpuppeteer.cdp.cdp.entity.browser.GetHistogramResponse.class);
+    }
 
     /**
     * Get position and size of the browser window.
@@ -98,6 +148,11 @@ public class Browser {
     }
 
 
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.browser.GetWindowBoundsResponse> asyncGetWindowBounds(jpuppeteer.cdp.cdp.entity.browser.GetWindowBoundsRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.getWindowBounds", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.browser.GetWindowBoundsResponse>(future, jpuppeteer.cdp.cdp.entity.browser.GetWindowBoundsResponse.class);
+    }
+
     /**
     * Get the browser window that contains the devtools target.
     */
@@ -105,6 +160,11 @@ public class Browser {
         return connection.send("Browser.getWindowForTarget", request, jpuppeteer.cdp.cdp.entity.browser.GetWindowForTargetResponse.class, timeout);
     }
 
+
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.browser.GetWindowForTargetResponse> asyncGetWindowForTarget(jpuppeteer.cdp.cdp.entity.browser.GetWindowForTargetRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.getWindowForTarget", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.browser.GetWindowForTargetResponse>(future, jpuppeteer.cdp.cdp.entity.browser.GetWindowForTargetResponse.class);
+    }
 
     /**
     * Set position and/or size of the browser window.
@@ -114,6 +174,11 @@ public class Browser {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncSetWindowBounds(jpuppeteer.cdp.cdp.entity.browser.SetWindowBoundsRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.setWindowBounds", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Set dock tile details, platform-specific.
     */
@@ -121,4 +186,9 @@ public class Browser {
         connection.send("Browser.setDockTile", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncSetDockTile(jpuppeteer.cdp.cdp.entity.browser.SetDockTileRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = connection.asyncSend("Browser.setDockTile", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }

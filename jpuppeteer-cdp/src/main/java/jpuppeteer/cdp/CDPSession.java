@@ -46,6 +46,10 @@ public class CDPSession {
         connection.send(method, params, extra, timeout);
     }
 
+    public final Future<JSONObject> asyncSend(String method) {
+        return connection.asyncSend(method, null, extra);
+    }
+
     public final Future<JSONObject> asyncSend(String method, Object params) {
         return connection.asyncSend(method, params, extra);
     }

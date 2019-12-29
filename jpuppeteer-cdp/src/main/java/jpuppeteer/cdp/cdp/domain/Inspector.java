@@ -20,6 +20,11 @@ public class Inspector {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncDisable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Inspector.disable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Enables inspector domain notifications.
     * experimental
@@ -28,4 +33,9 @@ public class Inspector {
         session.send("Inspector.enable", null, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncEnable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Inspector.enable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }

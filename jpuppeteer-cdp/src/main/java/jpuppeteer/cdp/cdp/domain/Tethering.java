@@ -20,6 +20,11 @@ public class Tethering {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncBind(jpuppeteer.cdp.cdp.entity.tethering.BindRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Tethering.bind", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Request browser port unbinding.
     * experimental
@@ -28,4 +33,9 @@ public class Tethering {
         session.send("Tethering.unbind", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncUnbind(jpuppeteer.cdp.cdp.entity.tethering.UnbindRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Tethering.unbind", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }

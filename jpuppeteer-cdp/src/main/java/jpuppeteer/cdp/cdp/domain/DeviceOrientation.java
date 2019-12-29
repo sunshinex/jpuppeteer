@@ -20,6 +20,11 @@ public class DeviceOrientation {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncClearDeviceOrientationOverride() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("DeviceOrientation.clearDeviceOrientationOverride");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Overrides the Device Orientation.
     * experimental
@@ -28,4 +33,9 @@ public class DeviceOrientation {
         session.send("DeviceOrientation.setDeviceOrientationOverride", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncSetDeviceOrientationOverride(jpuppeteer.cdp.cdp.entity.deviceorientation.SetDeviceOrientationOverrideRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("DeviceOrientation.setDeviceOrientationOverride", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }

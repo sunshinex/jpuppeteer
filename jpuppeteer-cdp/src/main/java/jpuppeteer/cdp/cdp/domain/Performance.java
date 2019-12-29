@@ -18,6 +18,11 @@ public class Performance {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncDisable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Performance.disable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Enable collecting and reporting metrics.
     */
@@ -25,6 +30,11 @@ public class Performance {
         session.send("Performance.enable", null, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncEnable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Performance.enable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Sets time domain to use for collecting and reporting duration metrics. Note that this must be called before enabling metrics collection. Calling this method while metrics collection is enabled returns an error.
@@ -34,6 +44,11 @@ public class Performance {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncSetTimeDomain(jpuppeteer.cdp.cdp.entity.performance.SetTimeDomainRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Performance.setTimeDomain", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Retrieve current values of run-time metrics.
     */
@@ -41,4 +56,9 @@ public class Performance {
         return session.send("Performance.getMetrics", null, jpuppeteer.cdp.cdp.entity.performance.GetMetricsResponse.class, timeout);
     }
 
+
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.performance.GetMetricsResponse> asyncGetMetrics() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Performance.getMetrics");
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.performance.GetMetricsResponse>(future, jpuppeteer.cdp.cdp.entity.performance.GetMetricsResponse.class);
+    }
 }

@@ -20,6 +20,11 @@ public class HeapProfiler {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncAddInspectedHeapObject(jpuppeteer.cdp.cdp.entity.heapprofiler.AddInspectedHeapObjectRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeapProfiler.addInspectedHeapObject", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * experimental
     */
@@ -27,6 +32,11 @@ public class HeapProfiler {
         session.send("HeapProfiler.collectGarbage", null, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncCollectGarbage() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeapProfiler.collectGarbage");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * experimental
@@ -36,6 +46,11 @@ public class HeapProfiler {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncDisable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeapProfiler.disable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * experimental
     */
@@ -43,6 +58,11 @@ public class HeapProfiler {
         session.send("HeapProfiler.enable", null, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncEnable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeapProfiler.enable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * experimental
@@ -52,6 +72,11 @@ public class HeapProfiler {
     }
 
 
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.heapprofiler.GetHeapObjectIdResponse> asyncGetHeapObjectId(jpuppeteer.cdp.cdp.entity.heapprofiler.GetHeapObjectIdRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeapProfiler.getHeapObjectId", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.heapprofiler.GetHeapObjectIdResponse>(future, jpuppeteer.cdp.cdp.entity.heapprofiler.GetHeapObjectIdResponse.class);
+    }
+
     /**
     * experimental
     */
@@ -59,6 +84,11 @@ public class HeapProfiler {
         return session.send("HeapProfiler.getObjectByHeapObjectId", request, jpuppeteer.cdp.cdp.entity.heapprofiler.GetObjectByHeapObjectIdResponse.class, timeout);
     }
 
+
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.heapprofiler.GetObjectByHeapObjectIdResponse> asyncGetObjectByHeapObjectId(jpuppeteer.cdp.cdp.entity.heapprofiler.GetObjectByHeapObjectIdRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeapProfiler.getObjectByHeapObjectId", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.heapprofiler.GetObjectByHeapObjectIdResponse>(future, jpuppeteer.cdp.cdp.entity.heapprofiler.GetObjectByHeapObjectIdResponse.class);
+    }
 
     /**
     * experimental
@@ -68,6 +98,11 @@ public class HeapProfiler {
     }
 
 
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.heapprofiler.GetSamplingProfileResponse> asyncGetSamplingProfile() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeapProfiler.getSamplingProfile");
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.heapprofiler.GetSamplingProfileResponse>(future, jpuppeteer.cdp.cdp.entity.heapprofiler.GetSamplingProfileResponse.class);
+    }
+
     /**
     * experimental
     */
@@ -75,6 +110,11 @@ public class HeapProfiler {
         session.send("HeapProfiler.startSampling", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncStartSampling(jpuppeteer.cdp.cdp.entity.heapprofiler.StartSamplingRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeapProfiler.startSampling", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * experimental
@@ -84,6 +124,11 @@ public class HeapProfiler {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncStartTrackingHeapObjects(jpuppeteer.cdp.cdp.entity.heapprofiler.StartTrackingHeapObjectsRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeapProfiler.startTrackingHeapObjects", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * experimental
     */
@@ -91,6 +136,11 @@ public class HeapProfiler {
         return session.send("HeapProfiler.stopSampling", null, jpuppeteer.cdp.cdp.entity.heapprofiler.StopSamplingResponse.class, timeout);
     }
 
+
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.heapprofiler.StopSamplingResponse> asyncStopSampling() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeapProfiler.stopSampling");
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.heapprofiler.StopSamplingResponse>(future, jpuppeteer.cdp.cdp.entity.heapprofiler.StopSamplingResponse.class);
+    }
 
     /**
     * experimental
@@ -100,6 +150,11 @@ public class HeapProfiler {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncStopTrackingHeapObjects(jpuppeteer.cdp.cdp.entity.heapprofiler.StopTrackingHeapObjectsRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeapProfiler.stopTrackingHeapObjects", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * experimental
     */
@@ -107,4 +162,9 @@ public class HeapProfiler {
         session.send("HeapProfiler.takeHeapSnapshot", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncTakeHeapSnapshot(jpuppeteer.cdp.cdp.entity.heapprofiler.TakeHeapSnapshotRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeapProfiler.takeHeapSnapshot", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }

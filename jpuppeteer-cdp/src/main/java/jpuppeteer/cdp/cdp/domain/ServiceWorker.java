@@ -19,6 +19,11 @@ public class ServiceWorker {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncDeliverPushMessage(jpuppeteer.cdp.cdp.entity.serviceworker.DeliverPushMessageRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("ServiceWorker.deliverPushMessage", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * experimental
     */
@@ -26,6 +31,11 @@ public class ServiceWorker {
         session.send("ServiceWorker.disable", null, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncDisable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("ServiceWorker.disable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * experimental
@@ -35,6 +45,11 @@ public class ServiceWorker {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncDispatchSyncEvent(jpuppeteer.cdp.cdp.entity.serviceworker.DispatchSyncEventRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("ServiceWorker.dispatchSyncEvent", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * experimental
     */
@@ -42,6 +57,11 @@ public class ServiceWorker {
         session.send("ServiceWorker.dispatchPeriodicSyncEvent", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncDispatchPeriodicSyncEvent(jpuppeteer.cdp.cdp.entity.serviceworker.DispatchPeriodicSyncEventRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("ServiceWorker.dispatchPeriodicSyncEvent", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * experimental
@@ -51,6 +71,11 @@ public class ServiceWorker {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncEnable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("ServiceWorker.enable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * experimental
     */
@@ -58,6 +83,11 @@ public class ServiceWorker {
         session.send("ServiceWorker.inspectWorker", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncInspectWorker(jpuppeteer.cdp.cdp.entity.serviceworker.InspectWorkerRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("ServiceWorker.inspectWorker", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * experimental
@@ -67,6 +97,11 @@ public class ServiceWorker {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncSetForceUpdateOnPageLoad(jpuppeteer.cdp.cdp.entity.serviceworker.SetForceUpdateOnPageLoadRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("ServiceWorker.setForceUpdateOnPageLoad", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * experimental
     */
@@ -74,6 +109,11 @@ public class ServiceWorker {
         session.send("ServiceWorker.skipWaiting", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncSkipWaiting(jpuppeteer.cdp.cdp.entity.serviceworker.SkipWaitingRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("ServiceWorker.skipWaiting", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * experimental
@@ -83,6 +123,11 @@ public class ServiceWorker {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncStartWorker(jpuppeteer.cdp.cdp.entity.serviceworker.StartWorkerRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("ServiceWorker.startWorker", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * experimental
     */
@@ -90,6 +135,11 @@ public class ServiceWorker {
         session.send("ServiceWorker.stopAllWorkers", null, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncStopAllWorkers() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("ServiceWorker.stopAllWorkers");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * experimental
@@ -99,6 +149,11 @@ public class ServiceWorker {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncStopWorker(jpuppeteer.cdp.cdp.entity.serviceworker.StopWorkerRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("ServiceWorker.stopWorker", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * experimental
     */
@@ -107,6 +162,11 @@ public class ServiceWorker {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncUnregister(jpuppeteer.cdp.cdp.entity.serviceworker.UnregisterRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("ServiceWorker.unregister", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * experimental
     */
@@ -114,4 +174,9 @@ public class ServiceWorker {
         session.send("ServiceWorker.updateRegistration", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncUpdateRegistration(jpuppeteer.cdp.cdp.entity.serviceworker.UpdateRegistrationRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("ServiceWorker.updateRegistration", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }

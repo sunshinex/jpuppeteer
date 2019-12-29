@@ -154,13 +154,17 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         this.requestInterceptionEnabled = false;
         this.requestMap = new MapMaker().weakValues().concurrencyLevel(16).makeMap();
 
-        enablePage();
-        enablePageLifecycleEvent();
-        enableNetwork();
-        enablePerformance();
-        enableLog();
-        enableRuntime();
-        enableDom();
+        List<Future> enableFutures = new ArrayList<>();
+        enableFutures.add(enablePage());
+        enableFutures.add(enablePageLifecycleEvent());
+        enableFutures.add(enableNetwork());
+        enableFutures.add(enableLog());
+        enableFutures.add(enableRuntime());
+        enableFutures.add(enableDom());
+
+        for(Future future : enableFutures) {
+            future.get();
+        }
 
     }
 
@@ -169,34 +173,30 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     }
 
 
-    protected void enablePage() throws Exception {
-        page.enable(DEFAULT_TIMEOUT);
+    protected Future<Void> enablePage() {
+        return page.asyncEnable();
     }
 
-    protected void enablePageLifecycleEvent() throws Exception {
+    protected Future<Void> enablePageLifecycleEvent() {
         SetLifecycleEventsEnabledRequest request = new SetLifecycleEventsEnabledRequest();
         request.setEnabled(true);
-        page.setLifecycleEventsEnabled(request, DEFAULT_TIMEOUT);
+        return page.asyncSetLifecycleEventsEnabled(request);
     }
 
-    protected void enableNetwork() throws Exception {
-        network.enable(null, DEFAULT_TIMEOUT);
+    protected Future<Void> enableNetwork() {
+        return network.asyncEnable(null);
     }
 
-    protected void enablePerformance() throws Exception {
-        performance.enable(DEFAULT_TIMEOUT);
+    protected Future<Void> enableLog() {
+        return log.asyncEnable();
     }
 
-    protected void enableLog() throws Exception {
-        log.enable(DEFAULT_TIMEOUT);
+    protected Future<Void> enableRuntime() {
+        return runtime.asyncEnable();
     }
 
-    protected void enableRuntime() throws Exception {
-        runtime.enable(DEFAULT_TIMEOUT);
-    }
-
-    protected void enableDom() throws Exception {
-        dom.enable(DEFAULT_TIMEOUT);
+    protected Future<Void> enableDom() {
+        return dom.asyncEnable();
     }
 
     protected void doAuthenticate(String requestId) {
@@ -468,13 +468,13 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
                 .collect(Collectors.toList());
     }
 
-    protected Future<JSONObject> asyncDeleteCookies(String name, String domain, String path, String url) {
+    protected Future<Void> asyncDeleteCookies(String name, String domain, String path, String url) {
         DeleteCookiesRequest request = new DeleteCookiesRequest();
         request.setName(name);
         request.setDomain(domain);
         request.setPath(path);
         request.setUrl(url);
-        return session.asyncSend("Network.deleteCookies", request);
+        return network.asyncDeleteCookies(request);
     }
 
     @Override

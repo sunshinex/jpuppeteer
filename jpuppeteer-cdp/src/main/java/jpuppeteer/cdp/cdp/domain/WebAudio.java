@@ -20,6 +20,11 @@ public class WebAudio {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncEnable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("WebAudio.enable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Disables the WebAudio domain.
     * experimental
@@ -29,6 +34,11 @@ public class WebAudio {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncDisable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("WebAudio.disable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Fetch the realtime data from the registered contexts.
     * experimental
@@ -37,4 +47,9 @@ public class WebAudio {
         return session.send("WebAudio.getRealtimeData", request, jpuppeteer.cdp.cdp.entity.webaudio.GetRealtimeDataResponse.class, timeout);
     }
 
+
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.webaudio.GetRealtimeDataResponse> asyncGetRealtimeData(jpuppeteer.cdp.cdp.entity.webaudio.GetRealtimeDataRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("WebAudio.getRealtimeData", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.webaudio.GetRealtimeDataResponse>(future, jpuppeteer.cdp.cdp.entity.webaudio.GetRealtimeDataResponse.class);
+    }
 }

@@ -18,6 +18,11 @@ public class Security {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncDisable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Security.disable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Enables tracking security state changes.
     */
@@ -25,6 +30,11 @@ public class Security {
         session.send("Security.enable", null, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncEnable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Security.enable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Enable/disable whether all certificate errors should be ignored.
@@ -34,6 +44,11 @@ public class Security {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncSetIgnoreCertificateErrors(jpuppeteer.cdp.cdp.entity.security.SetIgnoreCertificateErrorsRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Security.setIgnoreCertificateErrors", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Handles a certificate error that fired a certificateError event.
     */
@@ -42,6 +57,11 @@ public class Security {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncHandleCertificateError(jpuppeteer.cdp.cdp.entity.security.HandleCertificateErrorRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Security.handleCertificateError", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Enable/disable overriding certificate errors. If enabled, all certificate error events need to be handled by the DevTools client and should be answered with `handleCertificateError` commands.
     */
@@ -49,4 +69,9 @@ public class Security {
         session.send("Security.setOverrideCertificateErrors", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncSetOverrideCertificateErrors(jpuppeteer.cdp.cdp.entity.security.SetOverrideCertificateErrorsRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Security.setOverrideCertificateErrors", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }

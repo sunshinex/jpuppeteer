@@ -20,6 +20,11 @@ public class Cast {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncEnable(jpuppeteer.cdp.cdp.entity.cast.EnableRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Cast.enable", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Stops observing for sinks and issues.
     * experimental
@@ -28,6 +33,11 @@ public class Cast {
         session.send("Cast.disable", null, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncDisable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Cast.disable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Sets a sink to be used when the web page requests the browser to choose a sink via Presentation API, Remote Playback API, or Cast SDK.
@@ -38,6 +48,11 @@ public class Cast {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncSetSinkToUse(jpuppeteer.cdp.cdp.entity.cast.SetSinkToUseRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Cast.setSinkToUse", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Starts mirroring the tab to the sink.
     * experimental
@@ -47,6 +62,11 @@ public class Cast {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncStartTabMirroring(jpuppeteer.cdp.cdp.entity.cast.StartTabMirroringRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Cast.startTabMirroring", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Stops the active Cast session on the sink.
     * experimental
@@ -55,4 +75,9 @@ public class Cast {
         session.send("Cast.stopCasting", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncStopCasting(jpuppeteer.cdp.cdp.entity.cast.StopCastingRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Cast.stopCasting", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }

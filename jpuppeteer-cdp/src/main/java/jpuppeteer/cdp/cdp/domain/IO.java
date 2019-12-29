@@ -18,6 +18,11 @@ public class IO {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncClose(jpuppeteer.cdp.cdp.entity.io.CloseRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("IO.close", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Read a chunk of the stream
     */
@@ -26,6 +31,11 @@ public class IO {
     }
 
 
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.io.ReadResponse> asyncRead(jpuppeteer.cdp.cdp.entity.io.ReadRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("IO.read", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.io.ReadResponse>(future, jpuppeteer.cdp.cdp.entity.io.ReadResponse.class);
+    }
+
     /**
     * Return UUID of Blob object specified by a remote object id.
     */
@@ -33,4 +43,9 @@ public class IO {
         return session.send("IO.resolveBlob", request, jpuppeteer.cdp.cdp.entity.io.ResolveBlobResponse.class, timeout);
     }
 
+
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.io.ResolveBlobResponse> asyncResolveBlob(jpuppeteer.cdp.cdp.entity.io.ResolveBlobRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("IO.resolveBlob", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.io.ResolveBlobResponse>(future, jpuppeteer.cdp.cdp.entity.io.ResolveBlobResponse.class);
+    }
 }

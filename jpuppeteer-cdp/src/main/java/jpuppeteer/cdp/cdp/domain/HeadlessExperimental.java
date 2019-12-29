@@ -20,6 +20,11 @@ public class HeadlessExperimental {
     }
 
 
+    public java.util.concurrent.Future<jpuppeteer.cdp.cdp.entity.headlessexperimental.BeginFrameResponse> asyncBeginFrame(jpuppeteer.cdp.cdp.entity.headlessexperimental.BeginFrameRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeadlessExperimental.beginFrame", request);
+        return new jpuppeteer.cdp.CDPFuture<jpuppeteer.cdp.cdp.entity.headlessexperimental.BeginFrameResponse>(future, jpuppeteer.cdp.cdp.entity.headlessexperimental.BeginFrameResponse.class);
+    }
+
     /**
     * Disables headless events for the target.
     * experimental
@@ -29,6 +34,11 @@ public class HeadlessExperimental {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncDisable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeadlessExperimental.disable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Enables headless events for the target.
     * experimental
@@ -37,4 +47,9 @@ public class HeadlessExperimental {
         session.send("HeadlessExperimental.enable", null, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncEnable() {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("HeadlessExperimental.enable");
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }

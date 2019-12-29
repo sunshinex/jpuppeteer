@@ -18,6 +18,11 @@ public class Input {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncDispatchKeyEvent(jpuppeteer.cdp.cdp.entity.input.DispatchKeyEventRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Input.dispatchKeyEvent", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * This method emulates inserting text that doesn't come from a key press, for example an emoji keyboard or an IME.
     */
@@ -25,6 +30,11 @@ public class Input {
         session.send("Input.insertText", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncInsertText(jpuppeteer.cdp.cdp.entity.input.InsertTextRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Input.insertText", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Dispatches a mouse event to the page.
@@ -34,6 +44,11 @@ public class Input {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncDispatchMouseEvent(jpuppeteer.cdp.cdp.entity.input.DispatchMouseEventRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Input.dispatchMouseEvent", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Dispatches a touch event to the page.
     */
@@ -41,6 +56,11 @@ public class Input {
         session.send("Input.dispatchTouchEvent", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncDispatchTouchEvent(jpuppeteer.cdp.cdp.entity.input.DispatchTouchEventRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Input.dispatchTouchEvent", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Emulates touch event from the mouse event parameters.
@@ -50,6 +70,11 @@ public class Input {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncEmulateTouchFromMouseEvent(jpuppeteer.cdp.cdp.entity.input.EmulateTouchFromMouseEventRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Input.emulateTouchFromMouseEvent", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Ignores input events (useful while auditing page).
     */
@@ -57,6 +82,11 @@ public class Input {
         session.send("Input.setIgnoreInputEvents", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncSetIgnoreInputEvents(jpuppeteer.cdp.cdp.entity.input.SetIgnoreInputEventsRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Input.setIgnoreInputEvents", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 
     /**
     * Synthesizes a pinch gesture over a time period by issuing appropriate touch events.
@@ -66,6 +96,11 @@ public class Input {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncSynthesizePinchGesture(jpuppeteer.cdp.cdp.entity.input.SynthesizePinchGestureRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Input.synthesizePinchGesture", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Synthesizes a scroll gesture over a time period by issuing appropriate touch events.
     */
@@ -74,6 +109,11 @@ public class Input {
     }
 
 
+    public java.util.concurrent.Future<Void> asyncSynthesizeScrollGesture(jpuppeteer.cdp.cdp.entity.input.SynthesizeScrollGestureRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Input.synthesizeScrollGesture", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
+
     /**
     * Synthesizes a tap gesture over a time period by issuing appropriate touch events.
     */
@@ -81,4 +121,9 @@ public class Input {
         session.send("Input.synthesizeTapGesture", request, timeout);
     }
 
+
+    public java.util.concurrent.Future<Void> asyncSynthesizeTapGesture(jpuppeteer.cdp.cdp.entity.input.SynthesizeTapGestureRequest request) {
+        java.util.concurrent.Future<com.alibaba.fastjson.JSONObject> future = session.asyncSend("Input.synthesizeTapGesture", request);
+        return new jpuppeteer.cdp.CDPFuture<Void>(future, Void.class);
+    }
 }
