@@ -24,10 +24,6 @@ public class ChromeLauncher implements Launcher {
 
     private final String executable;
 
-    private volatile Process process;
-
-    private volatile ChromeBrowser browser;
-
     public ChromeLauncher(String executable) {
         this.executable = executable;
     }
@@ -35,9 +31,27 @@ public class ChromeLauncher implements Launcher {
     @Override
     public ChromeBrowser launch(String... args) throws Exception {
         ChromeArguments chromeArguments = ChromeArguments.parse(executable, args);
+        String[] command = chromeArguments.getCommand();
+        File exec = new File(executable);
+        logger.info("command line: {}", StringUtils.join(command, " "));
+        Process process = Runtime.getRuntime().exec(command, null, exec.getParentFile());
+
+        CDPConnection connection;
+        URI uri;
+        if (!chromeArguments.isPipe()) {
+            //等待chrome启动成功的debug listening输出
+            uri = waitForListening(process);
+            connection = new WebSocketCDPConnection(uri);
+            connection.open();
+        } else {
+            throw new Exception("unsupport pipe debug mode");
+        }
+
+        ChromeBrowser browser = new ChromeBrowser(uri.getHost() + ":" + uri.getPort(), process, connection);
+
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                if (browser != null && process != null && process.isAlive()) {
+                if (process != null && process.isAlive()) {
                     browser.close();
                     logger.info("normally quit browser succeed");
                     //等待chrome进程退出
@@ -65,20 +79,6 @@ public class ChromeLauncher implements Launcher {
                 }
             }
         }));
-        String[] command = chromeArguments.getCommand();
-        File exec = new File(executable);
-        logger.info("command line: {}", StringUtils.join(command, " "));
-        process = Runtime.getRuntime().exec(command, null, exec.getParentFile());
-        CDPConnection connection;
-        URI uri;
-        if (!chromeArguments.isPipe()) {
-            //等待chrome启动成功的debug listening输出
-            uri = waitForListening();
-            connection = new WebSocketCDPConnection(uri);
-            connection.open();
-        } else {
-            throw new Exception("unsupport pipe debug mode");
-        }
         //启动线程记录subprocess stderr的输出
         new Thread("CHROME-STDERR-LOG-THREAD") {
             @Override
@@ -96,7 +96,6 @@ public class ChromeLauncher implements Launcher {
                 }
             }
         }.start();
-        browser = new ChromeBrowser(uri.getHost() + ":" + uri.getPort(), process, connection);
         return browser;
     }
 
@@ -109,7 +108,7 @@ public class ChromeLauncher implements Launcher {
         file.delete();
     }
 
-    private URI waitForListening() throws IOException {
+    private URI waitForListening(Process process) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
         String line;
         while ((line = reader.readLine()) != null) {
