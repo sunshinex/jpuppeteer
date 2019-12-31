@@ -28,15 +28,13 @@ public class ChromeLauncher implements Launcher {
 
     private volatile ChromeBrowser browser;
 
-    private volatile ChromeArguments chromeArguments;
-
     public ChromeLauncher(String executable) {
         this.executable = executable;
     }
 
     @Override
     public ChromeBrowser launch(String... args) throws Exception {
-        chromeArguments = ChromeArguments.parse(executable, args);
+        ChromeArguments chromeArguments = ChromeArguments.parse(executable, args);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 if (browser != null && process != null && process.isAlive()) {
