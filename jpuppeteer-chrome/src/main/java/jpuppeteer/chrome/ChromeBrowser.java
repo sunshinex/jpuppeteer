@@ -4,6 +4,7 @@ import com.google.common.collect.MapMaker;
 import jpuppeteer.api.browser.Browser;
 import jpuppeteer.api.constant.PermissionType;
 import jpuppeteer.api.event.EventEmitter;
+import jpuppeteer.api.future.FutureFuture;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.CDPSession;
@@ -32,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -165,27 +167,11 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
             //logger.error("target created failed: context not found, targetId={}, contextId={}", targetId, contextId);
             return;
         }
-        String sessionId = null;
-        try {
-            //对所有创建的页面, 自动附加
-            sessionId = attachToTarget(targetId);
-            targetMap.put(targetId, context);
-            sessionMap.put(sessionId, context);
-            context.emit(ChromeContextEvent.TARGETCREATED, targetInfo);
-            logger.info("attach target success, targetId={}, sessionId={}", targetId, sessionId);
-        } catch (Exception e) {
-            //当target尝试attach失败的时候关闭target, 因为已经没有用了
-            logger.error("attach target failed, targetId={}, error={}", targetId, e.getMessage(), e);
-            targetMap.remove(targetId);
-            if (sessionId != null) {
-                sessionMap.remove(sessionId);
-            }
-            try {
-                closeTarget(targetId);
-            } catch (Exception e1) {
-                logger.error("try close attach failed target failed, targetId={}, error={}", targetId, e1.getMessage(), e1);
-            }
-        }
+        //自动执行attach操作
+        asyncAttachToTarget(targetId);
+        targetMap.put(targetId, context);
+        context.emit(ChromeContextEvent.TARGETCREATED, targetInfo);
+        logger.info("target created, auto do attach, targetId={}");
     }
 
     private void handleTargetAttached(CDPEvent event) {
@@ -198,6 +184,8 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
             //logger.error("target attached failed, context not found, targetId={}, contextId={}", targetId, contextId);
             return;
         }
+        String sessionId = evt.getSessionId();
+        sessionMap.put(sessionId, context);
         context.emit(ChromeContextEvent.ATTACHEDTOTARGET, evt);
         logger.info("target attached, targetId={}", targetId);
     }
@@ -269,12 +257,21 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         target.setDiscoverTargets(request, DEFAULT_TIMEOUT);
     }
 
-    protected String attachToTarget(String targetId) throws Exception {
+    private AttachToTargetRequest buildAttachToTargetRequest(String targetId) {
         AttachToTargetRequest request = new AttachToTargetRequest();
         request.setTargetId(targetId);
         request.setFlatten(true);
-        AttachToTargetResponse response = target.attachToTarget(request, DEFAULT_TIMEOUT);
+        return request;
+    }
+
+    protected String attachToTarget(String targetId) throws Exception {
+        AttachToTargetResponse response = target.attachToTarget(buildAttachToTargetRequest(targetId), DEFAULT_TIMEOUT);
         return response.getSessionId();
+    }
+
+    protected Future<String> asyncAttachToTarget(String targetId) {
+        Future<AttachToTargetResponse> future = target.asyncAttachToTarget(buildAttachToTargetRequest(targetId));
+        return new FutureFuture<>(future, response -> response.getSessionId());
     }
 
     protected boolean closeTarget(String targetId) throws Exception {
