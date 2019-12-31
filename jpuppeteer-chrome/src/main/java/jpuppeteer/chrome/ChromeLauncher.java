@@ -1,6 +1,8 @@
 package jpuppeteer.chrome;
 
 import jpuppeteer.api.browser.Launcher;
+import jpuppeteer.api.future.DefaultPromise;
+import jpuppeteer.api.future.Promise;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.WebSocketCDPConnection;
 import org.apache.commons.lang3.StringUtils;
@@ -31,22 +33,55 @@ public class ChromeLauncher implements Launcher {
     @Override
     public ChromeBrowser launch(String... args) throws Exception {
         ChromeArguments chromeArguments = ChromeArguments.parse(executable, args);
+        if (chromeArguments.isPipe()) {
+            throw new Exception("unsupport pipe debug mode");
+        }
         String[] command = chromeArguments.getCommand();
         File exec = new File(executable);
         logger.info("command line: {}", StringUtils.join(command, " "));
         Process process = Runtime.getRuntime().exec(command, null, exec.getParentFile());
 
-        CDPConnection connection;
-        URI uri;
-        if (!chromeArguments.isPipe()) {
-            //等待chrome启动成功的debug listening输出
-            uri = waitForListening(process);
-            connection = new WebSocketCDPConnection(uri);
-            connection.open();
-        } else {
-            throw new Exception("unsupport pipe debug mode");
-        }
+        Promise<URI> promise = new DefaultPromise<>();
 
+        new Thread("CHROME-STDERR-THREAD") {
+            @Override
+            public void run() {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                while (process.isAlive()) {
+                    try {
+                        String line = reader.readLine();
+                        line = StringUtils.trim(line);
+                        if (StringUtils.isEmpty(line)) {
+                            continue;
+                        }
+                        logger.debug(line);
+                        if (!promise.isDone() && !promise.isCancelled()) {
+                            Matcher matcher = LISTENING_PATTERN.matcher(line);
+                            if (matcher.matches()) {
+                                promise.setSuccess(URI.create(matcher.group(1)));
+                            }
+                        }
+                    } catch (IOException e) {
+                        if (!promise.isDone() && !promise.isCancelled()) {
+                            promise.setFailure(e);
+                        }
+                        logger.error("read error, error={}", e.getMessage(), e);
+                    }
+                }
+            }
+        }.start();
+
+        URI uri;
+        try {
+            //等待5s, 等chrome启动成功, 如果5s没有启动成功, 则强制关闭chrome进程
+            uri = promise.get(5, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            process.destroy();
+            throw e;
+        }
+        logger.info("listening on {}", uri);
+        CDPConnection connection = new WebSocketCDPConnection(uri);
+        connection.open();
         ChromeBrowser browser = new ChromeBrowser(uri.getHost() + ":" + uri.getPort(), process, connection);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -79,23 +114,6 @@ public class ChromeLauncher implements Launcher {
                 }
             }
         }));
-        //启动线程记录subprocess stderr的输出
-        new Thread("CHROME-STDERR-LOG-THREAD") {
-            @Override
-            public void run() {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-                while (process.isAlive()) {
-                    try {
-                        String line = reader.readLine();
-                        if (StringUtils.isNotEmpty(line)) {
-                            logger.debug("chrome process stderr message={}", line);
-                        }
-                    } catch (IOException e) {
-                        logger.error("chrome process stderr read error, error={}", e.getMessage(), e);
-                    }
-                }
-            }
-        }.start();
         return browser;
     }
 
@@ -106,18 +124,5 @@ public class ChromeLauncher implements Launcher {
             }
         }
         file.delete();
-    }
-
-    private URI waitForListening(Process process) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            Matcher matcher = LISTENING_PATTERN.matcher(line);
-            if (matcher.matches()) {
-                logger.info(line);
-                return URI.create(matcher.group(1));
-            }
-        }
-        throw new RuntimeException("please ensure startup with arg --remote-debugging-pipe or --remote-debugging-port");
     }
 }
