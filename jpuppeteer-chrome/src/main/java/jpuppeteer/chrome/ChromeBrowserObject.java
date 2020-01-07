@@ -8,8 +8,6 @@ import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
 import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.entity.runtime.*;
-import jpuppeteer.chrome.constant.ScriptConstants;
-import jpuppeteer.chrome.util.ArgUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
@@ -20,7 +18,7 @@ import java.util.List;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
-public class ChromeBrowserObject implements BrowserObject<CallArgument> {
+public class ChromeBrowserObject extends AbstractExecutionContext implements BrowserObject {
 
     private static final String NEGATIVE_ZERO = "-0";
 
@@ -32,8 +30,6 @@ public class ChromeBrowserObject implements BrowserObject<CallArgument> {
 
     protected Runtime runtime;
 
-    protected ChromeExecutionContext executionContext;
-
     protected String objectId;
 
     protected RemoteObjectType type;
@@ -42,9 +38,9 @@ public class ChromeBrowserObject implements BrowserObject<CallArgument> {
 
     protected RemoteObject object;
 
-    public ChromeBrowserObject(Runtime runtime, ChromeExecutionContext executionContext, RemoteObject object) {
+    public ChromeBrowserObject(Runtime runtime, RemoteObject object) {
+        super(runtime);
         this.runtime = runtime;
-        this.executionContext = executionContext;
         this.objectId = object.getObjectId();
         this.type = RemoteObjectType.findByValue(object.getType());
         this.subType = RemoteObjectSubtype.findByValue(object.getSubtype());
@@ -55,32 +51,37 @@ public class ChromeBrowserObject implements BrowserObject<CallArgument> {
         return objectId;
     }
 
-    private CallArgument[] fillArgs(String expression, CallArgument[] args) {
-        CallArgument[] fullArgs = new CallArgument[args.length + 2];
-        fullArgs[0] = ArgUtils.createFromObject(this);
-        fullArgs[1] = ArgUtils.createFromValue(expression);
-        System.arraycopy(args, 0, fullArgs, 2, args.length);
-        return fullArgs;
+    @Override
+    void pre(EvaluateRequest request) {
+        //do nth...
     }
 
     @Override
-    public <R> R evaluate(String expression, Class<R> clazz, CallArgument... args) throws Exception {
-        return executionContext.evaluate(ScriptConstants.BROWSER_OBJECT_EVALUATE, clazz, fillArgs(expression, args));
+    void pre(CallFunctionOnRequest request) {
+        request.setObjectId(objectId);
+    }
+
+    private ChromeBrowserObject evaluate(String expression, boolean returnJSON, Object... args) throws Exception {
+        if (!isFunction(expression)) {
+            throw new IllegalArgumentException("argument 'expression' must an function");
+        }
+        return doCall(expression, returnJSON, args);
+    }
+
+
+    @Override
+    public <R> R evaluate(String expression, Class<R> clazz, Object... args) throws Exception {
+        return evaluate(expression, true, args).toObject(clazz);
     }
 
     @Override
-    public <R> R evaluate(String expression, TypeReference<R> type, CallArgument... args) throws Exception {
-        return executionContext.evaluate(ScriptConstants.BROWSER_OBJECT_EVALUATE, type, fillArgs(expression, args));
+    public <R> R evaluate(String expression, TypeReference<R> type, Object... args) throws Exception {
+        return evaluate(expression, true, args).toObject(type);
     }
 
     @Override
-    public ChromeBrowserObject evaluate(String expression, CallArgument... args) throws Exception {
-        return executionContext.evaluate(ScriptConstants.BROWSER_OBJECT_EVALUATE, fillArgs(expression, args));
-    }
-
-    @Override
-    public ChromeExecutionContext executionContext() {
-        return executionContext;
+    public ChromeBrowserObject evaluate(String expression, Object... args) throws Exception {
+        return evaluate(expression, false, args);
     }
 
     @Override
@@ -97,19 +98,14 @@ public class ChromeBrowserObject implements BrowserObject<CallArgument> {
             if (!descriptor.getEnumerable()) {
                 continue;
             }
-            objects.add(new ChromeBrowserObject(runtime, executionContext, descriptor.getValue()));
+            objects.add(new ChromeBrowserObject(runtime, descriptor.getValue()));
         }
         return objects;
     }
 
     @Override
     public ChromeBrowserObject getProperty(String name) throws Exception {
-        CallArgument object = ArgUtils.createFromObjectId(objectId);
-        CallArgument prop = ArgUtils.createFromValue(name);
-        return executionContext.evaluate(
-                "function(object, prop){return object[prop];}",
-                object, prop
-                );
+        return evaluate("function(name){return this[name]}", name);
     }
 
     @Override

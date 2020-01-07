@@ -1,14 +1,11 @@
-function elementScroll(element, x, y) {
-    if (element === null || element === undefined) {
-        element = window;
-    }
-    element.scroll({
+function elementScroll(x, y) {
+    this.scroll({
         left: x,
         top: y,
         behavior: 'instant'
     });
     return {
-        scrollX: element.scrollX,
-        scrollY: element.scrollY
+        scrollX: this.scrollX,
+        scrollY: this.scrollY
     };
 }
