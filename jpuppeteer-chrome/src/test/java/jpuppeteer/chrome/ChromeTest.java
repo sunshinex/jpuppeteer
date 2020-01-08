@@ -24,7 +24,8 @@ public class ChromeTest {
         ChromePage page = browser.defaultContext().defaultPage();
         page.addListener(ChromePageEvent.LOAD, event -> {
             try {
-                page.reload();
+                ChromeElement body = page.waitSelector("body", 1, TimeUnit.SECONDS);
+                System.out.println(body.html());
             } catch (Exception e) {
                 e.printStackTrace();
             }

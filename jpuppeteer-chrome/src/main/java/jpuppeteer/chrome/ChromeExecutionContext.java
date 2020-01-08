@@ -13,11 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
-public class ChromeExecutionContext implements ExecutionContext<CallArgument> {
+public class ChromeExecutionContext implements ExecutionContext {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeExecutionContext.class);
 
@@ -34,10 +36,23 @@ public class ChromeExecutionContext implements ExecutionContext<CallArgument> {
         return executionContextId;
     }
 
-    private ChromeBrowserObject evaluate(String expression, boolean returnJSON, CallArgument... args) throws Exception {
+    protected static CallArgument buildArgument(Object object) {
+        CallArgument argument = new CallArgument();
+        if (object instanceof ChromeBrowserObject) {
+            argument.setObjectId(((ChromeBrowserObject) object).getObjectId());
+        } else if (object instanceof CallArgument) {
+            logger.warn("use object instead of CallArgument");
+            argument = (CallArgument) object;
+        } else {
+            argument.setValue(object);
+        }
+        return argument;
+    }
+
+    private ChromeBrowserObject evaluate(String expression, boolean returnJSON, Object... args) throws Exception {
         CallFunctionOnRequest request = new CallFunctionOnRequest();
         request.setFunctionDeclaration(expression);
-        request.setArguments(Lists.newArrayList(args));
+        request.setArguments(Arrays.stream(args).map(arg -> buildArgument(arg)).collect(Collectors.toList()));
         request.setExecutionContextId(executionContextId);
         request.setUserGesture(true);
         request.setReturnByValue(returnJSON);
@@ -57,7 +72,7 @@ public class ChromeExecutionContext implements ExecutionContext<CallArgument> {
     }
 
     @Override
-    public <R> R evaluate(String expression, Class<R> clazz, CallArgument... args) throws Exception {
+    public <R> R evaluate(String expression, Class<R> clazz, Object... args) throws Exception {
         ChromeBrowserObject object = evaluate(expression, true, args);
         if (Boolean.class.equals(clazz)) {
             return (R) object.toBoolean();
@@ -85,13 +100,13 @@ public class ChromeExecutionContext implements ExecutionContext<CallArgument> {
     }
 
     @Override
-    public <R> R evaluate(String expression, TypeReference<R> type, CallArgument... args) throws Exception {
+    public <R> R evaluate(String expression, TypeReference<R> type, Object... args) throws Exception {
         ChromeBrowserObject object = evaluate(expression, true, args);
         return object.toObject(type);
     }
 
     @Override
-    public ChromeBrowserObject evaluate(String expression, CallArgument... args) throws Exception {
+    public ChromeBrowserObject evaluate(String expression, Object... args) throws Exception {
         return evaluate(expression, false, args);
     }
 }

@@ -13,10 +13,8 @@ import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
 import jpuppeteer.cdp.cdp.entity.dom.*;
 import jpuppeteer.cdp.cdp.entity.input.InsertTextRequest;
 import jpuppeteer.cdp.cdp.entity.page.GetLayoutMetricsResponse;
-import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.chrome.constant.ScriptConstants;
-import jpuppeteer.chrome.util.ArgUtils;
 import jpuppeteer.chrome.util.MathUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -31,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
-public class ChromeElement extends ChromeBrowserObject implements Element<CallArgument> {
+public class ChromeElement extends ChromeBrowserObject implements Element {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeElement.class);
 
@@ -59,9 +57,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
 
     @Override
     public ChromeElement querySelector(String selector) throws Exception {
-        CallArgument parent = ArgUtils.createFromObjectId(objectId);
-        CallArgument argSelector = ArgUtils.createFromValue(selector);
-        ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelector(selector);}", parent, argSelector);
+        ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelector(selector);}", this, selector);
         if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
             return null;
         }
@@ -70,9 +66,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
 
     @Override
     public List<ChromeElement> querySelectorAll(String selector) throws Exception {
-        CallArgument parent = ArgUtils.createFromObjectId(objectId);
-        CallArgument argSelector = ArgUtils.createFromValue(selector);
-        ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelectorAll(selector);}", parent, argSelector);
+        ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelectorAll(selector);}", this, selector);
         List<ChromeBrowserObject> properties = object.getProperties();
         return properties.stream().map(obj -> new ChromeElement(frame, obj.object)).collect(Collectors.toList());
     }
@@ -84,7 +78,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
 
     @Override
     public boolean isIntersectingViewport() throws Exception {
-        return frame.evaluate(ScriptConstants.ELEMENT_IS_INTERSECTING_VIEWPORT, Boolean.class, ArgUtils.createFromObjectId(objectId));
+        return frame.evaluate(ScriptConstants.ELEMENT_IS_INTERSECTING_VIEWPORT, Boolean.class, this);
     }
 
     @Override
@@ -154,7 +148,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
 
     @Override
     public void scrollIntoView() throws Exception {
-        executionContext.evaluate(ScriptConstants.ELEMENT_SCROLL_INTO_VIEW, ArgUtils.createFromObjectId(objectId));
+        executionContext.evaluate(ScriptConstants.ELEMENT_SCROLL_INTO_VIEW, this);
     }
 
     private void insertText(String text) throws Exception {
@@ -231,7 +225,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
 
     @Override
     public void clear() throws Exception {
-        page.evaluate("function(element){element.value='';}", ArgUtils.createFromObjectId(objectId));
+        page.evaluate("function(element){element.value='';}", this);
     }
 
     @Override
@@ -257,14 +251,12 @@ public class ChromeElement extends ChromeBrowserObject implements Element<CallAr
 
     @Override
     public void select(String... values) throws Exception {
-        CallArgument parent = ArgUtils.createFromObjectId(objectId);
-        CallArgument argValues = ArgUtils.createFromValue(values);
-        frame.evaluate(ScriptConstants.ELEMENT_SELECT, parent, argValues);
+        frame.evaluate(ScriptConstants.ELEMENT_SELECT, this, values);
     }
 
     @Override
     public Coordinate scroll(int x, int y) throws Exception {
-        JSONObject offset = evaluate(ScriptConstants.SCROLL, JSONObject.class, ArgUtils.createFromObject(this), ArgUtils.createFromValue(x), ArgUtils.createFromValue(y));
+        JSONObject offset = evaluate(ScriptConstants.SCROLL, JSONObject.class, this, x, y);
         return new Coordinate(offset.getDouble("scrollX"), offset.getDouble("scrollY"));
     }
 

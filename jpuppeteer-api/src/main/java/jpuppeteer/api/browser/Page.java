@@ -6,11 +6,11 @@ import jpuppeteer.api.constant.USKeyboardDefinition;
 
 import java.util.List;
 
-public interface Page<P> extends Frame<P> {
+public interface Page extends Frame {
 
     void authenticate(String username, String password) throws Exception;
 
-    Page<P> opener();
+    Page opener();
 
     void setCookies(Cookie... cookies) throws Exception;
 
@@ -126,7 +126,5 @@ public interface Page<P> extends Frame<P> {
      * @throws Exception
      */
     byte[] screenshot() throws Exception;
-
-    Coordinate scroll(int x, int y) throws Exception;
 
 }

@@ -6,17 +6,17 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public interface Frame<P> extends ExecutionContext<P> {
+public interface Frame extends ExecutionContext {
 
     String frameId();
 
-    Frame<P> parent();
+    Frame parent();
 
     /**
      * child frames
      * @return
      */
-    Frame<P>[] children();
+    Frame[] children();
 
     String content() throws Exception;
 
@@ -34,17 +34,19 @@ public interface Frame<P> extends ExecutionContext<P> {
         navigate(url, null);
     }
 
-    Element<P> querySelector(String selector) throws Exception;
+    Element querySelector(String selector) throws Exception;
 
-    List<? extends Element<P>> querySelectorAll(String selector) throws Exception;
+    List<? extends Element> querySelectorAll(String selector) throws Exception;
 
-    BrowserObject<P> wait(String expression, int timeout, TimeUnit unit, P... args) throws Exception;
+    BrowserObject wait(String expression, int timeout, TimeUnit unit, Object... args) throws Exception;
 
-    <R> R wait(String expression, int timeout, TimeUnit unit, Class<R> clazz, P... args) throws Exception;
+    <R> R wait(String expression, int timeout, TimeUnit unit, Class<R> clazz, Object... args) throws Exception;
 
-    <R> R wait(String expression, int timeout, TimeUnit unit, TypeReference<R> type, P... args) throws Exception;
+    <R> R wait(String expression, int timeout, TimeUnit unit, TypeReference<R> type, Object... args) throws Exception;
 
-    Element<P> waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
+    Element waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
+
+    Coordinate scroll(int x, int y) throws Exception;
 
 }
 

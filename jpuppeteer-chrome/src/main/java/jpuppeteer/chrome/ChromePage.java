@@ -1,6 +1,5 @@
 package jpuppeteer.chrome;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import jpuppeteer.api.browser.Cookie;
@@ -40,11 +39,9 @@ import jpuppeteer.cdp.cdp.entity.network.GetCookiesResponse;
 import jpuppeteer.cdp.cdp.entity.network.*;
 import jpuppeteer.cdp.cdp.entity.page.SetTouchEmulationEnabledRequest;
 import jpuppeteer.cdp.cdp.entity.page.*;
-import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextCreatedEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
-import jpuppeteer.chrome.constant.ScriptConstants;
 import jpuppeteer.chrome.entity.RequestEvent;
 import jpuppeteer.chrome.entity.SecurityDetails;
 import jpuppeteer.chrome.event.Request;
@@ -52,7 +49,6 @@ import jpuppeteer.chrome.event.RequestFailed;
 import jpuppeteer.chrome.event.RequestFinished;
 import jpuppeteer.chrome.event.Response;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
-import jpuppeteer.chrome.util.ArgUtils;
 import jpuppeteer.chrome.util.CookieUtils;
 import jpuppeteer.chrome.util.HttpUtils;
 import jpuppeteer.chrome.util.URLUtils;
@@ -69,7 +65,7 @@ import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
-public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEvent>, Page<CallArgument> {
+public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEvent>, Page {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromePage.class);
 
@@ -825,11 +821,5 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         request.setFormat("png");
         CaptureScreenshotResponse response = page.captureScreenshot(request, DEFAULT_TIMEOUT);
         return Base64.getDecoder().decode(response.getData());
-    }
-
-    @Override
-    public Coordinate scroll(int x, int y) throws Exception {
-        JSONObject offset = evaluate(ScriptConstants.SCROLL, JSONObject.class, ArgUtils.createFromValue(null), ArgUtils.createFromValue(x), ArgUtils.createFromValue(y));
-        return new Coordinate(offset.getDouble("scrollX"), offset.getDouble("scrollY"));
     }
 }
