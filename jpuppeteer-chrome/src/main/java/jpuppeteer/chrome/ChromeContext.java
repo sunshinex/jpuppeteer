@@ -337,7 +337,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         promiseMap.put(uuid, promise);
         String targetId = browser.createTarget(browserContextId, uuid);
         try {
-            ChromePage page = promise.get(1, TimeUnit.SECONDS);
+            ChromePage page = promise.get(5, TimeUnit.SECONDS);
             if (!Objects.equals(targetId, page.targetInfo().getTargetId())) {
                 throw new RuntimeException("targetId not match, expect:" + targetId + ", actual:" + page.targetInfo().getTargetId());
             }
