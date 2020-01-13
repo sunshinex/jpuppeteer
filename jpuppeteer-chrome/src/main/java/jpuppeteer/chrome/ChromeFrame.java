@@ -22,12 +22,14 @@ import jpuppeteer.chrome.constant.ScriptConstants;
 import jpuppeteer.chrome.util.ChromeObjectUtils;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -44,7 +46,7 @@ public class ChromeFrame implements Frame {
 
     protected volatile Set<ChromeFrame> children;
 
-    private volatile ChromeExecutionContext executionContext;
+    protected volatile ChromeExecutionContext executionContext;
 
     protected CDPSession session;
 
@@ -80,22 +82,7 @@ public class ChromeFrame implements Frame {
         this.dom = dom;
         this.input = input;
         this.runtime = runtime;
-    }
-
-    protected ChromeExecutionContext executionContext() {
-        if (executionContext == null) {
-            synchronized (this) {
-                while (true) {
-                    try {
-                        wait();
-                        break;
-                    } catch (InterruptedException e) {
-                        //忽略中断
-                    }
-                }
-            }
-        }
-        return executionContext;
+        createExecutionContext(null);
     }
 
     protected ChromeFrame find(String frameId) {
@@ -113,7 +100,7 @@ public class ChromeFrame implements Frame {
     }
 
     protected ChromeFrame find(Integer executionContextId) {
-        if (executionContext != null && executionContext.executionContextId == executionContextId) {
+        if (executionContext != null && Objects.equals(executionContext.executionContextId, executionContextId)) {
             return this;
         } else if (CollectionUtils.isNotEmpty(children)) {
             for (ChromeFrame frame : children) {
@@ -145,9 +132,6 @@ public class ChromeFrame implements Frame {
 
     public void createExecutionContext(Integer executionContextId) {
         executionContext = new ChromeExecutionContext(runtime, executionContextId);
-        synchronized (this) {
-            notifyAll();
-        }
     }
 
     public void destroyExecutionContext() {
@@ -172,22 +156,22 @@ public class ChromeFrame implements Frame {
 
     @Override
     public <R> R evaluate(String expression, Class<R> clazz, Object... args) throws Exception {
-        return executionContext().evaluate(expression, clazz, args);
+        return executionContext.evaluate(expression, clazz, args);
     }
 
     @Override
     public <R> R evaluate(String expression, TypeReference<R> type, Object... args) throws Exception {
-        return executionContext().evaluate(expression, type, args);
+        return executionContext.evaluate(expression, type, args);
     }
 
     @Override
     public ChromeBrowserObject evaluate(String expression, Object... args) throws Exception {
-        return executionContext().evaluate(expression, args);
+        return executionContext.evaluate(expression, args);
     }
 
     @Override
     public ChromeElement querySelector(String selector) throws Exception {
-        ChromeBrowserObject object = evaluate("function(selector){return document.querySelector(selector);}", selector);
+        ChromeBrowserObject object = evaluate("document.querySelector(\""+ StringEscapeUtils.escapeEcmaScript(selector) +"\")");
         if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
             return null;
         }
@@ -196,7 +180,7 @@ public class ChromeFrame implements Frame {
 
     @Override
     public List<ChromeElement> querySelectorAll(String selector) throws Exception {
-        ChromeBrowserObject browserObject = evaluate("function(selector){return document.querySelectorAll(selector);}", selector);
+        ChromeBrowserObject browserObject = evaluate("document.querySelectorAll(\""+ StringEscapeUtils.escapeEcmaScript(selector) +"\")");
         List<ChromeBrowserObject> properties = browserObject.getProperties();
         List<ChromeElement> elements = properties.stream().map(object -> new ChromeElement(this, object)).collect(Collectors.toList());
         ChromeObjectUtils.releaseObjectQuietly(runtime, browserObject.objectId);
@@ -205,8 +189,7 @@ public class ChromeFrame implements Frame {
 
     @Override
     public String content() throws Exception {
-        ChromeBrowserObject object = evaluate("function(){return document.documentElement.outerHTML;}");
-        return object.toStringValue();
+        return evaluate("document.documentElement.outerHTML", String.class);
     }
 
     @Override
@@ -221,8 +204,7 @@ public class ChromeFrame implements Frame {
 
     @Override
     public String title() throws Exception {
-        ChromeBrowserObject object = evaluate("function(){return document.title;}");
-        return object.toStringValue();
+        return evaluate("document.title", String.class);
     }
 
     @Override
@@ -239,30 +221,23 @@ public class ChromeFrame implements Frame {
         page.navigate(request, DEFAULT_TIMEOUT);
     }
 
-    private static Object[] buildWaitArgs(String expression, int timeout, TimeUnit unit, Object... args) {
+    @Override
+    public ChromeBrowserObject wait(String expression, int timeout, TimeUnit unit, Object... args) throws Exception {
         Object[] callArgs = new Object[2 + args.length];
         callArgs[0] = expression;
         callArgs[1] = unit.toMillis(timeout);
         System.arraycopy(args, 0, callArgs, 2, args.length);
-        return callArgs;
-    }
-
-    @Override
-    public ChromeBrowserObject wait(String expression, int timeout, TimeUnit unit, Object... args) throws Exception {
-        Object[] callArgs = buildWaitArgs(expression, timeout, unit, args);
         return evaluate(ScriptConstants.WAIT, callArgs);
     }
 
     @Override
     public <R> R wait(String expression, int timeout, TimeUnit unit, Class<R> clazz, Object... args) throws Exception {
-        Object[] callArgs = buildWaitArgs(expression, timeout, unit, args);
-        return evaluate(ScriptConstants.WAIT, clazz, callArgs);
+        return wait(expression, timeout, unit, args).toObject(clazz);
     }
 
     @Override
     public <R> R wait(String expression, int timeout, TimeUnit unit, TypeReference<R> type, Object... args) throws Exception {
-        Object[] callArgs = buildWaitArgs(expression, timeout, unit, args);
-        return evaluate(ScriptConstants.WAIT, type, callArgs);
+        return wait(expression, timeout, unit, args).toObject(type);
     }
 
     @Override
@@ -276,7 +251,7 @@ public class ChromeFrame implements Frame {
 
     @Override
     public Coordinate scroll(int x, int y) throws Exception {
-        JSONObject offset = evaluate(ScriptConstants.SCROLL, JSONObject.class, null, x, y);
+        JSONObject offset = evaluate(ScriptConstants.SCROLL, JSONObject.class, x, y);
         return new Coordinate(offset.getDouble("scrollX"), offset.getDouble("scrollY"));
     }
 
@@ -288,7 +263,7 @@ public class ChromeFrame implements Frame {
             DescribeNodeResponse describeResponse = frame.dom.describeNode(describeRequest, DEFAULT_TIMEOUT);
             ResolveNodeRequest resolveRequest = new ResolveNodeRequest();
             resolveRequest.setBackendNodeId(describeResponse.getNode().getBackendNodeId());
-            resolveRequest.setExecutionContextId(frame.executionContext().executionContextId);
+            resolveRequest.setExecutionContextId(frame.executionContext.executionContextId);
             ResolveNodeResponse resolveResponse = frame.dom.resolveNode(resolveRequest, DEFAULT_TIMEOUT);
             ChromeObjectUtils.releaseObjectQuietly(frame.runtime, object.getObjectId());
             remoteObject = resolveResponse.getObject();

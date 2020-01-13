@@ -4,11 +4,12 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.util.TypeUtils;
 import jpuppeteer.api.browser.BrowserObject;
+import jpuppeteer.api.browser.ExecutionContext;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
 import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.entity.runtime.*;
-import jpuppeteer.chrome.constant.ScriptConstants;
+import jpuppeteer.chrome.util.ChromeObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
@@ -54,31 +55,8 @@ public class ChromeBrowserObject implements BrowserObject {
         return objectId;
     }
 
-    private Object[] fillArgs(String expression, Object[] args) {
-        Object[] fullArgs = new Object[args.length + 2];
-        fullArgs[0] = this;
-        fullArgs[1] = expression;
-        System.arraycopy(args, 0, fullArgs, 2, args.length);
-        return fullArgs;
-    }
-
     @Override
-    public <R> R evaluate(String expression, Class<R> clazz, Object... args) throws Exception {
-        return executionContext.evaluate(ScriptConstants.BROWSER_OBJECT_EVALUATE, clazz, fillArgs(expression, args));
-    }
-
-    @Override
-    public <R> R evaluate(String expression, TypeReference<R> type, Object... args) throws Exception {
-        return executionContext.evaluate(ScriptConstants.BROWSER_OBJECT_EVALUATE, type, fillArgs(expression, args));
-    }
-
-    @Override
-    public ChromeBrowserObject evaluate(String expression, Object... args) throws Exception {
-        return executionContext.evaluate(ScriptConstants.BROWSER_OBJECT_EVALUATE, fillArgs(expression, args));
-    }
-
-    @Override
-    public ChromeExecutionContext executionContext() {
+    public ExecutionContext executionContext() {
         return executionContext;
     }
 
@@ -101,12 +79,32 @@ public class ChromeBrowserObject implements BrowserObject {
         return objects;
     }
 
+    private ChromeBrowserObject evaluate(String expression, boolean returnJSON, Object... args) throws Exception {
+        if (executionContext.isFunction(expression)) {
+            return executionContext.doCall(expression, objectId, returnJSON, args);
+        } else {
+            return executionContext.doEvaluate(expression, returnJSON);
+        }
+    }
+
+    @Override
+    public <R> R evaluate(String expression, Class<R> clazz, Object... args) throws Exception {
+        return evaluate(expression, true, args).toObject(clazz);
+    }
+
+    @Override
+    public <R> R evaluate(String expression, TypeReference<R> type, Object... args) throws Exception {
+        return evaluate(expression, true, args).toObject(type);
+    }
+
+    @Override
+    public ChromeBrowserObject evaluate(String expression, Object... args) throws Exception {
+        return evaluate(expression, false, args);
+    }
+
     @Override
     public ChromeBrowserObject getProperty(String name) throws Exception {
-        return executionContext.evaluate(
-                "function(object, prop){return object[prop];}",
-                this, name
-                );
+        return evaluate("function(prop){return this[prop];}", name);
     }
 
     @Override

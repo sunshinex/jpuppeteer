@@ -38,7 +38,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
     protected ChromeFrame frame;
 
     protected ChromeElement(ChromeFrame frame, RemoteObject object) {
-        super(frame.runtime, frame.executionContext(), object);
+        super(frame.runtime, frame.executionContext, object);
         this.frame = frame;
         if (frame instanceof ChromePage) {
             this.page = (ChromePage) frame;
@@ -57,7 +57,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public ChromeElement querySelector(String selector) throws Exception {
-        ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelector(selector);}", this, selector);
+        ChromeBrowserObject object = evaluate("function(selector){return this.querySelector(selector);}", selector);
         if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
             return null;
         }
@@ -66,7 +66,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public List<ChromeElement> querySelectorAll(String selector) throws Exception {
-        ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelectorAll(selector);}", this, selector);
+        ChromeBrowserObject object = evaluate("function(selector){return this.querySelectorAll(selector);}", selector);
         List<ChromeBrowserObject> properties = object.getProperties();
         return properties.stream().map(obj -> new ChromeElement(frame, obj.object)).collect(Collectors.toList());
     }
@@ -78,7 +78,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public boolean isIntersectingViewport() throws Exception {
-        return frame.evaluate(ScriptConstants.ELEMENT_IS_INTERSECTING_VIEWPORT, Boolean.class, this);
+        return evaluate(ScriptConstants.ELEMENT_IS_INTERSECTING_VIEWPORT, Boolean.class);
     }
 
     @Override
@@ -148,7 +148,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public void scrollIntoView() throws Exception {
-        executionContext.evaluate(ScriptConstants.ELEMENT_SCROLL_INTO_VIEW, this);
+        evaluate(ScriptConstants.ELEMENT_SCROLL_INTO_VIEW);
     }
 
     private void insertText(String text) throws Exception {
@@ -225,7 +225,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public void clear() throws Exception {
-        page.evaluate("function(element){element.value='';}", this);
+        evaluate("function(){this.value=''}");
     }
 
     @Override
@@ -251,22 +251,22 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public void select(String... values) throws Exception {
-        frame.evaluate(ScriptConstants.ELEMENT_SELECT, this, values);
+        evaluate(ScriptConstants.ELEMENT_SELECT, values);
     }
 
     @Override
     public Coordinate scroll(int x, int y) throws Exception {
-        JSONObject offset = evaluate(ScriptConstants.SCROLL, JSONObject.class, this, x, y);
+        JSONObject offset = evaluate(ScriptConstants.SCROLL, JSONObject.class, x, y);
         return new Coordinate(offset.getDouble("scrollX"), offset.getDouble("scrollY"));
     }
 
     @Override
     public String html() throws Exception {
-        return evaluate(ScriptConstants.ELEMENT_HTML, String.class);
+        return evaluate("function(){return this.innerHTML;}", String.class);
     }
 
     @Override
     public String text() throws Exception {
-        return evaluate(ScriptConstants.ELEMENT_TEXT, String.class);
+        return evaluate("function(){return this.innerText;}", String.class);
     }
 }

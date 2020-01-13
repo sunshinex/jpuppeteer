@@ -22,22 +22,23 @@ public class ChromeTest {
     public void test() throws Exception {
         ChromeBrowser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
         ChromePage page = browser.defaultContext().defaultPage();
-        page.addListener(ChromePageEvent.LOAD, event -> {
-            try {
-                ChromeElement body = page.waitSelector("body", 1, TimeUnit.SECONDS);
-                System.out.println(body.html());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        page.addListener(ChromePageEvent.CRASHED, event -> {
-            try {
-                page.reload();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+//        page.addListener(ChromePageEvent.LOAD, event -> {
+//            try {
+//                ChromeElement body = page.waitSelector("body", 1, TimeUnit.SECONDS);
+//                //System.out.println(body.html());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
+//        page.addListener(ChromePageEvent.CRASHED, event -> {
+//            try {
+//                page.reload();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
         page.navigate("https://www.taobao.com/");
+        System.out.println(page.querySelector("body").html());
         TimeUnit.DAYS.sleep(1);
     }
 

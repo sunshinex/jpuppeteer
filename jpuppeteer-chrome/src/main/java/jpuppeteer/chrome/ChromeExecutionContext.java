@@ -1,20 +1,17 @@
 package jpuppeteer.chrome;
 
 import com.alibaba.fastjson.TypeReference;
-import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.ExecutionContext;
 import jpuppeteer.cdp.cdp.domain.Runtime;
-import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
-import jpuppeteer.cdp.cdp.entity.runtime.CallFunctionOnRequest;
-import jpuppeteer.cdp.cdp.entity.runtime.CallFunctionOnResponse;
+import jpuppeteer.cdp.cdp.entity.runtime.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
@@ -23,17 +20,15 @@ public class ChromeExecutionContext implements ExecutionContext {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeExecutionContext.class);
 
-    protected Runtime runtime;
+    private static final Pattern FUNCTION_DECLARATION_PATTERN = Pattern.compile("^(async\\s+)?function(\\s+[a-zA-Z0-9_]+)?\\s*\\(", Pattern.MULTILINE);
+
+    private Runtime runtime;
 
     protected final Integer executionContextId;
 
     protected ChromeExecutionContext(Runtime runtime, Integer executionContextId) {
         this.runtime = runtime;
         this.executionContextId = executionContextId;
-    }
-
-    public Integer getExecutionContextId() {
-        return executionContextId;
     }
 
     protected static CallArgument buildArgument(Object object) {
@@ -49,60 +44,84 @@ public class ChromeExecutionContext implements ExecutionContext {
         return argument;
     }
 
-    private ChromeBrowserObject evaluate(String expression, boolean returnJSON, Object... args) throws Exception {
+    protected static boolean isFunction(String expression) {
+        expression = StringUtils.trim(expression);
+        if (StringUtils.isEmpty(expression)) {
+            return false;
+        }
+        Matcher matcher = FUNCTION_DECLARATION_PATTERN.matcher(expression);
+        if (matcher.find()) {
+            return true;
+        }
+        return false;
+    }
+
+    protected static void processException(ExceptionDetails exceptionDetails) throws Exception {
+        if (exceptionDetails == null) {
+            return;
+        }
+        String error = "null";
+        if (StringUtils.isNotEmpty(exceptionDetails.getText())) {
+            error = exceptionDetails.getText();
+        }
+        if (exceptionDetails.getException() != null && StringUtils.isNotEmpty(exceptionDetails.getException().getDescription())) {
+            error = exceptionDetails.getException().getDescription();
+        }
+        throw new Exception(error);
+    }
+
+    protected ChromeBrowserObject doCall(String function, String objectId, boolean returnJSON, Object... args) throws Exception {
         CallFunctionOnRequest request = new CallFunctionOnRequest();
-        request.setFunctionDeclaration(expression);
+        request.setFunctionDeclaration(function);
         request.setArguments(Arrays.stream(args).map(arg -> buildArgument(arg)).collect(Collectors.toList()));
-        request.setExecutionContextId(executionContextId);
         request.setUserGesture(true);
         request.setReturnByValue(returnJSON);
         request.setAwaitPromise(true);
-        CallFunctionOnResponse response = runtime.callFunctionOn(request, DEFAULT_TIMEOUT);
-        if (response.getExceptionDetails() != null) {
-            String error = "null";
-            if (StringUtils.isNotEmpty(response.getExceptionDetails().getText())) {
-                error = response.getExceptionDetails().getText();
-            }
-            if (response.getExceptionDetails().getException() != null && StringUtils.isNotEmpty(response.getExceptionDetails().getException().getDescription())) {
-                error = response.getExceptionDetails().getException().getDescription();
-            }
-            throw new Exception(error);
+        request.setGeneratePreview(false);
+        if (StringUtils.isNotEmpty(objectId)) {
+            request.setObjectId(objectId);
+        } else {
+            request.setExecutionContextId(executionContextId);
         }
+        CallFunctionOnResponse response = runtime.callFunctionOn(request, DEFAULT_TIMEOUT);
+
+        processException(response.getExceptionDetails());
+
         return new ChromeBrowserObject(runtime, this, response.getResult());
+    }
+
+    protected ChromeBrowserObject doEvaluate(String expression, boolean returnJSON) throws Exception {
+        EvaluateRequest request = new EvaluateRequest();
+        request.setExpression(expression);
+        request.setUserGesture(true);
+        request.setReturnByValue(returnJSON);
+        request.setAwaitPromise(true);
+        request.setGeneratePreview(false);
+        request.setTimeout(Long.valueOf(TimeUnit.SECONDS.toMillis(DEFAULT_TIMEOUT)).doubleValue());
+        request.setContextId(executionContextId);
+        EvaluateResponse response = runtime.evaluate(request, DEFAULT_TIMEOUT);
+
+        processException(response.getExceptionDetails());
+
+        return new ChromeBrowserObject(runtime, this, response.getResult());
+    }
+
+    private ChromeBrowserObject evaluate(String expression, boolean returnJSON, Object... args) throws Exception {
+        if (isFunction(expression)) {
+            return doCall(expression, null, returnJSON, args);
+        } else {
+            return doEvaluate(expression, returnJSON);
+        }
     }
 
     @Override
     public <R> R evaluate(String expression, Class<R> clazz, Object... args) throws Exception {
-        ChromeBrowserObject object = evaluate(expression, true, args);
-        if (Boolean.class.equals(clazz)) {
-            return (R) object.toBoolean();
-        } else if (Short.class.equals(clazz)) {
-            return (R) object.toShort();
-        } else if (Integer.class.equals(clazz)) {
-            return (R) object.toInteger();
-        } else if (Long.class.equals(clazz)) {
-            return (R) object.toLong();
-        } else if (Float.class.equals(clazz)) {
-            return (R) object.toFloat();
-        } else if (Double.class.equals(clazz)) {
-            return (R) object.toDouble();
-        } else if (BigDecimal.class.equals(clazz)) {
-            return (R) object.toBigDecimal();
-        } else if (BigInteger.class.equals(clazz)) {
-            return (R) object.toBigInteger();
-        } else if (String.class.equals(clazz)) {
-            return (R) object.toStringValue();
-        } else if (Date.class.equals(clazz)) {
-            return (R) object.toDate();
-        } else {
-            return object.toObject(clazz);
-        }
+        return evaluate(expression, true, args).toObject(clazz);
     }
 
     @Override
     public <R> R evaluate(String expression, TypeReference<R> type, Object... args) throws Exception {
-        ChromeBrowserObject object = evaluate(expression, true, args);
-        return object.toObject(type);
+        return evaluate(expression, true, args).toObject(type);
     }
 
     @Override
