@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import jpuppeteer.api.browser.Coordinate;
 import jpuppeteer.api.browser.Frame;
+import jpuppeteer.api.util.ConcurrentHashSet;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
@@ -16,7 +17,6 @@ import jpuppeteer.cdp.cdp.entity.dom.DescribeNodeResponse;
 import jpuppeteer.cdp.cdp.entity.dom.ResolveNodeRequest;
 import jpuppeteer.cdp.cdp.entity.dom.ResolveNodeResponse;
 import jpuppeteer.cdp.cdp.entity.page.NavigateRequest;
-import jpuppeteer.cdp.cdp.entity.runtime.CallArgument;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.chrome.constant.ScriptConstants;
 import jpuppeteer.chrome.util.ChromeObjectUtils;
@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public class ChromeFrame implements Frame {
 
     protected ChromeFrame parent;
 
-    protected volatile Set<ChromeFrame> children;
+    protected Set<ChromeFrame> children;
 
     private volatile ChromeExecutionContext executionContext;
 
@@ -75,7 +76,7 @@ public class ChromeFrame implements Frame {
         this.parent = parent;
         this.frameId = frameId;
         this.session = session;
-        this.children = new HashSet<>(0);
+        this.children = new ConcurrentHashSet<>(0);
         this.page = page;
         this.dom = dom;
         this.input = input;
@@ -98,18 +99,23 @@ public class ChromeFrame implements Frame {
         return executionContext;
     }
 
-    protected ChromeFrame find(String frameId) {
-        if (this.frameId.equals(frameId)) {
-            return this;
-        } else if (CollectionUtils.isNotEmpty(children)) {
-            for (ChromeFrame frame : children) {
-                if (frame.find(frameId) == null) {
-                    continue;
+    private static ChromeFrame find(ChromeFrame frame, String frameId) {
+        ChromeFrame target = null;
+        if (Objects.equals(frame.frameId, frameId)) {
+            target = frame;
+        } else if (CollectionUtils.isNotEmpty(frame.children)) {
+            for (ChromeFrame frm : frame.children) {
+                target = find(frm, frameId);
+                if (target != null) {
+                    break;
                 }
-                return frame;
             }
         }
-        return null;
+        return target;
+    }
+
+    protected ChromeFrame find(String frameId) {
+        return find(this, frameId);
     }
 
     protected ChromeFrame find(Integer executionContextId) {

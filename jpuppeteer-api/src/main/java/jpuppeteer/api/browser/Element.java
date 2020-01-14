@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface Element extends BrowserObject {
 
+    Page page();
+
     Frame frame();
 
     Element querySelector(String selector) throws Exception;

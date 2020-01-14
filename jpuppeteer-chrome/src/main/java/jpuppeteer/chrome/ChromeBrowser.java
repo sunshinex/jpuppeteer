@@ -394,6 +394,18 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         return defaultContext;
     }
 
+    protected void closeContext(String browserContextId) throws Exception {
+        if (browserContextId == null) {
+            //默认的上下文不能用此方法关闭
+            return;
+        }
+        DisposeBrowserContextRequest request = new DisposeBrowserContextRequest();
+        request.setBrowserContextId(browserContextId);
+        target.disposeBrowserContext(request, DEFAULT_TIMEOUT);
+        contextMap.remove(browserContextId);
+        logger.info("browser context closed, contextId={}", browserContextId);
+    }
+
     @Override
     public String userAgent() throws Exception {
         GetVersionResponse response = browser.getVersion(DEFAULT_TIMEOUT);

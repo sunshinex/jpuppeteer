@@ -28,7 +28,7 @@ public interface Page extends Frame {
 
     BrowserContext browserContext();
 
-    void close();
+    void close() throws Exception;
 
     void emulateMedia(MediaType mediaType) throws Exception;
 

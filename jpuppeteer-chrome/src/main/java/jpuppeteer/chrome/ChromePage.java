@@ -3,6 +3,7 @@ package jpuppeteer.chrome;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import jpuppeteer.api.browser.Cookie;
+import jpuppeteer.api.browser.Frame;
 import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.browser.*;
 import jpuppeteer.api.constant.MediaType;
@@ -385,6 +386,11 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         this.eventQueue.clear();
     }
 
+    protected FrameTree getFrameTree() throws Exception {
+        GetFrameTreeResponse response = page.getFrameTree(DEFAULT_TIMEOUT);
+        return response.getFrameTree();
+    }
+
     protected TargetInfo targetInfo() {
         return targetInfo;
     }
@@ -488,7 +494,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     @Override
     public List<Cookie> cookies() throws Exception {
         GetCookiesRequest request = new GetCookiesRequest();
-        request.setUrls(Lists.newArrayList(url.toString()));
+        request.setUrls(Lists.newArrayList(url().toString()));
         GetCookiesResponse response = network.getCookies(request, DEFAULT_TIMEOUT);
         return response.getCookies().stream()
                 .map(cookie -> CookieUtils.copyOf(cookie))
@@ -683,13 +689,9 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     }
 
     @Override
-    public void close() {
-        try {
-            browserContext.browser().closeTarget(frameId);
-            close = true;
-        } catch (Throwable t) {
-            logger.error("close target failed, error={}", t.getMessage(), t);
-        }
+    public void close() throws Exception {
+        browserContext.browser().closeTarget(frameId);
+        close = true;
     }
 
     @Override

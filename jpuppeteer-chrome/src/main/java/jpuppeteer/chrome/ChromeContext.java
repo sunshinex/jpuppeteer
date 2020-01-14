@@ -22,6 +22,7 @@ import jpuppeteer.cdp.cdp.entity.target.AttachedToTargetEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
 import jpuppeteer.cdp.constant.TargetType;
+import jpuppeteer.chrome.constant.LifecycleEventType;
 import jpuppeteer.chrome.event.*;
 import jpuppeteer.chrome.event.type.ChromeContextEvent;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
@@ -86,7 +87,13 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         handleSessionEvent(FRAMENAVIGATED, (pg, event) -> handleFrameNavigated(pg, event), FrameNavigatedEvent.class);
         handleSessionEvent(FRAMEDETACHED, (pg, event) -> handleFrameDetached(pg, event), FrameDetachedEvent.class);
 
-        transmitSessionEvent(LIFECYCLEEVENT, ChromePageEvent.LIFECYCLEEVENT);
+        handleSessionEvent(LIFECYCLEEVENT, (pg, event) -> {
+            ChromeFrame frame = pg.find(event.getFrameId());
+            if (frame == null) {
+                return;
+            }
+            pg.emit(ChromePageEvent.LIFECYCLEEVENT, new FrameLifecycleEvent(LifecycleEventType.findByName(event.getName()), frame));
+        }, LifecycleEvent.class);
         handleSessionEvent(DOMCONTENTEVENTFIRED, (pg, event) -> pg.emit(ChromePageEvent.DOMCONTENTLOADED, event.getTimestamp()), DomContentEventFiredEvent.class);
         handleSessionEvent(LOADEVENTFIRED, (pg, event) -> pg.emit(ChromePageEvent.LOAD, event.getTimestamp()), LoadEventFiredEvent.class);
         handleSessionEvent(ENTRYADDED, (pg, event) -> pg.emit(ChromePageEvent.CONSOLE, event.getEntry()), EntryAddedEvent.class);
@@ -246,7 +253,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         Frame frm = event.getFrame();
         ChromeFrame frame = pg.find(frm.getId());
         if (frame == null) {
-            logger.warn("frame not found, frameId={}", frm.getId());
+            logger.warn("navigated failed:frame not found, frameId={}", frm.getId());
             return;
         }
         frame.setUrl(URLUtils.parse(frm.getUrl()));
@@ -260,12 +267,12 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
     private void handleFrameDetached(ChromePage pg, FrameDetachedEvent event) {
         ChromeFrame frame = pg.find(event.getFrameId());
         if (frame == null) {
-            logger.warn("frame not found, frameId={}", event.getFrameId());
+            logger.warn("detached failed:frame not found, frameId={}", event.getFrameId());
             return;
         }
         frame.remove();
         pg.emit(ChromePageEvent.FRAMEDETACHED, frame);
-        logger.info("frame attached, parent={}, frameId={}", frame.parent.frameId, event.getFrameId());
+        logger.info("frame detached, parent={}, frameId={}", frame.parent.frameId, event.getFrameId());
     }
 
     private void createDefaultPage() throws Exception {
@@ -401,6 +408,11 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
 //            cookies[i] = CookieUtils.copyOf(cookieList.get(i));
 //        }
 //        return cookies;
+    }
+
+    @Override
+    public void close() throws Exception {
+        browser.closeContext(browserContextId);
     }
 
     @FunctionalInterface

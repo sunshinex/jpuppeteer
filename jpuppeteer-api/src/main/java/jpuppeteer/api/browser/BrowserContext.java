@@ -33,4 +33,6 @@ public interface BrowserContext {
 
     List<Cookie> cookies() throws Exception;
 
+    void close() throws Exception;
+
 }

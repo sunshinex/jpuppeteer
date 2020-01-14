@@ -2,10 +2,8 @@ package jpuppeteer.chrome;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
-import jpuppeteer.api.browser.BoundingBox;
+import jpuppeteer.api.browser.*;
 import jpuppeteer.api.browser.BoxModel;
-import jpuppeteer.api.browser.Coordinate;
-import jpuppeteer.api.browser.Element;
 import jpuppeteer.api.constant.MouseDefinition;
 import jpuppeteer.api.constant.USKeyboardDefinition;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
@@ -43,7 +41,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
         if (frame instanceof ChromePage) {
             this.page = (ChromePage) frame;
         } else {
-            ChromeFrame parent = null;
+            ChromeFrame parent = frame.parent;
             while (parent.parent != null) {
                 parent = parent.parent;
             }
@@ -69,6 +67,11 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
         ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelectorAll(selector);}", this, selector);
         List<ChromeBrowserObject> properties = object.getProperties();
         return properties.stream().map(obj -> new ChromeElement(frame, obj.object)).collect(Collectors.toList());
+    }
+
+    @Override
+    public ChromePage page() {
+        return page;
     }
 
     @Override

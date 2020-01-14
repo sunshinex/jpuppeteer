@@ -21,7 +21,7 @@ public enum ChromePageEvent {
 
     FRAMENAVIGATED(ChromeFrame.class),
 
-    LIFECYCLEEVENT(LifecycleEvent.class),
+    LIFECYCLEEVENT(FrameLifecycleEvent.class),
 
     DOMCONTENTLOADED(Double.class),
 
