@@ -400,8 +400,8 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
     }
 
     @Override
-    public List<Cookie> cookies() throws Exception {
-        return defaultPage.doGetCookies();
+    public List<Cookie> cookies(String... urls) throws Exception {
+        return defaultPage.doGetCookies(urls);
 //        List<jpuppeteer.cdp.cdp.entity.network.Cookie> cookieList = browser.getCookies(browserContextId);
 //        Cookie[] cookies = new Cookie[cookieList.size()];
 //        for(int i = 0; i<cookieList.size(); i++) {

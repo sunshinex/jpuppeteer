@@ -463,9 +463,18 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         network.clearBrowserCookies(DEFAULT_TIMEOUT);
     }
 
-    protected List<Cookie> doGetCookies() throws Exception {
-        GetAllCookiesResponse response = network.getAllCookies(DEFAULT_TIMEOUT);
-        return response.getCookies().stream()
+    protected List<Cookie> doGetCookies(String... urls) throws Exception {
+        List<jpuppeteer.cdp.cdp.entity.network.Cookie> cookies;
+        if (urls.length == 0) {
+            GetAllCookiesResponse response = network.getAllCookies(DEFAULT_TIMEOUT);
+            cookies = response.getCookies();
+        } else {
+            GetCookiesRequest request = new GetCookiesRequest();
+            request.setUrls(Lists.newArrayList(urls));
+            GetCookiesResponse response = network.getCookies(request, DEFAULT_TIMEOUT);
+            cookies = response.getCookies();
+        }
+        return cookies.stream()
                 .map(cookie -> CookieUtils.copyOf(cookie))
                 .collect(Collectors.toList());
     }
@@ -493,12 +502,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
 
     @Override
     public List<Cookie> cookies() throws Exception {
-        GetCookiesRequest request = new GetCookiesRequest();
-        request.setUrls(Lists.newArrayList(url().toString()));
-        GetCookiesResponse response = network.getCookies(request, DEFAULT_TIMEOUT);
-        return response.getCookies().stream()
-                .map(cookie -> CookieUtils.copyOf(cookie))
-                .collect(Collectors.toList());
+        return doGetCookies(url.toString());
     }
 
     private static int getModifier(USKeyboardDefinition key) {

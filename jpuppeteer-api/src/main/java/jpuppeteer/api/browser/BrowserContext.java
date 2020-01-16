@@ -31,7 +31,7 @@ public interface BrowserContext {
 
     void clearCookies() throws Exception;
 
-    List<Cookie> cookies() throws Exception;
+    List<Cookie> cookies(String... urls) throws Exception;
 
     void close() throws Exception;
 
