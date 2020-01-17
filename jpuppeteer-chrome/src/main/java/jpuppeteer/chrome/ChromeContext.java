@@ -412,7 +412,16 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
 
     @Override
     public void close() throws Exception {
+        //关闭打开的页面
+        targetMap.forEach((targetId, page) -> {
+            try {
+                page.close();
+            } catch (Exception e) {
+                logger.error("close page failed, targetId={}, error={}", targetId, e.getMessage(), e);
+            }
+        });
         browser.closeContext(browserContextId);
+        super.close();
     }
 
     @FunctionalInterface

@@ -30,6 +30,7 @@ public class ChromeTest {
             try {
                 ChromeElement body = page.waitSelector("body", 1, TimeUnit.SECONDS);
                 System.out.println(body.html());
+                browser.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -42,8 +43,7 @@ public class ChromeTest {
             }
         });
         page.navigate("https://www.taobao.com/");
-        browser.close();
-        //TimeUnit.DAYS.sleep(1);
+        TimeUnit.DAYS.sleep(1);
     }
 
     @Test

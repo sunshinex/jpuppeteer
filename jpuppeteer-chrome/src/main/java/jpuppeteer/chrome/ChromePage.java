@@ -12,6 +12,8 @@ import jpuppeteer.api.constant.ResourceType;
 import jpuppeteer.api.constant.USKeyboardDefinition;
 import jpuppeteer.api.event.DefaultEventEmitter;
 import jpuppeteer.api.event.EventEmitter;
+import jpuppeteer.api.future.DefaultPromise;
+import jpuppeteer.api.future.Promise;
 import jpuppeteer.api.util.ConcurrentHashSet;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.constant.emulation.ScreenOrientationType;
@@ -49,6 +51,7 @@ import jpuppeteer.chrome.event.Request;
 import jpuppeteer.chrome.event.RequestFailed;
 import jpuppeteer.chrome.event.RequestFinished;
 import jpuppeteer.chrome.event.Response;
+import jpuppeteer.chrome.event.type.ChromeContextEvent;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
 import jpuppeteer.chrome.util.CookieUtils;
 import jpuppeteer.chrome.util.HttpUtils;
@@ -72,7 +75,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
 
     private static final List<TouchPoint> EMPTY_TOUCHPOINTS = Lists.newArrayListWithCapacity(0);
 
-    private final EventEmitter<ChromePageEvent> events;
+    private final DefaultEventEmitter<ChromePageEvent> events;
 
     private ChromePage opener;
 
@@ -694,8 +697,19 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
 
     @Override
     public void close() throws Exception {
+        Promise promise = new DefaultPromise();
+        browserContext.addListener(ChromeContextEvent.TARGETDESTROYED, (String targetId) -> {
+            if (Objects.equals(frameId, targetId)) {
+                promise.setSuccess(targetId);
+            }
+        });
         browserContext.browser().closeTarget(frameId);
-        close = true;
+        try {
+            promise.get(1, TimeUnit.SECONDS);
+        } finally {
+            events.close();
+            close = true;
+        }
     }
 
     @Override

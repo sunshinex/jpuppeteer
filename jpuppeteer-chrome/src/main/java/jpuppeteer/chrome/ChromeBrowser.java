@@ -362,7 +362,17 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
             return;
         }
         try {
+            //关闭打开的上下文
+            contextMap.forEach((browserContextId, context) -> {
+                try {
+                    context.close();
+                } catch (Exception e) {
+                    logger.error("close browser context failed, browserContextId={}, error={}", browserContextId, e.getMessage(), e);
+                }
+            });
+            //关闭浏览器
             browser.close(DEFAULT_TIMEOUT);
+            connection.close();
             logger.info("browser closed");
             while (process.isAlive()) {
                 logger.info("process is alive, waiting...");

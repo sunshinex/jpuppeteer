@@ -5,15 +5,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
 public class DefaultEventEmitter<E extends Enum<E>> extends AbstractEventEmitter<E> {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultEventEmitter.class);
 
-    private final Executor executor;
+    private final ExecutorService executor;
 
-    public DefaultEventEmitter(Executor executor) {
+    public DefaultEventEmitter(ExecutorService executor) {
         super();
         this.executor = executor;
     }
@@ -21,6 +22,10 @@ public class DefaultEventEmitter<E extends Enum<E>> extends AbstractEventEmitter
     @Override
     protected void emitInternal(Consumer<Object> consumer, Object event) {
         executor.execute(new EventTask(consumer, event));
+    }
+
+    public void close() throws Exception {
+        executor.shutdown();
     }
 
     static class EventTask implements Runnable {

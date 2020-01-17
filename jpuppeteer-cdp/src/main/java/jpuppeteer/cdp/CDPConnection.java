@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> implements Closeable {
+public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> {
 
     private static final Logger logger = LoggerFactory.getLogger(CDPConnection.class);
 
