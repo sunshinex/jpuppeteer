@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+//TODO 添加的listener要考虑未删除会造成的内存泄漏
 public abstract class AbstractEventEmitter<E extends Enum<E>> implements EventEmitter<E> {
 
     protected final Map<Enum<E>, Set<Consumer>> listenerMap;
