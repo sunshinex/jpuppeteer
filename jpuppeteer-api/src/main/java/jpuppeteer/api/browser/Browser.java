@@ -4,7 +4,7 @@ import java.net.URI;
 
 public interface Browser {
 
-    void close() throws Exception;
+    void close();
 
 
     BrowserContext[] browserContexts();

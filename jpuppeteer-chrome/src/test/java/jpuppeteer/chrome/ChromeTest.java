@@ -42,7 +42,8 @@ public class ChromeTest {
             }
         });
         page.navigate("https://www.taobao.com/");
-        TimeUnit.DAYS.sleep(1);
+        browser.close();
+        //TimeUnit.DAYS.sleep(1);
     }
 
     @Test

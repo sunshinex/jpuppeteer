@@ -88,25 +88,7 @@ public class ChromeLauncher implements Launcher {
         ChromeBrowser browser = new ChromeBrowser(uri.getHost() + ":" + uri.getPort(), process, connection);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                if (process != null && process.isAlive()) {
-                    browser.close();
-                    logger.info("normally quit browser succeed");
-                    //等待chrome进程退出
-                    while (process.isAlive()) {
-                        logger.info("chrome process is alive, waiting...");
-                        TimeUnit.SECONDS.sleep(1);
-                    }
-                    logger.info("chrome process is normally terminated");
-                }
-            } catch (Exception e) {
-                logger.error("normally quit browser failed, error={}", e.getMessage(), e);
-            } finally {
-                if (process != null && process.isAlive()) {
-                    process.destroy();
-                    logger.info("chrome process is terminated");
-                }
-            }
+            browser.close();
             if (chromeArguments.isUseTempUserData()) {
                 //删除临时文件夹
                 File tmp = new File(chromeArguments.getUserDataDir());

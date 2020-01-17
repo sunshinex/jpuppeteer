@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -356,8 +357,22 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
     }
 
     @Override
-    public void close() throws Exception {
-        browser.close(DEFAULT_TIMEOUT);
+    public synchronized void close() {
+        if (!process.isAlive()) {
+            return;
+        }
+        try {
+            browser.close(DEFAULT_TIMEOUT);
+            logger.info("browser closed");
+            while (process.isAlive()) {
+                logger.info("process is alive, waiting...");
+                TimeUnit.SECONDS.sleep(1);
+            }
+            logger.info("browser process normally exited");
+        } catch (Exception e) {
+            process.destroy();
+            logger.error("close browser failed force shutdown, error={}", e.getMessage(), e);
+        }
     }
 
     @Override
