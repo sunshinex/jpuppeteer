@@ -698,15 +698,17 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     @Override
     public void close() throws Exception {
         Promise promise = new DefaultPromise();
-        browserContext.addListener(ChromeContextEvent.TARGETDESTROYED, (String targetId) -> {
+        Consumer<String> consumer = targetId -> {
             if (Objects.equals(frameId, targetId)) {
                 promise.setSuccess(targetId);
             }
-        });
+        };
+        browserContext.addListener(ChromeContextEvent.TARGETDESTROYED, consumer);
         browserContext.browser().closeTarget(frameId);
         try {
             promise.get(1, TimeUnit.SECONDS);
         } finally {
+            browserContext.removeListener(ChromeContextEvent.TARGETDESTROYED, consumer);
             events.close();
             close = true;
         }
