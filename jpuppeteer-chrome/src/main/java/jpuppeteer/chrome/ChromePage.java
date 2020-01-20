@@ -704,8 +704,8 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
             }
         };
         browserContext.addListener(ChromeContextEvent.TARGETDESTROYED, consumer);
-        browserContext.browser().closeTarget(frameId);
         try {
+            browserContext.browser().closeTarget(frameId);
             promise.get(1, TimeUnit.SECONDS);
         } finally {
             browserContext.removeListener(ChromeContextEvent.TARGETDESTROYED, consumer);
