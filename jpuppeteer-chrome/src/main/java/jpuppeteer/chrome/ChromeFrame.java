@@ -118,18 +118,23 @@ public class ChromeFrame implements Frame {
         return find(this, frameId);
     }
 
-    protected ChromeFrame find(Integer executionContextId) {
-        if (executionContext != null && executionContext.executionContextId == executionContextId) {
-            return this;
-        } else if (CollectionUtils.isNotEmpty(children)) {
-            for (ChromeFrame frame : children) {
-                if (frame.find(executionContextId) == null) {
-                    continue;
+    private static ChromeFrame find(ChromeFrame frame, Integer executionContextId) {
+        ChromeFrame target = null;
+        if (frame.executionContext != null && Objects.equals(frame.executionContext.executionContextId, executionContextId)) {
+            target = frame;
+        } else if (CollectionUtils.isNotEmpty(frame.children)) {
+            for (ChromeFrame frm : frame.children) {
+                target = find(frm, executionContextId);
+                if (target != null) {
+                    break;
                 }
-                return frame;
             }
         }
-        return null;
+        return target;
+    }
+
+    protected ChromeFrame find(Integer executionContextId) {
+        return find(this, executionContextId);
     }
 
     /**
