@@ -257,17 +257,17 @@ public class Request implements jpuppeteer.api.browser.Request {
                 entry.setName(header.getName());
                 entry.setValue(StringUtils.join(header.getValues(), System.lineSeparator()));
                 entries.add(entry);
-                if ("Content-Type".equalsIgnoreCase(header.getName())) {
-                    String[] types = header.getValue().toLowerCase().split("charset=");
-                    if (types.length == 2) {
-                        try {
-                            encoding = Charset.forName(types[1].trim());
-                            logger.info("auto detected encoding success {}", encoding);
-                        } catch (Exception e) {
-                            logger.error("auto detected encoding failed, error={}", e.getMessage(), e);
-                        }
-                    }
-                }
+//                if ("Content-Type".equalsIgnoreCase(header.getName())) {
+//                    String[] types = header.getValue().toLowerCase().split("charset=");
+//                    if (types.length == 2) {
+//                        try {
+//                            encoding = Charset.forName(types[1].trim());
+//                            logger.info("auto detected encoding success {}", encoding);
+//                        } catch (Exception e) {
+//                            logger.error("auto detected encoding failed, error={}", e.getMessage(), e);
+//                        }
+//                    }
+//                }
             }
             request.setResponseHeaders(entries);
         }
@@ -275,12 +275,13 @@ public class Request implements jpuppeteer.api.browser.Request {
             byte[] encodedBodyBytes = Base64.getEncoder().encode(body);
             String encodedBody = new String(encodedBodyBytes, encoding);
             request.setBody(encodedBody);
+            //TODO 此处需要考虑body chunked的情况
             if (request.getResponseHeaders() == null) {
                 request.setResponseHeaders(new ArrayList<>(1));
             }
             HeaderEntry entry = new HeaderEntry();
             entry.setName("Content-Length");
-            entry.setValue(String.valueOf(encodedBodyBytes.length));
+            entry.setValue(String.valueOf(body.length));
             request.getResponseHeaders().add(entry);
         }
         fetch.fulfillRequest(request, DEFAULT_TIMEOUT);
