@@ -34,6 +34,8 @@ public interface Page extends Frame {
 
     String evaluateOnNewDocument(String script) throws Exception;
 
+    void removeOnNewDocument(String scriptId) throws Exception;
+
     void goBack() throws Exception;
 
     void goForward() throws Exception;

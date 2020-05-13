@@ -691,7 +691,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     }
 
     @Override
-    public BrowserContext browserContext() {
+    public ChromeContext browserContext() {
         return browserContext;
     }
 
@@ -727,6 +727,13 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         request.setSource(script);
         AddScriptToEvaluateOnNewDocumentResponse response = page.addScriptToEvaluateOnNewDocument(request, DEFAULT_TIMEOUT);
         return response.getIdentifier();
+    }
+
+    @Override
+    public void removeOnNewDocument(String scriptId) throws Exception {
+        RemoveScriptToEvaluateOnNewDocumentRequest request = new RemoveScriptToEvaluateOnNewDocumentRequest();
+        request.setIdentifier(scriptId);
+        page.removeScriptToEvaluateOnNewDocument(request, DEFAULT_TIMEOUT);
     }
 
     @Override
