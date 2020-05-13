@@ -851,4 +851,9 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         CaptureScreenshotResponse response = page.captureScreenshot(request, DEFAULT_TIMEOUT);
         return Base64.getDecoder().decode(response.getData());
     }
+
+    @Override
+    public void stopLoading() throws Exception {
+        page.stopLoading(DEFAULT_TIMEOUT);
+    }
 }

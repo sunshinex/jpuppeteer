@@ -129,4 +129,6 @@ public interface Page extends Frame {
      */
     byte[] screenshot() throws Exception;
 
+    void stopLoading() throws Exception;
+
 }
