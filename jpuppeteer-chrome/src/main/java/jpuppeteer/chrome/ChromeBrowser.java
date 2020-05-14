@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -55,6 +56,8 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
 
     private CDPConnection connection;
 
+    private ChromeArguments arguments;
+
     private Map<String/*browserContextId*/, ChromeContext> contextMap;
 
     /**
@@ -77,11 +80,12 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
 
     private Storage storage;
 
-    public ChromeBrowser(String name, Process process, CDPConnection connection) throws Exception {
+    public ChromeBrowser(String name, Process process, CDPConnection connection, ChromeArguments arguments) throws Exception {
         this.name = name;
         this.contextCounter = new AtomicInteger(0);
         this.process = process;
         this.connection = connection;
+        this.arguments = arguments;
         this.browser = new jpuppeteer.cdp.cdp.domain.Browser(connection);
         this.target = new Target(connection);
         this.storage = new Storage(connection);
@@ -378,11 +382,30 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
                 logger.info("process is alive, waiting...");
                 TimeUnit.SECONDS.sleep(1);
             }
+            //清空临时文件夹
+            if (arguments.isUseTempUserData()) {
+                //删除临时文件夹
+                File tmp = new File(arguments.getUserDataDir());
+                if (tmp.exists()) {
+                    logger.debug("clean user data dir {}", arguments.getUserDataDir());
+                    delete(tmp);
+                    logger.debug("clean success {}", arguments.getUserDataDir());
+                }
+            }
             logger.info("browser process normally exited");
         } catch (Exception e) {
             process.destroy();
             logger.error("close browser failed force shutdown, error={}", e.getMessage(), e);
         }
+    }
+
+    private void delete(File file) {
+        if (file.isDirectory()) {
+            for(File f : file.listFiles()) {
+                delete(f);
+            }
+        }
+        file.delete();
     }
 
     @Override

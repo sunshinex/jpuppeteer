@@ -85,29 +85,6 @@ public class ChromeLauncher implements Launcher {
         logger.info("listening on {}", uri);
         CDPConnection connection = new WebSocketCDPConnection(uri);
         connection.open();
-        ChromeBrowser browser = new ChromeBrowser(uri.getHost() + ":" + uri.getPort(), process, connection);
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            browser.close();
-            if (chromeArguments.isUseTempUserData()) {
-                //删除临时文件夹
-                File tmp = new File(chromeArguments.getUserDataDir());
-                if (tmp.exists()) {
-                    logger.debug("clean user data dir {}", chromeArguments.getUserDataDir());
-                    delete(tmp);
-                    logger.debug("clean success {}", chromeArguments.getUserDataDir());
-                }
-            }
-        }));
-        return browser;
-    }
-
-    private void delete(File file) {
-        if (file.isDirectory()) {
-            for(File f : file.listFiles()) {
-                delete(f);
-            }
-        }
-        file.delete();
+        return new ChromeBrowser(uri.getHost() + ":" + uri.getPort(), process, connection, chromeArguments);
     }
 }
