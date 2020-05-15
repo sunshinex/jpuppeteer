@@ -155,20 +155,23 @@ public class Request implements jpuppeteer.api.browser.Request {
     }
 
     @Override
-    public String postData() {
+    public String content() {
         if (!hasPostData) {
             return null;
         }
-        if (postData != null) {
-            return postData;
-        }
-        GetRequestPostDataRequest request = new GetRequestPostDataRequest();
-        request.setRequestId(requestId);
-        try {
-            GetRequestPostDataResponse response = network.getRequestPostData(request, DEFAULT_TIMEOUT);
-            postData = response.getPostData();
-        } catch (Exception e) {
-            logger.error("getRequestPostData failed, error={}", e.getMessage(), e);
+        if (postData == null) {
+            synchronized (this) {
+                if (postData == null) {
+                    GetRequestPostDataRequest request = new GetRequestPostDataRequest();
+                    request.setRequestId(requestId);
+                    try {
+                        GetRequestPostDataResponse response = network.getRequestPostData(request, DEFAULT_TIMEOUT);
+                        postData = response.getPostData();
+                    } catch (Exception e) {
+                        logger.error("getRequestPostData failed, error={}", e.getMessage(), e);
+                    }
+                }
+            }
         }
         return postData;
     }
@@ -217,8 +220,8 @@ public class Request implements jpuppeteer.api.browser.Request {
             if (request.method() != null) {
                 req.setMethod(request.method());
             }
-            if (request.postData() != null) {
-                req.setPostData(request.postData());
+            if (request.content() != null) {
+                req.setPostData(request.content());
             }
             if (CollectionUtils.isNotEmpty(request.headers())) {
                 List<HeaderEntry> entries = new ArrayList<>();
@@ -257,17 +260,6 @@ public class Request implements jpuppeteer.api.browser.Request {
                 entry.setName(header.getName());
                 entry.setValue(StringUtils.join(header.getValues(), System.lineSeparator()));
                 entries.add(entry);
-//                if ("Content-Type".equalsIgnoreCase(header.getName())) {
-//                    String[] types = header.getValue().toLowerCase().split("charset=");
-//                    if (types.length == 2) {
-//                        try {
-//                            encoding = Charset.forName(types[1].trim());
-//                            logger.info("auto detected encoding success {}", encoding);
-//                        } catch (Exception e) {
-//                            logger.error("auto detected encoding failed, error={}", e.getMessage(), e);
-//                        }
-//                    }
-//                }
             }
             request.setResponseHeaders(entries);
         }

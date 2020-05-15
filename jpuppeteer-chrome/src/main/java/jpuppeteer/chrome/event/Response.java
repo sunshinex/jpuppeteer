@@ -106,29 +106,32 @@ public class Response implements jpuppeteer.api.browser.Response {
 
     @Override
     public byte[] content() {
-        if (content != null) {
-            return content;
-        }
-        GetResponseBodyRequest req = new GetResponseBodyRequest();
-        req.setRequestId(requestId);
-        try {
-            GetResponseBodyResponse response = network.getResponseBody(req, DEFAULT_TIMEOUT);
-            if (Boolean.TRUE.equals(response.getBase64Encoded())) {
-                content = Base64.getDecoder().decode(response.getBody());
-            } else {
-                Charset contentEncoding = Charsets.UTF_8;
-                for(Header header : headers) {
-                    if ("content-type".equalsIgnoreCase(header.getName())) {
-                        Matcher matcher = PATTERN_CHARSET.matcher(header.getValue());
-                        if (matcher.find(1)) {
-                            contentEncoding = Charset.forName(matcher.group(1));
+        if (content == null) {
+            synchronized (this) {
+                if (content == null) {
+                    GetResponseBodyRequest req = new GetResponseBodyRequest();
+                    req.setRequestId(requestId);
+                    try {
+                        GetResponseBodyResponse response = network.getResponseBody(req, DEFAULT_TIMEOUT);
+                        if (Boolean.TRUE.equals(response.getBase64Encoded())) {
+                            content = Base64.getDecoder().decode(response.getBody());
+                        } else {
+                            Charset contentEncoding = Charsets.UTF_8;
+                            for (Header header : headers) {
+                                if ("content-type".equalsIgnoreCase(header.getName())) {
+                                    Matcher matcher = PATTERN_CHARSET.matcher(header.getValue());
+                                    if (matcher.find(1)) {
+                                        contentEncoding = Charset.forName(matcher.group(1));
+                                    }
+                                }
+                            }
+                            content = response.getBody().getBytes(contentEncoding);
                         }
+                    } catch (Exception e) {
+                        logger.error("getResponseBody error, error={}", e.getMessage(), e);
                     }
                 }
-                content = response.getBody().getBytes(contentEncoding);
             }
-        } catch (Exception e) {
-            logger.error("getResponseBody error, error={}", e.getMessage(), e);
         }
         return content;
     }

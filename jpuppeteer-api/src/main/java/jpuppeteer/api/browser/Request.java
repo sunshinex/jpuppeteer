@@ -30,7 +30,7 @@ public interface Request {
 
     String method();
 
-    String postData();
+    String content();
 
 //    /**
 //     * @return 当前请求的重定向来源
