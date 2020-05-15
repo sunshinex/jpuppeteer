@@ -152,7 +152,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         this.mouseX = 0;
         this.mouseY = 0;
         this.requestInterceptionEnabled = false;
-        this.requestMap = new MapMaker().weakValues().concurrencyLevel(16).makeMap();
+        this.requestMap = new ConcurrentHashMap<>();
 
         List<Future> enableFutures = new ArrayList<>();
         enableFutures.add(enablePage());
@@ -430,8 +430,6 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         request.setPatterns(Lists.newArrayList(pattern));
         request.setHandleAuthRequests(handleAuthRequest);
         fetch.enable(request, DEFAULT_TIMEOUT);
-        //启动拦截器的同时需要禁用缓存
-        setCacheEnable(false);
         this.requestInterceptionEnabled = true;
     }
 

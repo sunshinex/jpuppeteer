@@ -3,9 +3,9 @@ package jpuppeteer.chrome;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import jpuppeteer.api.browser.BrowserContext;
+import jpuppeteer.api.browser.Request;
 import jpuppeteer.chrome.constant.LifecycleEventType;
 import jpuppeteer.chrome.event.FrameLifecycleEvent;
-import jpuppeteer.chrome.event.Request;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -74,6 +74,22 @@ public class ChromeTest {
         BrowserContext context = browser.createContext();
         context.close();
         browser.defaultContext().close();
+        TimeUnit.DAYS.sleep(1);
+    }
+
+    @Test
+    public void testInterceptor() throws Exception {
+        ChromeBrowser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
+        ChromePage page = browser.defaultContext().newPage();
+        page.enableRequestInterception(false);
+        page.setCacheEnable(true);
+        page.addListener(ChromePageEvent.REQUEST, (Request request) -> {
+            try {
+                request.continues();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
         TimeUnit.DAYS.sleep(1);
     }
 

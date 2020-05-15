@@ -110,7 +110,7 @@ public class Response implements jpuppeteer.api.browser.Response {
             return content;
         }
         GetResponseBodyRequest req = new GetResponseBodyRequest();
-        req.setRequestId(request.getRequestId());
+        req.setRequestId(requestId);
         try {
             GetResponseBodyResponse response = network.getResponseBody(req, DEFAULT_TIMEOUT);
             if (Boolean.TRUE.equals(response.getBase64Encoded())) {
