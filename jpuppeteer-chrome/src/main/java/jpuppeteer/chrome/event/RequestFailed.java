@@ -1,7 +1,10 @@
 package jpuppeteer.chrome.event;
 
 import jpuppeteer.cdp.cdp.constant.network.BlockedReason;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter

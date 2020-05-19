@@ -2,8 +2,10 @@ package jpuppeteer.chrome;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
-import jpuppeteer.api.browser.*;
+import jpuppeteer.api.browser.BoundingBox;
 import jpuppeteer.api.browser.BoxModel;
+import jpuppeteer.api.browser.Coordinate;
+import jpuppeteer.api.browser.Element;
 import jpuppeteer.api.constant.MouseDefinition;
 import jpuppeteer.api.constant.USKeyboardDefinition;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;

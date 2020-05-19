@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import jpuppeteer.api.browser.BrowserContext;
 import jpuppeteer.api.browser.Request;
-import jpuppeteer.api.browser.Response;
 import jpuppeteer.chrome.constant.LifecycleEventType;
 import jpuppeteer.chrome.event.FrameLifecycleEvent;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
@@ -82,20 +81,25 @@ public class ChromeTest {
     public void testInterceptor() throws Exception {
         ChromeBrowser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
         ChromePage page = browser.defaultContext().newPage();
+        page.enableRequestInterception("*//h5api.m.taobao.com/h5/*", "*//h5api.m.tmall.com/h5/*");
         page.addListener(ChromePageEvent.REQUEST, (Request request) -> {
             try {
-                System.out.println(request.content());
+                System.out.println(request.url());
+//                if (request.intercepted()) {
+//                    request.continues();
+//                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
-        page.addListener(ChromePageEvent.RESPONSE, (Response response) -> {
-            try {
-                System.out.println(new String(response.content()));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+//        page.addListener(ChromePageEvent.RESPONSE, (Response response) -> {
+//            try {
+//                System.out.println(new String(response.content()));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
+        page.navigate("https://detail.m.tmall.com/item.htm?id=609390840832");
         TimeUnit.DAYS.sleep(1);
     }
 

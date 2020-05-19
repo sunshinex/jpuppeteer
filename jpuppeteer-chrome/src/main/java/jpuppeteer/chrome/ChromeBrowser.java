@@ -4,7 +4,6 @@ import com.google.common.collect.MapMaker;
 import jpuppeteer.api.browser.Browser;
 import jpuppeteer.api.constant.PermissionType;
 import jpuppeteer.api.event.EventEmitter;
-import jpuppeteer.api.future.FutureFuture;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.CDPSession;
@@ -34,8 +33,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -276,7 +277,32 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
 
     protected Future<String> asyncAttachToTarget(String targetId) {
         Future<AttachToTargetResponse> future = target.asyncAttachToTarget(buildAttachToTargetRequest(targetId));
-        return new FutureFuture<>(future, response -> response.getSessionId());
+        return new Future<String>() {
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                return future.cancel(mayInterruptIfRunning);
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return future.isCancelled();
+            }
+
+            @Override
+            public boolean isDone() {
+                return future.isDone();
+            }
+
+            @Override
+            public String get() throws InterruptedException, ExecutionException {
+                return future.get().getSessionId();
+            }
+
+            @Override
+            public String get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+                return future.get(timeout, unit).getSessionId();
+            }
+        };
     }
 
     protected boolean closeTarget(String targetId) throws Exception {

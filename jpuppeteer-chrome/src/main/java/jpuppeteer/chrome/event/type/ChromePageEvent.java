@@ -1,7 +1,6 @@
 package jpuppeteer.chrome.event.type;
 
 import jpuppeteer.cdp.cdp.entity.log.LogEntry;
-import jpuppeteer.cdp.cdp.entity.page.LifecycleEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ExceptionThrownEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetInfo;

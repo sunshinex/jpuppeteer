@@ -4,15 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.MapMaker;
+import com.google.common.util.concurrent.SettableFuture;
 import jpuppeteer.api.event.DefaultEventEmitter;
-import jpuppeteer.api.future.DefaultPromise;
-import jpuppeteer.api.future.Promise;
 import jpuppeteer.cdp.cdp.CDPEventType;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -34,7 +32,7 @@ public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> {
 
     private final AtomicInteger messageId;
 
-    protected final Map<Integer, Promise<JSONObject>> requestMap;
+    protected final Map<Integer, SettableFuture<JSONObject>> requestMap;
 
     protected CDPConnection(String name) {
         super(Executors.newSingleThreadExecutor(r -> new Thread(r, "Connection["+name+"]")));
@@ -56,8 +54,8 @@ public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> {
         json.put(ID, id);
         json.put(METHOD, method);
         json.put(PARAMS, params);
-        Promise<JSONObject> promise = new DefaultPromise<>();
-        requestMap.put(id, promise);
+        SettableFuture<JSONObject> future = SettableFuture.create();
+        requestMap.put(id, future);
         if (logger.isDebugEnabled()) {
             logger.debug("==> send method={}, id={}, extra={}, params={}", method, id, JSON.toJSONString(extra), JSON.toJSONString(params));
         }
@@ -66,10 +64,10 @@ public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> {
         } catch (IOException ioe) {
             //发送请求的过程中发生异常, 需要remove
             requestMap.remove(id);
-            promise.setFailure(ioe);
+            future.setException(ioe);
             logger.error("internal send error, error={}", ioe.getMessage(), ioe);
         }
-        return promise;
+        return future;
     }
 
     public final <T> T send(String method, Object params, Map<String, Object> extra, Class<T> clazz, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
@@ -136,8 +134,8 @@ public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> {
             throw new IllegalArgumentException("attribute \"id\" can not be null");
         }
         Integer id = json.getInteger(ID);
-        Promise<JSONObject> promise = requestMap.get(id);
-        if (promise == null) {
+        SettableFuture<JSONObject> future = requestMap.get(id);
+        if (future == null) {
             logger.warn("request timeout or send failed, id={}", id);
             return;
         }
@@ -145,9 +143,9 @@ public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> {
         requestMap.remove(id);
         if (json.containsKey(ERROR)) {
             JSONObject error = json.getJSONObject(ERROR);
-            promise.setFailure(new CDPException(error.getIntValue("code"), error.getString("message")));
+            future.setException(new CDPException(error.getIntValue("code"), error.getString("message")));
         } else {
-            promise.setSuccess(json.getJSONObject(RESULT));
+            future.set(json.getJSONObject(RESULT));
         }
     }
 

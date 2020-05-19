@@ -7,7 +7,10 @@ import java.util.List;
 
 public interface Request {
 
-    //暂不支持, 后续支持
+    default boolean intercepted() {
+        return false;
+    }
+
     void abort() throws Exception;
 
     void continues(Request request) throws Exception;

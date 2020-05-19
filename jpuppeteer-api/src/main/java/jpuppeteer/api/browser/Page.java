@@ -66,10 +66,14 @@ public interface Page extends Frame {
      * @param handleAuthRequest 是否拦截身份验证
      * @throws Exception
      */
-    void enableRequestInterception(boolean handleAuthRequest) throws Exception;
+    void enableRequestInterception(boolean handleAuthRequest, String... urlPatterns) throws Exception;
 
     default void enableRequestInterception() throws Exception {
-        enableRequestInterception(false);
+        enableRequestInterception(false, "*");
+    }
+
+    default void enableRequestInterception(String... urlPatterns) throws Exception {
+        enableRequestInterception(false, urlPatterns);
     }
 
     void disableRequestInterception() throws Exception;

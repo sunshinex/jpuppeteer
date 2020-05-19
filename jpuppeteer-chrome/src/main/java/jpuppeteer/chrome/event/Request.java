@@ -60,12 +60,12 @@ public class Request implements jpuppeteer.api.browser.Request {
 
     private transient boolean hasPostData;
 
-    private String postData;
+    private volatile String postData;
 
     @Setter
-    private Response response;
+    private volatile Response response;
 
-    private String interceptorId;
+    private volatile String interceptorId;
 
     static {
         STATUS_TEXT = new HashMap<>();
@@ -192,9 +192,14 @@ public class Request implements jpuppeteer.api.browser.Request {
     }
 
     @Override
+    public boolean intercepted() {
+        return StringUtils.isNotEmpty(interceptorId);
+    }
+
+    @Override
     public void abort() throws Exception {
-        if (StringUtils.isEmpty(interceptorId)) {
-            logger.warn("interceptorId undefined, requestId={}", requestId);
+        if (!intercepted()) {
+            logger.warn("request is not intercepted, requestId={}", requestId);
             return;
         }
         FailRequestRequest request = new FailRequestRequest();
@@ -207,8 +212,8 @@ public class Request implements jpuppeteer.api.browser.Request {
 
     @Override
     public void continues(jpuppeteer.api.browser.Request request) throws Exception {
-        if (StringUtils.isEmpty(interceptorId)) {
-            logger.warn("interceptorId undefined, requestId={}", requestId);
+        if (!intercepted()) {
+            logger.warn("request is not intercepted, requestId={}", requestId);
             return;
         }
         ContinueRequestRequest req = new ContinueRequestRequest();
@@ -241,8 +246,8 @@ public class Request implements jpuppeteer.api.browser.Request {
 
     @Override
     public void respond(int statusCode, List<Header> headers, byte[] body) throws Exception {
-        if (StringUtils.isEmpty(interceptorId)) {
-            logger.warn("interceptorId undefined, requestId={}", requestId);
+        if (!intercepted()) {
+            logger.warn("request is not intercepted, requestId={}", requestId);
             return;
         }
         if (!STATUS_TEXT.containsKey(statusCode)) {

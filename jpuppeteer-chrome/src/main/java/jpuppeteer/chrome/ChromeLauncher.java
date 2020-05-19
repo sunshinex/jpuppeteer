@@ -1,8 +1,7 @@
 package jpuppeteer.chrome;
 
+import com.google.common.util.concurrent.SettableFuture;
 import jpuppeteer.api.browser.Launcher;
-import jpuppeteer.api.future.DefaultPromise;
-import jpuppeteer.api.future.Promise;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.WebSocketCDPConnection;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +40,7 @@ public class ChromeLauncher implements Launcher {
         logger.info("command line: {}", StringUtils.join(command, " "));
         Process process = Runtime.getRuntime().exec(command, null, exec.getParentFile());
 
-        Promise<URI> promise = new DefaultPromise<>();
+        SettableFuture<URI> future = SettableFuture.create();
 
         Thread errThread = new Thread("CHROME-STDERR-THREAD") {
             @Override
@@ -55,15 +54,15 @@ public class ChromeLauncher implements Launcher {
                             continue;
                         }
                         logger.debug(line);
-                        if (!promise.isDone() && !promise.isCancelled()) {
+                        if (!future.isDone() && !future.isCancelled()) {
                             Matcher matcher = LISTENING_PATTERN.matcher(line);
                             if (matcher.matches()) {
-                                promise.setSuccess(URI.create(matcher.group(1)));
+                                future.set(URI.create(matcher.group(1)));
                             }
                         }
                     } catch (IOException e) {
-                        if (!promise.isDone() && !promise.isCancelled()) {
-                            promise.setFailure(e);
+                        if (!future.isDone() && !future.isCancelled()) {
+                            future.setException(e);
                         }
                         logger.error("read error, error={}", e.getMessage(), e);
                     }
@@ -76,7 +75,7 @@ public class ChromeLauncher implements Launcher {
         URI uri;
         try {
             //等待5s, 等chrome启动成功, 如果5s没有启动成功, 则强制关闭chrome进程
-            uri = promise.get(5, TimeUnit.SECONDS);
+            uri = future.get(5, TimeUnit.SECONDS);
         } catch (Exception e) {
             errThread.interrupt();
             process.destroy();

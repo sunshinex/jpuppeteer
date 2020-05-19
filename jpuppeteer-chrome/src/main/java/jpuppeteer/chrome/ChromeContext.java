@@ -1,12 +1,11 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.MapMaker;
+import com.google.common.util.concurrent.SettableFuture;
 import jpuppeteer.api.browser.BrowserContext;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.constant.PermissionType;
 import jpuppeteer.api.event.DefaultEventEmitter;
-import jpuppeteer.api.future.DefaultPromise;
-import jpuppeteer.api.future.Promise;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.cdp.entity.fetch.AuthRequiredEvent;
 import jpuppeteer.cdp.cdp.entity.fetch.RequestPausedEvent;
@@ -62,7 +61,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
     /**
      * @see #newPage()
      */
-    private Map<String/*uuid*/, Promise<ChromePage>> promiseMap;
+    private Map<String/*uuid*/, SettableFuture<ChromePage>> futureMap;
 
     private ChromePage defaultPage;
 
@@ -75,7 +74,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         MapMaker mapMaker = new MapMaker().weakValues().concurrencyLevel(16);
         this.targetMap = mapMaker.makeMap();
         this.sessionMap = mapMaker.makeMap();
-        this.promiseMap = new ConcurrentHashMap<>();
+        this.futureMap = new ConcurrentHashMap<>();
         this.createDefaultPage();
 
         addListener(ATTACHEDTOTARGET, (AttachedToTargetEvent event) -> handleTargetAttached(event));
@@ -182,12 +181,12 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         }
 
         String url = targetInfo.getUrl();
-        Promise<ChromePage> promise = null;
+        SettableFuture<ChromePage> promise = null;
         if (url.startsWith(NEW_PAGE_URL_PREFIX)) {
             //newPage创建的页面
             String uuid = url.substring(NEW_PAGE_URL_PREFIX.length());
             if (StringUtils.isNotEmpty(uuid)) {
-                promise = promiseMap.get(uuid);
+                promise = futureMap.get(uuid);
             }
         }
 
@@ -198,7 +197,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
             targetMap.put(targetId, page);
             sessionMap.put(sessionId, page);
             if (promise != null) {
-                promise.setSuccess(page);
+                promise.set(page);
             }
             try {
                 emit(NEWPAGE, page);
@@ -210,7 +209,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
             }
         } catch (Exception e) {
             if (promise != null) {
-                promise.setFailure(e);
+                promise.setException(e);
             }
             logger.error("create page instance failed, error={}", e.getMessage(), e);
         }
@@ -340,11 +339,11 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
     @Override
     public ChromePage newPage() throws Exception {
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        Promise<ChromePage> promise = new DefaultPromise<>();
-        promiseMap.put(uuid, promise);
+        SettableFuture<ChromePage> future = SettableFuture.create();
+        futureMap.put(uuid, future);
         String targetId = browser.createTarget(browserContextId, uuid);
         try {
-            ChromePage page = promise.get(5, TimeUnit.SECONDS);
+            ChromePage page = future.get(5, TimeUnit.SECONDS);
             if (!Objects.equals(targetId, page.targetInfo().getTargetId())) {
                 throw new RuntimeException("targetId not match, expect:" + targetId + ", actual:" + page.targetInfo().getTargetId());
             }
@@ -355,7 +354,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
             logger.warn("create page failed, targetId={}", targetId);
             throw e;
         } finally {
-            promiseMap.remove(uuid);
+            futureMap.remove(uuid);
         }
     }
 
