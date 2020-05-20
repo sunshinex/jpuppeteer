@@ -81,10 +81,14 @@ public class ChromeTest {
     public void testInterceptor() throws Exception {
         ChromeBrowser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
         ChromePage page = browser.defaultContext().newPage();
-        page.enableRequestInterception("*//h5api.m.taobao.com/h5/*", "*//h5api.m.tmall.com/h5/*");
+        page.enableRequestInterception("*//uranus.jd.com/*");
+        //page.enableRequestInterception("*//h5api.m.taobao.com/h5/*", "*//h5api.m.tmall.com/h5/*");
         page.addListener(ChromePageEvent.REQUEST, (Request request) -> {
             try {
-                System.out.println(request.url());
+                if ("uranus.jd.com".equals(request.url().getHost())) {
+                    System.out.println(request);
+                }
+                //System.out.println(request.url());
 //                if (request.intercepted()) {
 //                    request.continues();
 //                }
@@ -99,7 +103,7 @@ public class ChromeTest {
 //                e.printStackTrace();
 //            }
 //        });
-        page.navigate("https://detail.m.tmall.com/item.htm?id=609390840832");
+        page.navigate("https://item.m.jd.com/product/819163.html");
         TimeUnit.DAYS.sleep(1);
     }
 
