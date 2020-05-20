@@ -256,8 +256,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         String urlStr = req.getUrl();
         String fragment = req.getUrlFragment();
         URL url = URLUtils.parse(urlStr + (fragment != null ? fragment : ""));
-        String postData = event.getRequest().getPostData();
-        boolean hasPostData = postData != null || req.getHasPostData() ? true : false;
+        boolean hasPostData = req.getPostData() != null || (req.getHasPostData() != null && req.getHasPostData()) ? true : false;
         Request request = Request.builder()
                 .session(session)
                 .network(network)
@@ -271,7 +270,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
                 .resourceType(event.getResourceType())
                 .headers(HttpUtils.parseHeader(req.getHeaders()))
                 .hasPostData(hasPostData)
-                .postData(postData)
+                .postData(req.getPostData())
                 .build();
         requestMap.put(event.getRequestId(), request);
         return request;
