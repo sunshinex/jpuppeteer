@@ -249,7 +249,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     }
 
     protected RequestImpl handleRequest(RequestWillBeSentEvent event) {
-        logger.info("request will be sent, requestId={}, url={}", event.getRequestId(), event.getRequest().getUrl());
+        logger.debug("request will be sent, requestId={}, url={}", event.getRequestId(), event.getRequest().getUrl());
         //如果是导航请求，则清空对应frame的requestMap
         String requestId = event.getRequestId();
         String loaderId = event.getLoaderId();
@@ -280,7 +280,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     protected void handleRequestInterception(RequestPausedEvent event) {
         String interceptorId = event.getRequestId();
         String requestId = event.getNetworkId();
-        logger.info("request intercepted, requestId={}, interceptorId={}", requestId, interceptorId);
+        logger.debug("request intercepted, requestId={}, interceptorId={}", requestId, interceptorId);
         if (StringUtils.isEmpty(interceptorId)) {
             //不存在interceptorId 直接返回
             return;
@@ -344,13 +344,13 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     }
 
     protected RequestFailed handleRequestFailed(LoadingFailedEvent event) {
-        logger.info("failed id={}", event.getRequestId());
+        logger.debug("request failed id={}", event.getRequestId());
         RequestImpl request = requestMap.remove(event.getRequestId());
         return new RequestFailed(event.getRequestId(), request, event.getErrorText(), event.getCanceled(), BlockedReason.findByValue(event.getBlockedReason()));
     }
 
     protected RequestFinished handleRequestFinished(LoadingFinishedEvent event) {
-        logger.info("finished id={}", event.getRequestId());
+        logger.debug("request finished id={}", event.getRequestId());
         RequestImpl request = requestMap.remove(event.getRequestId());
         return new RequestFinished(event.getRequestId(), request, event.getEncodedDataLength(), event.getShouldReportCorbBlocking());
     }
@@ -369,7 +369,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
             return;
         }
         frame.createExecutionContext(event.getContext().getId());
-        logger.info("frame {} execution created with id:{}", frameId, event.getContext().getId());
+        logger.debug("frame {} execution created with id:{}", frameId, event.getContext().getId());
     }
 
     protected void handleExecutionDestroyed(ExecutionContextDestroyedEvent event) {
@@ -381,11 +381,11 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
             return;
         }
         frame.destroyExecutionContext();
-        logger.info("frame {} execution destroyed with id:{}", frame.frameId(), event.getExecutionContextId());
+        logger.debug("frame {} execution destroyed with id:{}", frame.frameId(), event.getExecutionContextId());
     }
 
     protected void handleExecutionCleared() {
-        logger.info("frame {} execution cleared", frameId);
+        logger.debug("frame {} execution cleared", frameId);
     }
 
     protected void handleTargetChanged(TargetInfo targetInfo) {

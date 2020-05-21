@@ -214,7 +214,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         ChromePage pg = targetMap.remove(targetId);
         if (pg != null) {
             //@TODO 此处没有从sessionMap中删除, sessionMap为value弱引用, 理论来说下一次垃圾回收的时候是会被干掉的
-            logger.info("target destroyed, targetId={}", targetId);
+            logger.debug("target destroyed, targetId={}", targetId);
         }
     }
 
@@ -240,7 +240,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
             return;
         }
         pg.emit(ChromePageEvent.FRAMEATTACHED, parent.append(event.getFrameId()));
-        logger.info("frame attached, parent={}, frameId={}", event.getParentFrameId(), event.getFrameId());
+        logger.debug("frame attached, parent={}, frameId={}", event.getParentFrameId(), event.getFrameId());
     }
 
     private void handleFrameNavigated(ChromePage pg, FrameNavigatedEvent event) {
@@ -266,7 +266,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         }
         frame.remove();
         pg.emit(ChromePageEvent.FRAMEDETACHED, frame);
-        logger.info("frame detached, parent={}, frameId={}", frame.parent.frameId, event.getFrameId());
+        logger.debug("frame detached, parent={}, frameId={}", frame.parent.frameId, event.getFrameId());
     }
 
     private void createDefaultPage() throws Exception {
@@ -342,7 +342,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
             if (!Objects.equals(targetId, page.targetInfo().getTargetId())) {
                 throw new RuntimeException("targetId not match, expect:" + targetId + ", actual:" + page.targetInfo().getTargetId());
             }
-            logger.info("page created, targetId={}", targetId);
+            logger.debug("page created, targetId={}", targetId);
             return page;
         } catch (Exception e) {
             browser.closeTarget(targetId);

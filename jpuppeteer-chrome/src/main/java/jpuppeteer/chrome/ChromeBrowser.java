@@ -177,7 +177,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         asyncAttachToTarget(targetId);
         targetMap.put(targetId, context);
         context.emit(ChromeContextEvent.TARGETCREATED, targetInfo);
-        logger.info("target created, auto do attach, targetId={}");
+        logger.debug("target created, auto do attach, targetId={}");
     }
 
     private void handleTargetAttached(CDPEvent event) {
@@ -193,7 +193,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         String sessionId = evt.getSessionId();
         sessionMap.put(sessionId, context);
         context.emit(ChromeContextEvent.ATTACHEDTOTARGET, evt);
-        logger.info("target attached, targetId={}", targetId);
+        logger.debug("target attached, targetId={}", targetId);
     }
 
     private void handleTargetDestroyed(CDPEvent event) {
@@ -208,7 +208,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         targetMap.remove(targetId);
         //@TODO 此处没有从sessionMap中移除, 等gc的时候清除
         context.emit(ChromeContextEvent.TARGETDESTROYED, targetId);
-        logger.info("target destoryed, targetId={}", targetId);
+        logger.debug("target destoryed, targetId={}", targetId);
     }
 
     private void handleTargetChanged(CDPEvent event) {
@@ -452,7 +452,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
             contextMap.put(contextId, context);
             targetMap.put(context.defaultPage().frameId(), context);
             sessionMap.put(context.defaultPage().sessionId(), context);
-            logger.info("browser context created, contextId={}", contextId);
+            logger.debug("browser context created, contextId={}", contextId);
             return context;
         } catch (Exception e) {
             DisposeBrowserContextRequest request = new DisposeBrowserContextRequest();
@@ -477,7 +477,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         request.setBrowserContextId(browserContextId);
         target.disposeBrowserContext(request, DEFAULT_TIMEOUT);
         contextMap.remove(browserContextId);
-        logger.info("browser context closed, contextId={}", browserContextId);
+        logger.debug("browser context closed, contextId={}", browserContextId);
     }
 
     @Override
