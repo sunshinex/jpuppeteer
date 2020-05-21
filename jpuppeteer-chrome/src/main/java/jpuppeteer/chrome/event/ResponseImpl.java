@@ -27,9 +27,9 @@ import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 @Setter
 @ToString
 @Builder
-public class Response implements jpuppeteer.api.browser.Response {
+public class ResponseImpl implements jpuppeteer.api.browser.Response {
 
-    private static final Logger logger = LoggerFactory.getLogger(Response.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResponseImpl.class);
 
     private static final Pattern PATTERN_CHARSET = Pattern.compile("charset=(.+)$", Pattern.CASE_INSENSITIVE);
 
@@ -44,7 +44,7 @@ public class Response implements jpuppeteer.api.browser.Response {
     private String type;
 
     //可能会没有request, request不会一直保存, 当进行垃圾回收的时候 会释放request
-    private Request request;
+    private RequestImpl request;
 
     private ChromeFrame frame;
 
@@ -85,7 +85,7 @@ public class Response implements jpuppeteer.api.browser.Response {
     }
 
     @Override
-    public Request request() {
+    public RequestImpl request() {
         return request;
     }
 
@@ -128,7 +128,7 @@ public class Response implements jpuppeteer.api.browser.Response {
                             content = response.getBody().getBytes(contentEncoding);
                         }
                     } catch (Exception e) {
-                        logger.error("getResponseBody error, error={}", e.getMessage(), e);
+                        logger.error("getResponseBody error, requestId={}, url={}, error={}", requestId, url, e.getMessage(), e);
                     }
                 }
             }

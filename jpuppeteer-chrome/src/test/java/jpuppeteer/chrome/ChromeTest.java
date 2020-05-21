@@ -3,9 +3,10 @@ package jpuppeteer.chrome;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import jpuppeteer.api.browser.BrowserContext;
-import jpuppeteer.api.browser.Request;
+import jpuppeteer.api.browser.Response;
 import jpuppeteer.chrome.constant.LifecycleEventType;
 import jpuppeteer.chrome.event.FrameLifecycleEvent;
+import jpuppeteer.chrome.event.RequestFinished;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
 
 public class ChromeTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(ChromeTest.class);
 
     @BeforeClass
     public static void setUp() {
@@ -81,18 +84,20 @@ public class ChromeTest {
     public void testInterceptor() throws Exception {
         ChromeBrowser browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
         ChromePage page = browser.defaultContext().newPage();
-        page.enableRequestInterception("*//uranus.jd.com/*");
-        //page.enableRequestInterception("*//h5api.m.taobao.com/h5/*", "*//h5api.m.tmall.com/h5/*");
-        page.addListener(ChromePageEvent.REQUEST, (Request request) -> {
+        page.enableRequestInterception((request) -> {
             try {
-                if ("uranus.jd.com".equals(request.url().getHost())) {
-                    System.out.println(request);
-                }
-                //System.out.println(request.url());
-//                if (request.intercepted()) {
-//                    request.continues();
-//                }
+                request.continues();
             } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, "*");
+        //page.enableRequestInterception("*//h5api.m.taobao.com/h5/*", "*//h5api.m.tmall.com/h5/*");
+        page.addListener(ChromePageEvent.REQUESTFINISHED, (RequestFinished requestFinished) -> {
+            try {
+                Response response = requestFinished.getRequest().getResponse();
+                System.out.println(response.content());
+            } catch (Exception e) {
+                System.out.println(page);
                 e.printStackTrace();
             }
         });

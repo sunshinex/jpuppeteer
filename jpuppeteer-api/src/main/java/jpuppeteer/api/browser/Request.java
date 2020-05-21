@@ -7,24 +7,6 @@ import java.util.List;
 
 public interface Request {
 
-    default boolean intercepted() {
-        return false;
-    }
-
-    void abort() throws Exception;
-
-    void continues(Request request) throws Exception;
-
-    default void continues() throws Exception {
-        continues(null);
-    }
-
-    void respond(int statusCode, List<Header> headers, byte[] body) throws Exception;
-
-    default void respond(int statusCode) throws Exception {
-        respond(statusCode, null, null);
-    }
-
     Frame frame();
 
     List<Header> headers();
@@ -34,11 +16,6 @@ public interface Request {
     String method();
 
     String content();
-
-//    /**
-//     * @return 当前请求的重定向来源
-//     */
-//    <R extends Request> R prev();
 
     ResourceType resourceType();
 

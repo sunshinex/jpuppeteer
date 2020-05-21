@@ -34,9 +34,9 @@ public enum ChromePageEvent {
 
     PAGEERROR(ExceptionThrownEvent.class),
 
-    REQUEST(Request.class),
+    REQUEST(RequestImpl.class),
 
-    RESPONSE(Response.class),
+    RESPONSE(ResponseImpl.class),
 
     REQUESTFAILED(RequestFailed.class),
 

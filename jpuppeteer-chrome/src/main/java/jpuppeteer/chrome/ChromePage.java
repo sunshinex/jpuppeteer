@@ -36,18 +36,15 @@ import jpuppeteer.cdp.cdp.entity.input.DispatchMouseEventRequest;
 import jpuppeteer.cdp.cdp.entity.input.DispatchTouchEventRequest;
 import jpuppeteer.cdp.cdp.entity.input.TouchPoint;
 import jpuppeteer.cdp.cdp.entity.network.GetCookiesResponse;
+import jpuppeteer.cdp.cdp.entity.network.Request;
 import jpuppeteer.cdp.cdp.entity.network.*;
 import jpuppeteer.cdp.cdp.entity.page.SetTouchEmulationEnabledRequest;
 import jpuppeteer.cdp.cdp.entity.page.*;
 import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextCreatedEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
-import jpuppeteer.chrome.entity.RequestEvent;
 import jpuppeteer.chrome.entity.SecurityDetails;
-import jpuppeteer.chrome.event.Request;
-import jpuppeteer.chrome.event.RequestFailed;
-import jpuppeteer.chrome.event.RequestFinished;
-import jpuppeteer.chrome.event.Response;
+import jpuppeteer.chrome.event.*;
 import jpuppeteer.chrome.event.type.ChromeContextEvent;
 import jpuppeteer.chrome.event.type.ChromePageEvent;
 import jpuppeteer.chrome.util.CookieUtils;
@@ -62,7 +59,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
@@ -107,13 +103,13 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
 
     private String password;
 
-    private Map<String/*requestId*/, Request> requestMap;
+    private Map<String/*requestId*/, RequestImpl> requestMap;
 
     private TargetInfo targetInfo;
 
     private BlockingQueue<Runnable> eventQueue;
 
-    private Pattern requestPattern;
+    private volatile Consumer<InterceptedRequest> interceptor;
 
     public ChromePage(String name, ChromeContext browserContext, CDPSession session, TargetInfo targetInfo, ChromePage opener) throws Exception {
         super(
@@ -226,102 +222,90 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
         }
     }
 
-    private Request handleRequestEvent(RequestEvent event) {
-        jpuppeteer.cdp.cdp.entity.network.Request req = event.getRequest();
-        //判断是否为frame导航request
+    private RequestImpl createRequest(String frameId, String loaderId, String requestId, ResourceType resourceType, Request request) {
+        ChromeFrame frame = find(frameId);
+        if (frame == null) {
+            logger.warn("request event frame not found, requestId={}, frameId={}", requestId, frameId);
+            return null;
+        }
+        String urlStr = request.getUrl();
+        String fragment = request.getUrlFragment();
+        URL url = URLUtils.parse(urlStr + (fragment != null ? fragment : ""));
+        boolean hasPostData = request.getPostData() != null || (request.getHasPostData() != null && request.getHasPostData()) ? true : false;
+        return RequestImpl.builder()
+                .session(session)
+                .network(network)
+                .fetch(fetch)
+                .frame(frame)
+                .loaderId(loaderId)
+                .requestId(requestId)
+                .method(request.getMethod())
+                .url(url)
+                .resourceType(resourceType)
+                .headers(HttpUtils.parseHeader(request.getHeaders()))
+                .hasPostData(hasPostData)
+                .postData(request.getPostData())
+                .build();
+    }
+
+    protected RequestImpl handleRequest(RequestWillBeSentEvent event) {
+        logger.info("request will be sent, requestId={}, url={}", event.getRequestId(), event.getRequest().getUrl());
+        //如果是导航请求，则清空对应frame的requestMap
         String requestId = event.getRequestId();
         String loaderId = event.getLoaderId();
-        ResourceType resourceType = event.getResourceType();
+        ResourceType resourceType = ResourceType.findByValue(event.getType());
         if (Objects.equals(requestId, loaderId) && ResourceType.DOCUMENT.equals(resourceType)) {
-            //navigation request
             if (Objects.equals(frameId, event.getFrameId())) {
                 //如果是top frame则直接clear整个requestMap即可
                 requestMap.clear();
             } else {
                 //否则清空指定frame的request
-                Iterator<Map.Entry<String, Request>> iterator = requestMap.entrySet().iterator();
+                Iterator<Map.Entry<String, RequestImpl>> iterator = requestMap.entrySet().iterator();
                 while (iterator.hasNext()) {
-                    Map.Entry<String, Request> entry = iterator.next();
+                    Map.Entry<String, RequestImpl> entry = iterator.next();
                     if (event.getFrameId().equals(entry.getValue().frame().frameId())) {
                         iterator.remove();
                     }
                 }
             }
         }
-        ChromeFrame frame = find(event.getFrameId());
-        if (frame == null) {
-            logger.warn("request event frame not found, requestId={}, frameId={}", event.getRequestId(), event.getFrameId());
+        RequestImpl request = createRequest(event.getFrameId(), loaderId, requestId, resourceType, event.getRequest());
+        if (request == null) {
             return null;
         }
-        String urlStr = req.getUrl();
-        String fragment = req.getUrlFragment();
-        URL url = URLUtils.parse(urlStr + (fragment != null ? fragment : ""));
-        boolean hasPostData = req.getPostData() != null || (req.getHasPostData() != null && req.getHasPostData()) ? true : false;
-        Request request = Request.builder()
-                .session(session)
-                .network(network)
-                .fetch(fetch)
-                .frame(frame)
-                .loaderId(event.getLoaderId())
-                .requestId(event.getRequestId())
-                .interceptorId(event.getInterceptorId())
-                .method(req.getMethod())
-                .url(url)
-                .resourceType(event.getResourceType())
-                .headers(HttpUtils.parseHeader(req.getHeaders()))
-                .hasPostData(hasPostData)
-                .postData(req.getPostData())
-                .build();
-        requestMap.put(event.getRequestId(), request);
+        requestMap.put(requestId, request);
         return request;
     }
 
-    protected Request handleRequest(RequestWillBeSentEvent event) {
-        String url = event.getRequest().getUrl();
-        if (requestPattern != null && requestPattern.matcher(url).matches()) {
-            //如果存在拦截器表达式，且拦截器匹配当前url，则此请求等待拦截器处理，此处不处理
-            logger.info("request matched pattern, ignore Network.requestWillBeSent event! pattern={}, url={}", requestPattern, url);
-            return null;
-        }
-        logger.info("request will be sent, requestId={}", event.getRequestId());
-        RequestEvent requestEvent = RequestEvent.builder()
-                .frameId(event.getFrameId())
-                .loaderId(event.getLoaderId())
-                .requestId(event.getRequestId())
-                .resourceType(ResourceType.findByValue(event.getType()))
-                .request(event.getRequest())
-                .build();
-        return handleRequestEvent(requestEvent);
-    }
-
-    protected Request handleRequestInterception(RequestPausedEvent event) {
+    protected void handleRequestInterception(RequestPausedEvent event) {
         String interceptorId = event.getRequestId();
         String requestId = event.getNetworkId();
         logger.info("request intercepted, requestId={}, interceptorId={}", requestId, interceptorId);
         if (StringUtils.isEmpty(interceptorId)) {
             //不存在interceptorId 直接返回
-            return null;
+            return;
         }
         if (StringUtils.isEmpty(requestId)) {
             //没有requestId的不拦截, 直接放行
             continueRequest(interceptorId);
-            return null;
+            return;
+        }
+        RequestImpl request = createRequest(
+                event.getFrameId(), null,
+                requestId, ResourceType.findByValue(event.getResourceType()),
+                event.getRequest());
+
+        if (request == null) {
+            continueRequest(interceptorId);
+            return;
         }
 
-        RequestEvent requestEvent = RequestEvent.builder()
-                .requestId(requestId)
-                .loaderId(requestId)
-                .interceptorId(interceptorId)
-                .frameId(event.getFrameId())
-                .request(event.getRequest())
-                .resourceType(ResourceType.findByValue(event.getResourceType()))
-                .build();
-        return handleRequestEvent(requestEvent);
+        interceptor.accept(new InterceptedRequestImpl(fetch, request, interceptorId));
     }
 
-    protected Response handleResponse(ResponseReceivedEvent event) {
+    protected ResponseImpl handleResponse(ResponseReceivedEvent event) {
         ChromeFrame frame = find(event.getFrameId());
-        Request request = requestMap.get(event.getRequestId());
+        RequestImpl request = requestMap.get(event.getRequestId());
         jpuppeteer.cdp.cdp.entity.network.Response res = event.getResponse();
         URL url = URLUtils.parse(res.getUrl());
         SecurityDetails securityDetails = null;
@@ -335,7 +319,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
                     .build();
         }
         List<Header> headers = HttpUtils.parseHeader(res.getHeaders());
-        Response response = Response.builder()
+        ResponseImpl response = ResponseImpl.builder()
                 .session(session)
                 .network(network)
                 .requestId(event.getRequestId())
@@ -360,12 +344,14 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     }
 
     protected RequestFailed handleRequestFailed(LoadingFailedEvent event) {
-        Request request = requestMap.remove(event.getRequestId());
+        logger.info("failed id={}", event.getRequestId());
+        RequestImpl request = requestMap.remove(event.getRequestId());
         return new RequestFailed(event.getRequestId(), request, event.getErrorText(), event.getCanceled(), BlockedReason.findByValue(event.getBlockedReason()));
     }
 
     protected RequestFinished handleRequestFinished(LoadingFinishedEvent event) {
-        Request request = requestMap.remove(event.getRequestId());
+        logger.info("finished id={}", event.getRequestId());
+        RequestImpl request = requestMap.remove(event.getRequestId());
         return new RequestFinished(event.getRequestId(), request, event.getEncodedDataLength(), event.getShouldReportCorbBlocking());
     }
 
@@ -436,47 +422,32 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
     }
 
     @Override
+    public void authenticate(String username, String password, Consumer<InterceptedRequest> interceptor) throws Exception {
+        this.username = username;
+        this.password = password;
+        if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+            enableRequestInterception(interceptor);
+        }
+    }
+
+    @Override
     public void authenticate(String username, String password) throws Exception {
         this.username = username;
         this.password = password;
         if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-            enableRequestInterception(true);
-        }
-    }
-
-    private static String compile(String urlPattern) {
-        String p = urlPattern;
-        char[] escapeChars = new char[]{'*', '?'};
-        StringBuilder sb = new StringBuilder();
-        int offset;
-        while ((offset = StringUtils.indexOfAny(p, escapeChars)) != -1) {
-            String p0 = p.substring(0, offset);
-            boolean endWithBackslash = p0.endsWith("\\");
-            if (endWithBackslash) {
-                p0 = p0.substring(0, p0.length() - 1);
-            }
-            char eChar = p.charAt(offset);
-            p = p.substring(offset + 1);
-            if (endWithBackslash) {
-                sb.append(Pattern.quote(p0 + eChar));
-            } else {
-                if (p0.length() > 0) {
-                    sb.append(Pattern.quote(p0));
+            enableRequestInterception(request -> {
+                try {
+                    request.continues();
+                } catch (Exception e) {
+                    logger.error("continue request failed, url={}, error={}", request.url(), e.getMessage(), e);
                 }
-                sb.append(".");
-                sb.append(eChar);
-            }
+            });
         }
-        if (p.length() > 0) {
-            sb.append(Pattern.quote(p));
-        }
-        return sb.toString();
     }
 
     @Override
-    public void enableRequestInterception(boolean handleAuthRequest, String... urlPatterns) throws Exception {
+    public void enableRequestInterception(boolean handleAuthRequest, Consumer<InterceptedRequest> interceptor, String... urlPatterns) throws Exception {
         EnableRequest request = new EnableRequest();
-        List<String> patterns = new ArrayList<>(urlPatterns.length);
         List<RequestPattern> ptns = new ArrayList<>(urlPatterns.length);
         for(String p : urlPatterns) {
             if (StringUtils.isEmpty(p)) {
@@ -485,18 +456,18 @@ public class ChromePage extends ChromeFrame implements EventEmitter<ChromePageEv
             RequestPattern ptn = new RequestPattern();
             ptn.setUrlPattern(p);
             ptns.add(ptn);
-            patterns.add(compile(p));
         }
         request.setPatterns(ptns);
         request.setHandleAuthRequests(handleAuthRequest);
+        //此处需要添加Fetch.requestPaused事件
         fetch.enable(request, DEFAULT_TIMEOUT);
-        this.requestPattern = Pattern.compile("("+ StringUtils.join(patterns, "|") +")");
+        this.interceptor = interceptor;
     }
 
     @Override
     public void disableRequestInterception() throws Exception {
         fetch.disable(DEFAULT_TIMEOUT);
-        this.requestPattern = null;
+        this.interceptor = null;
     }
 
     @Override

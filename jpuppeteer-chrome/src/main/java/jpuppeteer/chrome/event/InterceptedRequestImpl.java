@@ -1,22 +1,19 @@
 package jpuppeteer.chrome.event;
 
 import com.google.common.base.Charsets;
+import jpuppeteer.api.browser.Frame;
 import jpuppeteer.api.browser.Header;
+import jpuppeteer.api.browser.InterceptedRequest;
+import jpuppeteer.api.browser.Response;
 import jpuppeteer.api.constant.ResourceType;
-import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.constant.network.ErrorReason;
 import jpuppeteer.cdp.cdp.domain.Fetch;
-import jpuppeteer.cdp.cdp.domain.Network;
 import jpuppeteer.cdp.cdp.entity.fetch.ContinueRequestRequest;
 import jpuppeteer.cdp.cdp.entity.fetch.FailRequestRequest;
 import jpuppeteer.cdp.cdp.entity.fetch.FulfillRequestRequest;
 import jpuppeteer.cdp.cdp.entity.fetch.HeaderEntry;
-import jpuppeteer.cdp.cdp.entity.network.GetRequestPostDataRequest;
-import jpuppeteer.cdp.cdp.entity.network.GetRequestPostDataResponse;
-import jpuppeteer.chrome.ChromeFrame;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,42 +27,19 @@ import java.util.*;
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
 @Getter
-@ToString(exclude = {"response"})
-@Builder
-public class Request implements jpuppeteer.api.browser.Request {
+@ToString
+@AllArgsConstructor
+public class InterceptedRequestImpl implements InterceptedRequest {
 
-    private static final Logger logger = LoggerFactory.getLogger(Request.class);
+    private static final Logger logger = LoggerFactory.getLogger(InterceptedRequestImpl.class);
 
     private static final Map<Integer, String> STATUS_TEXT;
 
-    private transient CDPSession session;
+    private final Fetch fetch;
 
-    private transient Network network;
+    private final RequestImpl request;
 
-    private transient Fetch fetch;
-
-    private ChromeFrame frame;
-
-    private String requestId;
-
-    private String loaderId;
-
-    private String method;
-
-    private URL url;
-
-    private ResourceType resourceType;
-
-    private List<Header> headers;
-
-    private transient boolean hasPostData;
-
-    private volatile String postData;
-
-    @Setter
-    private volatile Response response;
-
-    private volatile String interceptorId;
+    private final String interceptorId;
 
     static {
         STATUS_TEXT = new HashMap<>();
@@ -135,87 +109,55 @@ public class Request implements jpuppeteer.api.browser.Request {
     }
 
     @Override
-    public ChromeFrame frame() {
-        return frame;
+    public Frame frame() {
+        return request.frame();
     }
 
     @Override
     public List<Header> headers() {
-        return headers;
+        return request.headers();
     }
 
     @Override
     public boolean isNavigationRequest() {
-        return StringUtils.equals(requestId, loaderId) && ResourceType.DOCUMENT.equals(resourceType);
+        return request.isNavigationRequest();
     }
 
     @Override
     public String method() {
-        return method;
+        return request.method();
     }
 
     @Override
     public String content() {
-        if (!hasPostData) {
-            return null;
-        }
-        if (postData == null) {
-            synchronized (this) {
-                if (postData == null) {
-                    GetRequestPostDataRequest request = new GetRequestPostDataRequest();
-                    request.setRequestId(requestId);
-                    try {
-                        GetRequestPostDataResponse response = network.getRequestPostData(request, DEFAULT_TIMEOUT);
-                        postData = response.getPostData();
-                    } catch (Exception e) {
-                        logger.error("getRequestPostData failed, error={}", e.getMessage(), e);
-                    }
-                }
-            }
-        }
-        return postData;
+        return request.content();
     }
 
     @Override
     public ResourceType resourceType() {
-        return resourceType;
+        return request.resourceType();
     }
 
     @Override
     public Response response() {
-        return response;
+        return request.response();
     }
 
     @Override
     public URL url() {
-        return url;
-    }
-
-    @Override
-    public boolean intercepted() {
-        return StringUtils.isNotEmpty(interceptorId);
+        return request.url();
     }
 
     @Override
     public void abort() throws Exception {
-        if (!intercepted()) {
-            logger.warn("request is not intercepted, requestId={}", requestId);
-            return;
-        }
         FailRequestRequest request = new FailRequestRequest();
         request.setRequestId(interceptorId);
         request.setErrorReason(ErrorReason.ABORTED.getValue());
         fetch.failRequest(request, DEFAULT_TIMEOUT);
-        //终止请求成功之后, 置空拦截ID
-        this.interceptorId = null;
     }
 
     @Override
     public void continues(jpuppeteer.api.browser.Request request) throws Exception {
-        if (!intercepted()) {
-            logger.warn("request is not intercepted, requestId={}", requestId);
-            return;
-        }
         ContinueRequestRequest req = new ContinueRequestRequest();
         req.setRequestId(interceptorId);
         if (request != null) {
@@ -240,16 +182,10 @@ public class Request implements jpuppeteer.api.browser.Request {
             }
         }
         fetch.continueRequest(req, DEFAULT_TIMEOUT);
-        //放行请求成功之后, 置空拦截ID
-        this.interceptorId = null;
     }
 
     @Override
     public void respond(int statusCode, List<Header> headers, byte[] body) throws Exception {
-        if (!intercepted()) {
-            logger.warn("request is not intercepted, requestId={}", requestId);
-            return;
-        }
         if (!STATUS_TEXT.containsKey(statusCode)) {
             throw new RuntimeException("unknown statusCode " + statusCode);
         }
@@ -282,7 +218,5 @@ public class Request implements jpuppeteer.api.browser.Request {
             request.getResponseHeaders().add(entry);
         }
         fetch.fulfillRequest(request, DEFAULT_TIMEOUT);
-        //完成请求成功之后, 置空拦截ID
-        this.interceptorId = null;
     }
 }

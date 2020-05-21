@@ -106,14 +106,14 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
         handleSessionEvent(EXECUTIONCONTEXTSCLEARED, (pg, event) -> pg.handleExecutionCleared(), null);
 
         handleSessionEvent(REQUESTWILLBESENT, (pg, event) -> {
-            Request request = pg.handleRequest(event);
+            RequestImpl request = pg.handleRequest(event);
             if (request != null) {
                 pg.emit(ChromePageEvent.REQUEST, request);
             }
         }, RequestWillBeSentEvent.class);
 
         handleSessionEvent(RESPONSERECEIVED, (pg, event) -> {
-            Response response = pg.handleResponse(event);
+            ResponseImpl response = pg.handleResponse(event);
             if (response != null) {
                 pg.emit(ChromePageEvent.RESPONSE, response);
             }
@@ -133,12 +133,7 @@ public class ChromeContext extends DefaultEventEmitter<ChromeContextEvent> imple
             }
         }, LoadingFinishedEvent.class);
 
-        handleSessionEvent(REQUESTPAUSED, (pg, event) -> {
-            Request request = pg.handleRequestInterception(event);
-            if (request != null) {
-                pg.emit(ChromePageEvent.REQUEST, request);
-            }
-        }, RequestPausedEvent.class);
+        handleSessionEvent(REQUESTPAUSED, (pg, event) -> pg.handleRequestInterception(event), RequestPausedEvent.class);
 
         handleSessionEvent(AUTHREQUIRED, (pg, event) -> pg.doAuthenticate(event.getRequestId()), AuthRequiredEvent.class);
     }
