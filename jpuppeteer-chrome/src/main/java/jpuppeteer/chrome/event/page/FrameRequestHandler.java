@@ -1,10 +1,7 @@
-package jpuppeteer.chrome.event;
+package jpuppeteer.chrome.event.page;
 
 import com.google.common.base.Charsets;
-import jpuppeteer.api.browser.Frame;
-import jpuppeteer.api.browser.Header;
-import jpuppeteer.api.browser.InterceptedRequest;
-import jpuppeteer.api.browser.Response;
+import jpuppeteer.api.browser.*;
 import jpuppeteer.api.constant.ResourceType;
 import jpuppeteer.cdp.cdp.constant.network.ErrorReason;
 import jpuppeteer.cdp.cdp.domain.Fetch;
@@ -12,34 +9,23 @@ import jpuppeteer.cdp.cdp.entity.fetch.ContinueRequestRequest;
 import jpuppeteer.cdp.cdp.entity.fetch.FailRequestRequest;
 import jpuppeteer.cdp.cdp.entity.fetch.FulfillRequestRequest;
 import jpuppeteer.cdp.cdp.entity.fetch.HeaderEntry;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
+import jpuppeteer.chrome.ChromeFrame;
+import jpuppeteer.chrome.ChromePage;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
-@Getter
-@ToString
-@AllArgsConstructor
-public class InterceptedRequestImpl implements InterceptedRequest {
+public class FrameRequestHandler extends FrameEvent implements RequestHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(InterceptedRequestImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(FrameRequestHandler.class);
 
     private static final Map<Integer, String> STATUS_TEXT;
-
-    private final Fetch fetch;
-
-    private final RequestImpl request;
-
-    private final String interceptorId;
 
     static {
         STATUS_TEXT = new HashMap<>();
@@ -108,9 +94,17 @@ public class InterceptedRequestImpl implements InterceptedRequest {
         STATUS_TEXT.put(511, "Network Authentication Required");
     }
 
-    @Override
-    public Frame frame() {
-        return request.frame();
+    private final Fetch fetch;
+
+    private final FrameRequest request;
+
+    private final String interceptorId;
+
+    public FrameRequestHandler(ChromePage page, Fetch fetch, FrameRequest request, String interceptorId) {
+        super(page, request.frame());
+        this.fetch = fetch;
+        this.request = request;
+        this.interceptorId = interceptorId;
     }
 
     @Override
@@ -144,7 +138,7 @@ public class InterceptedRequestImpl implements InterceptedRequest {
     }
 
     @Override
-    public URL url() {
+    public String url() {
         return request.url();
     }
 
@@ -208,7 +202,6 @@ public class InterceptedRequestImpl implements InterceptedRequest {
             byte[] encodedBodyBytes = Base64.getEncoder().encode(body);
             String encodedBody = new String(encodedBodyBytes, encoding);
             request.setBody(encodedBody);
-            //TODO 此处需要考虑body chunked的情况
             if (request.getResponseHeaders() == null) {
                 request.setResponseHeaders(new ArrayList<>(1));
             }

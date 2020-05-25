@@ -1,6 +1,7 @@
 package jpuppeteer.cdp;
 
 import com.alibaba.fastjson.JSONObject;
+import jpuppeteer.cdp.cdp.CDPEventType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -12,7 +13,7 @@ public class CDPEvent {
 
     private String sessionId;
 
-    private String method;
+    private CDPEventType method;
 
     private JSONObject params;
 

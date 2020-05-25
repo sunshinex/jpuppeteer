@@ -21,6 +21,6 @@ public interface Request {
 
     Response response();
 
-    URL url();
+    String url();
 
 }

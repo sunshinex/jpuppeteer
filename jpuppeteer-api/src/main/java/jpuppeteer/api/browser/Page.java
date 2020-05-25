@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 
 public interface Page extends Frame {
 
-    void authenticate(String username, String password, Consumer<InterceptedRequest> interceptor) throws Exception;
+    void authenticate(String username, String password, Consumer<RequestHandler> interceptor) throws Exception;
 
     void authenticate(String username, String password) throws Exception;
 
@@ -64,13 +64,13 @@ public interface Page extends Frame {
 
     void setGeolocation(double latitude, double longitude, int accuracy) throws Exception;
 
-    void enableRequestInterception(boolean handleAuthRequest, Consumer<InterceptedRequest> interceptor, String... urlPatterns) throws Exception;
+    void enableRequestInterception(boolean handleAuthRequest, Consumer<RequestHandler> interceptor, String... urlPatterns) throws Exception;
 
-    default void enableRequestInterception(Consumer<InterceptedRequest> interceptor) throws Exception {
+    default void enableRequestInterception(Consumer<RequestHandler> interceptor) throws Exception {
         enableRequestInterception(false, interceptor, "*");
     }
 
-    default void enableRequestInterception(Consumer<InterceptedRequest> interceptor, String... urlPatterns) throws Exception {
+    default void enableRequestInterception(Consumer<RequestHandler> interceptor, String... urlPatterns) throws Exception {
         enableRequestInterception(false, interceptor, urlPatterns);
     }
 

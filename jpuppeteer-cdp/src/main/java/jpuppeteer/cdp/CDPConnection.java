@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.MapMaker;
 import com.google.common.util.concurrent.SettableFuture;
-import jpuppeteer.api.event.DefaultEventEmitter;
+import jpuppeteer.api.event.AbstractEventEmitter;
+import jpuppeteer.api.event.AbstractListener;
+import jpuppeteer.api.eventx.DefaultEventEmitter;
 import jpuppeteer.cdp.cdp.CDPEventType;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
@@ -16,7 +18,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> {
+public abstract class CDPConnection extends AbstractEventEmitter<CDPEvent> {
 
     private static final Logger logger = LoggerFactory.getLogger(CDPConnection.class);
 
@@ -30,14 +32,21 @@ public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> {
 
     protected static final String RESULT = "result";
 
+    private final ExecutorService executors;
+
     private final AtomicInteger messageId;
 
     protected final Map<Integer, SettableFuture<JSONObject>> requestMap;
 
     protected CDPConnection(String name) {
-        super(Executors.newSingleThreadExecutor(r -> new Thread(r, "Connection["+name+"]")));
+        this.executors = Executors.newSingleThreadExecutor(r -> new Thread(r, "Connection["+name+"]"));
         this.messageId = new AtomicInteger(0);
         this.requestMap = new MapMaker().weakValues().concurrencyLevel(16).makeMap();
+    }
+
+    @Override
+    protected void emitInternal(AbstractListener<CDPEvent> listener, CDPEvent event) {
+        executors.submit(() -> listener.accept(event));
     }
 
     private JSONObject sendBase(String method, Object params, Map<String, Object> extra, int timeout) throws InterruptedException, ExecutionException, TimeoutException {
@@ -117,8 +126,10 @@ public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> {
             logger.error("discard unknown event [{}]", method);
             return;
         }
-        //把原始事件dispatch到connection对象上
-        emit(eventType, new CDPEvent(json.getString(CDPSession.SESSION_ID), json.getString(METHOD), json.getJSONObject(PARAMS)));
+        emit(new CDPEvent(
+                json.getString(CDPSession.SESSION_ID),
+                eventType,
+                json.getJSONObject(PARAMS)));
     }
 
     protected void recv(String message) {
@@ -147,6 +158,10 @@ public abstract class CDPConnection extends DefaultEventEmitter<CDPEventType> {
         } else {
             future.set(json.getJSONObject(RESULT));
         }
+    }
+
+    public void close() {
+        this.executors.shutdown();
     }
 
     public abstract void open() throws IOException, InterruptedException;

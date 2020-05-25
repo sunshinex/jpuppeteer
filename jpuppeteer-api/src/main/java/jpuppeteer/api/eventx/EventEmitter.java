@@ -1,4 +1,4 @@
-package jpuppeteer.api.event;
+package jpuppeteer.api.eventx;
 
 import java.util.function.Consumer;
 

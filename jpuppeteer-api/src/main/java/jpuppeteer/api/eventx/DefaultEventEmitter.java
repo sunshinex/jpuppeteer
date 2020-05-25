@@ -1,4 +1,4 @@
-package jpuppeteer.api.event;
+package jpuppeteer.api.eventx;
 
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;

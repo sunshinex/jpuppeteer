@@ -37,7 +37,7 @@ public class WebSocketCDPConnection extends CDPConnection {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         client.close();
         super.close();
     }

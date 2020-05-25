@@ -2,7 +2,7 @@ package jpuppeteer.api.browser;
 
 import java.util.List;
 
-public interface InterceptedRequest extends Request {
+public interface RequestHandler extends Request {
 
     void abort() throws Exception;
 

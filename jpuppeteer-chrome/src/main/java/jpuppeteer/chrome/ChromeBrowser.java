@@ -1,8 +1,10 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.MapMaker;
+import com.google.common.collect.Sets;
 import jpuppeteer.api.browser.Browser;
 import jpuppeteer.api.constant.PermissionType;
+import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
@@ -22,17 +24,16 @@ import jpuppeteer.cdp.cdp.entity.storage.GetCookiesResponse;
 import jpuppeteer.cdp.cdp.entity.storage.SetCookiesRequest;
 import jpuppeteer.cdp.cdp.entity.target.*;
 import jpuppeteer.cdp.constant.TargetType;
-import jpuppeteer.chrome.event.type.ChromeContextEvent;
+import jpuppeteer.chrome.event.context.ContextCDPEvent;
+import jpuppeteer.chrome.event.context.TargetAttached;
+import jpuppeteer.chrome.event.context.TargetCreated;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
 
 import static jpuppeteer.cdp.cdp.CDPEventType.*;
 
-public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
+public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeBrowser.class);
 
@@ -103,59 +104,62 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         //此方法必须等默认上下文创建好了之后才能调用true
         this.setDiscoverTargets(true);
 
-        //监听事件
-        addListener(TARGET_TARGETCREATED, (CDPEvent event) -> handleTargetCreated(event));
-        addListener(TARGET_ATTACHEDTOTARGET, (CDPEvent event) -> handleTargetAttached(event));
-        addListener(TARGET_TARGETDESTROYED, (CDPEvent event) -> handleTargetDestroyed(event));
-        addListener(TARGET_TARGETINFOCHANGED, (CDPEvent event) -> handleTargetChanged(event));
-        addListener(TARGET_TARGETCRASHED, (CDPEvent event) -> handleTargetCrashed(event));
-        //传递事件
-        transmitSessionEvent(PAGE_LIFECYCLEEVENT, ChromeContextEvent.LIFECYCLEEVENT);
-        transmitSessionEvent(PAGE_DOMCONTENTEVENTFIRED, ChromeContextEvent.DOMCONTENTEVENTFIRED);
-        transmitSessionEvent(PAGE_LOADEVENTFIRED, ChromeContextEvent.LOADEVENTFIRED);
-        transmitSessionEvent(PAGE_FRAMEATTACHED, ChromeContextEvent.FRAMEATTACHED);
-        transmitSessionEvent(PAGE_FRAMEDETACHED, ChromeContextEvent.FRAMEDETACHED);
-        transmitSessionEvent(PAGE_FRAMENAVIGATED, ChromeContextEvent.FRAMENAVIGATED);
-        transmitSessionEvent(PAGE_JAVASCRIPTDIALOGOPENING, ChromeContextEvent.JAVASCRIPTDIALOGOPENING);
-        transmitSessionEvent(NETWORK_REQUESTWILLBESENT, ChromeContextEvent.REQUESTWILLBESENT);
-        transmitSessionEvent(NETWORK_RESPONSERECEIVED, ChromeContextEvent.RESPONSERECEIVED);
-        transmitSessionEvent(NETWORK_LOADINGFAILED, ChromeContextEvent.LOADINGFAILED);
-        transmitSessionEvent(NETWORK_LOADINGFINISHED, ChromeContextEvent.LOADINGFINISHED);
-        transmitSessionEvent(RUNTIME_EXCEPTIONTHROWN, ChromeContextEvent.EXCEPTIONTHROWN);
-        transmitSessionEvent(RUNTIME_EXECUTIONCONTEXTCREATED, ChromeContextEvent.EXECUTIONCONTEXTCREATED);
-        transmitSessionEvent(RUNTIME_EXECUTIONCONTEXTDESTROYED, ChromeContextEvent.EXECUTIONCONTEXTDESTROYED);
-        transmitSessionEvent(RUNTIME_EXECUTIONCONTEXTSCLEARED, ChromeContextEvent.EXECUTIONCONTEXTSCLEARED);
-        transmitSessionEvent(FETCH_REQUESTPAUSED, ChromeContextEvent.REQUESTPAUSED);
-        transmitSessionEvent(FETCH_AUTHREQUIRED, ChromeContextEvent.AUTHREQUIRED);
-        transmitSessionEvent(LOG_ENTRYADDED, ChromeContextEvent.ENTRYADDED);
-    }
-
-
-    @Override
-    public void addListener(CDPEventType type, Consumer<?> consumer) {
-        connection.addListener(type, consumer);
+        //事件
+        bindEventHandler(event -> handleTargetCreated(event), TARGET_TARGETCREATED);
+        bindEventHandler(event -> handleTargetCreated(event), TARGET_TARGETCREATED);
+        bindEventHandler(event -> handleTargetAttached(event), TARGET_ATTACHEDTOTARGET);
+        bindEventHandler(event -> handleTargetDestroyed(event), TARGET_TARGETDESTROYED);
+        bindEventHandler(event -> handleTargetChanged(event), TARGET_TARGETINFOCHANGED);
+        bindEventHandler(event -> handleTargetCrashed(event), TARGET_TARGETCRASHED);
+        //透传事件
+        handleSessionEvent(
+                (context, event) -> context.emit(new ContextCDPEvent(context, event)),
+                PAGE_LIFECYCLEEVENT, PAGE_DOMCONTENTEVENTFIRED, PAGE_LOADEVENTFIRED,
+                PAGE_FRAMEATTACHED, PAGE_FRAMEDETACHED, PAGE_FRAMENAVIGATED,
+                PAGE_JAVASCRIPTDIALOGOPENING, NETWORK_REQUESTWILLBESENT, NETWORK_RESPONSERECEIVED,
+                NETWORK_LOADINGFAILED, NETWORK_LOADINGFINISHED, RUNTIME_EXCEPTIONTHROWN,
+                RUNTIME_EXECUTIONCONTEXTCREATED, RUNTIME_EXECUTIONCONTEXTDESTROYED, RUNTIME_EXECUTIONCONTEXTSCLEARED,
+                FETCH_REQUESTPAUSED, FETCH_AUTHREQUIRED, LOG_ENTRYADDED
+        );
     }
 
     @Override
-    public void removeListener(CDPEventType type, Consumer<?> consumer) {
-        connection.addListener(type, consumer);
+    public void emit(CDPEvent event) {
+        connection.emit(event);
     }
 
     @Override
-    public void emit(CDPEventType type, Object event) {
-        connection.emit(type, event);
+    public void addListener(AbstractListener<? extends CDPEvent> listener) {
+        connection.addListener(listener);
     }
 
-    private void transmitSessionEvent(CDPEventType from, ChromeContextEvent to) {
-        addListener(from, (CDPEvent event) -> {
+    @Override
+    public void removeListener(AbstractListener<? extends CDPEvent> listener) {
+        connection.removeListener(listener);
+    }
+
+    private void bindEventHandler(Consumer<CDPEvent> handler, CDPEventType... eventTypes) {
+        Set<CDPEventType> eventTypeSet = Sets.newHashSet(eventTypes);
+        addListener(new AbstractListener<CDPEvent>() {
+            @Override
+            public void accept(CDPEvent event) {
+                if (eventTypeSet.contains(event.getMethod())) {
+                    handler.accept(event);
+                }
+            }
+        });
+    }
+
+    private void handleSessionEvent(ContextEventHandler handler, CDPEventType... eventTypes) {
+        bindEventHandler(event -> {
             String sessionId = event.getSessionId();
             ChromeContext context = sessionMap.get(sessionId);
             if (context == null) {
-                //logger.error("transmit event failed:context not found, event={} sessionId={}", from.getName(), sessionId);
+                logger.error("handle event failed, context not found, event={} sessionId={}", event.getMethod().getName(), sessionId);
                 return;
             }
-            context.emit(to, event);
-        });
+            handler.handle(context, event);
+        }, eventTypes);
     }
 
     private void handleTargetCreated(CDPEvent event) {
@@ -176,7 +180,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         //自动执行attach操作
         asyncAttachToTarget(targetId);
         targetMap.put(targetId, context);
-        context.emit(ChromeContextEvent.TARGETCREATED, targetInfo);
+        context.emit(new TargetCreated(context, event));
         logger.debug("target created, auto do attach, targetId={}");
     }
 
@@ -192,7 +196,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         }
         String sessionId = evt.getSessionId();
         sessionMap.put(sessionId, context);
-        context.emit(ChromeContextEvent.ATTACHEDTOTARGET, evt);
+        context.emit(new TargetAttached(context, event));
         logger.debug("target attached, targetId={}", targetId);
     }
 
@@ -207,7 +211,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         }
         targetMap.remove(targetId);
         //@TODO 此处没有从sessionMap中移除, 等gc的时候清除
-        context.emit(ChromeContextEvent.TARGETDESTROYED, targetId);
+        context.emit(new TargetAttached(context, event));
         logger.debug("target destoryed, targetId={}", targetId);
     }
 
@@ -225,7 +229,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
             //logger.error("target info changed failed, context not found, targetId={}", targetId);
             return;
         }
-        context.emit(ChromeContextEvent.TARGETINFOCHANGED, targetInfo);
+        context.emit(new TargetAttached(context, event));
     }
 
     private void handleTargetCrashed(CDPEvent event) {
@@ -236,7 +240,7 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
             //logger.error("target crashed failed, context not found, targetId={}", targetId);
             return;
         }
-        context.emit(ChromeContextEvent.TARGETCRASHED, evt);
+        context.emit(new TargetAttached(context, event));
         logger.error("target crashed, targetId={}", targetId);
     }
 
@@ -502,4 +506,10 @@ public class ChromeBrowser implements EventEmitter<CDPEventType>, Browser {
         return this.process;
     }
 
+    @FunctionalInterface
+    private interface ContextEventHandler {
+
+        void handle(ChromeContext context, CDPEvent event);
+
+    }
 }
