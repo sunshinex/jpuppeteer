@@ -40,7 +40,7 @@ public class CookieUtils {
                 .value(cookie.getValue())
                 .domain(cookie.getDomain())
                 .path(cookie.getPath())
-                .expires(cookie.getExpires() != null && cookie.getExpires() != -1 ? new Date(cookie.getExpires().longValue()) : null)
+                .expires(cookie.getExpires() != null && cookie.getExpires() != -1 ? new Date(cookie.getExpires().longValue() * 1000) : null)
                 .httpOnly(cookie.getHttpOnly())
                 .secure(cookie.getSecure())
                 .sameSite(cookie.getSameSite())
