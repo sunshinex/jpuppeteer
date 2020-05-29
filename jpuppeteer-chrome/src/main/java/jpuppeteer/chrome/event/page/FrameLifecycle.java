@@ -3,7 +3,6 @@ package jpuppeteer.chrome.event.page;
 import jpuppeteer.cdp.constant.PageLifecyclePhase;
 import jpuppeteer.chrome.ChromeFrame;
 import jpuppeteer.chrome.ChromePage;
-import jpuppeteer.chrome.constant.LifecycleEventType;
 
 public class FrameLifecycle extends FrameEvent {
 

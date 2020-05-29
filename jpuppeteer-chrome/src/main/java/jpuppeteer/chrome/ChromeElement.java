@@ -38,7 +38,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
     protected ChromeFrame frame;
 
     protected ChromeElement(ChromeFrame frame, RemoteObject object) {
-        super(frame.runtime, frame.executionContext(), object);
+        super(frame.runtime, frame, object);
         this.frame = frame;
         if (frame instanceof ChromePage) {
             this.page = (ChromePage) frame;
@@ -57,7 +57,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public ChromeElement querySelector(String selector) throws Exception {
-        ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelector(selector);}", this, selector);
+        ChromeBrowserObject object = call("function(selector){return this.querySelector(selector);}", selector);
         if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
             return null;
         }
@@ -66,7 +66,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public List<ChromeElement> querySelectorAll(String selector) throws Exception {
-        ChromeBrowserObject object = frame.evaluate("function(parent, selector){return parent.querySelectorAll(selector);}", this, selector);
+        ChromeBrowserObject object = call("function(selector){return this.querySelectorAll(selector);}", selector);
         List<ChromeBrowserObject> properties = object.getProperties();
         return properties.stream().map(obj -> new ChromeElement(frame, obj.object)).collect(Collectors.toList());
     }
@@ -83,7 +83,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public boolean isIntersectingViewport() throws Exception {
-        return frame.evaluate(ScriptConstants.ELEMENT_IS_INTERSECTING_VIEWPORT, Boolean.class, this);
+        return call(ScriptConstants.ELEMENT_IS_INTERSECTING_VIEWPORT, Boolean.class);
     }
 
     @Override
@@ -153,7 +153,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public void scrollIntoView() throws Exception {
-        executionContext.evaluate(ScriptConstants.ELEMENT_SCROLL_INTO_VIEW, this);
+        call(ScriptConstants.ELEMENT_SCROLL_INTO_VIEW);
     }
 
     private void insertText(String text) throws Exception {
@@ -230,16 +230,13 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public void clear() throws Exception {
-        page.evaluate("function(element){element.value='';}", this);
+        call("function(){this.value='';}");
     }
 
     @Override
     public void input(String text, int delay) throws Exception {
-        try {
-            focus();
-        } catch (Exception e) {
-            click();
-        }
+        //先将输入框聚焦才能输入内容
+        focus();
         for(char chr : text.toCharArray()) {
             String chrStr = String.valueOf(chr);
             USKeyboardDefinition def = USKeyboardDefinition.find(chrStr);
@@ -256,22 +253,22 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public void select(String... values) throws Exception {
-        frame.evaluate(ScriptConstants.ELEMENT_SELECT, this, values);
+        call(ScriptConstants.ELEMENT_SELECT, values);
     }
 
     @Override
     public Coordinate scroll(int x, int y) throws Exception {
-        JSONObject offset = evaluate(ScriptConstants.SCROLL, JSONObject.class, this, x, y);
+        JSONObject offset = call(ScriptConstants.SCROLL, JSONObject.class, x, y);
         return new Coordinate(offset.getDouble("scrollX"), offset.getDouble("scrollY"));
     }
 
     @Override
     public String html() throws Exception {
-        return evaluate(ScriptConstants.ELEMENT_HTML, String.class);
+        return call("function(){this.innerHTML}", String.class);
     }
 
     @Override
     public String text() throws Exception {
-        return evaluate(ScriptConstants.ELEMENT_TEXT, String.class);
+        return call("function(){this.innerText}", String.class);
     }
 }

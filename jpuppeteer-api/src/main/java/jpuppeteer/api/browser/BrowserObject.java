@@ -7,9 +7,15 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-public interface BrowserObject extends ExecutionContext {
+public interface BrowserObject {
 
     ExecutionContext executionContext();
+
+    <R> R call(String declaration, Class<R> clazz, Object... args) throws Exception;
+
+    <R> R call(String declaration, TypeReference<R> type, Object... args) throws Exception;
+
+    BrowserObject call(String declaration, Object... args) throws Exception;
 
     List<? extends BrowserObject> getProperties() throws Exception;
 

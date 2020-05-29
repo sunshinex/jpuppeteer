@@ -48,5 +48,9 @@ public interface Frame extends ExecutionContext {
 
     Coordinate scroll(int x, int y) throws Exception;
 
+    Element evalx(String expression) throws Exception;
+
+    Element callx(String declaration, Object... args) throws Exception;
+
 }
 

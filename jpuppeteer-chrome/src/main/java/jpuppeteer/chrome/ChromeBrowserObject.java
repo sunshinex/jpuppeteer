@@ -4,11 +4,12 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.util.TypeUtils;
 import jpuppeteer.api.browser.BrowserObject;
+import jpuppeteer.api.browser.Element;
+import jpuppeteer.api.browser.ExecutionContext;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
 import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.entity.runtime.*;
-import jpuppeteer.chrome.constant.ScriptConstants;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
@@ -31,7 +32,9 @@ public class ChromeBrowserObject implements BrowserObject {
 
     protected Runtime runtime;
 
-    protected ChromeExecutionContext executionContext;
+    protected ExecutionContext executionContext;
+
+    protected AbstractExecution execution;
 
     protected String objectId;
 
@@ -41,9 +44,20 @@ public class ChromeBrowserObject implements BrowserObject {
 
     protected RemoteObject object;
 
-    public ChromeBrowserObject(Runtime runtime, ChromeExecutionContext executionContext, RemoteObject object) {
+    public ChromeBrowserObject(Runtime runtime, ExecutionContext executionContext, RemoteObject object) {
         this.runtime = runtime;
         this.executionContext = executionContext;
+        this.execution = new AbstractExecution(runtime) {
+            @Override
+            protected void intercept(CallFunctionOnRequest request) {
+                request.setObjectId(objectId);
+            }
+
+            @Override
+            protected void intercept(EvaluateRequest request) {
+                throw new UnsupportedOperationException();
+            }
+        };
         this.objectId = object.getObjectId();
         this.type = RemoteObjectType.findByValue(object.getType());
         this.subType = RemoteObjectSubtype.findByValue(object.getSubtype());
@@ -54,31 +68,8 @@ public class ChromeBrowserObject implements BrowserObject {
         return objectId;
     }
 
-    private Object[] fillArgs(String expression, Object[] args) {
-        Object[] fullArgs = new Object[args.length + 2];
-        fullArgs[0] = this;
-        fullArgs[1] = expression;
-        System.arraycopy(args, 0, fullArgs, 2, args.length);
-        return fullArgs;
-    }
-
     @Override
-    public <R> R evaluate(String expression, Class<R> clazz, Object... args) throws Exception {
-        return executionContext.evaluate(ScriptConstants.BROWSER_OBJECT_EVALUATE, clazz, fillArgs(expression, args));
-    }
-
-    @Override
-    public <R> R evaluate(String expression, TypeReference<R> type, Object... args) throws Exception {
-        return executionContext.evaluate(ScriptConstants.BROWSER_OBJECT_EVALUATE, type, fillArgs(expression, args));
-    }
-
-    @Override
-    public ChromeBrowserObject evaluate(String expression, Object... args) throws Exception {
-        return executionContext.evaluate(ScriptConstants.BROWSER_OBJECT_EVALUATE, fillArgs(expression, args));
-    }
-
-    @Override
-    public ChromeExecutionContext executionContext() {
+    public ExecutionContext executionContext() {
         return executionContext;
     }
 
@@ -102,11 +93,23 @@ public class ChromeBrowserObject implements BrowserObject {
     }
 
     @Override
+    public <R> R call(String declaration, Class<R> clazz, Object... args) throws Exception {
+        return execution.call(declaration, clazz, args);
+    }
+
+    @Override
+    public <R> R call(String declaration, TypeReference<R> type, Object... args) throws Exception {
+        return execution.call(declaration, type, args);
+    }
+
+    @Override
+    public ChromeBrowserObject call(String declaration, Object... args) throws Exception {
+        return execution.call(declaration, args);
+    }
+
+    @Override
     public ChromeBrowserObject getProperty(String name) throws Exception {
-        return executionContext.evaluate(
-                "function(object, prop){return object[prop];}",
-                this, name
-                );
+        return call("function(name){return this[name]}", name);
     }
 
     @Override

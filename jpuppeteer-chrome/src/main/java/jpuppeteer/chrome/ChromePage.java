@@ -22,6 +22,8 @@ import jpuppeteer.cdp.cdp.constant.input.DispatchMouseEventRequestPointerType;
 import jpuppeteer.cdp.cdp.constant.input.DispatchMouseEventRequestType;
 import jpuppeteer.cdp.cdp.constant.input.DispatchTouchEventRequestType;
 import jpuppeteer.cdp.cdp.constant.page.SetTouchEmulationEnabledRequestConfiguration;
+import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
+import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
 import jpuppeteer.cdp.cdp.domain.Runtime;
 import jpuppeteer.cdp.cdp.domain.*;
 import jpuppeteer.cdp.cdp.entity.emulation.SetDeviceMetricsOverrideRequest;
@@ -43,11 +45,13 @@ import jpuppeteer.cdp.cdp.entity.network.Request;
 import jpuppeteer.cdp.cdp.entity.network.*;
 import jpuppeteer.cdp.cdp.entity.page.SetTouchEmulationEnabledRequest;
 import jpuppeteer.cdp.cdp.entity.page.*;
+import jpuppeteer.cdp.cdp.entity.runtime.EvaluateRequest;
 import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextCreatedEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
 import jpuppeteer.chrome.event.context.TargetDestroyed;
 import jpuppeteer.chrome.event.page.*;
+import jpuppeteer.chrome.util.ChromeObjectUtils;
 import jpuppeteer.chrome.util.CookieUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -407,6 +411,41 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
 
     protected TargetInfo targetInfo() {
         return targetInfo;
+    }
+
+    @Override
+    protected void intercept(EvaluateRequest request) {
+        request.setContextId(executionContextId);
+    }
+
+    @Override
+    public ChromeElement querySelector(String selector) throws Exception {
+        selector = selector.replace("'", "\\'");
+        ChromeBrowserObject object = eval("document.querySelector('" + selector + "')");
+        if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
+            return null;
+        }
+        return new ChromeElement(this, object);
+    }
+
+    @Override
+    public List<ChromeElement> querySelectorAll(String selector) throws Exception {
+        selector = selector.replace("'", "\\'");
+        ChromeBrowserObject browserObject = eval("document.querySelectorAll('" + selector + "')");
+        List<ChromeBrowserObject> properties = browserObject.getProperties();
+        List<ChromeElement> elements = properties.stream().map(object -> new ChromeElement(this, object)).collect(Collectors.toList());
+        ChromeObjectUtils.releaseObjectQuietly(runtime, browserObject.objectId);
+        return elements;
+    }
+
+    @Override
+    public String title() throws Exception {
+        return eval("document.title").toStringValue();
+    }
+
+    @Override
+    public String content() throws Exception {
+        return eval("document.documentElement.outerHTML").toStringValue();
     }
 
     @Override
