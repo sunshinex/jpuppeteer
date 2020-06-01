@@ -171,7 +171,7 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
             asyncAttachToTarget(targetId);
             targetMap.put(targetId, context);
             context.emit(new TargetCreated(context, event));
-            logger.debug("target created, auto do attach, targetId={}");
+            logger.debug("target created, auto do attach, targetId={}", targetId);
         }
     }
 
@@ -227,12 +227,10 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
         TargetCrashedEvent evt = event.getObject(TargetCrashedEvent.class);
         String targetId = evt.getTargetId();
         ChromeContext context = targetMap.get(targetId);
-        if (context == null) {
-            //logger.error("target crashed failed, context not found, targetId={}", targetId);
-            return;
+        if (context != null) {
+            context.emit(new TargetCrashed(context, event));
+            logger.error("target crashed, targetId={}", targetId);
         }
-        context.emit(new TargetCrashed(context, event));
-        logger.error("target crashed, targetId={}", targetId);
     }
 
     private String nextContextName() {
@@ -270,34 +268,8 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
         return response.getSessionId();
     }
 
-    protected Future<String> asyncAttachToTarget(String targetId) {
-        Future<AttachToTargetResponse> future = target.asyncAttachToTarget(buildAttachToTargetRequest(targetId));
-        return new Future<String>() {
-            @Override
-            public boolean cancel(boolean mayInterruptIfRunning) {
-                return future.cancel(mayInterruptIfRunning);
-            }
-
-            @Override
-            public boolean isCancelled() {
-                return future.isCancelled();
-            }
-
-            @Override
-            public boolean isDone() {
-                return future.isDone();
-            }
-
-            @Override
-            public String get() throws InterruptedException, ExecutionException {
-                return future.get().getSessionId();
-            }
-
-            @Override
-            public String get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-                return future.get(timeout, unit).getSessionId();
-            }
-        };
+    protected Future<AttachToTargetResponse> asyncAttachToTarget(String targetId) {
+        return target.asyncAttachToTarget(buildAttachToTargetRequest(targetId));
     }
 
     protected boolean closeTarget(String targetId) throws Exception {
