@@ -166,15 +166,13 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
         String targetId = targetInfo.getTargetId();
         String contextId = targetInfo.getBrowserContextId();
         ChromeContext context = contextMap.get(contextId);
-        if (context == null) {
-            //logger.error("target created failed: context not found, targetId={}, contextId={}", targetId, contextId);
-            return;
+        if (context != null) {
+            //自动执行attach操作
+            asyncAttachToTarget(targetId);
+            targetMap.put(targetId, context);
+            context.emit(new TargetCreated(context, event));
+            logger.debug("target created, auto do attach, targetId={}");
         }
-        //自动执行attach操作
-        asyncAttachToTarget(targetId);
-        targetMap.put(targetId, context);
-        context.emit(new TargetCreated(context, event));
-        logger.debug("target created, auto do attach, targetId={}");
     }
 
     private void handleTargetAttached(CDPEvent event) {
@@ -183,29 +181,31 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
         String targetId = target.getTargetId();
         String contextId = target.getBrowserContextId();
         ChromeContext context = contextMap.get(contextId);
-        if (context == null) {
-            //logger.error("target attached failed, context not found, targetId={}, contextId={}", targetId, contextId);
-            return;
+        if (context != null) {
+            String sessionId = evt.getSessionId();
+            sessionMap.put(sessionId, context);
+            context.emit(new TargetAttached(context, event));
+            logger.debug("target attached, targetId={}", targetId);
         }
-        String sessionId = evt.getSessionId();
-        sessionMap.put(sessionId, context);
-        context.emit(new TargetAttached(context, event));
-        logger.debug("target attached, targetId={}", targetId);
     }
 
     private void handleTargetDestroyed(CDPEvent event) {
         TargetDestroyedEvent evt = event.getObject(TargetDestroyedEvent.class);
         String targetId = evt.getTargetId();
-        ChromeContext context = targetMap.get(targetId);
-        if (context == null) {
-            //此处有可能不是page类型的target, 但是无法作出判断, 先忽略错误日志的输出
-            //logger.error("target destroyed failed, context not found, targetId={}", targetId);
-            return;
+        ChromeContext context = targetMap.remove(targetId);
+        if (context != null) {
+            try {
+                for (ChromePage page : context.pages()) {
+                    if (targetId.equals(page.targetInfo().getTargetId())) {
+                        sessionMap.remove(page.sessionId());
+                    }
+                }
+            } catch (Exception e) {
+                //do nth...
+            }
+            context.emit(new TargetDestroyed(context, event));
+            logger.debug("target destoryed, targetId={}", targetId);
         }
-        targetMap.remove(targetId);
-        //@TODO 此处没有从sessionMap中移除, 等gc的时候清除
-        context.emit(new TargetDestroyed(context, event));
-        logger.debug("target destoryed, targetId={}", targetId);
     }
 
     private void handleTargetChanged(CDPEvent event) {
@@ -218,11 +218,9 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
             return;
         }
         ChromeContext context = targetMap.get(targetId);
-        if (context == null) {
-            //logger.error("target info changed failed, context not found, targetId={}", targetId);
-            return;
+        if (context != null) {
+            context.emit(new TargetChanged(context, event));
         }
-        context.emit(new TargetChanged(context, event));
     }
 
     private void handleTargetCrashed(CDPEvent event) {

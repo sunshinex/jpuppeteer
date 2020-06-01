@@ -260,7 +260,7 @@ public class ChromeContext extends AbstractEventEmitter<ContextEvent> implements
     private void handleTargetDestroyed(String targetId) {
         ChromePage pg = targetMap.remove(targetId);
         if (pg != null) {
-            //@TODO 此处没有从sessionMap中删除, sessionMap为value弱引用, 理论来说下一次垃圾回收的时候是会被干掉的
+            sessionMap.remove(pg.sessionId());
             logger.debug("target destroyed, targetId={}", targetId);
         }
     }
