@@ -38,6 +38,15 @@ public interface Frame extends ExecutionContext {
 
     List<? extends Element> querySelectorAll(String selector) throws Exception;
 
+    /**
+     * 如果返回的对象是node类型的话，会转为Element返回
+     * @param expression
+     * @param timeout
+     * @param unit
+     * @param args
+     * @return
+     * @throws Exception
+     */
     BrowserObject wait(String expression, int timeout, TimeUnit unit, Object... args) throws Exception;
 
     <R> R wait(String expression, int timeout, TimeUnit unit, Class<R> clazz, Object... args) throws Exception;
@@ -47,10 +56,6 @@ public interface Frame extends ExecutionContext {
     Element waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
 
     Coordinate scroll(int x, int y) throws Exception;
-
-    Element evalx(String expression) throws Exception;
-
-    Element callx(String declaration, Object... args) throws Exception;
 
 }
 

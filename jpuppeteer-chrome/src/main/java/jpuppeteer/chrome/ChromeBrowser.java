@@ -1,6 +1,5 @@
 package jpuppeteer.chrome;
 
-import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import jpuppeteer.api.browser.Browser;
 import jpuppeteer.api.constant.PermissionType;
@@ -24,9 +23,7 @@ import jpuppeteer.cdp.cdp.entity.storage.GetCookiesResponse;
 import jpuppeteer.cdp.cdp.entity.storage.SetCookiesRequest;
 import jpuppeteer.cdp.cdp.entity.target.*;
 import jpuppeteer.cdp.constant.TargetType;
-import jpuppeteer.chrome.event.context.ContextCDPEvent;
-import jpuppeteer.chrome.event.context.TargetAttached;
-import jpuppeteer.chrome.event.context.TargetCreated;
+import jpuppeteer.chrome.event.context.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,10 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URI;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -92,11 +86,10 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
         this.target = new Target(connection);
         this.storage = new Storage(connection);
         this.defaultContext = new ChromeContext(nextContextName(), this, null);
-        MapMaker mapMaker = new MapMaker().weakValues().concurrencyLevel(16);
-        this.contextMap = mapMaker.makeMap();
+        this.contextMap = new ConcurrentHashMap<>();
         this.contextMap.put(this.defaultContext.defaultPage().targetInfo().getBrowserContextId(), this.defaultContext);
-        this.targetMap = mapMaker.makeMap();
-        this.sessionMap = mapMaker.makeMap();
+        this.targetMap = new ConcurrentHashMap<>();
+        this.sessionMap = new ConcurrentHashMap<>();
 
         //由于在没有启动目标发现之前就有默认的page, 需要手动注册到map
         this.targetMap.put(defaultContext.defaultPage().frameId(), defaultContext);
@@ -211,7 +204,7 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
         }
         targetMap.remove(targetId);
         //@TODO 此处没有从sessionMap中移除, 等gc的时候清除
-        context.emit(new TargetAttached(context, event));
+        context.emit(new TargetDestroyed(context, event));
         logger.debug("target destoryed, targetId={}", targetId);
     }
 
@@ -229,7 +222,7 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
             //logger.error("target info changed failed, context not found, targetId={}", targetId);
             return;
         }
-        context.emit(new TargetAttached(context, event));
+        context.emit(new TargetChanged(context, event));
     }
 
     private void handleTargetCrashed(CDPEvent event) {
@@ -240,7 +233,7 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
             //logger.error("target crashed failed, context not found, targetId={}", targetId);
             return;
         }
-        context.emit(new TargetAttached(context, event));
+        context.emit(new TargetCrashed(context, event));
         logger.error("target crashed, targetId={}", targetId);
     }
 

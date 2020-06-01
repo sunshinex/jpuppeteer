@@ -7,7 +7,6 @@ import com.google.common.collect.MapMaker;
 import com.google.common.util.concurrent.SettableFuture;
 import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.api.event.AbstractListener;
-import jpuppeteer.api.eventx.DefaultEventEmitter;
 import jpuppeteer.cdp.cdp.CDPEventType;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;

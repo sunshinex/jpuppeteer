@@ -56,6 +56,16 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
     }
 
     @Override
+    public ChromeBrowserObject call(String declaration, Object... args) throws Exception {
+        ChromeBrowserObject object = super.call(declaration, args);
+        if (RemoteObjectSubtype.NODE.equals(object.subType)) {
+            return new ChromeElement(frame, object);
+        } else {
+            return object;
+        }
+    }
+
+    @Override
     public ChromeElement querySelector(String selector) throws Exception {
         ChromeBrowserObject object = call("function(selector){return this.querySelector(selector);}", selector);
         if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
@@ -253,7 +263,7 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public void select(String... values) throws Exception {
-        call(ScriptConstants.ELEMENT_SELECT, values);
+        call(ScriptConstants.ELEMENT_SELECT, (Object[]) values);
     }
 
     @Override

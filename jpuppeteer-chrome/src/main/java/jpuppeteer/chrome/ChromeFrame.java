@@ -245,6 +245,26 @@ public class ChromeFrame extends AbstractExecution implements Frame {
     }
 
     @Override
+    public ChromeBrowserObject eval(String expression) throws Exception {
+        ChromeBrowserObject object = super.eval(expression);
+        if (RemoteObjectSubtype.NODE.equals(object.subType)) {
+            return new ChromeElement(this, object);
+        } else {
+            return object;
+        }
+    }
+
+    @Override
+    public ChromeBrowserObject call(String declaration, Object... args) throws Exception {
+        ChromeBrowserObject object = super.call(declaration, args);
+        if (RemoteObjectSubtype.NODE.equals(object.subType)) {
+            return new ChromeElement(this, object);
+        } else {
+            return object;
+        }
+    }
+
+    @Override
     public ChromeBrowserObject wait(String expression, int timeout, TimeUnit unit, Object... args) throws Exception {
         Object[] callArgs = buildWaitArgs(expression, timeout, unit, args);
         return call(ScriptConstants.WAIT, callArgs);
@@ -268,49 +288,13 @@ public class ChromeFrame extends AbstractExecution implements Frame {
         if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
             return null;
         }
-        return new ChromeElement(this, toDomObject(this, object.object));
-    }
-
-    @Override
-    public Element evalx(String expression) throws Exception {
-        ChromeBrowserObject object = eval(expression);
-        if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
-            return null;
-        }
-        return new ChromeElement(this, toDomObject(this, object.object));
-    }
-
-    @Override
-    public Element callx(String declaration, Object... args) throws Exception {
-        ChromeBrowserObject object = call(declaration, args);
-        if (RemoteObjectType.UNDEFINED.equals(object.type) || RemoteObjectSubtype.NULL.equals(object.subType)) {
-            return null;
-        }
-        return new ChromeElement(this, toDomObject(this, object.object));
+        return new ChromeElement(this, object);
     }
 
     @Override
     public Coordinate scroll(int x, int y) throws Exception {
         JSONObject offset = call(ScriptConstants.SCROLL, JSONObject.class, null, x, y);
         return new Coordinate(offset.getDouble("scrollX"), offset.getDouble("scrollY"));
-    }
-
-    public static RemoteObject toDomObject(ChromeFrame frame, RemoteObject object) {
-        RemoteObject remoteObject = object;
-        try {
-            DescribeNodeRequest describeRequest = new DescribeNodeRequest();
-            describeRequest.setObjectId(object.getObjectId());
-            DescribeNodeResponse describeResponse = frame.dom.describeNode(describeRequest, DEFAULT_TIMEOUT);
-            ResolveNodeRequest resolveRequest = new ResolveNodeRequest();
-            resolveRequest.setBackendNodeId(describeResponse.getNode().getBackendNodeId());
-            resolveRequest.setExecutionContextId(frame.executionContextId);
-            ResolveNodeResponse resolveResponse = frame.dom.resolveNode(resolveRequest, DEFAULT_TIMEOUT);
-            ChromeObjectUtils.releaseObjectQuietly(frame.runtime, object.getObjectId());
-            remoteObject = resolveResponse.getObject();
-        } catch (Exception e) {
-            logger.warn("script object to dom element error, error={}", e.getMessage(), e);
-        }
-        return remoteObject;
     }
 
 }

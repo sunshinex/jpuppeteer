@@ -115,6 +115,6 @@ public abstract class AbstractExecution implements ExecutionContext {
 
     @Override
     public ChromeBrowserObject call(String declaration, Object... args) throws Exception {
-        return call0(declaration, false);
+        return call0(declaration, false, args);
     }
 }

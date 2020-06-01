@@ -1,6 +1,5 @@
 package jpuppeteer.chrome;
 
-import com.google.common.collect.MapMaker;
 import com.google.common.util.concurrent.SettableFuture;
 import jpuppeteer.api.browser.BrowserContext;
 import jpuppeteer.api.browser.Cookie;
@@ -72,9 +71,8 @@ public class ChromeContext extends AbstractEventEmitter<ContextEvent> implements
         this.pageCounter = new AtomicInteger(0);
         this.browser = browser;
         this.browserContextId = browserContextId;
-        MapMaker mapMaker = new MapMaker().weakValues().concurrencyLevel(16);
-        this.targetMap = mapMaker.makeMap();
-        this.sessionMap = mapMaker.makeMap();
+        this.targetMap = new ConcurrentHashMap<>();
+        this.sessionMap = new ConcurrentHashMap<>();
         this.futureMap = new ConcurrentHashMap<>();
         this.createDefaultPage();
 
@@ -355,6 +353,17 @@ public class ChromeContext extends AbstractEventEmitter<ContextEvent> implements
         TargetType targetType = TargetType.findByValue(targetInfo.getType());
         String sessionId = browser.attachToTarget(targetInfo.getTargetId());
         ChromePage page = new ChromePage(nextPageName(), this, browser.createSession(targetType, sessionId), targetInfo, null);
+        page.addListener(new AbstractListener<PageCrashed>() {
+            @Override
+            public void accept(PageCrashed pageCrashed) {
+                //当页面崩溃的时候自动刷新页面, 避免因为页面崩溃cdp无法通信的情况
+                try {
+                    page.reload();
+                } catch (Exception e) {
+                    logger.error("default page crashed and reload failed, error={}", e.getMessage(), e);
+                }
+            }
+        });
         targetMap.put(targetInfo.getTargetId(), page);
         sessionMap.put(sessionId, page);
         this.defaultPage = page;
