@@ -99,7 +99,6 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
 
         //事件
         bindEventHandler(event -> handleTargetCreated(event), TARGET_TARGETCREATED);
-        bindEventHandler(event -> handleTargetCreated(event), TARGET_TARGETCREATED);
         bindEventHandler(event -> handleTargetAttached(event), TARGET_ATTACHEDTOTARGET);
         bindEventHandler(event -> handleTargetDestroyed(event), TARGET_TARGETDESTROYED);
         bindEventHandler(event -> handleTargetChanged(event), TARGET_TARGETINFOCHANGED);
