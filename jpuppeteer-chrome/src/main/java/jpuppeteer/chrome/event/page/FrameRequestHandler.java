@@ -228,10 +228,15 @@ public class FrameRequestHandler extends FrameEvent implements RequestHandler {
         private volatile byte[] content;
 
         InterceptedResponse() {
-            this.headers = new ArrayList<>();
+            Map<String, Header> headerMap = new HashMap<>();
             for(HeaderEntry he : event.getResponseHeaders()) {
-                this.headers.add(new Header(he.getName(), he.getValue()));
+                String name = he.getName().toLowerCase();
+                if (!headerMap.containsKey(name)) {
+                    headerMap.put(name, new Header(he.getName(), he.getValue()));
+                }
+                headerMap.get(name).add(he.getValue());
             }
+            this.headers = new ArrayList<>(headerMap.values());
             this.content = null;
         }
 

@@ -61,14 +61,16 @@ public class ChromeTest {
 //                System.out.println(crashEvent.error());
 //            }
 //        });
-        page.enableRequestInterception(false, RequestStage.RESPONSE, (request) -> {
+        page.enableResponseInterception(request -> {
             try {
+                System.out.println(request.headers());
+                System.out.println("----------------------------------");
                 request.continues();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, "*");
-        page.navigate("https://goods.kaola.com/product/8203697.html");
+        });
+        page.navigate("http://www.baidu.com/");
         TimeUnit.DAYS.sleep(1);
     }
 
