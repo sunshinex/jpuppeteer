@@ -3,6 +3,7 @@ package jpuppeteer.chrome;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import jpuppeteer.api.browser.Frame;
+import jpuppeteer.api.constant.RequestStage;
 import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.cdp.constant.PageLifecyclePhase;
 import jpuppeteer.chrome.event.page.FrameLifecycle;
@@ -40,26 +41,33 @@ public class ChromeTest {
     @Test
     public void testInterceptor() throws Exception {
         ChromePage page = browser.defaultContext().newPage();
-        page.addListener(new AbstractListener<FrameLifecycle>() {
-            @Override
-            public void accept(FrameLifecycle frameLifecycle) {
-                PageLifecyclePhase phase = frameLifecycle.phase();
-                Frame frame = frameLifecycle.frame();
-                try {
-                    if (frame.url() != null && frame.url().getPath().equals("/mini_login.htm") && PageLifecyclePhase.LOAD.equals(phase)) {
-                        System.out.println(frame.querySelector("#fm-sms-login-id"));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//        page.addListener(new AbstractListener<FrameLifecycle>() {
+//            @Override
+//            public void accept(FrameLifecycle frameLifecycle) {
+//                PageLifecyclePhase phase = frameLifecycle.phase();
+//                Frame frame = frameLifecycle.frame();
+//                try {
+//                    if (frame.url() != null && frame.url().getPath().equals("/mini_login.htm") && PageLifecyclePhase.LOAD.equals(phase)) {
+//                        System.out.println(frame.querySelector("#fm-sms-login-id"));
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//        page.addListener(new AbstractListener<PageCrashed>() {
+//            @Override
+//            public void accept(PageCrashed crashEvent) {
+//                System.out.println(crashEvent.error());
+//            }
+//        });
+        page.enableRequestInterception(false, RequestStage.RESPONSE, (request) -> {
+            try {
+                request.continues();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
-        page.addListener(new AbstractListener<PageCrashed>() {
-            @Override
-            public void accept(PageCrashed crashEvent) {
-                System.out.println(crashEvent.error());
-            }
-        });
+        }, "*");
         page.navigate("https://goods.kaola.com/product/8203697.html");
         TimeUnit.DAYS.sleep(1);
     }

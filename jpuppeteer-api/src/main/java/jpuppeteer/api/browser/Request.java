@@ -15,7 +15,7 @@ public interface Request {
 
     String method();
 
-    String content();
+    String content() throws Exception;
 
     ResourceType resourceType();
 

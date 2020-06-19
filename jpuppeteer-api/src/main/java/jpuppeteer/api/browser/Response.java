@@ -23,7 +23,7 @@ public interface Response {
 
     String statusText();
 
-    byte[] content();
+    byte[] content() throws Exception;
 
     String url();
 

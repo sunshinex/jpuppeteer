@@ -6,10 +6,7 @@ import com.google.common.util.concurrent.SettableFuture;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.browser.Page;
 import jpuppeteer.api.browser.*;
-import jpuppeteer.api.constant.MediaType;
-import jpuppeteer.api.constant.MouseDefinition;
-import jpuppeteer.api.constant.ResourceType;
-import jpuppeteer.api.constant.USKeyboardDefinition;
+import jpuppeteer.api.constant.*;
 import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.api.event.EventEmitter;
@@ -53,6 +50,7 @@ import jpuppeteer.chrome.event.context.TargetDestroyed;
 import jpuppeteer.chrome.event.page.*;
 import jpuppeteer.chrome.util.ChromeObjectUtils;
 import jpuppeteer.chrome.util.CookieUtils;
+import jpuppeteer.chrome.util.HttpUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -73,8 +71,6 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
     private static final Logger logger = LoggerFactory.getLogger(ChromePage.class);
 
     private static final List<TouchPoint> EMPTY_TOUCHPOINTS = Lists.newArrayListWithCapacity(0);
-
-    private static final Pattern PATTERN_CHARSET = Pattern.compile("charset=(.+)$", Pattern.CASE_INSENSITIVE);
 
     private final ExecutorService executors;
 
@@ -290,7 +286,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
             return;
         }
 
-        interceptor.accept(new FrameRequestHandler(this, fetch, request, interceptorId));
+        interceptor.accept(new FrameRequestHandler(this, fetch, request, event));
     }
 
     protected FrameResponse handleResponse(ResponseReceivedEvent event) {
@@ -383,25 +379,10 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
     }
 
     public byte[] getResponseContent(String requestId, List<Header> headers) throws Exception {
-        byte[] content;
         GetResponseBodyRequest req = new GetResponseBodyRequest();
         req.setRequestId(requestId);
         GetResponseBodyResponse response = network.getResponseBody(req, DEFAULT_TIMEOUT);
-        if (Boolean.TRUE.equals(response.getBase64Encoded())) {
-            content = Base64.getDecoder().decode(response.getBody());
-        } else {
-            Charset contentEncoding = Charsets.UTF_8;
-            for (Header header : headers) {
-                if ("content-type".equalsIgnoreCase(header.getName())) {
-                    Matcher matcher = PATTERN_CHARSET.matcher(header.getValue());
-                    if (matcher.find(1)) {
-                        contentEncoding = Charset.forName(matcher.group(1));
-                    }
-                }
-            }
-            content = response.getBody().getBytes(contentEncoding);
-        }
-        return content;
+        return HttpUtils.parseContent(response.getBody(), response.getBase64Encoded(), headers);
     }
 
     protected FrameTree getFrameTree() throws Exception {
@@ -488,7 +469,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
     }
 
     @Override
-    public void enableRequestInterception(boolean handleAuthRequest, Consumer<RequestHandler> interceptor, String... urlPatterns) throws Exception {
+    public void enableRequestInterception(boolean handleAuthRequest, RequestStage stage, Consumer<RequestHandler> interceptor, String... urlPatterns) throws Exception {
         EnableRequest request = new EnableRequest();
         List<RequestPattern> ptns = new ArrayList<>(urlPatterns.length);
         for(String p : urlPatterns) {
@@ -497,6 +478,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
             }
             RequestPattern ptn = new RequestPattern();
             ptn.setUrlPattern(p);
+            ptn.setRequestStage(stage.getValue());
             ptns.add(ptn);
         }
         request.setPatterns(ptns);

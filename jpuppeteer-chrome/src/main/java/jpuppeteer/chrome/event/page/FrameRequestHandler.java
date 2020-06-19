@@ -5,12 +5,10 @@ import jpuppeteer.api.browser.*;
 import jpuppeteer.api.constant.ResourceType;
 import jpuppeteer.cdp.cdp.constant.network.ErrorReason;
 import jpuppeteer.cdp.cdp.domain.Fetch;
-import jpuppeteer.cdp.cdp.entity.fetch.ContinueRequestRequest;
-import jpuppeteer.cdp.cdp.entity.fetch.FailRequestRequest;
-import jpuppeteer.cdp.cdp.entity.fetch.FulfillRequestRequest;
-import jpuppeteer.cdp.cdp.entity.fetch.HeaderEntry;
+import jpuppeteer.cdp.cdp.entity.fetch.*;
 import jpuppeteer.chrome.ChromeFrame;
 import jpuppeteer.chrome.ChromePage;
+import jpuppeteer.chrome.util.HttpUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -100,11 +98,21 @@ public class FrameRequestHandler extends FrameEvent implements RequestHandler {
 
     private final String interceptorId;
 
-    public FrameRequestHandler(ChromePage page, Fetch fetch, FrameRequest request, String interceptorId) {
+    private final RequestPausedEvent event;
+
+    private final Response response;
+
+    public FrameRequestHandler(ChromePage page, Fetch fetch, FrameRequest request, RequestPausedEvent event) {
         super(page, request.frame());
         this.fetch = fetch;
         this.request = request;
-        this.interceptorId = interceptorId;
+        this.interceptorId = event.getRequestId();
+        this.event = event;
+        if (event.getResponseStatusCode() != null && event.getResponseStatusCode() > 0) {
+            this.response = new InterceptedResponse();
+        } else {
+            this.response = null;
+        }
     }
 
     @Override
@@ -123,7 +131,7 @@ public class FrameRequestHandler extends FrameEvent implements RequestHandler {
     }
 
     @Override
-    public String content() {
+    public String content() throws Exception {
         return request.content();
     }
 
@@ -134,7 +142,7 @@ public class FrameRequestHandler extends FrameEvent implements RequestHandler {
 
     @Override
     public Response response() {
-        return request.response();
+        return response;
     }
 
     @Override
@@ -151,12 +159,12 @@ public class FrameRequestHandler extends FrameEvent implements RequestHandler {
     }
 
     @Override
-    public void continues(jpuppeteer.api.browser.Request request) throws Exception {
+    public void continues(Request request) throws Exception {
         ContinueRequestRequest req = new ContinueRequestRequest();
         req.setRequestId(interceptorId);
         if (request != null) {
             if (request.url() != null) {
-                req.setUrl(request.url().toString());
+                req.setUrl(request.url());
             }
             if (request.method() != null) {
                 req.setMethod(request.method());
@@ -211,5 +219,80 @@ public class FrameRequestHandler extends FrameEvent implements RequestHandler {
             request.getResponseHeaders().add(entry);
         }
         fetch.fulfillRequest(request, DEFAULT_TIMEOUT);
+    }
+
+    class InterceptedResponse implements Response {
+
+        private List<Header> headers;
+
+        private volatile byte[] content;
+
+        InterceptedResponse() {
+            this.headers = new ArrayList<>();
+            for(HeaderEntry he : event.getResponseHeaders()) {
+                this.headers.add(new Header(he.getName(), he.getValue()));
+            }
+            this.content = null;
+        }
+
+        @Override
+        public Frame frame() {
+            return request.frame();
+        }
+
+        @Override
+        public boolean fromCache() {
+            return false;
+        }
+
+        @Override
+        public List<Header> headers() {
+            return headers;
+        }
+
+        @Override
+        public String remoteAddress() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return request;
+        }
+
+        @Override
+        public SecurityDetails securityDetails() {
+            return null;
+        }
+
+        @Override
+        public int status() {
+            return event.getResponseStatusCode();
+        }
+
+        @Override
+        public String statusText() {
+            return STATUS_TEXT.get(status());
+        }
+
+        @Override
+        public byte[] content() throws Exception {
+            if (content == null) {
+                synchronized (this) {
+                    if (content == null) {
+                        GetResponseBodyRequest req = new GetResponseBodyRequest();
+                        req.setRequestId(interceptorId);
+                        GetResponseBodyResponse resp = fetch.getResponseBody(req, DEFAULT_TIMEOUT);
+                        content = HttpUtils.parseContent(resp.getBody(), resp.getBase64Encoded(), headers);
+                    }
+                }
+            }
+            return content;
+        }
+
+        @Override
+        public String url() {
+            return request.url();
+        }
     }
 }

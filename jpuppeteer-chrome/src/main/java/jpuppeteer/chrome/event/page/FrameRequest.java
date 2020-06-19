@@ -73,18 +73,14 @@ public class FrameRequest extends FrameEvent implements Request {
     }
 
     @Override
-    public String content() {
+    public String content() throws Exception {
         if (!hasPostData) {
             return null;
         }
         if (postData == null) {
             synchronized (this) {
                 if (postData == null) {
-                    try {
-                        postData = page().getRequestContent(requestId);
-                    } catch (Exception e) {
-                        logger.error("getRequestPostData failed, error={}", e.getMessage(), e);
-                    }
+                    postData = page().getRequestContent(requestId);
                 }
             }
         }

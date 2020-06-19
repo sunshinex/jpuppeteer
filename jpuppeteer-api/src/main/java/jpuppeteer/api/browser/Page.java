@@ -2,6 +2,7 @@ package jpuppeteer.api.browser;
 
 import jpuppeteer.api.constant.MediaType;
 import jpuppeteer.api.constant.MouseDefinition;
+import jpuppeteer.api.constant.RequestStage;
 import jpuppeteer.api.constant.USKeyboardDefinition;
 
 import java.util.List;
@@ -64,14 +65,14 @@ public interface Page extends Frame {
 
     void setGeolocation(double latitude, double longitude, int accuracy) throws Exception;
 
-    void enableRequestInterception(boolean handleAuthRequest, Consumer<RequestHandler> interceptor, String... urlPatterns) throws Exception;
+    void enableRequestInterception(boolean handleAuthRequest, RequestStage stage, Consumer<RequestHandler> interceptor, String... urlPatterns) throws Exception;
 
     default void enableRequestInterception(Consumer<RequestHandler> interceptor) throws Exception {
-        enableRequestInterception(false, interceptor, "*");
+        enableRequestInterception(false, RequestStage.REQUEST, interceptor, "*");
     }
 
     default void enableRequestInterception(Consumer<RequestHandler> interceptor, String... urlPatterns) throws Exception {
-        enableRequestInterception(false, interceptor, urlPatterns);
+        enableRequestInterception(false, RequestStage.REQUEST, interceptor, urlPatterns);
     }
 
     void disableRequestInterception() throws Exception;

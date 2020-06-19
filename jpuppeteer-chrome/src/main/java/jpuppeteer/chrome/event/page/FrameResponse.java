@@ -105,15 +105,11 @@ public class FrameResponse extends FrameEvent implements Response {
     }
 
     @Override
-    public byte[] content() {
+    public byte[] content() throws Exception {
         if (content == null) {
             synchronized (this) {
                 if (content == null) {
-                    try {
-                        content = page().getResponseContent(requestId, headers);
-                    } catch (Exception e) {
-                        logger.error("getResponseBody error, requestId={}, url={}, error={}", requestId, url, e.getMessage(), e);
-                    }
+                    content = page().getResponseContent(requestId, headers);
                 }
             }
         }
