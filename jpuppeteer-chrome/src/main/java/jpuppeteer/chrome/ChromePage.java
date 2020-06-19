@@ -449,7 +449,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
         this.username = username;
         this.password = password;
         if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-            enableRequestInterception(interceptor);
+            enableRequestInterception(true, RequestStage.REQUEST, interceptor, "*");
         }
     }
 
@@ -458,13 +458,13 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
         this.username = username;
         this.password = password;
         if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-            enableRequestInterception(request -> {
+            enableRequestInterception(true, RequestStage.REQUEST, request -> {
                 try {
                     request.continues();
                 } catch (Exception e) {
                     logger.error("continue request failed, url={}, error={}", request.url(), e.getMessage(), e);
                 }
-            });
+            }, "*");
         }
     }
 

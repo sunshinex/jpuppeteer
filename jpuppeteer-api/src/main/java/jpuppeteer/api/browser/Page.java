@@ -75,6 +75,14 @@ public interface Page extends Frame {
         enableRequestInterception(false, RequestStage.REQUEST, interceptor, urlPatterns);
     }
 
+    default void enableResponseInterception(Consumer<RequestHandler> interceptor, String... urlPatterns) throws Exception {
+        enableRequestInterception(false, RequestStage.RESPONSE, interceptor, urlPatterns);
+    }
+
+    default void enableResponseInterception(Consumer<RequestHandler> interceptor) throws Exception {
+        enableRequestInterception(false, RequestStage.RESPONSE, interceptor, "*");
+    }
+
     void disableRequestInterception() throws Exception;
 
     void setUserAgent(UserAgent userAgent) throws Exception;
