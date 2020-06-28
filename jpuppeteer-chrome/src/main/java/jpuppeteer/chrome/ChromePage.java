@@ -1,6 +1,5 @@
 package jpuppeteer.chrome;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.SettableFuture;
 import jpuppeteer.api.browser.Cookie;
@@ -56,12 +55,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
@@ -112,7 +108,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
 
     private TargetInfo targetInfo;
 
-    private volatile Consumer<RequestHandler> interceptor;
+    private volatile Consumer<RequestInterceptor> interceptor;
 
     public ChromePage(String name, ChromeContext browserContext, CDPSession session, TargetInfo targetInfo, ChromePage opener) throws Exception {
         super(
@@ -286,7 +282,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
             return;
         }
 
-        interceptor.accept(new FrameRequestHandler(this, fetch, request, event));
+        interceptor.accept(new FrameRequestInterceptor(this, fetch, request, event));
     }
 
     protected FrameResponse handleResponse(ResponseReceivedEvent event) {
@@ -445,7 +441,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
     }
 
     @Override
-    public void authenticate(String username, String password, Consumer<RequestHandler> interceptor) throws Exception {
+    public void authenticate(String username, String password, Consumer<RequestInterceptor> interceptor) throws Exception {
         this.username = username;
         this.password = password;
         if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
@@ -469,7 +465,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
     }
 
     @Override
-    public void enableRequestInterception(boolean handleAuthRequest, RequestStage stage, Consumer<RequestHandler> interceptor, String... urlPatterns) throws Exception {
+    public void enableRequestInterception(boolean handleAuthRequest, RequestStage stage, Consumer<RequestInterceptor> interceptor, String... urlPatterns) throws Exception {
         EnableRequest request = new EnableRequest();
         List<RequestPattern> ptns = new ArrayList<>(urlPatterns.length);
         for(String p : urlPatterns) {

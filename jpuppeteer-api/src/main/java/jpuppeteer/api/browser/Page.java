@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 public interface Page extends Frame {
 
-    void authenticate(String username, String password, Consumer<RequestHandler> interceptor) throws Exception;
+    void authenticate(String username, String password, Consumer<RequestInterceptor> interceptor) throws Exception;
 
     void authenticate(String username, String password) throws Exception;
 
@@ -65,21 +65,21 @@ public interface Page extends Frame {
 
     void setGeolocation(double latitude, double longitude, int accuracy) throws Exception;
 
-    void enableRequestInterception(boolean handleAuthRequest, RequestStage stage, Consumer<RequestHandler> interceptor, String... urlPatterns) throws Exception;
+    void enableRequestInterception(boolean handleAuthRequest, RequestStage stage, Consumer<? extends Interceptor> interceptor, String... urlPatterns) throws Exception;
 
-    default void enableRequestInterception(Consumer<RequestHandler> interceptor) throws Exception {
+    default void enableRequestInterception(Consumer<RequestInterceptor> interceptor) throws Exception {
         enableRequestInterception(false, RequestStage.REQUEST, interceptor, "*");
     }
 
-    default void enableRequestInterception(Consumer<RequestHandler> interceptor, String... urlPatterns) throws Exception {
+    default void enableRequestInterception(Consumer<RequestInterceptor> interceptor, String... urlPatterns) throws Exception {
         enableRequestInterception(false, RequestStage.REQUEST, interceptor, urlPatterns);
     }
 
-    default void enableResponseInterception(Consumer<RequestHandler> interceptor, String... urlPatterns) throws Exception {
+    default void enableResponseInterception(Consumer<Interceptor> interceptor, String... urlPatterns) throws Exception {
         enableRequestInterception(false, RequestStage.RESPONSE, interceptor, urlPatterns);
     }
 
-    default void enableResponseInterception(Consumer<RequestHandler> interceptor) throws Exception {
+    default void enableResponseInterception(Consumer<Interceptor> interceptor) throws Exception {
         enableRequestInterception(false, RequestStage.RESPONSE, interceptor, "*");
     }
 

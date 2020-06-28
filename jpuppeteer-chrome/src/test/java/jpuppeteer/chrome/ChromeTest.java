@@ -2,14 +2,14 @@ package jpuppeteer.chrome;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.Frame;
+import jpuppeteer.api.browser.Header;
+import jpuppeteer.api.browser.Request;
 import jpuppeteer.api.constant.RequestStage;
 import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.cdp.constant.PageLifecyclePhase;
-import jpuppeteer.chrome.event.page.FrameLifecycle;
-import jpuppeteer.chrome.event.page.FrameResponse;
-import jpuppeteer.chrome.event.page.PageCrashed;
-import jpuppeteer.chrome.event.page.PageEvent;
+import jpuppeteer.chrome.event.page.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.misc.Unsafe;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ChromeTest {
@@ -61,11 +62,11 @@ public class ChromeTest {
 //                System.out.println(crashEvent.error());
 //            }
 //        });
-        page.enableResponseInterception(request -> {
+        page.enableRequestInterception(request -> {
             try {
                 System.out.println(request.headers());
                 System.out.println("----------------------------------");
-                request.continues();
+                request.response();
             } catch (Exception e) {
                 e.printStackTrace();
             }

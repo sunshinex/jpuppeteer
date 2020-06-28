@@ -6,7 +6,6 @@ import jpuppeteer.api.constant.ResourceType;
 import jpuppeteer.cdp.cdp.constant.network.ErrorReason;
 import jpuppeteer.cdp.cdp.domain.Fetch;
 import jpuppeteer.cdp.cdp.entity.fetch.*;
-import jpuppeteer.chrome.ChromeFrame;
 import jpuppeteer.chrome.ChromePage;
 import jpuppeteer.chrome.util.HttpUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -19,9 +18,9 @@ import java.util.*;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
-public class FrameRequestHandler extends FrameEvent implements RequestHandler {
+public class FrameRequestInterceptor extends FrameEvent implements RequestInterceptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(FrameRequestHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(FrameRequestInterceptor.class);
 
     private static final Map<Integer, String> STATUS_TEXT;
 
@@ -102,7 +101,7 @@ public class FrameRequestHandler extends FrameEvent implements RequestHandler {
 
     private final Response response;
 
-    public FrameRequestHandler(ChromePage page, Fetch fetch, FrameRequest request, RequestPausedEvent event) {
+    public FrameRequestInterceptor(ChromePage page, Fetch fetch, FrameRequest request, RequestPausedEvent event) {
         super(page, request.frame());
         this.fetch = fetch;
         this.request = request;
@@ -159,29 +158,27 @@ public class FrameRequestHandler extends FrameEvent implements RequestHandler {
     }
 
     @Override
-    public void continues(Request request) throws Exception {
+    public void continues(String method, String url, List<Header> headers, String body) throws Exception {
         ContinueRequestRequest req = new ContinueRequestRequest();
         req.setRequestId(interceptorId);
-        if (request != null) {
-            if (request.url() != null) {
-                req.setUrl(request.url());
+        if (method != null) {
+            req.setMethod(method);
+        }
+        if (url != null) {
+            req.setUrl(url);
+        }
+        if (body != null) {
+            req.setPostData(body);
+        }
+        if (CollectionUtils.isNotEmpty(headers)) {
+            List<HeaderEntry> entries = new ArrayList<>();
+            for (Header header : headers) {
+                HeaderEntry entry = new HeaderEntry();
+                entry.setName(header.getName());
+                entry.setValue(StringUtils.join(header.getValues(), System.lineSeparator()));
+                entries.add(entry);
             }
-            if (request.method() != null) {
-                req.setMethod(request.method());
-            }
-            if (request.content() != null) {
-                req.setPostData(request.content());
-            }
-            if (CollectionUtils.isNotEmpty(request.headers())) {
-                List<HeaderEntry> entries = new ArrayList<>();
-                for (Header header : request.headers()) {
-                    HeaderEntry entry = new HeaderEntry();
-                    entry.setName(header.getName());
-                    entry.setValue(StringUtils.join(header.getValues(), System.lineSeparator()));
-                    entries.add(entry);
-                }
-                req.setHeaders(entries);
-            }
+            req.setHeaders(entries);
         }
         fetch.continueRequest(req, DEFAULT_TIMEOUT);
     }
@@ -196,6 +193,7 @@ public class FrameRequestHandler extends FrameEvent implements RequestHandler {
         request.setResponseCode(statusCode);
         request.setResponsePhrase(STATUS_TEXT.get(statusCode));
         Charset encoding = Charsets.UTF_8;
+        boolean contentTypeDefined = false;
         if (CollectionUtils.isNotEmpty(headers)) {
             List<HeaderEntry> entries = new ArrayList<>(headers.size());
             for(Header header : headers) {
@@ -203,20 +201,35 @@ public class FrameRequestHandler extends FrameEvent implements RequestHandler {
                 entry.setName(header.getName());
                 entry.setValue(StringUtils.join(header.getValues(), System.lineSeparator()));
                 entries.add(entry);
+                if ("content-type".equalsIgnoreCase(header.getName())) {
+                    contentTypeDefined = true;
+                }
             }
             request.setResponseHeaders(entries);
         }
+        String encodedBody;
+        int length;
         if (body != null) {
             byte[] encodedBodyBytes = Base64.getEncoder().encode(body);
-            String encodedBody = new String(encodedBodyBytes, encoding);
-            request.setBody(encodedBody);
-            if (request.getResponseHeaders() == null) {
-                request.setResponseHeaders(new ArrayList<>(1));
-            }
-            HeaderEntry entry = new HeaderEntry();
-            entry.setName("Content-Length");
-            entry.setValue(String.valueOf(body.length));
-            request.getResponseHeaders().add(entry);
+            length = encodedBodyBytes.length;
+            encodedBody = new String(encodedBodyBytes, encoding);
+        } else {
+            encodedBody = "";
+            length = 0;
+        }
+        request.setBody(encodedBody);
+        if (request.getResponseHeaders() == null) {
+            request.setResponseHeaders(new ArrayList<>(1));
+        }
+        HeaderEntry entry = new HeaderEntry();
+        entry.setName("Content-Length");
+        entry.setValue(String.valueOf(length));
+        request.getResponseHeaders().add(entry);
+        if (!contentTypeDefined) {
+            HeaderEntry contentTypeEntry = new HeaderEntry();
+            contentTypeEntry.setName("Content-Type");
+            contentTypeEntry.setValue("text/plain; charset=" + encoding.name());
+            request.getResponseHeaders().add(contentTypeEntry);
         }
         fetch.fulfillRequest(request, DEFAULT_TIMEOUT);
     }
