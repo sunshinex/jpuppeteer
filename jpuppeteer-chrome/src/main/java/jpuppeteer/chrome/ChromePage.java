@@ -108,7 +108,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
 
     private TargetInfo targetInfo;
 
-    private volatile Consumer<RequestInterceptor> interceptor;
+    private volatile Consumer<Interceptor> interceptor;
 
     public ChromePage(String name, ChromeContext browserContext, CDPSession session, TargetInfo targetInfo, ChromePage opener) throws Exception {
         super(
@@ -464,8 +464,9 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void enableRequestInterception(boolean handleAuthRequest, RequestStage stage, Consumer<RequestInterceptor> interceptor, String... urlPatterns) throws Exception {
+    public <T extends Interceptor> void enableRequestInterception(boolean handleAuthRequest, RequestStage stage, Consumer<T> interceptor, String... urlPatterns) throws Exception {
         EnableRequest request = new EnableRequest();
         List<RequestPattern> ptns = new ArrayList<>(urlPatterns.length);
         for(String p : urlPatterns) {
@@ -481,7 +482,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
         request.setHandleAuthRequests(handleAuthRequest);
         //此处需要添加Fetch.requestPaused事件
         fetch.enable(request, DEFAULT_TIMEOUT);
-        this.interceptor = interceptor;
+        this.interceptor = (Consumer<Interceptor>) interceptor;
     }
 
     @Override

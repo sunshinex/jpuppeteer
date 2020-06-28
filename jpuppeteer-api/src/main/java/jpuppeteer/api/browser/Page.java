@@ -65,7 +65,7 @@ public interface Page extends Frame {
 
     void setGeolocation(double latitude, double longitude, int accuracy) throws Exception;
 
-    void enableRequestInterception(boolean handleAuthRequest, RequestStage stage, Consumer<? extends Interceptor> interceptor, String... urlPatterns) throws Exception;
+    <T extends Interceptor> void enableRequestInterception(boolean handleAuthRequest, RequestStage stage, Consumer<T> interceptor, String... urlPatterns) throws Exception;
 
     default void enableRequestInterception(Consumer<RequestInterceptor> interceptor) throws Exception {
         enableRequestInterception(false, RequestStage.REQUEST, interceptor, "*");

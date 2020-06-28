@@ -62,11 +62,11 @@ public class ChromeTest {
 //                System.out.println(crashEvent.error());
 //            }
 //        });
-        page.enableRequestInterception(request -> {
+        page.enableResponseInterception(request -> {
             try {
                 System.out.println(request.headers());
                 System.out.println("----------------------------------");
-                request.response();
+                request.respond(404);
             } catch (Exception e) {
                 e.printStackTrace();
             }
