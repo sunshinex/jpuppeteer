@@ -1,6 +1,7 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.SettableFuture;
 import jpuppeteer.api.browser.Cookie;
 import jpuppeteer.api.browser.Page;
@@ -9,7 +10,6 @@ import jpuppeteer.api.constant.*;
 import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.api.event.EventEmitter;
-import jpuppeteer.api.util.ConcurrentHashSet;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.constant.emulation.ScreenOrientationType;
 import jpuppeteer.cdp.cdp.constant.fetch.AuthChallengeResponseResponse;
@@ -140,7 +140,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
         this.device = null;
         this.close = false;
 
-        this.pressedKeys = new ConcurrentHashSet<>();
+        this.pressedKeys = Sets.newConcurrentHashSet();
         this.keyModifiers = 0;
         this.mouseX = 0;
         this.mouseY = 0;

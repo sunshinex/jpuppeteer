@@ -1,7 +1,6 @@
 package jpuppeteer.chrome.event.page;
 
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
-import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
 import jpuppeteer.chrome.ChromePage;
 
 public class PageCrashed extends PageEvent {

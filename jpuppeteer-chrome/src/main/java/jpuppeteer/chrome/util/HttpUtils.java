@@ -3,8 +3,6 @@ package jpuppeteer.chrome.util;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import jpuppeteer.api.browser.Header;
-import jpuppeteer.cdp.cdp.entity.network.GetResponseBodyRequest;
-import jpuppeteer.cdp.cdp.entity.network.GetResponseBodyResponse;
 import org.apache.commons.collections4.MapUtils;
 
 import java.nio.charset.Charset;
@@ -13,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
 
 public class HttpUtils {
 

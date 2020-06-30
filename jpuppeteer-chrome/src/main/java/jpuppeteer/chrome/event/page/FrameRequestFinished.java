@@ -1,7 +1,6 @@
 package jpuppeteer.chrome.event.page;
 
 import jpuppeteer.cdp.cdp.entity.network.LoadingFinishedEvent;
-import jpuppeteer.chrome.ChromeFrame;
 import jpuppeteer.chrome.ChromePage;
 
 public class FrameRequestFinished extends FrameEvent {

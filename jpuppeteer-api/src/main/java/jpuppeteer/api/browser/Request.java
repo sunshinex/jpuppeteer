@@ -2,7 +2,6 @@ package jpuppeteer.api.browser;
 
 import jpuppeteer.api.constant.ResourceType;
 
-import java.net.URL;
 import java.util.List;
 
 public interface Request {

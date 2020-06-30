@@ -2,7 +2,6 @@ package jpuppeteer.chrome.event.page;
 
 import jpuppeteer.cdp.cdp.constant.network.BlockedReason;
 import jpuppeteer.cdp.cdp.entity.network.LoadingFailedEvent;
-import jpuppeteer.chrome.ChromeFrame;
 import jpuppeteer.chrome.ChromePage;
 
 public class FrameRequestFailed extends FrameEvent {

@@ -4,7 +4,6 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.util.TypeUtils;
 import jpuppeteer.api.browser.BrowserObject;
-import jpuppeteer.api.browser.Element;
 import jpuppeteer.api.browser.ExecutionContext;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;

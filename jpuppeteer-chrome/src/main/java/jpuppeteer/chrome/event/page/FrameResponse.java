@@ -4,7 +4,6 @@ import jpuppeteer.api.browser.Header;
 import jpuppeteer.api.browser.Response;
 import jpuppeteer.api.browser.SecurityDetails;
 import jpuppeteer.api.constant.ResourceType;
-import jpuppeteer.chrome.ChromeFrame;
 import jpuppeteer.chrome.ChromePage;
 import jpuppeteer.chrome.util.HttpUtils;
 import org.slf4j.Logger;
