@@ -30,7 +30,7 @@ public class FrameRequest extends FrameEvent implements Request {
 
     private final boolean hasPostData;
 
-    private volatile String postData;
+    private volatile Object postData;
 
     private volatile FrameResponse response;
 
@@ -80,11 +80,18 @@ public class FrameRequest extends FrameEvent implements Request {
         if (postData == null) {
             synchronized (this) {
                 if (postData == null) {
-                    postData = page().getRequestContent(requestId);
+                    try {
+                        postData = page().getRequestContent(requestId);
+                    } catch (Exception e) {
+                        postData = e;
+                    }
                 }
             }
         }
-        return postData;
+        if (postData instanceof Exception) {
+            throw new Exception(((Exception) postData).getMessage());
+        }
+        return (String) postData;
     }
 
     @Override

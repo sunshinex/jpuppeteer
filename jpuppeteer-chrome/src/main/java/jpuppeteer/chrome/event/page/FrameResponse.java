@@ -38,7 +38,7 @@ public class FrameResponse extends FrameEvent implements Response {
 
     private final SecurityDetails securityDetails;
 
-    private volatile byte[] content;
+    private volatile Object content;
 
     public FrameResponse(
             ChromePage page, String requestId, String loaderId,
@@ -108,11 +108,18 @@ public class FrameResponse extends FrameEvent implements Response {
         if (content == null) {
             synchronized (this) {
                 if (content == null) {
-                    content = page().getResponseContent(requestId, headers);
+                    try {
+                        content = page().getResponseContent(requestId, headers);
+                    } catch (Exception e) {
+                        content = e;
+                    }
                 }
             }
         }
-        return content;
+        if (content instanceof Exception) {
+            throw new Exception(((Exception) content).getMessage());
+        }
+        return (byte[]) content;
     }
 
     @Override

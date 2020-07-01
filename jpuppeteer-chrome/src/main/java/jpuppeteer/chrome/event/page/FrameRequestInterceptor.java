@@ -238,7 +238,7 @@ public class FrameRequestInterceptor extends FrameEvent implements RequestInterc
 
         private List<Header> headers;
 
-        private volatile byte[] content;
+        private volatile Object content;
 
         InterceptedResponse() {
             Map<String, Header> headerMap = new HashMap<>();
@@ -298,14 +298,21 @@ public class FrameRequestInterceptor extends FrameEvent implements RequestInterc
             if (content == null) {
                 synchronized (this) {
                     if (content == null) {
-                        GetResponseBodyRequest req = new GetResponseBodyRequest();
-                        req.setRequestId(interceptorId);
-                        GetResponseBodyResponse resp = fetch.getResponseBody(req, DEFAULT_TIMEOUT);
-                        content = HttpUtils.parseContent(resp.getBody(), resp.getBase64Encoded(), headers);
+                        try {
+                            GetResponseBodyRequest req = new GetResponseBodyRequest();
+                            req.setRequestId(interceptorId);
+                            GetResponseBodyResponse resp = fetch.getResponseBody(req, DEFAULT_TIMEOUT);
+                            content = HttpUtils.parseContent(resp.getBody(), resp.getBase64Encoded(), headers);
+                        } catch (Exception e) {
+                            content = e;
+                        }
                     }
                 }
             }
-            return content;
+            if (content instanceof Exception) {
+                throw new Exception(((Exception) content).getMessage());
+            }
+            return (byte[]) content;
         }
 
         @Override
