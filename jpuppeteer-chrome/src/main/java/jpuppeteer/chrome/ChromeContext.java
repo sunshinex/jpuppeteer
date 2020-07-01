@@ -194,6 +194,7 @@ public class ChromeContext extends AbstractEventEmitter<ContextEvent> implements
         });
         targetMap.put(targetInfo.getTargetId(), page);
         sessionMap.put(sessionId, page);
+        page.init();
         this.defaultPage = page;
     }
 
@@ -255,6 +256,7 @@ public class ChromeContext extends AbstractEventEmitter<ContextEvent> implements
             ChromePage page = new ChromePage(nextPageName(), this, browser.createSession(targetType, sessionId), targetInfo, opener);
             targetMap.put(targetId, page);
             sessionMap.put(sessionId, page);
+            page.init();
             if (promise != null) {
                 promise.set(page);
             }

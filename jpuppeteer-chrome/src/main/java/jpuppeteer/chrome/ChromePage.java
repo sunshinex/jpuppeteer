@@ -146,6 +146,13 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
         this.mouseY = 0;
         this.requestMap = new ConcurrentHashMap<>();
 
+    }
+
+    protected String sessionId() {
+        return session.sessionId();
+    }
+
+    protected void init() throws Exception {
         List<Future> enableFutures = new ArrayList<>();
         enableFutures.add(enablePage());
         enableFutures.add(enablePageLifecycleEvent());
@@ -157,13 +164,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
         for(Future future : enableFutures) {
             future.get();
         }
-
     }
-
-    protected String sessionId() {
-        return session.sessionId();
-    }
-
 
     protected Future<Void> enablePage() {
         return page.asyncEnable();
@@ -392,7 +393,7 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
 
     @Override
     protected void intercept(EvaluateRequest request) {
-        request.setContextId(executionContextId);
+        //啥也不用干，顶级页面不需要传contextId
     }
 
     @Override
