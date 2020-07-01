@@ -87,15 +87,10 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
         this.browser = new jpuppeteer.cdp.cdp.domain.Browser(connection);
         this.target = new Target(connection);
         this.storage = new Storage(connection);
-        this.defaultContext = new ChromeContext(nextContextName(), this, null);
         this.contextMap = new ConcurrentHashMap<>();
-        this.contextMap.put(this.defaultContext.defaultPage().targetInfo().getBrowserContextId(), this.defaultContext);
         this.targetMap = new ConcurrentHashMap<>();
         this.sessionMap = new ConcurrentHashMap<>();
-
-        //由于在没有启动目标发现之前就有默认的page, 需要手动注册到map
-        this.targetMap.put(defaultContext.defaultPage().frameId(), defaultContext);
-        this.sessionMap.put(defaultContext.defaultPage().sessionId(), defaultContext);
+        this.defaultContext = initContext(null);
         //此方法必须等默认上下文创建好了之后才能调用true
         this.setDiscoverTargets(true);
 
@@ -354,6 +349,50 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
         return new CDPSession(connection, targetType, sessionId);
     }
 
+    private ChromeContext initContext(String browserContextId) throws Exception {
+        List<TargetInfo> targets = getTargets(browserContextId).stream()
+                .filter(targetInfo -> TargetType.PAGE.getValue().equals(targetInfo.getType()))
+                .collect(Collectors.toList());
+        TargetInfo targetInfo;
+        if (targets.size() == 0) {
+            //没有默认页
+            //创建一个
+            String targetId = createTarget(browserContextId);
+            try {
+                targetInfo = getTargets(browserContextId).stream()
+                        .filter(tinfo -> targetId.equals(tinfo.getTargetId()))
+                        .findAny()
+                        .get();
+            } catch (Exception e) {
+                closeTarget(targetId);
+                throw e;
+            }
+        } else if (targets.size() == 1) {
+            //有一个默认页
+            targetInfo = targets.get(0);
+        } else {
+            //有多个默认页
+            //留下第一个, 其余的关闭掉
+            targetInfo = targets.get(0);
+            for(int i=1; i<targets.size(); i++) {
+                String tid = targets.get(i).getTargetId();
+                try {
+                    closeTarget(tid);
+                } catch (Exception e) {
+                    logger.error("close startup page failed, targetId={}", tid);
+                }
+            }
+        }
+        ChromeContext context = new ChromeContext(nextContextName(), this, browserContextId);
+        TargetType targetType = TargetType.findByValue(targetInfo.getType());
+        String sessionId = attachToTarget(targetInfo.getTargetId());
+        this.contextMap.put(targetInfo.getBrowserContextId(), context);
+        this.targetMap.put(targetInfo.getTargetId(), context);
+        this.sessionMap.put(sessionId, context);
+        context.init(sessionId, targetType, targetInfo);
+        return context;
+    }
+
     @Override
     public synchronized void close() {
         if (!process.isAlive()) {
@@ -416,10 +455,7 @@ public class ChromeBrowser implements EventEmitter<CDPEvent>, Browser {
         CreateBrowserContextResponse response = target.createBrowserContext(DEFAULT_TIMEOUT);
         String contextId = response.getBrowserContextId();
         try {
-            ChromeContext context = new ChromeContext(nextContextName(), this, contextId);
-            contextMap.put(contextId, context);
-            targetMap.put(context.defaultPage().frameId(), context);
-            sessionMap.put(context.defaultPage().sessionId(), context);
+            ChromeContext context = initContext(contextId);
             logger.debug("browser context created, contextId={}", contextId);
             return context;
         } catch (Exception e) {

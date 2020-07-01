@@ -2,23 +2,12 @@ package jpuppeteer.chrome;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import com.google.common.collect.Lists;
-import jpuppeteer.api.browser.Frame;
-import jpuppeteer.api.browser.Header;
-import jpuppeteer.api.browser.Request;
-import jpuppeteer.api.constant.RequestStage;
-import jpuppeteer.api.event.AbstractListener;
-import jpuppeteer.cdp.constant.PageLifecyclePhase;
-import jpuppeteer.chrome.event.page.*;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.misc.Unsafe;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ChromeTest {
@@ -30,7 +19,7 @@ public class ChromeTest {
     @Before
     public void setUp() throws Exception {
         LoggerContext logger = (LoggerContext) LoggerFactory.getILoggerFactory();
-        logger.getLogger("root").setLevel(Level.INFO);
+        logger.getLogger("root").setLevel(Level.DEBUG);
         browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
     }
 
@@ -62,16 +51,19 @@ public class ChromeTest {
 //                System.out.println(crashEvent.error());
 //            }
 //        });
-        page.enableResponseInterception(request -> {
-            try {
-                System.out.println(request.headers());
-                System.out.println("----------------------------------");
-                request.respond(404);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        page.navigate("http://www.baidu.com/");
+//        page.addListener(new AbstractListener<PageReady>() {
+//            @Override
+//            public void accept(PageReady pageReady) {
+//                System.out.println("page dom ready duration=" + pageReady.duration());
+//                try {
+//                    page.waitSelector("#J_IMGSeachUploadBtn", 5, TimeUnit.SECONDS)
+//                            .uploadFile(new File("D:\\tmp\\1a3636c2-1ca8-46cf-a3ec-f0ec98a591de.jpg"));
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+        page.navigate("https://www.taobao.com");
         TimeUnit.DAYS.sleep(1);
     }
 

@@ -74,7 +74,6 @@ public class ChromeContext extends AbstractEventEmitter<ContextEvent> implements
         this.targetMap = new ConcurrentHashMap<>();
         this.sessionMap = new ConcurrentHashMap<>();
         this.futureMap = new ConcurrentHashMap<>();
-        this.createDefaultPage();
 
         addListener(new AbstractListener<TargetAttached>() {
             @Override
@@ -178,6 +177,24 @@ public class ChromeContext extends AbstractEventEmitter<ContextEvent> implements
 
     private String nextPageName() {
         return name + "-Page-" + pageCounter.getAndIncrement();
+    }
+
+    protected void init(String sessionId, TargetType targetType, TargetInfo targetInfo) throws Exception {
+        ChromePage page = new ChromePage(nextPageName(), this, browser.createSession(targetType, sessionId), targetInfo, null);
+        page.addListener(new AbstractListener<PageCrashed>() {
+            @Override
+            public void accept(PageCrashed pageCrashed) {
+                //当页面崩溃的时候自动刷新页面, 避免因为页面崩溃cdp无法通信的情况
+                try {
+                    page.reload();
+                } catch (Exception e) {
+                    logger.error("default page crashed and reload failed, error={}", e.getMessage(), e);
+                }
+            }
+        });
+        targetMap.put(targetInfo.getTargetId(), page);
+        sessionMap.put(sessionId, page);
+        this.defaultPage = page;
     }
 
     @Override
@@ -314,59 +331,6 @@ public class ChromeContext extends AbstractEventEmitter<ContextEvent> implements
         frame.remove();
         pg.emit(new FrameDetached(pg, frame));
         logger.debug("frame detached, parent={}, frameId={}", frame.parent.frameId, event.getFrameId());
-    }
-
-    private void createDefaultPage() throws Exception {
-        List<TargetInfo> targets = browser.getTargets(browserContextId).stream()
-                .filter(targetInfo -> TargetType.PAGE.getValue().equals(targetInfo.getType()))
-                .collect(Collectors.toList());
-        TargetInfo targetInfo;
-        if (targets.size() == 0) {
-            //没有默认页
-            //创建一个
-            String targetId = browser.createTarget(browserContextId);
-            try {
-                targetInfo = browser.getTargets(browserContextId).stream()
-                        .filter(tinfo -> targetId.equals(tinfo.getTargetId()))
-                        .findAny()
-                        .get();
-            } catch (Exception e) {
-                browser.closeTarget(targetId);
-                throw e;
-            }
-        } else if (targets.size() == 1) {
-            //有一个默认页
-            targetInfo = targets.get(0);
-        } else {
-            //有多个默认页
-            //留下第一个, 其余的关闭掉
-            targetInfo = targets.get(0);
-            for(int i=1; i<targets.size(); i++) {
-                String tid = targets.get(i).getTargetId();
-                try {
-                    browser.closeTarget(tid);
-                } catch (Exception e) {
-                    logger.error("close startup page failed, targetId={}", tid);
-                }
-            }
-        }
-        TargetType targetType = TargetType.findByValue(targetInfo.getType());
-        String sessionId = browser.attachToTarget(targetInfo.getTargetId());
-        ChromePage page = new ChromePage(nextPageName(), this, browser.createSession(targetType, sessionId), targetInfo, null);
-        page.addListener(new AbstractListener<PageCrashed>() {
-            @Override
-            public void accept(PageCrashed pageCrashed) {
-                //当页面崩溃的时候自动刷新页面, 避免因为页面崩溃cdp无法通信的情况
-                try {
-                    page.reload();
-                } catch (Exception e) {
-                    logger.error("default page crashed and reload failed, error={}", e.getMessage(), e);
-                }
-            }
-        });
-        targetMap.put(targetInfo.getTargetId(), page);
-        sessionMap.put(sessionId, page);
-        this.defaultPage = page;
     }
 
     protected ChromePage defaultPage() {
