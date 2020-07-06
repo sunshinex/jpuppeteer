@@ -7,6 +7,7 @@ import jpuppeteer.api.constant.PermissionType;
 import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.cdp.cdp.CDPEventType;
+import jpuppeteer.cdp.cdp.constant.runtime.ConsoleAPICalledEventType;
 import jpuppeteer.cdp.cdp.entity.fetch.AuthRequiredEvent;
 import jpuppeteer.cdp.cdp.entity.fetch.RequestPausedEvent;
 import jpuppeteer.cdp.cdp.entity.log.EntryAddedEvent;
@@ -15,6 +16,7 @@ import jpuppeteer.cdp.cdp.entity.network.LoadingFinishedEvent;
 import jpuppeteer.cdp.cdp.entity.network.RequestWillBeSentEvent;
 import jpuppeteer.cdp.cdp.entity.network.ResponseReceivedEvent;
 import jpuppeteer.cdp.cdp.entity.page.*;
+import jpuppeteer.cdp.cdp.entity.runtime.ConsoleAPICalledEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ExceptionThrownEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextCreatedEvent;
 import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
@@ -123,8 +125,17 @@ public class ChromeContext extends AbstractEventEmitter<ContextEvent> implements
         handlePageEvent(PAGE_LOADEVENTFIRED, (PageEventHandler<LoadEventFiredEvent>) (pg, event) -> {
             pg.emit(new PageLoaded(pg, event.getTimestamp()));
         });
-        handlePageEvent(LOG_ENTRYADDED, (PageEventHandler<EntryAddedEvent>) (pg, event) -> {
-            pg.emit(new Console(pg, event.getEntry()));
+        handlePageEvent(RUNTIME_CONSOLEAPICALLED, (PageEventHandler<ConsoleAPICalledEvent>) (pg, event) -> {
+            ChromeFrame frame = pg.find(event.getExecutionContextId());
+            if (frame == null) {
+                logger.warn("execution not found, executionId={}", event.getExecutionContextId());
+                return;
+            }
+            ConsoleAPICalledEventType eventType = ConsoleAPICalledEventType.findByValue(event.getType());
+            List<ChromeBrowserObject> args = event.getArgs().stream()
+                    .map(arg -> new ChromeBrowserObject(frame.runtime, frame, arg))
+                    .collect(Collectors.toList());
+            pg.emit(new Console(pg, eventType, args, frame, event.getTimestamp(), event.getStackTrace(), event.getContext()));
         });
         handlePageEvent(PAGE_JAVASCRIPTDIALOGOPENING, (PageEventHandler<JavascriptDialogOpeningEvent>) (pg, event) -> {
             pg.emit(new Dialog(pg, event));
