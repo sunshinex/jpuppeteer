@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -186,9 +187,10 @@ public class ChromeFrame extends AbstractExecution implements Frame {
     public List<ChromeElement> querySelectorAll(String selector) throws Exception {
         ChromeBrowserObject browserObject = call("function(selector){return document.querySelectorAll(selector);}", selector);
         List<ChromeBrowserObject> properties = browserObject.getProperties();
-        List<ChromeElement> elements = properties.stream().map(object -> new ChromeElement(this, object)).collect(Collectors.toList());
         ChromeObjectUtils.releaseObjectQuietly(runtime, browserObject.objectId);
-        return elements;
+        return properties.stream()
+                .map(object -> new ChromeElement(this, object))
+                .collect(Collectors.toList());
     }
 
     @Override

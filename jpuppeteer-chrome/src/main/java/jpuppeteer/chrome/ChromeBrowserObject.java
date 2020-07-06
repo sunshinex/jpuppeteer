@@ -123,6 +123,21 @@ public class ChromeBrowserObject implements BrowserObject {
         if (object.getValue() != null) {
             return object.getValue();
         }
+        if (
+                RemoteObjectType.OBJECT.equals(this.type) &&
+                        RemoteObjectSubtype.DATE.equals(this.subType)) {
+            synchronized (this) {
+                //修正日期类型
+                if (object.getValue() != null) {
+                    try {
+                        object.setValue(call("function(){return this.toJSON()}").value());
+                    } catch (Exception e) {
+                        throw new RuntimeException("get date failed, error=" + e.getMessage(), e);
+                    }
+                }
+                return object.getValue();
+            }
+        }
         String origin = object.getUnserializableValue();
         if (NEGATIVE_ZERO.equals(origin)) {
             return -0;

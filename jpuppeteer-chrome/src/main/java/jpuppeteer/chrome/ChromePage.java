@@ -411,9 +411,10 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
         selector = selector.replace("'", "\\'");
         ChromeBrowserObject browserObject = eval("document.querySelectorAll('" + selector + "')");
         List<ChromeBrowserObject> properties = browserObject.getProperties();
-        List<ChromeElement> elements = properties.stream().map(object -> new ChromeElement(this, object)).collect(Collectors.toList());
         ChromeObjectUtils.releaseObjectQuietly(runtime, browserObject.objectId);
-        return elements;
+        return properties.stream()
+                .map(object -> new ChromeElement(this, object))
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -15,6 +15,7 @@ import jpuppeteer.cdp.cdp.entity.input.InsertTextRequest;
 import jpuppeteer.cdp.cdp.entity.page.GetLayoutMetricsResponse;
 import jpuppeteer.cdp.cdp.entity.runtime.RemoteObject;
 import jpuppeteer.chrome.constant.ScriptConstants;
+import jpuppeteer.chrome.util.ChromeObjectUtils;
 import jpuppeteer.chrome.util.MathUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -76,9 +77,12 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public List<ChromeElement> querySelectorAll(String selector) throws Exception {
-        ChromeBrowserObject object = call("function(selector){return this.querySelectorAll(selector);}", selector);
-        List<ChromeBrowserObject> properties = object.getProperties();
-        return properties.stream().map(obj -> new ChromeElement(frame, obj.object)).collect(Collectors.toList());
+        ChromeBrowserObject browserObject = call("function(selector){return this.querySelectorAll(selector);}", selector);
+        List<ChromeBrowserObject> properties = browserObject.getProperties();
+        ChromeObjectUtils.releaseObjectQuietly(runtime, browserObject.objectId);
+        return properties.stream()
+                .map(object -> new ChromeElement(frame, object))
+                .collect(Collectors.toList());
     }
 
     @Override

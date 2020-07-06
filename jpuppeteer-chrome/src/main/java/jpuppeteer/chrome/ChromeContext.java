@@ -10,7 +10,6 @@ import jpuppeteer.cdp.cdp.CDPEventType;
 import jpuppeteer.cdp.cdp.constant.runtime.ConsoleAPICalledEventType;
 import jpuppeteer.cdp.cdp.entity.fetch.AuthRequiredEvent;
 import jpuppeteer.cdp.cdp.entity.fetch.RequestPausedEvent;
-import jpuppeteer.cdp.cdp.entity.log.EntryAddedEvent;
 import jpuppeteer.cdp.cdp.entity.network.LoadingFailedEvent;
 import jpuppeteer.cdp.cdp.entity.network.LoadingFinishedEvent;
 import jpuppeteer.cdp.cdp.entity.network.RequestWillBeSentEvent;
