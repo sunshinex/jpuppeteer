@@ -12,6 +12,7 @@ public enum PageLifecyclePhase {
     NETWORKALMOSTIDLE("networkAlmostIdle"),
     FIRSTMEANINGFULPAINT("firstMeaningfulPaint"),
     NETWORKIDLE("networkIdle"),
+    COMMIT("commit"),
     ;
 
     private String value;
