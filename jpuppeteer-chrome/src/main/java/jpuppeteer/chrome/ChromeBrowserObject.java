@@ -130,7 +130,7 @@ public class ChromeBrowserObject implements BrowserObject {
                 //修正日期类型
                 if (object.getValue() == null) {
                     try {
-                        object.setValue(call("function(){return this.toJSON()}").value());
+                        object.setValue(call("function(){return this.toISOString()}").value());
                     } catch (Exception e) {
                         throw new RuntimeException("get date failed, error=" + e.getMessage(), e);
                     }
