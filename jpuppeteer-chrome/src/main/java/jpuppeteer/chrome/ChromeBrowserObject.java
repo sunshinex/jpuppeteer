@@ -128,7 +128,7 @@ public class ChromeBrowserObject implements BrowserObject {
                         RemoteObjectSubtype.DATE.equals(this.subType)) {
             synchronized (this) {
                 //修正日期类型
-                if (object.getValue() != null) {
+                if (object.getValue() == null) {
                     try {
                         object.setValue(call("function(){return this.toJSON()}").value());
                     } catch (Exception e) {
