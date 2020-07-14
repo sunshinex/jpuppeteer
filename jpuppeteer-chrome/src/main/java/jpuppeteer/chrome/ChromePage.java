@@ -26,6 +26,7 @@ import jpuppeteer.cdp.cdp.entity.emulation.SetDeviceMetricsOverrideRequest;
 import jpuppeteer.cdp.cdp.entity.emulation.SetGeolocationOverrideRequest;
 import jpuppeteer.cdp.cdp.entity.emulation.SetUserAgentOverrideRequest;
 import jpuppeteer.cdp.cdp.entity.emulation.*;
+import jpuppeteer.cdp.cdp.entity.fetch.AuthChallenge;
 import jpuppeteer.cdp.cdp.entity.fetch.AuthChallengeResponse;
 import jpuppeteer.cdp.cdp.entity.fetch.EnableRequest;
 import jpuppeteer.cdp.cdp.entity.fetch.RequestPattern;
@@ -100,15 +101,13 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
 
     private volatile double mouseY;
 
-    private String username;
-
-    private String password;
-
     private Map<String/*requestId*/, FrameRequest> requestMap;
 
     private TargetInfo targetInfo;
 
     private volatile Consumer<Interceptor> interceptor;
+
+    private volatile Consumer<Authenticator> authenticator;
 
     public ChromePage(String name, ChromeContext browserContext, CDPSession session, TargetInfo targetInfo, ChromePage opener) throws Exception {
         super(
@@ -193,23 +192,55 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
     }
 
     protected void handleAuthentication(AuthRequiredEvent authRequired) {
-        AuthChallengeResponse authChallenge = new AuthChallengeResponse();
-        authChallenge.setResponse(AuthChallengeResponseResponse.DEFAULT.getValue());
-        if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-            authChallenge.setResponse(AuthChallengeResponseResponse.PROVIDECREDENTIALS.getValue());
-        } else {
-            authChallenge.setResponse(AuthChallengeResponseResponse.CANCELAUTH.getValue());
-        }
-        authChallenge.setUsername(username);
-        authChallenge.setPassword(password);
-        ContinueWithAuthRequest request = new ContinueWithAuthRequest();
-        request.setAuthChallengeResponse(authChallenge);
-        request.setRequestId(authRequired.getRequestId());
-        try {
-            fetch.continueWithAuth(request, DEFAULT_TIMEOUT);
-        } catch (Exception e) {
-            logger.error("auth failed, error={}", e.getMessage(), e);
-        }
+        AuthChallenge authChallenge = authRequired.getAuthChallenge();
+        AuthChallengeSourceType sourceType = AuthChallengeSourceType.findByValue(authChallenge.getSource());
+        Authenticator authenticator = new Authenticator() {
+            @Override
+            public AuthChallengeSourceType source() {
+                return sourceType;
+            }
+
+            @Override
+            public String origin() {
+                return authChallenge.getOrigin();
+            }
+
+            @Override
+            public String scheme() {
+                return authChallenge.getScheme();
+            }
+
+            @Override
+            public String realm() {
+                return authChallenge.getRealm();
+            }
+
+            private ContinueWithAuthRequest createRequest(AuthChallengeResponseResponse resp, String username, String password) {
+                ContinueWithAuthRequest request = new ContinueWithAuthRequest();
+                request.setRequestId(authRequired.getRequestId());
+                AuthChallengeResponse authChallengeResp = new AuthChallengeResponse();
+                authChallengeResp.setResponse(resp.getValue());
+                if (username != null) {
+                    authChallengeResp.setUsername(username);
+                }
+                if (password != null) {
+                    authChallengeResp.setPassword(password);
+                }
+                request.setAuthChallengeResponse(authChallengeResp);
+                return request;
+            }
+
+            @Override
+            public void accept(String username, String password) throws Exception {
+                fetch.continueWithAuth(createRequest(AuthChallengeResponseResponse.PROVIDECREDENTIALS, username, password), DEFAULT_TIMEOUT);
+            }
+
+            @Override
+            public void cancel() throws Exception {
+                fetch.continueWithAuth(createRequest(AuthChallengeResponseResponse.CANCELAUTH, null, null), DEFAULT_TIMEOUT);
+            }
+        };
+        this.authenticator.accept(authenticator);
     }
 
     protected void continueRequest(String interceptorId) {
@@ -443,27 +474,21 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
     }
 
     @Override
-    public void authenticate(String username, String password, Consumer<RequestInterceptor> interceptor) throws Exception {
-        this.username = username;
-        this.password = password;
-        if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-            enableRequestInterception(true, RequestStage.REQUEST, interceptor, "*");
-        }
+    public void enableAuthentication(Consumer<Authenticator> authenticator) throws Exception {
+        enableRequestInterception(true, RequestStage.REQUEST, request -> {
+            try {
+                request.continues();
+            } catch (Exception e) {
+                logger.error("continue request failed, url={}, error={}", request.url(), e.getMessage(), e);
+            }
+        }, "*");
+        this.authenticator = authenticator;
     }
 
     @Override
-    public void authenticate(String username, String password) throws Exception {
-        this.username = username;
-        this.password = password;
-        if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-            enableRequestInterception(true, RequestStage.REQUEST, request -> {
-                try {
-                    request.continues();
-                } catch (Exception e) {
-                    logger.error("continue request failed, url={}, error={}", request.url(), e.getMessage(), e);
-                }
-            }, "*");
-        }
+    public void disableAuthentication() throws Exception {
+        disableRequestInterception();
+        this.authenticator = null;
     }
 
     @SuppressWarnings("unchecked")

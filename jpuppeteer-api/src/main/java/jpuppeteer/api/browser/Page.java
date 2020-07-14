@@ -10,9 +10,9 @@ import java.util.function.Consumer;
 
 public interface Page extends Frame {
 
-    void authenticate(String username, String password, Consumer<RequestInterceptor> interceptor) throws Exception;
+    void enableAuthentication(Consumer<Authenticator> authenticator) throws Exception;
 
-    void authenticate(String username, String password) throws Exception;
+    void disableAuthentication() throws Exception;
 
     Page opener();
 
