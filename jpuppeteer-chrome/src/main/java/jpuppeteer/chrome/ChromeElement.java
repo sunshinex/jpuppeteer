@@ -278,11 +278,11 @@ public class ChromeElement extends ChromeBrowserObject implements Element {
 
     @Override
     public String html() throws Exception {
-        return call("function(){this.innerHTML}", String.class);
+        return call("function(){return this.innerHTML}", String.class);
     }
 
     @Override
     public String text() throws Exception {
-        return call("function(){this.innerText}", String.class);
+        return call("function(){return this.innerText}", String.class);
     }
 }
