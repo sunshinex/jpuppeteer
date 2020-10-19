@@ -2,6 +2,13 @@ package jpuppeteer.chrome;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import com.alibaba.fastjson.JSONObject;
+import jpuppeteer.api.event.AbstractListener;
+import jpuppeteer.cdp.cdp.domain.Runtime;
+import jpuppeteer.cdp.cdp.domain.Target;
+import jpuppeteer.cdp.cdp.entity.runtime.AddBindingRequest;
+import jpuppeteer.chrome.event.page.PageEvent;
+import jpuppeteer.chrome.event.page.PageReady;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +37,13 @@ public class ChromeTest {
 
     @Test
     public void testInterceptor() throws Exception {
-        ChromePage page = browser.defaultContext().newPage();
+        ChromePage page = browser.defaultContext().defaultPage();
+        page.addBinding("test", new AbstractListener<Integer>() {
+            @Override
+            public void accept(Integer i) {
+                System.out.println(i);
+            }
+        });
 //        page.addListener(new AbstractListener<FrameLifecycle>() {
 //            @Override
 //            public void accept(FrameLifecycle frameLifecycle) {
@@ -63,7 +76,7 @@ public class ChromeTest {
 //                }
 //            }
 //        });
-        page.navigate("https://www.taobao.com");
+        //page.navigate("https://www.taobao.com");
         TimeUnit.DAYS.sleep(1);
     }
 

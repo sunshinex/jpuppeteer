@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Sets;
 import jpuppeteer.api.browser.Coordinate;
 import jpuppeteer.api.browser.Frame;
+import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.cdp.constant.runtime.RemoteObjectType;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static jpuppeteer.chrome.ChromeBrowser.DEFAULT_TIMEOUT;
@@ -292,4 +294,15 @@ public class ChromeFrame extends AbstractExecution implements Frame {
         return new Coordinate(offset.getDouble("scrollX"), offset.getDouble("scrollY"));
     }
 
+    protected <T> void addBinding(Integer contextId, String name, AbstractListener<T> listener) throws Exception {
+        parent.addBinding(contextId, name, listener);
+    }
+
+    public <T> void addBinding(String name, AbstractListener<T> listener) throws Exception {
+        addBinding(executionContextId, name, listener);
+    }
+
+    public void removeBinding(String name) throws Exception {
+        parent.removeBinding(name);
+    }
 }

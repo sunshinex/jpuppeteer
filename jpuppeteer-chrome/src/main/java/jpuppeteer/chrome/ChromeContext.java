@@ -15,10 +15,7 @@ import jpuppeteer.cdp.cdp.entity.network.LoadingFinishedEvent;
 import jpuppeteer.cdp.cdp.entity.network.RequestWillBeSentEvent;
 import jpuppeteer.cdp.cdp.entity.network.ResponseReceivedEvent;
 import jpuppeteer.cdp.cdp.entity.page.*;
-import jpuppeteer.cdp.cdp.entity.runtime.ConsoleAPICalledEvent;
-import jpuppeteer.cdp.cdp.entity.runtime.ExceptionThrownEvent;
-import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextCreatedEvent;
-import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
+import jpuppeteer.cdp.cdp.entity.runtime.*;
 import jpuppeteer.cdp.cdp.entity.target.AttachedToTargetEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetCrashedEvent;
 import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
@@ -135,6 +132,9 @@ public class ChromeContext extends AbstractEventEmitter<ContextEvent> implements
                     .map(arg -> new ChromeBrowserObject(frame.runtime, frame, arg))
                     .collect(Collectors.toList());
             pg.emit(new Console(pg, eventType, args, frame, event.getTimestamp(), event.getStackTrace(), event.getContext()));
+        });
+        handlePageEvent(RUNTIME_BINDINGCALLED, (PageEventHandler<BindingCalledEvent>) (pg, event) -> {
+            pg.handleBindingEvent(event);
         });
         handlePageEvent(PAGE_JAVASCRIPTDIALOGOPENING, (PageEventHandler<JavascriptDialogOpeningEvent>) (pg, event) -> {
             pg.emit(new Dialog(pg, event));

@@ -1,5 +1,9 @@
 package jpuppeteer.chrome;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.util.TypeUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.SettableFuture;
@@ -42,9 +46,7 @@ import jpuppeteer.cdp.cdp.entity.network.Request;
 import jpuppeteer.cdp.cdp.entity.network.*;
 import jpuppeteer.cdp.cdp.entity.page.SetTouchEmulationEnabledRequest;
 import jpuppeteer.cdp.cdp.entity.page.*;
-import jpuppeteer.cdp.cdp.entity.runtime.EvaluateRequest;
-import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextCreatedEvent;
-import jpuppeteer.cdp.cdp.entity.runtime.ExecutionContextDestroyedEvent;
+import jpuppeteer.cdp.cdp.entity.runtime.*;
 import jpuppeteer.cdp.cdp.entity.target.TargetInfo;
 import jpuppeteer.chrome.event.context.TargetDestroyed;
 import jpuppeteer.chrome.event.page.*;
@@ -56,6 +58,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
@@ -109,6 +113,8 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
 
     private volatile Consumer<Authenticator> authenticator;
 
+    private Map<String/*bindName*/, AbstractListener> bindingMap;
+
     public ChromePage(String name, ChromeContext browserContext, CDPSession session, TargetInfo targetInfo, ChromePage opener) throws Exception {
         super(
                 null,
@@ -144,6 +150,8 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
         this.mouseX = 0;
         this.mouseY = 0;
         this.requestMap = new ConcurrentHashMap<>();
+
+        this.bindingMap = new ConcurrentHashMap<>();
 
     }
 
@@ -379,6 +387,45 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
         }
         frame.destroyExecutionContext();
         logger.debug("frame {} execution destroyed with id:{}", frame.frameId(), event.getExecutionContextId());
+    }
+
+    public void handleBindingEvent(BindingCalledEvent event) {
+        String name = event.getName();
+        AbstractListener listener = this.bindingMap.get(name);
+        if (listener == null) {
+            logger.warn("binding `{}` not found", name);
+            return;
+        }
+        Object obj = event.getPayload();
+        Class clazz = listener.type();
+        if (clazz == boolean.class || clazz == Boolean.class) {
+            obj = TypeUtils.castToBoolean(obj);
+        } else if (clazz == byte.class || clazz == Byte.class) {
+            obj = TypeUtils.castToByte(obj);
+        } else if (clazz == char.class || clazz == Character.class) {
+            obj = TypeUtils.castToChar(obj);
+        } else if (clazz == short.class || clazz == Short.class) {
+            obj = TypeUtils.castToShort(obj);
+        } else if (clazz == int.class || clazz == Integer.class) {
+            obj = TypeUtils.castToInt(obj);
+        } else if (clazz == long.class || clazz == Long.class) {
+            obj = TypeUtils.castToLong(obj);
+        } else if (clazz == float.class || clazz == Float.class) {
+            obj = TypeUtils.castToFloat(obj);
+        } else if (clazz == double.class || clazz == Double.class) {
+            obj = TypeUtils.castToDouble(obj);
+        } else if(clazz == String.class) {
+            obj = TypeUtils.castToString(obj);
+        } else if(clazz == BigDecimal.class) {
+            obj = TypeUtils.castToBigDecimal(obj);
+        } else if(clazz == BigInteger.class){
+            obj = TypeUtils.castToBigInteger(obj);
+        } else if(clazz == Date.class){
+            obj = TypeUtils.castToDate(obj);
+        } else {
+            obj = JSONObject.parseObject(event.getPayload(), clazz);
+        }
+        listener.accept(obj);
     }
 
     protected void handleExecutionCleared() {
@@ -935,5 +982,23 @@ public class ChromePage extends ChromeFrame implements EventEmitter<PageEvent>, 
     @Override
     public void stopLoading() throws Exception {
         page.stopLoading(DEFAULT_TIMEOUT);
+    }
+
+    protected <T> void addBinding(Integer contextId, String name, AbstractListener<T> listener) throws Exception {
+        if (this.bindingMap.putIfAbsent(name, listener) != null) {
+            throw new Exception("Failed to add page binding with name "+name+": window['"+name+"'] already exists!");
+        }
+        AddBindingRequest request = new AddBindingRequest();
+        request.setExecutionContextId(contextId);
+        request.setName(name);
+        runtime.addBinding(request, DEFAULT_TIMEOUT);
+    }
+
+    public void removeBinding(String name) throws Exception {
+        if (this.bindingMap.remove(name) != null) {
+            RemoveBindingRequest request = new RemoveBindingRequest();
+            request.setName(name);
+            runtime.removeBinding(request, DEFAULT_TIMEOUT);
+        }
     }
 }
