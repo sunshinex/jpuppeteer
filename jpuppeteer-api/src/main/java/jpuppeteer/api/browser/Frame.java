@@ -1,6 +1,7 @@
 package jpuppeteer.api.browser;
 
 import com.alibaba.fastjson.TypeReference;
+import jpuppeteer.api.event.AbstractListener;
 
 import java.net.URL;
 import java.util.List;
@@ -56,6 +57,10 @@ public interface Frame extends ExecutionContext {
     Element waitSelector(String selector, int timeout, TimeUnit unit) throws Exception;
 
     Coordinate scroll(int x, int y) throws Exception;
+
+    <T> void addBinding(String name, AbstractListener<T> listener) throws Exception;
+
+    void removeBinding(String name) throws Exception;
 
 }
 
