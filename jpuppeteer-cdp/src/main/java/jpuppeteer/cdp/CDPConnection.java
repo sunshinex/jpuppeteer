@@ -3,6 +3,7 @@ package jpuppeteer.cdp;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.google.common.collect.MapMaker;
 import com.google.common.util.concurrent.SettableFuture;
 import jpuppeteer.api.event.AbstractEventEmitter;
@@ -65,7 +66,8 @@ public abstract class CDPConnection extends AbstractEventEmitter<CDPEvent> {
         SettableFuture<JSONObject> future = SettableFuture.create();
         requestMap.put(id, future);
         if (logger.isDebugEnabled()) {
-            logger.debug("==> send method={}, id={}, extra={}, params={}", method, id, JSON.toJSONString(extra), JSON.toJSONString(params));
+            SerializeConfig config = new SerializeConfig();
+            logger.debug("==> send method={}, id={}, extra={}, params={}", method, id, JSON.toJSONString(extra, config), JSON.toJSONString(params, config));
         }
         try {
             sendInternal(json);

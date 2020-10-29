@@ -1,6 +1,9 @@
 package jpuppeteer.cdp;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.slf4j.Logger;
@@ -33,7 +36,9 @@ public class WebSocketCDPConnection extends CDPConnection {
 
     @Override
     protected void sendInternal(JSONObject request) {
-        this.client.send(request.toJSONString());
+        SerializeConfig config = new SerializeConfig();
+        String json = JSON.toJSONString(request, config);
+        this.client.send(json);
     }
 
     @Override
