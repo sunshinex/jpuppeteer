@@ -1,6 +1,9 @@
 # jpuppeteer
 java版本的puppeteer
 
+# <font color=#ff0000>warning</font>
+<font color=#ff0000>整个模型为单线程，请不要在future listener或者event listener中放置任何的阻塞代码，请用线程池执行阻塞代码</font>
+
 # 启动浏览器
 ```Java
 Browser browser = new ChromeLauncher("D:\\workspace\\win32-x64\\chrome.exe").launch(args);
