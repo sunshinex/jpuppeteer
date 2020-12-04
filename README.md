@@ -40,9 +40,9 @@ page.addListener(new AbstractListener<PageLoaded>() {
 ```Java
 Browser browser = new ChromeLauncher("D:\\workspace\\win32-x64\\chrome.exe").launch();
 Page page = browser.defaultContext().newPage().get();
-page.addListener(new AbstractListener<PageLoaded>() {
+page.addListener(new AbstractListener<LoadedEvent>() {
     @Override
-    public void accept(PageLoaded loadEvent) {
+    public void accept(LoadedEvent event) {
         SeriesFuture
             .wrap(page.querySelector("#kw"))
             .async(o -> o.input("test"))
