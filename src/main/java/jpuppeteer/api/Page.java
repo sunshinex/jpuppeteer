@@ -14,6 +14,7 @@ import jpuppeteer.cdp.client.entity.page.CaptureScreenshotRequest;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -106,7 +107,19 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     Future setUserAgent(SetUserAgentOverrideRequest userAgent);
 
+    default Future setUserAgent(String userAgent) {
+        return setUserAgent(new SetUserAgentOverrideRequest(userAgent));
+    }
+
     Future setDevice(SetDeviceMetricsOverrideRequest device);
+
+    default Future setDevice(int width, int height, double scale, boolean isMobile) {
+        return setDevice(new SetDeviceMetricsOverrideRequest(width, height, BigDecimal.valueOf(scale), isMobile));
+    }
+
+    default Future setDevice(int width, int height) {
+        return setDevice(width, height, 1, false);
+    }
 
     Future<byte[]> screenshot(CaptureScreenshotRequest request);
 

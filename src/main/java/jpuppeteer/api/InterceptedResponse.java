@@ -3,8 +3,6 @@ package jpuppeteer.api;
 import io.netty.util.concurrent.Future;
 import jpuppeteer.cdp.client.constant.network.ErrorReason;
 
-import java.util.List;
-
 public interface InterceptedResponse extends Request {
 
     String interceptorId();

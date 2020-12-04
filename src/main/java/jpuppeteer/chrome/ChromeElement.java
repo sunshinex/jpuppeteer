@@ -182,8 +182,11 @@ public class ChromeElement implements Element {
                 .wrap(center())
                 .async(o -> input.mouseMove(0, 0, o.x, o.y, Double.valueOf(Math.max(o.x / 20, o.y / 20)).intValue()))
                 .async(o -> input.mouseDown(buttonType, o.x, o.y))
-                .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
-                .async(o -> input.mouseUp(buttonType, o.x, o.y));
+                .async(o -> executor.schedule(
+                        () -> input.mouseUp(buttonType, o.x, o.y),
+                        delay,
+                        TimeUnit.MILLISECONDS
+                ));
     }
 
     @Override
@@ -196,8 +199,11 @@ public class ChromeElement implements Element {
                         }
                         )
                 )
-                .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
-                .async(o -> input.touchEnd());
+                .async(o -> executor.schedule(
+                        () -> input.touchEnd(),
+                        delay,
+                        TimeUnit.MILLISECONDS
+                ));
     }
 
     @Override

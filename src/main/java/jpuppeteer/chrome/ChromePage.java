@@ -5,6 +5,7 @@ import io.netty.util.concurrent.Future;
 import jpuppeteer.api.Page;
 import jpuppeteer.api.Request;
 import jpuppeteer.api.*;
+import jpuppeteer.api.Response;
 import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.api.event.EventEmitter;
@@ -78,6 +79,10 @@ public class ChromePage extends ChromeFrame implements Page {
 
     private final Map<Integer, Isolate> isolateMap;
 
+    private final Map<String, Request> requestMap;
+
+    private final Map<String, Response> responseMap;
+
     public ChromePage(String name, ChromeContext browserContext, CDPSession session, ChromePage opener) {
         super(
                 null, session.targetId(), new jpuppeteer.cdp.client.domain.Page(session),
@@ -111,6 +116,9 @@ public class ChromePage extends ChromeFrame implements Page {
         //将自己丢到frameMap里面
         this.frameMap.put(targetId(), this);
         this.isolateMap = new ConcurrentHashMap<>();
+        //保存request跟response,后面会用到
+        this.requestMap = new ConcurrentHashMap<>();
+        this.responseMap = new ConcurrentHashMap<>();
         //enable features
         this.network.enable(new EnableRequest());
         this.page.enable();
@@ -141,8 +149,14 @@ public class ChromePage extends ChromeFrame implements Page {
         ChromeFrame frame = this.frameMap.get(event.frame.id);
         if (frame == null) {
             logger.warn("[{}] parent frame not found, frameId={}", targetId(), event.frame.id);
-        } else {
-            //TODO 此处可以安排一些页面清理工作
+        } else if (frame.parent() == null) {
+            //页面导航完成的时候需要清空，requestMap跟responseMap，但是导航页本身的请求要保留
+            Request request = requestMap.get(event.frame.loaderId);
+            Response response = responseMap.get(event.frame.loaderId);
+            requestMap.clear();
+            responseMap.clear();
+            requestMap.put(request.requestId(), request);
+            responseMap.put(request.requestId(), response);
         }
     }
 
@@ -260,7 +274,7 @@ public class ChromePage extends ChromeFrame implements Page {
                 .url(url)
                 .method(request.method)
                 .headers(headers)
-                .hasPostData(request.hasPostData)
+                .hasPostData(request.hasPostData != null && request.hasPostData)
                 .postData(request.postData);
     }
 
@@ -279,6 +293,7 @@ public class ChromePage extends ChromeFrame implements Page {
                 .resourceType(resourceType)
                 .location(location)
                 .build();
+        requestMap.put(event.requestId, requestEvent);
         emit(requestEvent);
     }
 
@@ -318,16 +333,20 @@ public class ChromePage extends ChromeFrame implements Page {
                 .fromPrefetchCache(event.response.fromPrefetchCache)
                 .encodedDataLength(event.response.encodedDataLength.intValue())
                 .build();
-
+        responseMap.put(event.requestId, responseEvent);
         emit(responseEvent);
     }
 
     public void handleRequestFailed(LoadingFailedEvent event) {
-        emit(new RequestFailedEvent(event.requestId, event.errorText, event.canceled));
+        Request request = requestMap.remove(event.requestId);
+        Response response = responseMap.remove(event.requestId);
+        emit(new RequestFailedEvent(request, response, event.requestId, event.errorText, event.canceled));
     }
 
     public void handleRequestFinished(LoadingFinishedEvent event) {
-        emit(new RequestFinishedEvent(event.requestId, event.encodedDataLength.intValue()));
+        Request request = requestMap.remove(event.requestId);
+        Response response = responseMap.remove(event.requestId);
+        emit(new RequestFinishedEvent(request, response, event.requestId, event.encodedDataLength.intValue()));
     }
 
     public void handleRequestPaused(RequestPausedEvent event) {

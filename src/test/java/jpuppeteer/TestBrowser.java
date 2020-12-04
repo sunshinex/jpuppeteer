@@ -4,7 +4,10 @@ import jpuppeteer.api.Browser;
 import jpuppeteer.api.BrowserContext;
 import jpuppeteer.cdp.client.entity.browser.GetVersionResponse;
 import jpuppeteer.chrome.ChromeLauncher;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.util.concurrent.ExecutionException;
 

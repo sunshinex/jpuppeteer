@@ -3,10 +3,18 @@ package jpuppeteer;
 import jpuppeteer.api.Browser;
 import jpuppeteer.api.BrowserContext;
 import jpuppeteer.api.Page;
+import jpuppeteer.api.event.AbstractListener;
+import jpuppeteer.api.event.PageEvent;
+import jpuppeteer.api.event.page.RequestEvent;
+import jpuppeteer.api.event.page.RequestFailedEvent;
+import jpuppeteer.api.event.page.RequestFinishedEvent;
+import jpuppeteer.api.event.page.ResponseEvent;
+import jpuppeteer.cdp.client.constant.network.ResourceType;
 import jpuppeteer.chrome.ChromeLauncher;
 import org.junit.*;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class TestPage {
 
@@ -91,7 +99,19 @@ public class TestPage {
 
     @Test
     public void navigate() throws ExecutionException, InterruptedException {
-        page.navigate("https://www.baidu.com/").get();
+        page.addListener(new AbstractListener<RequestFinishedEvent>() {
+            @Override
+            public void accept(RequestFinishedEvent event) {
+                System.out.println(event);
+            }
+        });
+        try {
+            page.navigate("http://www.baidu.com/").get();
+        } catch (Throwable cause) {
+            cause.printStackTrace();
+        } finally {
+            TimeUnit.SECONDS.sleep(5);
+        }
     }
 
 }

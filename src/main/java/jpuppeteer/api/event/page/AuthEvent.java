@@ -133,11 +133,6 @@ public class AuthEvent extends FrameEvent implements Authenticator {
     }
 
     @Override
-    public boolean isNavigationRequest() {
-        return request.isNavigationRequest();
-    }
-
-    @Override
     public Future<String> content() {
         return request.content();
     }

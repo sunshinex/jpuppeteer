@@ -13,11 +13,13 @@ import jpuppeteer.cdp.client.constant.network.ResourceType;
 import jpuppeteer.cdp.client.domain.Fetch;
 import jpuppeteer.cdp.client.entity.fetch.*;
 import jpuppeteer.util.SeriesFuture;
-import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestInterceptedEvent extends FrameEvent implements InterceptedRequest {
@@ -254,11 +256,6 @@ public class RequestInterceptedEvent extends FrameEvent implements InterceptedRe
     @Override
     public String location() {
         return request.location();
-    }
-
-    @Override
-    public boolean isNavigationRequest() {
-        return request.isNavigationRequest();
     }
 
     @Override

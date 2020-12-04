@@ -1,8 +1,14 @@
 package jpuppeteer.api.event.page;
 
+import jpuppeteer.api.Request;
+import jpuppeteer.api.Response;
 import jpuppeteer.api.event.PageEvent;
 
 public class RequestFailedEvent extends PageEvent {
+
+    private final Request request;
+
+    private final Response response;
 
     private final String requestId;
 
@@ -10,7 +16,9 @@ public class RequestFailedEvent extends PageEvent {
 
     private final Boolean canceled;
 
-    public RequestFailedEvent(String requestId, String error, Boolean canceled) {
+    public RequestFailedEvent(Request request, Response response, String requestId, String error, Boolean canceled) {
+        this.request = request;
+        this.response = response;
         this.requestId = requestId;
         this.error = error;
         this.canceled = canceled;
@@ -26,5 +34,13 @@ public class RequestFailedEvent extends PageEvent {
 
     public Boolean canceled() {
         return canceled;
+    }
+
+    public Request request() {
+        return request;
+    }
+
+    public Response response() {
+        return response;
     }
 }

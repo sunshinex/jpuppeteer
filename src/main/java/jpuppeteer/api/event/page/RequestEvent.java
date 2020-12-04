@@ -89,11 +89,6 @@ public class RequestEvent extends FrameEvent implements Request {
     }
 
     @Override
-    public boolean isNavigationRequest() {
-        return StringUtils.equals(requestId, loaderId) && ResourceType.DOCUMENT.equals(resourceType);
-    }
-
-    @Override
     public Future<String> content() {
         if (!hasPostData) {
             return null;

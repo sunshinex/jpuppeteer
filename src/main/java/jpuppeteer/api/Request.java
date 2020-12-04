@@ -21,8 +21,6 @@ public interface Request {
 
     String location();
 
-    boolean isNavigationRequest();
-
     Future<String> content();
 
 }
