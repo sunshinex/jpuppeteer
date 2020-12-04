@@ -25,11 +25,9 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     Page opener();
 
-    Future bringToFront();
-
     BrowserContext browserContext();
 
-    Future close();
+    Future bringToFront();
 
     Future<String> addScriptToEvaluateOnNewDocument(String script);
 
@@ -160,5 +158,7 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     Future touchMove(TouchPoint[] touchPoints, USKeyboardDefinition... modifiers);
 
     Future touchCancel();
+
+    Future close();
 
 }
