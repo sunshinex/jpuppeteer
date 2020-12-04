@@ -8,10 +8,7 @@ import jpuppeteer.api.Element;
 import jpuppeteer.api.Isolate;
 import jpuppeteer.cdp.client.domain.DOM;
 import jpuppeteer.cdp.client.domain.Runtime;
-import jpuppeteer.cdp.client.entity.dom.BoxModel;
-import jpuppeteer.cdp.client.entity.dom.FocusRequest;
-import jpuppeteer.cdp.client.entity.dom.GetBoxModelRequest;
-import jpuppeteer.cdp.client.entity.dom.SetFileInputFilesRequest;
+import jpuppeteer.cdp.client.entity.dom.*;
 import jpuppeteer.cdp.client.entity.input.TouchPoint;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
@@ -123,7 +120,9 @@ public class ChromeElement implements Element {
 
     @Override
     public Future<String> html() {
-        return isolate.call("function (){return this.outerHTML;}", objectId(), String.class);
+        return SeriesFuture
+                .wrap(dom.getOuterHTML(new GetOuterHTMLRequest(null, null, objectId())))
+                .sync(o -> o.outerHTML);
     }
 
     @Override
