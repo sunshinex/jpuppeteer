@@ -27,7 +27,7 @@ public class ChromeTest {
     public void setUp() throws Exception {
         LoggerContext logger = (LoggerContext) LoggerFactory.getILoggerFactory();
         logger.getLogger("root").setLevel(Level.DEBUG);
-        browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
+        //browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
     }
 
     @After
@@ -37,13 +37,14 @@ public class ChromeTest {
 
     @Test
     public void testInterceptor() throws Exception {
-        ChromePage page = browser.defaultContext().defaultPage();
-        page.addBinding("test", new AbstractListener<Integer>() {
-            @Override
-            public void accept(Integer i) {
-                System.out.println(i);
-            }
-        });
+        browser = new ChromeLauncher(Constant.CHROME_EXECUTABLE_PATH).launch();
+//        ChromePage page = browser.defaultContext().defaultPage();
+//        page.addBinding("test", new AbstractListener<Integer>() {
+//            @Override
+//            public void accept(Integer i) {
+//                System.out.println(i);
+//            }
+//        });
 //        page.addListener(new AbstractListener<FrameLifecycle>() {
 //            @Override
 //            public void accept(FrameLifecycle frameLifecycle) {
