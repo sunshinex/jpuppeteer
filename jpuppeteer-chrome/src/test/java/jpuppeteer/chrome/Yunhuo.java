@@ -206,9 +206,9 @@ public class Yunhuo {
                         goods.write(String.valueOf(g.goodsNumber));
                         goods.write(",\"");
                         goods.write(String.valueOf(g.goodsName));
+                        goods.write("\",\"");
+                        goods.write("https://imagecos.yunhuotong.net/yhtplusFile/" + String.valueOf(g.goodsDefaultImage) + ".jpg");
                         goods.write("\",");
-                        goods.write(String.valueOf(g.goodsDefaultImage));
-                        goods.write(",");
                         goods.write(String.valueOf(g.supplyPrice));
                         goods.write(",");
                         goods.write(String.valueOf(g.dailyPrice));
