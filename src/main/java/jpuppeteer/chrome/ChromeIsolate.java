@@ -1,6 +1,5 @@
 package jpuppeteer.chrome;
 
-import com.sun.istack.internal.NotNull;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.Future;
 import jpuppeteer.api.BrowserObject;
@@ -121,12 +120,18 @@ public class ChromeIsolate implements Isolate {
     }
 
     @Override
-    public Future<BrowserObject> call(String declaration, @NotNull String objectId, Object... args) {
+    public Future<BrowserObject> call(String declaration, String objectId, Object... args) {
+        if (objectId == null) {
+            throw new IllegalArgumentException("objectId required");
+        }
         return call(IsolateUtil.buildCallRequest(declaration, objectId, false, null, args));
     }
 
     @Override
-    public <R> Future<R> call(String declaration, @NotNull String objectId, Class<R> clazz, Object... args) {
+    public <R> Future<R> call(String declaration, String objectId, Class<R> clazz, Object... args) {
+        if (objectId == null) {
+            throw new IllegalArgumentException("objectId required");
+        }
         return call(IsolateUtil.buildCallRequest(declaration, objectId, true, null, args), clazz);
     }
 
