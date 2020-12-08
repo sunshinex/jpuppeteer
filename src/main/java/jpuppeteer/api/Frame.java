@@ -8,6 +8,8 @@ public interface Frame extends Isolate {
 
     Future<Element[]> querySelectorAll(String selector);
 
+    Future<Element> waitSelector(String selector, long timeout);
+
     String frameId();
 
     Frame parent();

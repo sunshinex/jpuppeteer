@@ -152,6 +152,10 @@ public class ChromeContext implements BrowserContext {
                 page.handleIsolateDestroyed(event.getObject());
                 break;
 
+            case RUNTIME_EXECUTIONCONTEXTSCLEARED:
+                page.handleIsolateCleared();
+                break;
+
             case NETWORK_REQUESTWILLBESENT:
                 page.handleRequest(event.getObject());
                 break;

@@ -15,10 +15,13 @@ import jpuppeteer.cdp.client.entity.page.NavigateRequest;
 import jpuppeteer.cdp.client.entity.runtime.CallFunctionOnRequest;
 import jpuppeteer.cdp.client.entity.runtime.EvaluateRequest;
 import jpuppeteer.util.Input;
+import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesFuture;
 import org.apache.commons.lang3.StringUtils;
 
 public class ChromeFrame implements Frame {
+
+    private static final String SCRIPT_WAIT_SELECTOR = ScriptUtil.load("scripts/waitselector.js");
 
     private final ChromeFrame parent;
 
@@ -221,6 +224,13 @@ public class ChromeFrame implements Frame {
                     }
                     return elements;
                 });
+    }
+
+    @Override
+    public Future<Element> waitSelector(String selector, long timeout) {
+        return SeriesFuture
+                .wrap(call(SCRIPT_WAIT_SELECTOR, (Object) selector, timeout))
+                .sync(o -> new ChromeElement(dom, isolatePromise.getNow(), runtime, input, o, executor));
     }
 
     @Override

@@ -176,6 +176,7 @@ public class ChromePage extends ChromeFrame implements Page {
             logger.error("[{}] handle isolate created failed, frameId={}, isolateId={}", targetId(), frameId, event.context.id);
             return;
         }
+        logger.info("[{}] isolate created, frameId={}, isolateId={}", targetId(), frameId, event.context.id);
         boolean isDefault = (boolean) auxData.get("isDefault");
         String type = (String) auxData.get("type");
         if (isDefault && "default".equals(type)) {
@@ -190,12 +191,26 @@ public class ChromePage extends ChromeFrame implements Page {
     public void handleIsolateDestroyed(ExecutionContextDestroyedEvent event) {
         Isolate isolate = this.isolateMap.remove(event.executionContextId);
         if (isolate == null) {
-            logger.error("[{}] isolate not found, frameId={}", targetId(), event.executionContextId);
+            logger.error("[{}] isolate not found, isolateId={}", targetId(), event.executionContextId);
             return;
         }
+        logger.info("[{}] isolate destroyed, isolateId={}", targetId(), event.executionContextId);
         if (isolate instanceof ChromeFrame) {
             //如果对应的isolate是frame，则销毁当前frame的isolate，等待重建
             ((ChromeFrame) isolate).destroyIsolate();
+        }
+    }
+
+    public void handleIsolateCleared() {
+        Iterator<Map.Entry<Integer, Isolate>> iterator = this.isolateMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, Isolate> entry = iterator.next();
+            Isolate isolate = entry.getValue();
+            if (isolate instanceof ChromeFrame) {
+                //如果对应的isolate是frame，则销毁当前frame的isolate，等待重建
+                ((ChromeFrame) isolate).destroyIsolate();
+            }
+            iterator.remove();
         }
     }
 

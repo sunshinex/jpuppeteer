@@ -1,11 +1,16 @@
 package jpuppeteer;
 
+import com.google.common.util.concurrent.SettableFuture;
 import jpuppeteer.api.Browser;
 import jpuppeteer.api.BrowserContext;
+import jpuppeteer.api.Element;
 import jpuppeteer.api.Page;
 import jpuppeteer.api.event.AbstractListener;
+import jpuppeteer.api.event.PageEvent;
+import jpuppeteer.api.event.page.LoadedEvent;
 import jpuppeteer.api.event.page.RequestFinishedEvent;
 import jpuppeteer.chrome.ChromeLauncher;
+import jpuppeteer.util.SeriesFuture;
 import org.junit.*;
 
 import java.util.concurrent.ExecutionException;
@@ -94,19 +99,24 @@ public class TestPage {
 
     @Test
     public void navigate() throws ExecutionException, InterruptedException {
-        page.addListener(new AbstractListener<RequestFinishedEvent>() {
+        page.navigate("about:blank").get();
+    }
+
+    @Test
+    public void waitSelector() throws ExecutionException, InterruptedException {
+        SettableFuture<Element> future = SettableFuture.create();
+        page.addListener(new AbstractListener<LoadedEvent>() {
             @Override
-            public void accept(RequestFinishedEvent event) {
-                System.out.println(event);
+            public void accept(LoadedEvent event) {
+                page.waitSelector("#kw", 1000)
+                        .addListener(f -> {
+                            future.set((Element) f.getNow());
+                        });
             }
         });
-        try {
-            page.navigate("http://www.baidu.com/").get();
-        } catch (Throwable cause) {
-            cause.printStackTrace();
-        } finally {
-            TimeUnit.SECONDS.sleep(5);
-        }
+        page.navigate("https://www.baidu.com/");
+        Element element = future.get();
+        System.out.println(element);
     }
 
 }
