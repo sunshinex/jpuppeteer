@@ -13,13 +13,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ParallelFuture<V> implements Future<V[]> {
+public class BatchFuture<V> implements Future<V[]> {
 
     private final Promise<V[]> promise;
 
     private volatile V[] values;
 
-    private ParallelFuture(EventExecutor executor, Future<V>[] futures) {
+    private BatchFuture(EventExecutor executor, Future<V>[] futures) {
         this.promise = executor.newPromise();
         int i = 0;
         int total = futures.length;
@@ -52,61 +52,61 @@ public class ParallelFuture<V> implements Future<V[]> {
         }
     }
 
-    public static <V> ParallelFuture<V> wrap(EventExecutor executor, Future<V>... futures) {
-        return new ParallelFuture<>(executor, futures);
+    public static <V> BatchFuture<V> wrap(EventExecutor executor, Future<V>... futures) {
+        return new BatchFuture<>(executor, futures);
     }
 
-    public static <V> ParallelFuture<V> wrap(EventExecutor executor, Iterable<Future<V>> futures) {
+    public static <V> BatchFuture<V> wrap(EventExecutor executor, Iterable<Future<V>> futures) {
         List<Future<V>> futureList = Lists.newArrayList(futures);
         Future<V>[] futureArray = new Future[futureList.size()];
         futureList.toArray(futureArray);
-        return new ParallelFuture<>(executor, futureArray);
+        return new BatchFuture<>(executor, futureArray);
     }
 
     @Override
-    public ParallelFuture<V> addListener(GenericFutureListener<? extends Future<? super V[]>> listener) {
+    public BatchFuture<V> addListener(GenericFutureListener<? extends Future<? super V[]>> listener) {
         promise.addListener(listener);
         return this;
     }
 
     @Override
-    public ParallelFuture<V> addListeners(GenericFutureListener<? extends Future<? super V[]>>... listeners) {
+    public BatchFuture<V> addListeners(GenericFutureListener<? extends Future<? super V[]>>... listeners) {
         promise.addListeners(listeners);
         return this;
     }
 
     @Override
-    public ParallelFuture<V> removeListener(GenericFutureListener<? extends Future<? super V[]>> listener) {
+    public BatchFuture<V> removeListener(GenericFutureListener<? extends Future<? super V[]>> listener) {
         promise.removeListener(listener);
         return this;
     }
 
     @Override
-    public ParallelFuture<V> removeListeners(GenericFutureListener<? extends Future<? super V[]>>... listeners) {
+    public BatchFuture<V> removeListeners(GenericFutureListener<? extends Future<? super V[]>>... listeners) {
         promise.removeListeners(listeners);
         return this;
     }
 
     @Override
-    public ParallelFuture<V> sync() throws InterruptedException {
+    public BatchFuture<V> sync() throws InterruptedException {
         promise.sync();
         return this;
     }
 
     @Override
-    public ParallelFuture<V> syncUninterruptibly() {
+    public BatchFuture<V> syncUninterruptibly() {
         promise.syncUninterruptibly();
         return this;
     }
 
     @Override
-    public ParallelFuture<V> await() throws InterruptedException {
+    public BatchFuture<V> await() throws InterruptedException {
         promise.await();
         return this;
     }
 
     @Override
-    public ParallelFuture<V> awaitUninterruptibly() {
+    public BatchFuture<V> awaitUninterruptibly() {
         promise.awaitUninterruptibly();
         return this;
     }
