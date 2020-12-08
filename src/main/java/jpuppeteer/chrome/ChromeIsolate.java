@@ -1,5 +1,6 @@
 package jpuppeteer.chrome;
 
+import com.sun.istack.internal.NotNull;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.Future;
 import jpuppeteer.api.BrowserObject;
@@ -120,21 +121,23 @@ public class ChromeIsolate implements Isolate {
     }
 
     @Override
-    public Future<BrowserObject> call(String declaration, String objectId, Object... args) {
-        if (objectId != null) {
-            return call(IsolateUtil.buildCallRequest(declaration, objectId, false, null, args));
-        } else {
-            return call(IsolateUtil.buildCallRequest(declaration, null, false, isolateId, args));
-        }
+    public Future<BrowserObject> call(String declaration, @NotNull String objectId, Object... args) {
+        return call(IsolateUtil.buildCallRequest(declaration, objectId, false, null, args));
     }
 
     @Override
-    public <R> Future<R> call(String declaration, String objectId, Class<R> clazz, Object... args) {
-        if (objectId != null) {
-            return call(IsolateUtil.buildCallRequest(declaration, objectId, true, null, args), clazz);
-        } else {
-            return call(IsolateUtil.buildCallRequest(declaration, null, true, isolateId, args), clazz);
-        }
+    public <R> Future<R> call(String declaration, @NotNull String objectId, Class<R> clazz, Object... args) {
+        return call(IsolateUtil.buildCallRequest(declaration, objectId, true, null, args), clazz);
+    }
+
+    @Override
+    public Future<BrowserObject> call(String declaration, Object... args) {
+        return call(IsolateUtil.buildCallRequest(declaration, null, false, isolateId, args));
+    }
+
+    @Override
+    public <R> Future<R> call(String declaration, Class<R> clazz, Object... args) {
+        return call(IsolateUtil.buildCallRequest(declaration, null, true, isolateId, args), clazz);
     }
 
     @Override

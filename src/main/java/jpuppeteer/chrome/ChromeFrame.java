@@ -186,10 +186,24 @@ public class ChromeFrame implements Frame {
     }
 
     @Override
+    public Future<BrowserObject> call(String declaration, Object... args) {
+        return SeriesFuture
+                .wrap(isolatePromise)
+                .async(o -> o.call(declaration, args));
+    }
+
+    @Override
+    public <R> Future<R> call(String declaration, Class<R> clazz, Object... args) {
+        return SeriesFuture
+                .wrap(isolatePromise)
+                .async(o -> o.call(declaration, clazz, args));
+    }
+
+    @Override
     public Future<Element> querySelector(String selector) {
         return SeriesFuture
                 .wrap(isolatePromise)
-                .async(o -> o.call("function (selector){return document.querySelector(selector);}", null, selector))
+                .async(o -> o.call("function (selector){return document.querySelector(selector);}", selector))
                 .sync(o -> new ChromeElement(dom, isolatePromise.getNow(), runtime, input, o, executor));
     }
 
@@ -197,7 +211,7 @@ public class ChromeFrame implements Frame {
     public Future<Element[]> querySelectorAll(String selector) {
         return SeriesFuture
                 .wrap(isolatePromise)
-                .async(o -> o.call("function (selector){return document.querySelectorAll(selector);}", null, selector))
+                .async(o -> o.call("function (selector){return document.querySelectorAll(selector);}", selector))
                 .async(BrowserObject::getProperties)
                 .sync(o -> {
                     Isolate isolate = isolatePromise.getNow();
@@ -221,7 +235,7 @@ public class ChromeFrame implements Frame {
     public Future html(String html) {
         return SeriesFuture
                 .wrap(isolatePromise)
-                .async(o -> o.call("function (html){document.documentElement.outerHTML=html;}", null, html));
+                .async(o -> o.call("function (html){document.documentElement.outerHTML=html;}", html));
     }
 
 }

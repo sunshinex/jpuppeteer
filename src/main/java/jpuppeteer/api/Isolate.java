@@ -24,4 +24,8 @@ public interface Isolate {
 
     <R> Future<R> call(String declaration, String objectId, Class<R> clazz, Object... args);
 
+    Future<BrowserObject> call(String declaration, Object... args);
+
+    <R> Future<R> call(String declaration, Class<R> clazz, Object... args);
+
 }
