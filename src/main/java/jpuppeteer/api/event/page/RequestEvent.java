@@ -12,7 +12,6 @@ import jpuppeteer.cdp.client.constant.network.ResourceType;
 import jpuppeteer.cdp.client.domain.Network;
 import jpuppeteer.cdp.client.entity.network.GetRequestPostDataRequest;
 import jpuppeteer.util.SeriesFuture;
-import org.apache.commons.lang3.StringUtils;
 
 public class RequestEvent extends FrameEvent implements Request {
 
