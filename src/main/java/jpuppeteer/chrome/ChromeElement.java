@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ChromeElement implements Element {
 
-    private static final String JS_FUNC_SELECT = ScriptUtil.load("scripts/select.js");
+    private static final String JS_FUNC_SELECT = ScriptUtil.load("script/select.js");
 
     private final DOM dom;
 

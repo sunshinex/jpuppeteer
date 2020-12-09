@@ -7,11 +7,7 @@ import java.io.InputStreamReader;
 
 public class ScriptUtil {
 
-    public static final String SCROLL = load("scripts/scroll.js");
-
-    private ScriptUtil() {
-
-    }
+    private ScriptUtil() {}
 
     public static String load(String path) {
         InputStream is;

@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ChromeFrame implements Frame {
 
-    private static final String SCRIPT_WAIT_SELECTOR = ScriptUtil.load("scripts/waitselector.js");
+    private static final String SCRIPT_WAIT_SELECTOR = ScriptUtil.load("script/waitselector.js");
 
     private final ChromeFrame parent;
 
