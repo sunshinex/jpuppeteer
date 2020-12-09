@@ -12,6 +12,8 @@ public interface Element extends BrowserObject {
 
     Future<Element[]> querySelectorAll(String selector);
 
+    Future<Element> waitSelector(String selector, long timeout);
+
     Future setAttribute(String name, String value);
 
     Future removeAttribute(String name);

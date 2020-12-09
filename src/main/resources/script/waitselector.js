@@ -25,7 +25,7 @@ async function waitSelector(selector, timeout) {
             }
         });
 
-        observer.observe(document, {
+        observer.observe(this === window ? document : this, {
             childList: true,
             subtree: true,
             attributes: true

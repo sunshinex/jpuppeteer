@@ -28,7 +28,9 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ChromeElement implements Element {
 
-    private static final String JS_FUNC_SELECT = ScriptUtil.load("script/select.js");
+    private static final String SCRIPT_SELECT = ScriptUtil.load("script/select.js");
+
+    private static final String SCRIPT_WAIT_SELECTOR = ScriptUtil.load("script/waitselector.js");
 
     private final DOM dom;
 
@@ -70,6 +72,13 @@ public class ChromeElement implements Element {
                     }
                     return elements;
                 });
+    }
+
+    @Override
+    public Future<Element> waitSelector(String selector, long timeout) {
+        return SeriesFuture
+                .wrap(isolate.call(SCRIPT_WAIT_SELECTOR, objectId(), (Object) selector, timeout))
+                .sync(o -> new ChromeElement(dom, isolate, runtime, input, o, executor));
     }
 
     @Override
@@ -157,7 +166,7 @@ public class ChromeElement implements Element {
 
     @Override
     public Future select(String... values) {
-        return isolate.call(JS_FUNC_SELECT, objectId(), Lists.newArrayList(values));
+        return isolate.call(SCRIPT_SELECT, objectId(), Lists.newArrayList(values));
     }
 
     private Future<Coordinate> center() {
