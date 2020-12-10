@@ -294,6 +294,9 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     public void handleRequest(RequestWillBeSentEvent event) {
+        if (event.frameId == null) {
+            return;
+        }
         ChromeFrame frame = this.frameMap.get(event.frameId);
         if (frame == null) {
             logger.error("[{}] handle request failed, frameId={}", targetId(), event.frameId);
@@ -313,6 +316,9 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     public void handleResponse(ResponseReceivedEvent event) {
+        if (event.frameId == null) {
+            return;
+        }
         ChromeFrame frame = this.frameMap.get(event.frameId);
         if (frame == null) {
             logger.error("[{}] handle response failed, frameId={}", targetId(), event.frameId);
@@ -365,6 +371,9 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     public void handleRequestPaused(RequestPausedEvent event) {
+        if (event.frameId == null) {
+            return;
+        }
         ChromeFrame frame = this.frameMap.get(event.frameId);
         if (frame == null) {
             logger.error("[{}] handle request intercept failed, frameId={}", targetId(), event.frameId);

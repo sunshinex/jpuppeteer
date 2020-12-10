@@ -7,6 +7,7 @@ import jpuppeteer.api.Element;
 import jpuppeteer.api.Page;
 import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.api.event.PageEvent;
+import jpuppeteer.api.event.page.DomReadyEvent;
 import jpuppeteer.api.event.page.LoadedEvent;
 import jpuppeteer.api.event.page.RequestFinishedEvent;
 import jpuppeteer.chrome.ChromeLauncher;
@@ -105,16 +106,16 @@ public class TestPage {
     @Test
     public void waitSelector() throws ExecutionException, InterruptedException {
         SettableFuture<Element> future = SettableFuture.create();
-        page.addListener(new AbstractListener<LoadedEvent>() {
+        page.addListener(new AbstractListener<DomReadyEvent>() {
             @Override
-            public void accept(LoadedEvent event) {
-                page.waitSelector("#kw", 1000)
+            public void accept(DomReadyEvent event) {
+                page.waitSelector("#baxia-dialog-content", 10000)
                         .addListener(f -> {
                             future.set((Element) f.getNow());
                         });
             }
         });
-        page.navigate("https://www.baidu.com/");
+        page.navigate("https://goods.kaola.com.hk/product/8891918.html");
         Element element = future.get();
         System.out.println(element);
     }
