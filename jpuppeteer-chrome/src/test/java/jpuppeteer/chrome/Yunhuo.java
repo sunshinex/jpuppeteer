@@ -29,7 +29,9 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -153,6 +155,21 @@ public class Yunhuo {
                 .toJavaList(Activity.class);
     }
 
+    private static ActivityDetail activityDetail(Integer activityId) throws Exception {
+        String tag = "activity-" + activityId + ".cache";
+        return cache(
+                tag,
+                () -> {
+                    String api = "weeget-bullet-goods-rest/goodsGroup/getGoodsGroupByGoodsGroupId";
+                    JSONObject param = newParams();
+                    param.put("inviteUserId", "");
+                    param.put("goodsGroupId", activityId);
+                    param.put("organizationId", ORGANIZATION_ID);
+                    return callGateway(api, param);
+                })
+                .getObject("goodsGroup", ActivityDetail.class);
+    }
+
     private static List<Goods> goodsList(Integer activityId, int page) throws Exception {
         String tag = "list-" + activityId + "-" + page + ".cache";
         JSONObject result = cache(
@@ -177,17 +194,24 @@ public class Yunhuo {
         List<Category> categories = categoryList();
         FileWriter brands = new FileWriter("D:\\tmp\\yunhuo\\brands.csv");
         FileWriter goods = new FileWriter("D:\\tmp\\yunhuo\\goods.csv");
-        brands.write("品牌ID,品牌分类,品牌名称\r\n");
-        goods.write("品牌ID,品牌名称,商品ID,货号,商品名称,商品主图,供货价,商城价,最低价,市场价\r\n");
+        brands.write("品牌ID,品牌分类,品牌名称,上线时间,下线时间\r\n");
+        goods.write("品牌ID,品牌名称,上线时间,下线时间,商品ID,货号,商品名称,商品主图,供货价,商城价,最低价,市场价\r\n");
+        String strDateFormat = "yyyy-MM-dd HH:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
         for(Category category : categories) {
             List<Activity> activities = activityList(category.id);
             for(Activity activity : activities) {
+                ActivityDetail detail = activityDetail(activity.id);
                 brands.write(String.valueOf(activity.id));
                 brands.write(",");
                 brands.write(category.title);
                 brands.write(",\"");
                 brands.write(activity.name);
-                brands.write("\"\r\n");
+                brands.write("\",");
+                brands.write(sdf.format(detail.saleStartTime));
+                brands.write(",");
+                brands.write(sdf.format(detail.saleEndTime));
+                brands.write("\r\n");
                 brands.flush();
                 int page = 0;
                 while (true) {
@@ -201,6 +225,10 @@ public class Yunhuo {
                         goods.write(",\"");
                         goods.write(String.valueOf(activity.name));
                         goods.write("\",");
+                        goods.write(sdf.format(detail.saleStartTime));
+                        goods.write(",");
+                        goods.write(sdf.format(detail.saleEndTime));
+                        goods.write(",");
                         goods.write(String.valueOf(g.goodsId));
                         goods.write(",");
                         goods.write(String.valueOf(g.goodsNumber));
@@ -248,6 +276,15 @@ public class Yunhuo {
 
         @JSONField(name = "goodsGroupId")
         private Integer id;
+
+    }
+
+    @Data
+    static class ActivityDetail extends Activity {
+
+        private Date saleStartTime;
+
+        private Date saleEndTime;
 
     }
 
