@@ -41,8 +41,4 @@ public class CDPSession {
     public final <T> Future<T> send(String method, Object params, Class<T> clazz) {
         return connection.send(method, params, extra, clazz);
     }
-
-    public final <T> Future<T> send(String method, Object params, TypeReference<T> type) {
-        return connection.send(method, params, extra, type);
-    }
 }
