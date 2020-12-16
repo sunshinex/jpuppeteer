@@ -8,6 +8,8 @@ import java.io.File;
 
 public interface Element extends BrowserObject {
 
+    Page page();
+
     Future<Element> querySelector(String selector);
 
     Future<Element[]> querySelectorAll(String selector);

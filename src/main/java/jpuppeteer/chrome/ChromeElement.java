@@ -6,6 +6,7 @@ import io.netty.util.concurrent.Future;
 import jpuppeteer.api.BrowserObject;
 import jpuppeteer.api.Element;
 import jpuppeteer.api.Isolate;
+import jpuppeteer.api.Page;
 import jpuppeteer.cdp.client.domain.DOM;
 import jpuppeteer.cdp.client.domain.Runtime;
 import jpuppeteer.cdp.client.entity.dom.*;
@@ -32,6 +33,8 @@ public class ChromeElement implements Element {
 
     private static final String SCRIPT_WAIT_SELECTOR = ScriptUtil.load("script/waitselector.js");
 
+    private final Page page;
+
     private final DOM dom;
 
     private final Isolate isolate;
@@ -44,7 +47,8 @@ public class ChromeElement implements Element {
 
     private final EventExecutor executor;
 
-    public ChromeElement(DOM dom, Isolate isolate, Runtime runtime, Input input, BrowserObject object, EventExecutor executor) {
+    public ChromeElement(Page page, DOM dom, Isolate isolate, Runtime runtime, Input input, BrowserObject object, EventExecutor executor) {
+        this.page = page;
         this.dom = dom;
         this.isolate = isolate;
         this.runtime = runtime;
@@ -54,10 +58,15 @@ public class ChromeElement implements Element {
     }
 
     @Override
+    public Page page() {
+        return page;
+    }
+
+    @Override
     public Future<Element> querySelector(String selector) {
         return SeriesFuture
                 .wrap(isolate.call("function (selector){return this.querySelector(selector);}", objectId(), selector))
-                .sync(o -> new ChromeElement(dom, isolate, runtime, input, object, executor));
+                .sync(o -> new ChromeElement(page, dom, isolate, runtime, input, object, executor));
     }
 
     @Override
@@ -68,7 +77,7 @@ public class ChromeElement implements Element {
                 .sync(o -> {
                     Element[] elements = new Element[o.length];
                     for(int i=0; i<o.length; i++) {
-                        elements[i] = new ChromeElement(dom, isolate, runtime, input, o[i], executor);
+                        elements[i] = new ChromeElement(page, dom, isolate, runtime, input, o[i], executor);
                     }
                     return elements;
                 });
@@ -78,7 +87,7 @@ public class ChromeElement implements Element {
     public Future<Element> waitSelector(String selector, long timeout) {
         return SeriesFuture
                 .wrap(isolate.call(SCRIPT_WAIT_SELECTOR, objectId(), (Object) selector, timeout))
-                .sync(o -> new ChromeElement(dom, isolate, runtime, input, o, executor));
+                .sync(o -> new ChromeElement(page, dom, isolate, runtime, input, o, executor));
     }
 
     @Override

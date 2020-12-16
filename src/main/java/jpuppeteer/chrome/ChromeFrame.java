@@ -23,11 +23,13 @@ public class ChromeFrame implements Frame {
 
     private static final String SCRIPT_WAIT_SELECTOR = ScriptUtil.load("script/waitselector.js");
 
+    private final ChromePage page;
+
     private final ChromeFrame parent;
 
     private final String frameId;
 
-    private final Page page;
+    private final Page pageDomain;
 
     private final DOM dom;
 
@@ -39,10 +41,11 @@ public class ChromeFrame implements Frame {
 
     private volatile Promise<ChromeIsolate> isolatePromise;
 
-    public ChromeFrame(ChromeFrame parent, String frameId, Page page, DOM dom, Runtime runtime, Input input, EventExecutor executor) {
+    public ChromeFrame(ChromePage page, ChromeFrame parent, String frameId, Page pageDomain, DOM dom, Runtime runtime, Input input, EventExecutor executor) {
+        this.page = page;
         this.parent = parent;
         this.frameId = frameId;
-        this.page = page;
+        this.pageDomain = pageDomain;
         this.dom = dom;
         this.runtime = runtime;
         this.input = input;
@@ -50,8 +53,8 @@ public class ChromeFrame implements Frame {
         this.isolatePromise = executor.newPromise();
     }
 
-    public Page page() {
-        return page;
+    public Page pageDomain() {
+        return pageDomain;
     }
 
     public DOM dom() {
@@ -83,8 +86,13 @@ public class ChromeFrame implements Frame {
         this.isolatePromise = executor.newPromise();
     }
 
+    @Override
+    public jpuppeteer.api.Page page() {
+        return page;
+    }
+
     public ChromeFrame appendChild(String frameId) {
-        return new ChromeFrame(this, frameId, page, dom, runtime, input, executor);
+        return new ChromeFrame(page, this, frameId, pageDomain, dom, runtime, input, executor);
     }
 
     @Override
@@ -110,7 +118,7 @@ public class ChromeFrame implements Frame {
     @Override
     public Future<String> navigate(String url, String referer) {
         return SeriesFuture
-                .wrap(page.navigate(new NavigateRequest(url, referer, null, frameId)))
+                .wrap(pageDomain.navigate(new NavigateRequest(url, referer, null, frameId)))
                 .sync(o -> {
                     if (StringUtils.isNoneEmpty(o.errorText)) {
                         throw new RuntimeException(o.errorText);
@@ -123,7 +131,7 @@ public class ChromeFrame implements Frame {
     @Override
     public Future<Isolate> createIsolate(String isolateName) {
         return SeriesFuture
-                .wrap(page.createIsolatedWorld(new CreateIsolatedWorldRequest(frameId, isolateName, true)))
+                .wrap(pageDomain.createIsolatedWorld(new CreateIsolatedWorldRequest(frameId, isolateName, true)))
                 .sync(o -> new ChromeIsolate(runtime, o.executionContextId, isolateName, this, executor));
     }
 
@@ -207,7 +215,7 @@ public class ChromeFrame implements Frame {
         return SeriesFuture
                 .wrap(isolatePromise)
                 .async(o -> o.call("function (selector){return document.querySelector(selector);}", selector))
-                .sync(o -> new ChromeElement(dom, isolatePromise.getNow(), runtime, input, o, executor));
+                .sync(o -> new ChromeElement(page, dom, isolatePromise.getNow(), runtime, input, o, executor));
     }
 
     @Override
@@ -220,7 +228,7 @@ public class ChromeFrame implements Frame {
                     Isolate isolate = isolatePromise.getNow();
                     Element[] elements = new Element[o.length];
                     for(int i=0; i<o.length; i++) {
-                        elements[i] = new ChromeElement(dom, isolate, runtime, input, o[i], executor);
+                        elements[i] = new ChromeElement(page, dom, isolate, runtime, input, o[i], executor);
                     }
                     return elements;
                 });
@@ -230,7 +238,7 @@ public class ChromeFrame implements Frame {
     public Future<Element> waitSelector(String selector, long timeout) {
         return SeriesFuture
                 .wrap(call(SCRIPT_WAIT_SELECTOR, (Object) selector, timeout))
-                .sync(o -> new ChromeElement(dom, isolatePromise.getNow(), runtime, input, o, executor));
+                .sync(o -> new ChromeElement(page, dom, isolatePromise.getNow(), runtime, input, o, executor));
     }
 
     @Override

@@ -81,7 +81,7 @@ public class ChromePage extends ChromeFrame implements Page {
     private final Map<String, Response> responseMap;
 
     public ChromePage(String name, ChromeContext browserContext, CDPSession session, ChromePage opener) {
-        super(
+        super(null,
                 null, session.targetId(), new jpuppeteer.cdp.client.domain.Page(session),
                 new DOM(session), new Runtime(session),
                 new Input(new jpuppeteer.cdp.client.domain.Input(session), browserContext.executor()),
@@ -102,7 +102,7 @@ public class ChromePage extends ChromeFrame implements Page {
         this.browserContext = browserContext;
         this.session = session;
         this.opener = opener;
-        this.page = page();
+        this.page = pageDomain();
         this.fetch = new Fetch(session);
         this.network = new Network(session);
         this.runtime = runtime();
@@ -433,6 +433,11 @@ public class ChromePage extends ChromeFrame implements Page {
                 frame, fetch, event.requestId,
                 event.authChallenge, request);
         interceptor.authenticate(auth);
+    }
+
+    @Override
+    public Page page() {
+        return this;
     }
 
     @Override
