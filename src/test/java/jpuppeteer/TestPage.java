@@ -117,7 +117,8 @@ public class TestPage {
         });
         page.navigate("https://goods.kaola.com.hk/product/8891918.html");
         Element element = future.get();
-        System.out.println(element);
+        String src = element.getAttribute("src").get();
+        System.out.println(src);
     }
 
 }

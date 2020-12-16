@@ -66,7 +66,7 @@ public class ChromeElement implements Element {
     public Future<Element> querySelector(String selector) {
         return SeriesFuture
                 .wrap(isolate.call("function (selector){return this.querySelector(selector);}", objectId(), selector))
-                .sync(o -> new ChromeElement(page, dom, isolate, runtime, input, object, executor));
+                .sync(o -> new ChromeElement(page, dom, isolate, runtime, input, o, executor));
     }
 
     @Override
