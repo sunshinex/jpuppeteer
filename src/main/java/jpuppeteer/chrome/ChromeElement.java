@@ -84,7 +84,8 @@ public class ChromeElement implements Element {
     }
 
     @Override
-    public Future<Element> waitSelector(String selector, long timeout) {
+    public Future<Element> waitSelector(String selector, long timeout, TimeUnit unit) {
+        timeout = unit.toMillis(timeout);
         return SeriesFuture
                 .wrap(isolate.call(SCRIPT_WAIT_SELECTOR, objectId(), (Object) selector, timeout))
                 .sync(o -> new ChromeElement(page, dom, isolate, runtime, input, o, executor));

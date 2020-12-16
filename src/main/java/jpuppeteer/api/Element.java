@@ -5,6 +5,7 @@ import jpuppeteer.cdp.client.entity.dom.BoxModel;
 import jpuppeteer.constant.MouseDefinition;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 public interface Element extends BrowserObject {
 
@@ -14,7 +15,7 @@ public interface Element extends BrowserObject {
 
     Future<Element[]> querySelectorAll(String selector);
 
-    Future<Element> waitSelector(String selector, long timeout);
+    Future<Element> waitSelector(String selector, long timeout, TimeUnit unit);
 
     Future<String> getAttribute(String name);
 

@@ -2,6 +2,8 @@ package jpuppeteer.api;
 
 import io.netty.util.concurrent.Future;
 
+import java.util.concurrent.TimeUnit;
+
 public interface Frame extends Isolate {
 
     Page page();
@@ -10,7 +12,7 @@ public interface Frame extends Isolate {
 
     Future<Element[]> querySelectorAll(String selector);
 
-    Future<Element> waitSelector(String selector, long timeout);
+    Future<Element> waitSelector(String selector, long timeout, TimeUnit unit);
 
     String frameId();
 

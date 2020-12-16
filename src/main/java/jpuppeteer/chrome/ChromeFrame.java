@@ -19,6 +19,8 @@ import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesFuture;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.concurrent.TimeUnit;
+
 public class ChromeFrame implements Frame {
 
     private static final String SCRIPT_WAIT_SELECTOR = ScriptUtil.load("script/waitselector.js");
@@ -235,7 +237,8 @@ public class ChromeFrame implements Frame {
     }
 
     @Override
-    public Future<Element> waitSelector(String selector, long timeout) {
+    public Future<Element> waitSelector(String selector, long timeout, TimeUnit unit) {
+        timeout = unit.toMillis(timeout);
         return SeriesFuture
                 .wrap(call(SCRIPT_WAIT_SELECTOR, (Object) selector, timeout))
                 .sync(o -> new ChromeElement(page, dom, isolatePromise.getNow(), runtime, input, o, executor));

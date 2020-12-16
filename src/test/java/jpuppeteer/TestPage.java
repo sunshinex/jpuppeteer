@@ -109,7 +109,7 @@ public class TestPage {
         page.addListener(new AbstractListener<DomReadyEvent>() {
             @Override
             public void accept(DomReadyEvent event) {
-                page.waitSelector("#baxia-dialog-content", 10000)
+                page.waitSelector("#baxia-dialog-content", 10, TimeUnit.SECONDS)
                         .addListener(f -> {
                             future.set((Element) f.getNow());
                         });
