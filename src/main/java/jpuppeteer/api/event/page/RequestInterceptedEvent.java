@@ -164,7 +164,7 @@ public class RequestInterceptedEvent extends FrameEvent implements InterceptedRe
 
     @Override
     public Future abort() {
-        FailRequestRequest request = new FailRequestRequest(interceptorId, ErrorReason.ABORTED.getValue());
+        FailRequestRequest request = new FailRequestRequest(interceptorId, ErrorReason.ABORTED);
         return fetch.failRequest(request);
     }
 

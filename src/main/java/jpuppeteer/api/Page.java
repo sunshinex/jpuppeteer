@@ -5,6 +5,7 @@ import io.netty.util.concurrent.Future;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.PageEvent;
 import jpuppeteer.cdp.client.constant.fetch.RequestStage;
+import jpuppeteer.cdp.client.constant.page.CaptureScreenshotRequestFormat;
 import jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetUserAgentOverrideRequest;
 import jpuppeteer.cdp.client.entity.fetch.EnableRequest;
@@ -45,7 +46,7 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     default Future enableAuthentication(Consumer<Authenticator> consumer) {
         return enableRequestInterception(new EnableRequest(
                 Lists.newArrayList(
-                        new RequestPattern("*", null, RequestStage.REQUEST.getValue())
+                        new RequestPattern("*", null, RequestStage.REQUEST)
                 ),
                 true
         ), new Interceptor<InterceptedRequest>() {
@@ -66,7 +67,7 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     default Future enableRequestInterception(Consumer<InterceptedRequest> interceptor) {
         return enableRequestInterception(new EnableRequest(
                 Lists.newArrayList(
-                        new RequestPattern("*", null, RequestStage.REQUEST.getValue())
+                        new RequestPattern("*", null, RequestStage.REQUEST)
                 ),
                 false
         ), (Interceptor<InterceptedRequest>) request -> interceptor.accept(request));
@@ -74,7 +75,7 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     default Future enableRequestInterception(Consumer<InterceptedRequest> interceptor, String... urlPatterns) {
         List<RequestPattern> requestPatterns = Arrays.stream(urlPatterns)
-                .map(pattern -> new RequestPattern(pattern, null, RequestStage.REQUEST.getValue()))
+                .map(pattern -> new RequestPattern(pattern, null, RequestStage.REQUEST))
                 .collect(Collectors.toList());
         return enableRequestInterception(
                 new EnableRequest(requestPatterns, false),
@@ -84,7 +85,7 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     default Future enableResponseInterception(Consumer<InterceptedResponse> interceptor) {
         return enableRequestInterception(new EnableRequest(
                 Lists.newArrayList(
-                        new RequestPattern("*", null, RequestStage.RESPONSE.getValue())
+                        new RequestPattern("*", null, RequestStage.RESPONSE)
                 ),
                 false
         ), request -> interceptor.accept(request));
@@ -92,7 +93,7 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     default Future enableResponseInterception(Consumer<InterceptedResponse> interceptor, String... urlPatterns) {
         List<RequestPattern> requestPatterns = Arrays.stream(urlPatterns)
-                .map(pattern -> new RequestPattern(pattern, null, RequestStage.RESPONSE.getValue()))
+                .map(pattern -> new RequestPattern(pattern, null, RequestStage.RESPONSE))
                 .collect(Collectors.toList());
         return enableRequestInterception(
                 new EnableRequest(requestPatterns, false),
@@ -124,7 +125,7 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     Future<byte[]> screenshot(CaptureScreenshotRequest request);
 
     default Future<byte[]> screenshot(Integer quality) {
-        return screenshot(new CaptureScreenshotRequest("jpg", quality, null, null));
+        return screenshot(new CaptureScreenshotRequest(CaptureScreenshotRequestFormat.JPEG, quality, null, null));
     }
 
     default Future<byte[]> screenshot() {

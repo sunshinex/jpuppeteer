@@ -282,10 +282,7 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
     }
 
     public Future grantPermissions(String browserContextId, String origin, PermissionType... permissions) {
-        List<String> perms = Arrays.stream(permissions)
-                .map(type -> type.getValue())
-                .collect(Collectors.toList());
-        GrantPermissionsRequest request = new GrantPermissionsRequest(origin, perms, browserContextId);
+        GrantPermissionsRequest request = new GrantPermissionsRequest(origin, Lists.newArrayList(permissions), browserContextId);
         return browser.grantPermissions(request);
     }
 

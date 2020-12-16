@@ -1,5 +1,6 @@
 package jpuppeteer.util;
 
+import jpuppeteer.cdp.client.constant.input.DispatchTouchEventRequestType;
 import jpuppeteer.cdp.client.entity.input.DispatchTouchEventRequest;
 import jpuppeteer.cdp.client.entity.input.TouchPoint;
 
@@ -7,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public final class DispatchTouchEventRequestBuilder {
-    private String type;
+    private DispatchTouchEventRequestType type;
     private java.util.List<jpuppeteer.cdp.client.entity.input.TouchPoint> touchPoints;
     private Integer modifiers;
     private java.math.BigDecimal timestamp;
@@ -15,7 +16,7 @@ public final class DispatchTouchEventRequestBuilder {
     public DispatchTouchEventRequestBuilder() {
     }
 
-    public DispatchTouchEventRequestBuilder type(String type) {
+    public DispatchTouchEventRequestBuilder type(DispatchTouchEventRequestType type) {
         this.type = type;
         return this;
     }

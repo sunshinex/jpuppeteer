@@ -1,11 +1,12 @@
 package jpuppeteer.util;
 
+import jpuppeteer.cdp.client.constant.input.DispatchKeyEventRequestType;
 import jpuppeteer.cdp.client.entity.input.DispatchKeyEventRequest;
 
 import java.math.BigDecimal;
 
 public final class DispatchKeyEventRequestBuilder {
-    private String type;
+    private DispatchKeyEventRequestType type;
     private Integer modifiers;
     private java.math.BigDecimal timestamp;
     private String text;
@@ -23,7 +24,7 @@ public final class DispatchKeyEventRequestBuilder {
     public DispatchKeyEventRequestBuilder() {
     }
 
-    public DispatchKeyEventRequestBuilder type(String type) {
+    public DispatchKeyEventRequestBuilder type(DispatchKeyEventRequestType type) {
         this.type = type;
         return this;
     }

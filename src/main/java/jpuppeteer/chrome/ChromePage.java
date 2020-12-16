@@ -13,9 +13,6 @@ import jpuppeteer.api.event.PageEvent;
 import jpuppeteer.api.event.page.RequestInterceptedEvent;
 import jpuppeteer.api.event.page.*;
 import jpuppeteer.cdp.CDPSession;
-import jpuppeteer.cdp.client.constant.network.ErrorReason;
-import jpuppeteer.cdp.client.constant.network.ResourceType;
-import jpuppeteer.cdp.client.constant.page.DialogType;
 import jpuppeteer.cdp.client.domain.Runtime;
 import jpuppeteer.cdp.client.domain.*;
 import jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest;
@@ -251,8 +248,7 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     public void handleJavascriptDialog(JavascriptDialogOpeningEvent event) {
-        DialogType type = DialogType.findByValue(event.type);
-        emit(new DialogEvent(page, event.url, type, event.message, event.defaultPrompt, event.hasBrowserHandler));
+        emit(new DialogEvent(page, event.url, event.type, event.message, event.defaultPrompt, event.hasBrowserHandler));
     }
 
     public void handleExceptionThrown(ExceptionThrownEvent event) {
@@ -302,13 +298,12 @@ public class ChromePage extends ChromeFrame implements Page {
             logger.error("[{}] handle request failed, frameId={}", targetId(), event.frameId);
             return;
         }
-        ResourceType resourceType = ResourceType.findByValue(event.type);
         String location = event.redirectResponse != null ? event.redirectResponse.url : null;
         RequestEvent requestEvent = requestBuilder(event.request)
                 .requestId(event.requestId)
                 .loaderId(event.loaderId)
                 .frame(frame)
-                .resourceType(resourceType)
+                .resourceType(event.type)
                 .location(location)
                 .build();
         requestMap.put(event.requestId, requestEvent);
@@ -324,7 +319,6 @@ public class ChromePage extends ChromeFrame implements Page {
             logger.error("[{}] handle response failed, frameId={}", targetId(), event.frameId);
             return;
         }
-        ResourceType resourceType = ResourceType.findByValue(event.type);
         HttpHeader[] headers = parseHeaders(event.response.headers);
         HttpHeader[] requestHeaders = parseHeaders(event.response.requestHeaders);
         InetSocketAddress remoteAddress = null;
@@ -338,7 +332,7 @@ public class ChromePage extends ChromeFrame implements Page {
                 .requestId(event.requestId)
                 .loaderId(event.loaderId)
                 .frame(frame)
-                .resourceType(resourceType)
+                .resourceType(event.type)
                 .url(event.response.url)
                 .protocol(event.response.protocol)
                 .status(event.response.status)
@@ -379,12 +373,11 @@ public class ChromePage extends ChromeFrame implements Page {
             logger.error("[{}] handle request intercept failed, frameId={}", targetId(), event.frameId);
             return;
         }
-        ResourceType resourceType = ResourceType.findByValue(event.resourceType);
         Request request = requestBuilder(event.request)
                 .requestId(event.networkId)
                 .loaderId(null)
                 .frame(frame)
-                .resourceType(resourceType)
+                .resourceType(event.resourceType)
                 .build();
 
         HttpHeader[] responseHeaders = null;
@@ -407,7 +400,7 @@ public class ChromePage extends ChromeFrame implements Page {
                 .frame(frame)
                 .interceptorId(event.requestId)
                 .request(request)
-                .responseErrorReason(ErrorReason.findByValue(event.responseErrorReason))
+                .responseErrorReason(event.responseErrorReason)
                 .responseStatusCode(event.responseStatusCode)
                 .responseHeaders(responseHeaders)
                 .build();
@@ -430,12 +423,11 @@ public class ChromePage extends ChromeFrame implements Page {
             logger.error("[{}] handle auth failed, frameId={}", targetId(), event.frameId);
             return;
         }
-        ResourceType resourceType = ResourceType.findByValue(event.resourceType);
         Request request = requestBuilder(event.request)
                 .requestId(null)
                 .loaderId(null)
                 .frame(frame)
-                .resourceType(resourceType)
+                .resourceType(event.resourceType)
                 .build();
         AuthEvent auth = new AuthEvent(
                 frame, fetch, event.requestId,

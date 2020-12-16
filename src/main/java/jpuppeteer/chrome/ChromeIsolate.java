@@ -37,13 +37,11 @@ public class ChromeIsolate implements Isolate {
         this.executor = executor;
     }
 
-    private static boolean checkNull(String type, String subType) {
-        RemoteObjectType objectType = RemoteObjectType.findByValue(type);
-        RemoteObjectSubtype subObjectType = RemoteObjectSubtype.findByValue(subType);
+    private static boolean checkNull(RemoteObjectType type, RemoteObjectSubtype subType) {
         if (
-                RemoteObjectType.UNDEFINED.equals(objectType) || (
-                        RemoteObjectType.OBJECT.equals(objectType) &&
-                                RemoteObjectSubtype.NULL.equals(subObjectType)
+                RemoteObjectType.UNDEFINED.equals(type) || (
+                        RemoteObjectType.OBJECT.equals(type) &&
+                                RemoteObjectSubtype.NULL.equals(subType)
                 )
         ) {
             return true;

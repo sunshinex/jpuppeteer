@@ -37,7 +37,7 @@ public class AuthEvent extends FrameEvent implements Authenticator {
         this.origin = challenge.origin;
         this.scheme = challenge.scheme;
         this.realm = challenge.realm;
-        this.source = AuthChallengeSource.findByValue(challenge.source);
+        this.source = challenge.source;
         this.request = request;
     }
 
@@ -69,9 +69,9 @@ public class AuthEvent extends FrameEvent implements Authenticator {
     private ContinueWithAuthRequest createRequest(AuthChallengeResponseResponse resp, String username, String password) {
         AuthChallengeResponse authChallengeResp;
         if (username != null) {
-            authChallengeResp = new AuthChallengeResponse(resp.getValue(), username, password);
+            authChallengeResp = new AuthChallengeResponse(resp, username, password);
         } else {
-            authChallengeResp = new AuthChallengeResponse(resp.getValue());
+            authChallengeResp = new AuthChallengeResponse(resp);
         }
 
         return new ContinueWithAuthRequest(interceptorId, authChallengeResp);

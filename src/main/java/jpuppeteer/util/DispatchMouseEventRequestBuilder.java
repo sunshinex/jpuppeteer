@@ -1,26 +1,29 @@
 package jpuppeteer.util;
 
+import jpuppeteer.cdp.client.constant.input.DispatchMouseEventRequestPointerType;
+import jpuppeteer.cdp.client.constant.input.DispatchMouseEventRequestType;
+import jpuppeteer.cdp.client.constant.input.MouseButton;
 import jpuppeteer.cdp.client.entity.input.DispatchMouseEventRequest;
 
 import java.math.BigDecimal;
 
 public final class DispatchMouseEventRequestBuilder {
-    private String type;
+    private DispatchMouseEventRequestType type;
     private java.math.BigDecimal x;
     private java.math.BigDecimal y;
     private Integer modifiers;
     private java.math.BigDecimal timestamp;
-    private String button;
+    private MouseButton button;
     private Integer buttons;
     private Integer clickCount;
     private java.math.BigDecimal deltaX;
     private java.math.BigDecimal deltaY;
-    private String pointerType;
+    private DispatchMouseEventRequestPointerType pointerType;
 
     public DispatchMouseEventRequestBuilder() {
     }
 
-    public DispatchMouseEventRequestBuilder type(String type) {
+    public DispatchMouseEventRequestBuilder type(DispatchMouseEventRequestType type) {
         this.type = type;
         return this;
     }
@@ -45,7 +48,7 @@ public final class DispatchMouseEventRequestBuilder {
         return this;
     }
 
-    public DispatchMouseEventRequestBuilder button(String button) {
+    public DispatchMouseEventRequestBuilder button(MouseButton button) {
         this.button = button;
         return this;
     }
@@ -70,7 +73,7 @@ public final class DispatchMouseEventRequestBuilder {
         return this;
     }
 
-    public DispatchMouseEventRequestBuilder pointerType(String pointerType) {
+    public DispatchMouseEventRequestBuilder pointerType(DispatchMouseEventRequestPointerType pointerType) {
         this.pointerType = pointerType;
         return this;
     }
