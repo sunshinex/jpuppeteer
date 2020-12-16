@@ -93,7 +93,7 @@ public class ChromeElement implements Element {
 
     @Override
     public Future<String> getAttribute(String name) {
-        return isolate.call("function (name, value){return this.getAttribute(name);}", objectId(), String.class, name);
+        return isolate.call("function (name){return this.getAttribute(name);}", objectId(), String.class, name);
     }
 
     @Override
