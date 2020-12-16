@@ -19,6 +19,7 @@ import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesFuture;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 public class ChromeFrame implements Frame {
@@ -217,7 +218,13 @@ public class ChromeFrame implements Frame {
         return SeriesFuture
                 .wrap(isolatePromise)
                 .async(o -> o.call("function (selector){return document.querySelector(selector);}", selector))
-                .sync(o -> new ChromeElement(page(), dom, isolatePromise.getNow(), runtime, input, o, executor));
+                .sync(o -> {
+                    if (o == null) {
+                        throw new NoSuchElementException(selector);
+                    } else {
+                        return new ChromeElement(page(), dom, isolatePromise.getNow(), runtime, input, o, executor);
+                    }
+                });
     }
 
     @Override

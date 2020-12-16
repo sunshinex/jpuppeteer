@@ -23,6 +23,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -66,7 +67,13 @@ public class ChromeElement implements Element {
     public Future<Element> querySelector(String selector) {
         return SeriesFuture
                 .wrap(isolate.call("function (selector){return this.querySelector(selector);}", objectId(), selector))
-                .sync(o -> new ChromeElement(page, dom, isolate, runtime, input, o, executor));
+                .sync(o -> {
+                    if (o == null) {
+                        throw new NoSuchElementException(selector);
+                    } else {
+                        return new ChromeElement(page, dom, isolate, runtime, input, o, executor);
+                    }
+                });
     }
 
     @Override
