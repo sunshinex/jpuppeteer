@@ -25,7 +25,7 @@ public class ChromeFrame implements Frame {
 
     private static final String SCRIPT_WAIT_SELECTOR = ScriptUtil.load("script/waitselector.js");
 
-    private final ChromePage page;
+    private final jpuppeteer.api.Page page;
 
     private final ChromeFrame parent;
 
@@ -43,7 +43,7 @@ public class ChromeFrame implements Frame {
 
     private volatile Promise<ChromeIsolate> isolatePromise;
 
-    public ChromeFrame(ChromePage page, ChromeFrame parent, String frameId, Page pageDomain, DOM dom, Runtime runtime, Input input, EventExecutor executor) {
+    public ChromeFrame(jpuppeteer.api.Page page, ChromeFrame parent, String frameId, Page pageDomain, DOM dom, Runtime runtime, Input input, EventExecutor executor) {
         this.page = page;
         this.parent = parent;
         this.frameId = frameId;
@@ -94,7 +94,7 @@ public class ChromeFrame implements Frame {
     }
 
     public ChromeFrame appendChild(String frameId) {
-        return new ChromeFrame(page, this, frameId, pageDomain, dom, runtime, input, executor);
+        return new ChromeFrame(page(), this, frameId, pageDomain, dom, runtime, input, executor);
     }
 
     @Override
@@ -217,7 +217,7 @@ public class ChromeFrame implements Frame {
         return SeriesFuture
                 .wrap(isolatePromise)
                 .async(o -> o.call("function (selector){return document.querySelector(selector);}", selector))
-                .sync(o -> new ChromeElement(page, dom, isolatePromise.getNow(), runtime, input, o, executor));
+                .sync(o -> new ChromeElement(page(), dom, isolatePromise.getNow(), runtime, input, o, executor));
     }
 
     @Override
@@ -230,7 +230,7 @@ public class ChromeFrame implements Frame {
                     Isolate isolate = isolatePromise.getNow();
                     Element[] elements = new Element[o.length];
                     for(int i=0; i<o.length; i++) {
-                        elements[i] = new ChromeElement(page, dom, isolate, runtime, input, o[i], executor);
+                        elements[i] = new ChromeElement(page(), dom, isolate, runtime, input, o[i], executor);
                     }
                     return elements;
                 });
@@ -241,7 +241,7 @@ public class ChromeFrame implements Frame {
         timeout = unit.toMillis(timeout);
         return SeriesFuture
                 .wrap(call(SCRIPT_WAIT_SELECTOR, (Object) selector, timeout))
-                .sync(o -> new ChromeElement(page, dom, isolatePromise.getNow(), runtime, input, o, executor));
+                .sync(o -> new ChromeElement(page(), dom, isolatePromise.getNow(), runtime, input, o, executor));
     }
 
     @Override
