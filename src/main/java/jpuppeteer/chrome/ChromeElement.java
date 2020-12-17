@@ -10,7 +10,6 @@ import jpuppeteer.api.Page;
 import jpuppeteer.cdp.client.domain.DOM;
 import jpuppeteer.cdp.client.domain.Runtime;
 import jpuppeteer.cdp.client.entity.dom.*;
-import jpuppeteer.cdp.client.entity.input.TouchPoint;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
 import jpuppeteer.entity.Coordinate;
@@ -20,7 +19,6 @@ import jpuppeteer.util.SeriesFuture;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -213,28 +211,19 @@ public class ChromeElement implements Element {
                 .wrap(center())
                 .async(o -> input.mouseMove(0, 0, o.x, o.y, Double.valueOf(Math.max(o.x / 20, o.y / 20)).intValue()))
                 .async(o -> input.mouseDown(buttonType, o.x, o.y))
-                .async(o -> executor.schedule(
-                        () -> input.mouseUp(buttonType, o.x, o.y),
-                        delay,
-                        TimeUnit.MILLISECONDS
-                ));
+                //此处单纯为了延迟，没啥鸟用
+                .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
+                .async(o -> input.mouseUp(buttonType, o.x, o.y));
     }
 
     @Override
     public Future tap(int delay) {
         return SeriesFuture
                 .wrap(center())
-                .async(o -> input.touchStart(
-                        new TouchPoint[]{
-                                new TouchPoint(BigDecimal.valueOf(o.x), BigDecimal.valueOf(o.y))
-                        }
-                        )
-                )
-                .async(o -> executor.schedule(
-                        () -> input.touchEnd(),
-                        delay,
-                        TimeUnit.MILLISECONDS
-                ));
+                .async(o -> input.touchStart(Double.valueOf(o.x).intValue(), Double.valueOf(o.y).intValue()))
+                //此处单纯为了延迟，没啥鸟用
+                .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
+                .async(o -> input.touchEnd());
     }
 
     @Override

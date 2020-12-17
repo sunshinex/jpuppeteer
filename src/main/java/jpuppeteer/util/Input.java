@@ -111,11 +111,9 @@ public class Input {
     public Future press(USKeyboardDefinition key, int delay, USKeyboardDefinition... modifiers) {
         return SeriesFuture
                 .wrap(keyDown(key, modifiers))
-                .async(o -> executor.schedule(
-                        () -> keyUp(key, modifiers),
-                        delay,
-                        TimeUnit.MILLISECONDS
-                ));
+                //此处单纯为了延迟，没啥鸟用
+                .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
+                .async(o -> keyUp(key, modifiers));
     }
 
     public Future input(String text) {
