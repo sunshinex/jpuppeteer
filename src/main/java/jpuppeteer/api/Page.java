@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import io.netty.util.concurrent.Future;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.PageEvent;
+import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration;
 import jpuppeteer.cdp.client.constant.fetch.RequestStage;
 import jpuppeteer.cdp.client.constant.page.CaptureScreenshotRequestFormat;
 import jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest;
@@ -101,6 +102,18 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     }
 
     Future disableRequestInterception();
+
+    Future enableTouchEmulation(boolean enable, int maxTouchPoints);
+
+    default Future enableTouchEmulation(boolean enable) {
+        return enableTouchEmulation(enable, 1);
+    }
+
+    Future enableEmitTouchEventsForMouse(boolean enable, SetEmitTouchEventsForMouseRequestConfiguration configuration);
+
+    default Future enableEmitTouchEventsForMouse(boolean enable) {
+        return enableEmitTouchEventsForMouse(enable, SetEmitTouchEventsForMouseRequestConfiguration.MOBILE);
+    }
 
     Future setHeaders(HttpHeader... headers);
 

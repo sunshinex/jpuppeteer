@@ -1,4 +1,4 @@
-function fake() {
+(function fake() {
   //navigator.webdriver
   Object.defineProperty(navigator, 'webdriver', {
     get: () => undefined
@@ -335,6 +335,4 @@ function fake() {
   } catch (err) {
     console.log(err);
   }
-}
-
-fake();
+})();

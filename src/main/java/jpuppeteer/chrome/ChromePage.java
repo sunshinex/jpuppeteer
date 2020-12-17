@@ -13,10 +13,13 @@ import jpuppeteer.api.event.PageEvent;
 import jpuppeteer.api.event.page.RequestInterceptedEvent;
 import jpuppeteer.api.event.page.*;
 import jpuppeteer.cdp.CDPSession;
+import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration;
 import jpuppeteer.cdp.client.domain.Runtime;
 import jpuppeteer.cdp.client.domain.*;
 import jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest;
+import jpuppeteer.cdp.client.entity.emulation.SetEmitTouchEventsForMouseRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetGeolocationOverrideRequest;
+import jpuppeteer.cdp.client.entity.emulation.SetTouchEmulationEnabledRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetUserAgentOverrideRequest;
 import jpuppeteer.cdp.client.entity.fetch.AuthRequiredEvent;
 import jpuppeteer.cdp.client.entity.fetch.HeaderEntry;
@@ -529,6 +532,16 @@ public class ChromePage extends ChromeFrame implements Page {
     public Future disableRequestInterception() {
         this.interceptor = null;
         return fetch.disable();
+    }
+
+    @Override
+    public Future enableTouchEmulation(boolean enable, int maxTouchPoints) {
+        return emulation.setTouchEmulationEnabled(new SetTouchEmulationEnabledRequest(enable, maxTouchPoints));
+    }
+
+    @Override
+    public Future enableEmitTouchEventsForMouse(boolean enable, SetEmitTouchEventsForMouseRequestConfiguration configuration) {
+        return emulation.setEmitTouchEventsForMouse(new SetEmitTouchEventsForMouseRequest(enable, configuration));
     }
 
     @Override

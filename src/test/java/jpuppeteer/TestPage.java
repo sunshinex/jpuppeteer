@@ -10,7 +10,9 @@ import jpuppeteer.api.event.PageEvent;
 import jpuppeteer.api.event.page.DomReadyEvent;
 import jpuppeteer.api.event.page.LoadedEvent;
 import jpuppeteer.api.event.page.RequestFinishedEvent;
+import jpuppeteer.cdp.client.entity.dom.BoxModel;
 import jpuppeteer.chrome.ChromeLauncher;
+import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesFuture;
 import org.junit.*;
 
@@ -109,16 +111,23 @@ public class TestPage {
         page.addListener(new AbstractListener<DomReadyEvent>() {
             @Override
             public void accept(DomReadyEvent event) {
-                page.waitSelector("#baxia-dialog-content", 10, TimeUnit.SECONDS)
+                page.waitSelector("#pc_0_0 > li:nth-child(1) > div.txt-box > h3 > a", 10, TimeUnit.SECONDS)
                         .addListener(f -> {
                             future.set((Element) f.getNow());
                         });
             }
         });
-        page.navigate("https://goods.kaola.com.hk/product/8891918.html");
+        page.navigate("https://weixin.sogou.com/");
         Element element = future.get();
-        String src = element.getAttribute("src").get();
-        System.out.println(src);
+        BoxModel boxModel = element.boxModel().get();
+        System.out.println(boxModel);
+    }
+
+    @Test
+    public void fake() throws ExecutionException, InterruptedException {
+        page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/fake.js"));
+        page.navigate("https://detail.m.tmall.com/item.htm?id=633695953246");
+        TimeUnit.DAYS.sleep(1);
     }
 
 }
