@@ -632,6 +632,11 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
+    public Future touchStart(int x, int y, USKeyboardDefinition... modifiers) {
+        return input.touchStart(x, y, modifiers);
+    }
+
+    @Override
     public Future touchEnd(USKeyboardDefinition... modifiers) {
         return input.touchEnd(modifiers);
     }
@@ -639,6 +644,11 @@ public class ChromePage extends ChromeFrame implements Page {
     @Override
     public Future touchMove(TouchPoint[] touchPoints, USKeyboardDefinition... modifiers) {
         return input.touchMove(touchPoints, modifiers);
+    }
+
+    @Override
+    public Future touchMove(int fromX, int fromY, int toX, int toY, int steps, USKeyboardDefinition... modifiers) {
+        return input.touchMove(fromX, fromY, toX, toY, steps, modifiers);
     }
 
     @Override

@@ -207,6 +207,14 @@ public class Input {
                 .sync(o -> touchPoints);
     }
 
+    private TouchPoint createTouchPoint(double x, double y) {
+        return new TouchPoint(BigDecimal.valueOf(x), BigDecimal.valueOf(y));
+    }
+
+    public Future<TouchPoint[]> touchStart(int x, int y, USKeyboardDefinition... modifiers) {
+        return touchStart(new TouchPoint[]{createTouchPoint(x, y)}, modifiers);
+    }
+
     
     public Future touchEnd(USKeyboardDefinition... modifiers) {
         DispatchTouchEventRequestBuilder builder = touchEventBuilder(null, modifiers);
@@ -221,6 +229,27 @@ public class Input {
         return SeriesFuture
                 .wrap(input.dispatchTouchEvent(builder.build()))
                 .sync(o -> touchPoints);
+    }
+
+    public Future<TouchPoint[][]> touchMove(int fromX, int fromY, int toX, int toY, int steps, USKeyboardDefinition... modifiers) {
+        TouchPoint[][] tracks = new TouchPoint[steps][1];
+        TouchPoint[] start = new TouchPoint[]{createTouchPoint(fromX, fromY)};
+        tracks[0] = start;
+        double stepX = Math.ceil((toX - fromX) / steps);
+        double stepY = Math.ceil((toY - fromY) / steps);
+        //初始化位置
+        SeriesFuture future = SeriesFuture
+                .wrap(touchMove(start, modifiers));
+        //开始移动
+        for(int i=1; i<steps; i++) {
+            double x = fromX + stepX * i;
+            double y = fromY + stepY * i;
+            TouchPoint[] point = new TouchPoint[]{createTouchPoint(x, y)};
+            tracks[i] = point;
+            future = future.async(o -> touchMove(point, modifiers));
+        }
+
+        return future.sync(o -> tracks);
     }
 
     

@@ -180,9 +180,13 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     //touch event
     Future touchStart(TouchPoint[] touchPoints, USKeyboardDefinition... modifiers);
 
+    Future touchStart(int x, int y, USKeyboardDefinition... modifiers);
+
     Future touchEnd(USKeyboardDefinition... modifiers);
 
     Future touchMove(TouchPoint[] touchPoints, USKeyboardDefinition... modifiers);
+
+    Future touchMove(int fromX, int fromY, int toX, int toY, int steps, USKeyboardDefinition... modifiers);
 
     Future touchCancel();
 
