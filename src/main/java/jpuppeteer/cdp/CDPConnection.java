@@ -140,7 +140,7 @@ public class CDPConnection extends AbstractEventEmitter<CDPEvent> {
                                     new Handshaker(
                                             WebSocketClientHandshakerFactory.newHandshaker(
                                                     uri, WebSocketVersion.V13, null,
-                                                    true, new DefaultHttpHeaders(), 1024 * 1024),
+                                                    true, new DefaultHttpHeaders(), 8 * 1024 * 1024),
                                             shakePromise
                                     ));
                         }
