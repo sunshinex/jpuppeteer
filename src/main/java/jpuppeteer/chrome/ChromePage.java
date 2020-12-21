@@ -154,8 +154,10 @@ public class ChromePage extends ChromeFrame implements Page {
             Response response = responseMap.get(event.frame.loaderId);
             requestMap.clear();
             responseMap.clear();
-            requestMap.put(request.requestId(), request);
-            responseMap.put(request.requestId(), response);
+            if (request != null) {
+                requestMap.put(request.requestId(), request);
+                responseMap.put(request.requestId(), response);
+            }
         }
     }
 
