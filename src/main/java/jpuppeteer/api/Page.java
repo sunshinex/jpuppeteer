@@ -36,6 +36,14 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     Future removeScriptToEvaluateOnNewDocument(String scriptId);
 
+    Future enableNetwork(jpuppeteer.cdp.client.entity.network.EnableRequest request);
+
+    default Future enableNetwork() {
+        return enableNetwork(new jpuppeteer.cdp.client.entity.network.EnableRequest());
+    }
+
+    Future disableNetwork();
+
     Future enableCache();
 
     Future disableCache();

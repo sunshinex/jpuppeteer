@@ -120,7 +120,6 @@ public class ChromePage extends ChromeFrame implements Page {
         this.requestMap = new ConcurrentHashMap<>();
         this.responseMap = new ConcurrentHashMap<>();
         //enable features
-        this.network.enable(new EnableRequest());
         this.page.enable();
         this.page.setLifecycleEventsEnabled(new SetLifecycleEventsEnabledRequest(true));
         //this.dom.enable();
@@ -494,6 +493,16 @@ public class ChromePage extends ChromeFrame implements Page {
     public Future removeScriptToEvaluateOnNewDocument(String scriptId) {
         RemoveScriptToEvaluateOnNewDocumentRequest request = new RemoveScriptToEvaluateOnNewDocumentRequest(scriptId);
         return page.removeScriptToEvaluateOnNewDocument(request);
+    }
+
+    @Override
+    public Future enableNetwork(EnableRequest request) {
+        return network.enable(request);
+    }
+
+    @Override
+    public Future disableNetwork() {
+        return network.disable();
     }
 
     @Override
