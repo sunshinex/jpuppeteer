@@ -546,7 +546,7 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public Future enableTouchEmulation(boolean enable, int maxTouchPoints) {
+    public Future enableTouchEmulation(boolean enable, Integer maxTouchPoints) {
         return emulation.setTouchEmulationEnabled(new SetTouchEmulationEnabledRequest(enable, maxTouchPoints));
     }
 

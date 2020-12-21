@@ -111,16 +111,16 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     Future disableRequestInterception();
 
-    Future enableTouchEmulation(boolean enable, int maxTouchPoints);
+    Future enableTouchEmulation(boolean enable, Integer maxTouchPoints);
 
     default Future enableTouchEmulation(boolean enable) {
-        return enableTouchEmulation(enable, 1);
+        return enableTouchEmulation(enable, null);
     }
 
     Future enableEmitTouchEventsForMouse(boolean enable, SetEmitTouchEventsForMouseRequestConfiguration configuration);
 
     default Future enableEmitTouchEventsForMouse(boolean enable) {
-        return enableEmitTouchEventsForMouse(enable, SetEmitTouchEventsForMouseRequestConfiguration.MOBILE);
+        return enableEmitTouchEventsForMouse(enable, null);
     }
 
     Future setHeaders(HttpHeader... headers);
