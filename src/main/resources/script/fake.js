@@ -15,6 +15,57 @@
   Object.defineProperty(navigator, 'platform', {
     get: () => 'Win32'
   });
+  //navigator.connection.rtt
+  Object.defineProperty(navigator.connection, 'rtt', {
+    get: () => 250
+  });
+  //针对所有的控制台都不输出
+  Object.defineProperties(console, {
+    log : {
+      get: () => function(){},
+      set: () => function(){}
+    },
+    trace : {
+      get: () => function(){},
+      set: () => function(){}
+    },
+    warn : {
+      get: () => function(){},
+      set: () => function(){}
+    },
+    error : {
+      get: () => function(){},
+      set: () => function(){}
+    },
+    dir : {
+      get: () => function(){},
+      set: () => function(){}
+    },
+    dirxml : {
+      get: () => function(){},
+      set: () => function(){}
+    },
+    assert : {
+      get: () => function(){},
+      set: () => function(){}
+    },
+    clear : {
+      get: () => function(){},
+      set: () => function(){}
+    },
+    count : {
+      get: () => function(){},
+      set: () => function(){}
+    },
+    countReset : {
+      get: () => function(){},
+      set: () => function(){}
+    },
+    context : {
+      get: () => function(){},
+      set: () => function(){}
+    },
+  });
   //window.chrome
   window.chrome = {
     runtime : {

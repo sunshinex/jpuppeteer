@@ -15,10 +15,14 @@ public interface BrowserContext {
 
     Future resetPermissions();
 
-    Future<Page> newPage(String url);
+    Future<Page> newPage(String url, Integer width, Integer height);
+
+    default Future<Page> newPage(String url) {
+        return newPage(url, null, null);
+    }
 
     default Future<Page> newPage() {
-        return newPage("about:blank");
+        return newPage("about:blank", null, null);
     }
 
     Page[] pages();

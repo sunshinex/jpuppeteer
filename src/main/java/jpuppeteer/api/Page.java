@@ -4,15 +4,18 @@ import com.google.common.collect.Lists;
 import io.netty.util.concurrent.Future;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.PageEvent;
+import jpuppeteer.cdp.client.constant.emulation.ScreenOrientationType;
 import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration;
 import jpuppeteer.cdp.client.constant.fetch.RequestStage;
 import jpuppeteer.cdp.client.constant.page.CaptureScreenshotRequestFormat;
+import jpuppeteer.cdp.client.entity.emulation.ScreenOrientation;
 import jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetUserAgentOverrideRequest;
 import jpuppeteer.cdp.client.entity.fetch.EnableRequest;
 import jpuppeteer.cdp.client.entity.fetch.RequestPattern;
 import jpuppeteer.cdp.client.entity.input.TouchPoint;
 import jpuppeteer.cdp.client.entity.page.CaptureScreenshotRequest;
+import jpuppeteer.cdp.client.entity.page.ReloadRequest;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
 
@@ -25,6 +28,12 @@ import java.util.stream.Collectors;
 public interface Page extends EventEmitter<PageEvent>, Frame {
 
     String name();
+
+    Future reload(Boolean ignoreCache, String scriptToEvaluateOnLoad);
+
+    default Future reload() {
+        return reload(null, null);
+    }
 
     Page opener();
 
@@ -130,17 +139,25 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     Future setUserAgent(SetUserAgentOverrideRequest userAgent);
 
     default Future setUserAgent(String userAgent) {
-        return setUserAgent(new SetUserAgentOverrideRequest(userAgent));
+        return setUserAgent(new SetUserAgentOverrideRequest(userAgent, "zh-CN,zh;q=0.9", "Win32"));
     }
 
     Future setDevice(SetDeviceMetricsOverrideRequest device);
 
-    default Future setDevice(int width, int height, double scale, boolean isMobile) {
-        return setDevice(new SetDeviceMetricsOverrideRequest(width, height, BigDecimal.valueOf(scale), isMobile));
+    default Future setDevice(ScreenOrientationType screenOrientation, int width, int height, double scale, boolean isMobile) {
+        return setDevice(
+                new SetDeviceMetricsOverrideRequest(
+                        width, height, BigDecimal.valueOf(scale),
+                        isMobile, null, width, height,
+                        null, null, null,
+                        new ScreenOrientation(screenOrientation, 0),
+                        null
+                )
+        );
     }
 
-    default Future setDevice(int width, int height) {
-        return setDevice(width, height, 1, false);
+    default Future setDevice(ScreenOrientationType screenOrientation, int width, int height) {
+        return setDevice(screenOrientation, width, height, 1, false);
     }
 
     Future<byte[]> screenshot(CaptureScreenshotRequest request);

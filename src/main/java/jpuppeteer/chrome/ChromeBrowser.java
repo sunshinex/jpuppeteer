@@ -14,9 +14,7 @@ import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.client.constant.browser.PermissionType;
 import jpuppeteer.cdp.client.domain.Storage;
 import jpuppeteer.cdp.client.domain.Target;
-import jpuppeteer.cdp.client.entity.browser.GetVersionResponse;
-import jpuppeteer.cdp.client.entity.browser.GrantPermissionsRequest;
-import jpuppeteer.cdp.client.entity.browser.ResetPermissionsRequest;
+import jpuppeteer.cdp.client.entity.browser.*;
 import jpuppeteer.cdp.client.entity.network.Cookie;
 import jpuppeteer.cdp.client.entity.network.CookieParam;
 import jpuppeteer.cdp.client.entity.storage.ClearCookiesRequest;
@@ -230,9 +228,9 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
                 .sync(o -> connection.newSession(targetId, o.sessionId));
     }
 
-    public Future<CDPSession> createTarget(String browserContextId, String url) {
+    public Future<CDPSession> createTarget(String browserContextId, String url, Integer width, Integer height) {
         return SeriesFuture
-                .wrap(target.createTarget(new CreateTargetRequest(url, null, null, browserContextId, null, null, null)))
+                .wrap(target.createTarget(new CreateTargetRequest(url, width, height, browserContextId, null, null, null)))
                 .async(o -> {
                     ChromeContext ctx = browserContextId != null ? contextMap.get(browserContextId) : defaultContext;
                     if (ctx == null) {
@@ -294,6 +292,12 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
     public Future closeTarget(String targetId) {
         CloseTargetRequest request = new CloseTargetRequest(targetId);
         return target.closeTarget(request);
+    }
+
+    public Future setWindowBounds(String targetId, Bounds bounds) {
+        return SeriesFuture
+                .wrap(browser.getWindowForTarget(new GetWindowForTargetRequest(targetId)))
+                .async(o -> browser.setWindowBounds(new SetWindowBoundsRequest(o.windowId, bounds)));
     }
 
     @Override

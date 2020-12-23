@@ -1,5 +1,7 @@
 package jpuppeteer;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import com.google.common.util.concurrent.SettableFuture;
 import jpuppeteer.api.Browser;
 import jpuppeteer.api.BrowserContext;
@@ -7,6 +9,7 @@ import jpuppeteer.api.Element;
 import jpuppeteer.api.Page;
 import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.api.event.PageEvent;
+import jpuppeteer.api.event.page.DialogEvent;
 import jpuppeteer.api.event.page.DomReadyEvent;
 import jpuppeteer.api.event.page.LoadedEvent;
 import jpuppeteer.api.event.page.RequestFinishedEvent;
@@ -15,6 +18,7 @@ import jpuppeteer.chrome.ChromeLauncher;
 import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesFuture;
 import org.junit.*;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -125,8 +129,19 @@ public class TestPage {
 
     @Test
     public void fake() throws ExecutionException, InterruptedException {
-        page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/fake.js"));
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        loggerContext.getLogger("root").setLevel(Level.INFO);
+        page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/fake.js")).get();
+        page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/trackmouse.js")).get();
+        page.addListener(new AbstractListener<DialogEvent>() {
+            @Override
+            public void accept(DialogEvent dialog) {
+                dialog.accept();
+            }
+        });
+        page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36").get();
         page.navigate("https://detail.m.tmall.com/item.htm?id=633695953246");
+        page.mouseMove(0, 100, 200, 100, 20);
         TimeUnit.DAYS.sleep(1);
     }
 

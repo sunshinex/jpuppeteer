@@ -13,9 +13,12 @@ import jpuppeteer.api.event.PageEvent;
 import jpuppeteer.api.event.page.RequestInterceptedEvent;
 import jpuppeteer.api.event.page.*;
 import jpuppeteer.cdp.CDPSession;
+import jpuppeteer.cdp.client.constant.browser.WindowState;
 import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration;
+import jpuppeteer.cdp.client.domain.Browser;
 import jpuppeteer.cdp.client.domain.Runtime;
 import jpuppeteer.cdp.client.domain.*;
+import jpuppeteer.cdp.client.entity.browser.Bounds;
 import jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetEmitTouchEventsForMouseRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetGeolocationOverrideRequest;
@@ -465,6 +468,11 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
+    public Future reload(Boolean ignoreCache, String scriptToEvaluateOnLoad) {
+        return page.reload(new ReloadRequest(ignoreCache, scriptToEvaluateOnLoad));
+    }
+
+    @Override
     public Page opener() {
         return opener;
     }
@@ -581,7 +589,11 @@ public class ChromePage extends ChromeFrame implements Page {
 
     @Override
     public Future setDevice(SetDeviceMetricsOverrideRequest device) {
-        return emulation.setDeviceMetricsOverride(device);
+        ChromeBrowser browser = (ChromeBrowser) browserContext().browser();
+        Bounds bounds = new Bounds(0, 0, device.width, device.height, WindowState.NORMAL);
+        return SeriesFuture
+                .wrap(browser.setWindowBounds(targetId(), bounds))
+                .async(o -> emulation.setDeviceMetricsOverride(device));
     }
 
     @Override

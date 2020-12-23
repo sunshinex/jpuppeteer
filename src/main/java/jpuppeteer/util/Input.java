@@ -15,6 +15,7 @@ import jpuppeteer.entity.Coordinate;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class Input {
@@ -173,16 +174,43 @@ public class Input {
 
     
     public Future<Coordinate> mouseMove(double fromX, double fromY, double toX, double toY, int steps, USKeyboardDefinition... modifiers) {
-        double stepX = (toX - fromX) / steps;
-        double stepY = (toY - fromY) / steps;
+        double dx = toX - fromX;
+        double dy = toY - fromY;
+
+        int stepX = Double.valueOf(dx / steps).intValue();
+        int stepY = Double.valueOf(dy / steps).intValue();
         //初始化位置从0开始
         SeriesFuture next = SeriesFuture.wrap(doMouseMove(0, 0, modifiers));
-        for(int i = 0; i<steps; i++) {
-            double x = fromX + stepX * i;
-            double y = fromY + stepY * i;
-            next = next.async(o -> doMouseMove(x, y, modifiers));
+        //前面的80%快速拉过，后面的20%慢速
+        double firstX = fromX + dx * 0.8;
+        double firstY = fromY + dy * 0.8;
+
+        Random random = new Random();
+
+        double x = fromX;
+        double y = fromY;
+        //首先滑前面的80%
+        while (x < firstX || y < firstY) {
+            double tx = x;
+            double ty = y;
+            next = next.async(o -> doMouseMove(tx, ty, modifiers));
+            int rx = random.nextInt((stepX + 5) * 2);
+            int ry = random.nextInt((stepY + 5) * 2);
+            x = Math.min(x + rx, firstX);
+            y = Math.min(y + ry, firstY);
         }
-        return next.async(o ->doMouseMove(toX, toY, modifiers));
+        next = next.async(o -> doMouseMove(firstX, firstY, modifiers));
+        //再滑后面的20%
+        while (x < toX || y < toY) {
+            double tx = x;
+            double ty = y;
+            next = next.async(o -> doMouseMove(tx, ty, modifiers));
+            int rx = random.nextInt((stepX + 5) / 2);
+            int ry = random.nextInt((stepY + 5) / 2);
+            x = Math.min(x + rx, toX);
+            y = Math.min(y + ry, toY);
+        }
+        return next.async(o -> doMouseMove(toX, toY, modifiers));
     }
 
     private DispatchTouchEventRequestBuilder touchEventBuilder(TouchPoint[] touchPoints, USKeyboardDefinition... modifiers) {

@@ -203,9 +203,9 @@ public class ChromeContext implements BrowserContext {
     }
 
     @Override
-    public Future<Page> newPage(String url) {
+    public Future<Page> newPage(String url, Integer width, Integer height) {
         return SeriesFuture
-                .wrap(browser.createTarget(browserContextId, url))
+                .wrap(browser.createTarget(browserContextId, url, width, height))
                 .sync(o -> newPage(o, null));
     }
 
