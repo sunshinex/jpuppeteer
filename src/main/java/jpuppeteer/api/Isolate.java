@@ -12,6 +12,10 @@ public interface Isolate {
 
     <R> Future<R> eval(EvaluateRequest request, Class<R> clazz);
 
+    default Future<BrowserObject> eval(String expression) {
+        return eval(expression, null);
+    }
+
     Future<BrowserObject> eval(String expression, Integer timeout);
 
     <R> Future<R> eval(String expression, Integer timeout, Class<R> clazz);

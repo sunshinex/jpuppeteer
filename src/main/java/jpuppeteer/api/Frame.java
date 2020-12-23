@@ -8,6 +8,8 @@ public interface Frame extends Isolate {
 
     Page page();
 
+    Future<Element> owner();
+
     Future<Element> querySelector(String selector);
 
     Future<Element[]> querySelectorAll(String selector);

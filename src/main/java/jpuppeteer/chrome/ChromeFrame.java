@@ -32,6 +32,8 @@ public class ChromeFrame implements Frame {
 
     private final String frameId;
 
+    private final Future<Element> ownerFuture;
+
     private final Page pageDomain;
 
     private final DOM dom;
@@ -44,10 +46,11 @@ public class ChromeFrame implements Frame {
 
     private volatile Promise<ChromeIsolate> isolatePromise;
 
-    public ChromeFrame(jpuppeteer.api.Page page, ChromeFrame parent, String frameId, Page pageDomain, DOM dom, Runtime runtime, Input input, EventExecutor executor) {
+    public ChromeFrame(jpuppeteer.api.Page page, ChromeFrame parent, String frameId, Future<Element> ownerFuture, Page pageDomain, DOM dom, Runtime runtime, Input input, EventExecutor executor) {
         this.page = page;
         this.parent = parent;
         this.frameId = frameId;
+        this.ownerFuture = ownerFuture;
         this.pageDomain = pageDomain;
         this.dom = dom;
         this.runtime = runtime;
@@ -94,8 +97,13 @@ public class ChromeFrame implements Frame {
         return page;
     }
 
-    public ChromeFrame appendChild(String frameId) {
-        return new ChromeFrame(page(), this, frameId, pageDomain, dom, runtime, input, executor);
+    @Override
+    public Future<Element> owner() {
+        return ownerFuture;
+    }
+
+    public ChromeFrame appendChild(String frameId, Future<Element> ownerFuture) {
+        return new ChromeFrame(page(), this, frameId, ownerFuture, pageDomain, dom, runtime, input, executor);
     }
 
     @Override

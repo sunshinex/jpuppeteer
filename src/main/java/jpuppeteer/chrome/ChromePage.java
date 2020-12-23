@@ -19,6 +19,9 @@ import jpuppeteer.cdp.client.domain.Browser;
 import jpuppeteer.cdp.client.domain.Runtime;
 import jpuppeteer.cdp.client.domain.*;
 import jpuppeteer.cdp.client.entity.browser.Bounds;
+import jpuppeteer.cdp.client.entity.dom.GetFrameOwnerRequest;
+import jpuppeteer.cdp.client.entity.dom.ResolveNodeRequest;
+import jpuppeteer.cdp.client.entity.dom.ResolveNodeResponse;
 import jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetEmitTouchEventsForMouseRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetGeolocationOverrideRequest;
@@ -87,8 +90,8 @@ public class ChromePage extends ChromeFrame implements Page {
     private final Map<String, Response> responseMap;
 
     public ChromePage(String name, ChromeContext browserContext, CDPSession session, ChromePage opener) {
-        super(null,
-                null, session.targetId(), new jpuppeteer.cdp.client.domain.Page(session),
+        super(null, null, session.targetId(), null,
+                new jpuppeteer.cdp.client.domain.Page(session),
                 new DOM(session), new Runtime(session),
                 new Input(new jpuppeteer.cdp.client.domain.Input(session), browserContext.executor()),
                 browserContext.executor()
@@ -143,7 +146,14 @@ public class ChromePage extends ChromeFrame implements Page {
             logger.warn("[{}] parent frame not found, parentId={}, frameId={}", targetId(), event.parentFrameId, event.frameId);
             return;
         }
-        ChromeFrame child = parent.appendChild(event.frameId);
+        Future<Element> ownerFuture = SeriesFuture
+                .wrap(dom().getFrameOwner(new GetFrameOwnerRequest(event.frameId)))
+                .async(o -> dom().resolveNode(new ResolveNodeRequest(null, o.backendNodeId, null, null)))
+                .sync(o -> {
+                    BrowserObject ownerObject = new ChromeObject(parent, runtime, o.object.objectId, executor());
+                    return new ChromeElement(this, dom(), parent, runtime, input, ownerObject, executor());
+                });
+        ChromeFrame child = parent.appendChild(event.frameId, ownerFuture);
         frameMap.put(event.frameId, child);
     }
 
