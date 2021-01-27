@@ -141,7 +141,6 @@ public class TestPage {
         });
         page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36").get();
         page.navigate("https://detail.m.tmall.com/item.htm?id=633695953246");
-        page.mouseMove(0, 100, 200, 100, 20);
         TimeUnit.DAYS.sleep(1);
     }
 

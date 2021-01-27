@@ -3,10 +3,8 @@ package jpuppeteer.util;
 import com.google.common.collect.Lists;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.Future;
-import jpuppeteer.cdp.client.constant.input.DispatchKeyEventRequestType;
-import jpuppeteer.cdp.client.constant.input.DispatchMouseEventRequestPointerType;
-import jpuppeteer.cdp.client.constant.input.DispatchMouseEventRequestType;
-import jpuppeteer.cdp.client.constant.input.DispatchTouchEventRequestType;
+import io.netty.util.concurrent.Promise;
+import jpuppeteer.cdp.client.constant.input.*;
 import jpuppeteer.cdp.client.entity.input.InsertTextRequest;
 import jpuppeteer.cdp.client.entity.input.TouchPoint;
 import jpuppeteer.constant.MouseDefinition;
@@ -16,7 +14,11 @@ import jpuppeteer.entity.Coordinate;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 public class Input {
     
@@ -24,37 +26,49 @@ public class Input {
     
     private final EventExecutor executor;
 
+    /**
+     * 页面上按下的键盘
+     */
+    private final Set<USKeyboardDefinition> pressedKeys;
+
+    /**
+     * 页面上按下的鼠标按键
+     */
+    private final Set<MouseDefinition> pressedButtons;
+
     public Input(jpuppeteer.cdp.client.domain.Input input, EventExecutor executor) {
         this.input = input;
         this.executor = executor;
+        this.pressedKeys = ConcurrentHashMap.newKeySet();
+        this.pressedButtons = ConcurrentHashMap.newKeySet();
     }
 
-    private static int getModifier(USKeyboardDefinition... modifiers) {
+    private static int getModifier(Set<USKeyboardDefinition> modifiers) {
         int mod = 0;
         for(USKeyboardDefinition key : modifiers) {
             switch (key) {
                 case ALTLEFT:
                 case ALTRIGHT:
                 case ALT:
-                    mod &= ~1;
+                    mod |= 1;
                     break;
 
                 case CONTROLLEFT:
                 case CONTROLRIGHT:
                 case CONTROL:
-                    mod &= ~2;
+                    mod |= 2;
                     break;
 
                 case METALEFT:
                 case METARIGHT:
                 case META:
-                    mod &= ~4;
+                    mod |= 4;
                     break;
 
                 case SHIFTLEFT:
                 case SHIFTRIGHT:
                 case SHIFT:
-                    mod &= ~8;
+                    mod |= 8;
                     break;
             }
         }
@@ -62,9 +76,17 @@ public class Input {
         return mod;
     }
 
+    private static int getButtons(Set<MouseDefinition> buttons) {
+        int mod = 0;
+        for(MouseDefinition btn : buttons) {
+            mod |= btn.getCode();
+        }
+        return mod;
+    }
     
-    public Future keyDown(USKeyboardDefinition key, USKeyboardDefinition... modifiers) {
-        int keyModifiers = getModifier(modifiers);
+    public Future keyDown(USKeyboardDefinition key) {
+        pressedKeys.add(key);
+        int keyModifiers = getModifier(pressedKeys);
         boolean shift = (keyModifiers & 8) == 8;
         String keyStr = shift && key.getShiftKey() != null ? key.getShiftKey() : key.getKey();
 
@@ -75,7 +97,7 @@ public class Input {
         builder.key(keyStr);
         builder.location(key.getLocation() != null ? key.getLocation() : 0);
         builder.isKeypad(key.getLocation() != null && key.getLocation() == 3);
-        builder.autoRepeat(false);
+        builder.autoRepeat(pressedKeys.contains(key));
 
         builder.type(DispatchKeyEventRequestType.RAWKEYDOWN);
         if (keyStr.length() == 1) {
@@ -89,13 +111,12 @@ public class Input {
         if (keyStr != null) {
             builder.type(DispatchKeyEventRequestType.KEYDOWN);
         }
-
         return input.dispatchKeyEvent(builder.build());
     }
 
     
-    public Future keyUp(USKeyboardDefinition key, USKeyboardDefinition... modifiers) {
-        int keyModifiers = getModifier(modifiers);
+    public Future keyUp(USKeyboardDefinition key) {
+        int keyModifiers = getModifier(pressedKeys);
         boolean shift = (keyModifiers & 8) == 8;
         DispatchKeyEventRequestBuilder builder = new DispatchKeyEventRequestBuilder();
         builder.modifiers(keyModifiers);
@@ -105,16 +126,17 @@ public class Input {
         builder.location(key.getLocation() != null ? key.getLocation() : 0);
         builder.isKeypad(key.getLocation() != null && key.getLocation() == 3);
         builder.type(DispatchKeyEventRequestType.KEYUP);
+        pressedKeys.remove(key);
         return input.dispatchKeyEvent(builder.build());
     }
 
     
-    public Future press(USKeyboardDefinition key, int delay, USKeyboardDefinition... modifiers) {
+    public Future press(USKeyboardDefinition key, int delay) {
         return SeriesFuture
-                .wrap(keyDown(key, modifiers))
+                .wrap(keyDown(key))
                 //此处单纯为了延迟，没啥鸟用
                 .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
-                .async(o -> keyUp(key, modifiers));
+                .async(o -> keyUp(key));
     }
 
     public Future input(String text) {
@@ -122,11 +144,11 @@ public class Input {
         return input.insertText(request);
     }
 
-    private DispatchMouseEventRequestBuilder mouseEventBuilder(MouseDefinition mouseDefinition, double x, double y, USKeyboardDefinition... modifiers) {
-        int keyModifiers = getModifier(modifiers);
+    private DispatchMouseEventRequestBuilder mouseEventBuilder(MouseDefinition mouseDefinition, int x, int y) {
+        int keyModifiers = getModifier(pressedKeys);
         DispatchMouseEventRequestBuilder builder = new DispatchMouseEventRequestBuilder();
         builder.button(mouseDefinition.getButton());
-        builder.buttons(mouseDefinition.getCode());
+        builder.buttons(getButtons(pressedButtons));
         builder.modifiers(keyModifiers);
         builder.pointerType(DispatchMouseEventRequestPointerType.MOUSE);
         builder.x(BigDecimal.valueOf(x));
@@ -134,8 +156,14 @@ public class Input {
         return builder;
     }
 
-    private Future<Coordinate> doMouseDown(MouseDefinition mouseDefinition, double x, double y, int count, USKeyboardDefinition... modifiers) {
-        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, x, y, modifiers);
+    
+    public Future<Coordinate> mouseDown(MouseDefinition mouseDefinition, int x, int y) {
+        return mouseDown(mouseDefinition, x, y, 1);
+    }
+
+    public Future<Coordinate> mouseDown(MouseDefinition mouseDefinition, int x, int y, int count) {
+        pressedButtons.add(mouseDefinition);
+        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, x, y);
         builder.type(DispatchMouseEventRequestType.MOUSEPRESSED);
         builder.clickCount(count);
         return SeriesFuture
@@ -143,17 +171,23 @@ public class Input {
                 .sync(o -> new Coordinate(x, y));
     }
 
-    private Future<Coordinate> doMouseUp(MouseDefinition mouseDefinition, double x, double y, int count, USKeyboardDefinition... modifiers) {
-        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, x, y, modifiers);
+    
+    public Future<Coordinate> mouseUp(MouseDefinition mouseDefinition, int x, int y) {
+        return mouseUp(mouseDefinition, x, y, 1);
+    }
+
+    public Future<Coordinate> mouseUp(MouseDefinition mouseDefinition, int x, int y, int count) {
+        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, x, y);
         builder.type(DispatchMouseEventRequestType.MOUSERELEASED);
         builder.clickCount(count);
+        pressedButtons.remove(mouseDefinition);
         return SeriesFuture
                 .wrap(input.dispatchMouseEvent(builder.build()))
                 .sync(o -> new Coordinate(x, y));
     }
 
-    private Future<Coordinate> doMouseMove(double x, double y, USKeyboardDefinition... modifiers) {
-        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(MouseDefinition.NONE, x, y, modifiers);
+    public Future<Coordinate> mouseMove(MouseDefinition mouseDefinition, int x, int y) {
+        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, x, y);
         builder.type(DispatchMouseEventRequestType.MOUSEMOVED);
         builder.x(BigDecimal.valueOf(x));
         builder.y(BigDecimal.valueOf(y));
@@ -162,60 +196,9 @@ public class Input {
                 .sync(o -> new Coordinate(x, y));
     }
 
-    
-    public Future<Coordinate> mouseDown(MouseDefinition mouseDefinition, double x, double y, USKeyboardDefinition... modifiers) {
-        return doMouseDown(mouseDefinition, x, y, 1, modifiers);
-    }
-
-    
-    public Future<Coordinate> mouseUp(MouseDefinition mouseDefinition, double x, double y, USKeyboardDefinition... modifiers) {
-        return doMouseUp(mouseDefinition, x, y, 1, modifiers);
-    }
-
-    
-    public Future<Coordinate> mouseMove(double fromX, double fromY, double toX, double toY, int steps, USKeyboardDefinition... modifiers) {
-        double dx = toX - fromX;
-        double dy = toY - fromY;
-
-        int stepX = Double.valueOf(dx / steps).intValue();
-        int stepY = Double.valueOf(dy / steps).intValue();
-        //初始化位置从0开始
-        SeriesFuture next = SeriesFuture.wrap(doMouseMove(0, 0, modifiers));
-        //前面的80%快速拉过，后面的20%慢速
-        double firstX = fromX + dx * 0.8;
-        double firstY = fromY + dy * 0.8;
-
-        Random random = new Random();
-
-        double x = fromX;
-        double y = fromY;
-        //首先滑前面的80%
-        while (x < firstX || y < firstY) {
-            double tx = x;
-            double ty = y;
-            next = next.async(o -> doMouseMove(tx, ty, modifiers));
-            int rx = random.nextInt((stepX + 5) * 2);
-            int ry = random.nextInt((stepY + 5) * 2);
-            x = Math.min(x + rx, firstX);
-            y = Math.min(y + ry, firstY);
-        }
-        next = next.async(o -> doMouseMove(firstX, firstY, modifiers));
-        //再滑后面的20%
-        while (x < toX || y < toY) {
-            double tx = x;
-            double ty = y;
-            next = next.async(o -> doMouseMove(tx, ty, modifiers));
-            int rx = random.nextInt((stepX + 5) / 2);
-            int ry = random.nextInt((stepY + 5) / 2);
-            x = Math.min(x + rx, toX);
-            y = Math.min(y + ry, toY);
-        }
-        return next.async(o -> doMouseMove(toX, toY, modifiers));
-    }
-
-    private DispatchTouchEventRequestBuilder touchEventBuilder(TouchPoint[] touchPoints, USKeyboardDefinition... modifiers) {
+    private DispatchTouchEventRequestBuilder touchEventBuilder(TouchPoint[] touchPoints) {
         DispatchTouchEventRequestBuilder builder = new DispatchTouchEventRequestBuilder();
-        builder.modifiers(getModifier(modifiers));
+        builder.modifiers(getModifier(pressedKeys));
         if (touchPoints != null && touchPoints.length > 0) {
             builder.touchPoints(Lists.newArrayList(touchPoints));
         } else {
@@ -225,62 +208,43 @@ public class Input {
     }
 
     
-    public Future<TouchPoint[]> touchStart(TouchPoint[] touchPoints, USKeyboardDefinition... modifiers) {
-        DispatchTouchEventRequestBuilder builder = touchEventBuilder(touchPoints, modifiers);
+    public Future<TouchPoint[]> touchStart(TouchPoint[] touchPoints) {
+        DispatchTouchEventRequestBuilder builder = touchEventBuilder(touchPoints);
         builder.type(DispatchTouchEventRequestType.TOUCHSTART);
         return SeriesFuture
                 .wrap(input.dispatchTouchEvent(builder.build()))
                 .sync(o -> touchPoints);
     }
 
-    private TouchPoint createTouchPoint(double x, double y) {
+    private TouchPoint createTouchPoint(int x, int y) {
         return new TouchPoint(BigDecimal.valueOf(x), BigDecimal.valueOf(y));
     }
 
-    public Future<TouchPoint[]> touchStart(int x, int y, USKeyboardDefinition... modifiers) {
-        return touchStart(new TouchPoint[]{createTouchPoint(x, y)}, modifiers);
+    public Future<TouchPoint[]> touchStart(int x, int y) {
+        return touchStart(new TouchPoint[]{createTouchPoint(x, y)});
     }
 
-    
-    public Future touchEnd(USKeyboardDefinition... modifiers) {
-        DispatchTouchEventRequestBuilder builder = touchEventBuilder(null, modifiers);
+    public Future touchEnd() {
+        DispatchTouchEventRequestBuilder builder = touchEventBuilder(null);
         builder.type(DispatchTouchEventRequestType.TOUCHEND);
         return input.dispatchTouchEvent(builder.build());
     }
 
     
-    public Future<TouchPoint[]> touchMove(TouchPoint[] touchPoints, USKeyboardDefinition... modifiers) {
-        DispatchTouchEventRequestBuilder builder = touchEventBuilder(touchPoints, modifiers);
+    public Future<TouchPoint[]> touchMove(TouchPoint[] touchPoints) {
+        DispatchTouchEventRequestBuilder builder = touchEventBuilder(touchPoints);
         builder.type(DispatchTouchEventRequestType.TOUCHMOVE);
         return SeriesFuture
                 .wrap(input.dispatchTouchEvent(builder.build()))
                 .sync(o -> touchPoints);
     }
 
-    public Future<TouchPoint[][]> touchMove(int fromX, int fromY, int toX, int toY, int steps, USKeyboardDefinition... modifiers) {
-        TouchPoint[][] tracks = new TouchPoint[steps][1];
-        TouchPoint[] start = new TouchPoint[]{createTouchPoint(fromX, fromY)};
-        tracks[0] = start;
-        double stepX = Math.ceil((toX - fromX) / steps);
-        double stepY = Math.ceil((toY - fromY) / steps);
-        //初始化位置
-        SeriesFuture future = SeriesFuture
-                .wrap(touchMove(start, modifiers));
-        //开始移动
-        for(int i=1; i<steps; i++) {
-            double x = fromX + stepX * i;
-            double y = fromY + stepY * i;
-            TouchPoint[] point = new TouchPoint[]{createTouchPoint(x, y)};
-            tracks[i] = point;
-            future = future.async(o -> touchMove(point, modifiers));
-        }
-
-        return future.sync(o -> tracks);
+    public Future<TouchPoint[]> touchMove(int x, int y) {
+        return touchMove(new TouchPoint[]{createTouchPoint(x, y)});
     }
 
-    
-    public Future touchCancel(USKeyboardDefinition... modifiers) {
-        DispatchTouchEventRequestBuilder builder = touchEventBuilder(null, modifiers);
+    public Future touchCancel() {
+        DispatchTouchEventRequestBuilder builder = touchEventBuilder(null);
         builder.type(DispatchTouchEventRequestType.TOUCHCANCEL);
         return input.dispatchTouchEvent(builder.build());
     }

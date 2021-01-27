@@ -173,45 +173,41 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     Future stopLoading();
 
     //keyboard event;
-    Future keyDown(USKeyboardDefinition key, USKeyboardDefinition... modifiers);
+    Future keyDown(USKeyboardDefinition key);
 
-    Future keyUp(USKeyboardDefinition key, USKeyboardDefinition... modifiers);
+    Future keyUp(USKeyboardDefinition key);
 
-    Future press(USKeyboardDefinition key, int delay, USKeyboardDefinition... modifiers);
+    Future press(USKeyboardDefinition key, int delay);
 
-    default Future press(USKeyboardDefinition key, USKeyboardDefinition... modifiers) {
-        return press(key, 0, modifiers);
+    default Future press(USKeyboardDefinition key) {
+        return press(key, 0);
     }
 
     //mouse event
-    Future mouseDown(MouseDefinition mouseDefinition, double x, double y, USKeyboardDefinition... modifiers);
+    Future mouseDown(MouseDefinition mouseDefinition, int x, int y);
 
-    default Future mouseDown(double x, double y, USKeyboardDefinition... modifiers) {
-        return mouseDown(MouseDefinition.LEFT, x, y, modifiers);
+    default Future mouseDown(int x, int y) {
+        return mouseDown(MouseDefinition.LEFT, x, y);
     }
 
-    Future mouseUp(MouseDefinition mouseDefinition, double x, double y, USKeyboardDefinition... modifiers);
+    Future mouseUp(MouseDefinition mouseDefinition, int x, int y);
 
-    default Future mouseUp(double x, double y, USKeyboardDefinition... modifiers) {
-        return mouseUp(MouseDefinition.LEFT, x, y, modifiers);
+    default Future mouseUp(int x, int y) {
+        return mouseUp(MouseDefinition.LEFT, x, y);
     }
 
-    Future mouseMove(double fromX, double fromY, double toX, double toY, int steps, USKeyboardDefinition... modifiers);
-
-    default Future mouseMove(double fromX, double fromY, double toX, double toY, USKeyboardDefinition... modifiers) {
-        return mouseMove(fromX, fromY, toX, toY, 1, modifiers);
-    }
+    Future mouseMove(MouseDefinition mouseDefinition, int x, int y);
 
     //touch event
-    Future touchStart(TouchPoint[] touchPoints, USKeyboardDefinition... modifiers);
+    Future touchStart(TouchPoint[] touchPoints);
 
-    Future touchStart(int x, int y, USKeyboardDefinition... modifiers);
+    Future touchStart(int x, int y);
 
-    Future touchEnd(USKeyboardDefinition... modifiers);
+    Future touchEnd();
 
-    Future touchMove(TouchPoint[] touchPoints, USKeyboardDefinition... modifiers);
+    Future touchMove(TouchPoint[] touchPoints);
 
-    Future touchMove(int fromX, int fromY, int toX, int toY, int steps, USKeyboardDefinition... modifiers);
+    Future touchMove(int x, int y);
 
     Future touchCancel();
 

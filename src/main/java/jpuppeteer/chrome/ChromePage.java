@@ -630,58 +630,58 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public Future keyDown(USKeyboardDefinition key, USKeyboardDefinition... modifiers) {
-        return input.keyDown(key, modifiers);
+    public Future keyDown(USKeyboardDefinition key) {
+        return input.keyDown(key);
     }
 
     @Override
-    public Future keyUp(USKeyboardDefinition key, USKeyboardDefinition... modifiers) {
-        return input.keyUp(key, modifiers);
+    public Future keyUp(USKeyboardDefinition key) {
+        return input.keyUp(key);
     }
 
     @Override
-    public Future press(USKeyboardDefinition key, int delay, USKeyboardDefinition... modifiers) {
-        return input.press(key, delay, modifiers);
+    public Future press(USKeyboardDefinition key, int delay) {
+        return input.press(key, delay);
     }
 
     @Override
-    public Future mouseDown(MouseDefinition mouseDefinition, double x, double y, USKeyboardDefinition... modifiers) {
-        return input.mouseDown(mouseDefinition, x, y, modifiers);
+    public Future mouseDown(MouseDefinition mouseDefinition, int x, int y) {
+        return input.mouseDown(mouseDefinition, x, y);
     }
 
     @Override
-    public Future mouseUp(MouseDefinition mouseDefinition, double x, double y, USKeyboardDefinition... modifiers) {
-        return input.mouseUp(mouseDefinition, x, y, modifiers);
+    public Future mouseUp(MouseDefinition mouseDefinition, int x, int y) {
+        return input.mouseUp(mouseDefinition, x, y);
     }
 
     @Override
-    public Future mouseMove(double fromX, double fromY, double toX, double toY, int steps, USKeyboardDefinition... modifiers) {
-        return input.mouseMove(fromX, fromY, toX, toY, steps, modifiers);
+    public Future mouseMove(MouseDefinition mouseDefinition, int x, int y) {
+        return input.mouseMove(mouseDefinition, x, y);
     }
 
     @Override
-    public Future touchStart(TouchPoint[] touchPoints, USKeyboardDefinition... modifiers) {
-        return input.touchStart(touchPoints, modifiers);
+    public Future touchStart(TouchPoint[] touchPoints) {
+        return input.touchStart(touchPoints);
     }
 
     @Override
-    public Future touchStart(int x, int y, USKeyboardDefinition... modifiers) {
-        return input.touchStart(x, y, modifiers);
+    public Future touchStart(int x, int y) {
+        return input.touchStart(x, y);
     }
 
     @Override
-    public Future touchEnd(USKeyboardDefinition... modifiers) {
-        return input.touchEnd(modifiers);
+    public Future touchEnd() {
+        return input.touchEnd();
     }
 
     @Override
-    public Future touchMove(TouchPoint[] touchPoints, USKeyboardDefinition... modifiers) {
-        return input.touchMove(touchPoints, modifiers);
+    public Future touchMove(TouchPoint[] touchPoints) {
+        return input.touchMove(touchPoints);
     }
 
     @Override
-    public Future touchMove(int fromX, int fromY, int toX, int toY, int steps, USKeyboardDefinition... modifiers) {
-        return input.touchMove(fromX, fromY, toX, toY, steps, modifiers);
+    public Future touchMove(int x, int y) {
+        return input.touchMove(x, y);
     }
 
     @Override

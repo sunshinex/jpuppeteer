@@ -209,11 +209,10 @@ public class ChromeElement implements Element {
     public Future click(MouseDefinition buttonType, int delay) {
         return SeriesFuture
                 .wrap(center())
-                .async(o -> input.mouseMove(0, 0, o.x, o.y, Double.valueOf(Math.max(o.x / 20, o.y / 20)).intValue()))
-                .async(o -> input.mouseDown(buttonType, o.x, o.y))
+                .async(o -> input.mouseDown(buttonType, Double.valueOf(o.x).intValue(), Double.valueOf(o.y).intValue()))
                 //此处单纯为了延迟，没啥鸟用
                 .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
-                .async(o -> input.mouseUp(buttonType, o.x, o.y));
+                .async(o -> input.mouseUp(buttonType, Double.valueOf(o.x).intValue(), Double.valueOf(o.y).intValue()));
     }
 
     @Override

@@ -275,6 +275,7 @@
     // Make mockedFns toString() representation resemble a native function
     makeFnsNative(mockedFns)
   }
+  //plugins
   try {
     const isPluginArray = navigator.plugins instanceof PluginArray
     const hasPlugins = isPluginArray && navigator.plugins.length > 0
@@ -283,39 +284,6 @@
     }
     mockPluginsAndMimeTypes()
   } catch (err) { }
-  //navigator.permissions
-  const originalQuery = window.navigator.permissions.query;
-  // eslint-disable-next-line
-  window.navigator.permissions.__proto__.query = parameters =>
-    parameters.name === 'notifications'
-      ? Promise.resolve({ state: Notification.permission }) //eslint-disable-line
-      : originalQuery(parameters)
-
-  // Inspired by: https://github.com/ikarienator/phantomjs_hide_and_seek/blob/master/5.spoofFunctionBind.js
-  const oldCall = Function.prototype.call
-  function call() {
-    return oldCall.apply(this, arguments)
-  }
-  // eslint-disable-next-line
-  Function.prototype.call = call
-
-  const nativeToStringFunctionString = Error.toString().replace(
-    /Error/g,
-    'toString'
-  )
-  const oldToString = Function.prototype.toString
-
-  function functionToString() {
-    if (this === window.navigator.permissions.query) {
-      return 'function query() { [native code] }'
-    }
-    if (this === functionToString) {
-      return nativeToStringFunctionString
-    }
-    return oldCall.call(oldToString, this)
-  }
-  // eslint-disable-next-line
-  Function.prototype.toString = functionToString
   //webgl
   try {
     /* global WebGLRenderingContext */
@@ -368,22 +336,8 @@
           ret = getParameter.call(this, parameter);
           break;
       }
-      // console.log("getParameter " + parameter + "=" + ret);
+      //console.log("getParameter " + parameter + "=" + ret);
       return ret;
     }
   } catch (err) { console.error(err) }
-  //window.out...
-  try {
-    if (!window.outerWidth) {
-      window.outerWidth = window.innerWidth;
-    }
-    if (!window.outerHeight) {
-      window.outerHeight = window.innerHeight;
-    }
-    if (window.outerHeight == window.innerHeight) {
-      window.innerHeight = window.outerHeight - 92;
-    }
-  } catch (err) {
-    console.log(err);
-  }
 })();
