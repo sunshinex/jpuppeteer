@@ -607,6 +607,12 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
+    public Future setWindow(Bounds bounds) {
+        ChromeBrowser browser = (ChromeBrowser) browserContext.browser();
+        return browser.setWindowBounds(targetId(), bounds);
+    }
+
+    @Override
     public Future<byte[]> screenshot(CaptureScreenshotRequest request) {
         Future<byte[]> future = SeriesFuture
                 .wrap(page.captureScreenshot(request))

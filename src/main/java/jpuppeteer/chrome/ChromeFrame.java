@@ -225,7 +225,7 @@ public class ChromeFrame implements Frame {
     public Future<Element> querySelector(String selector) {
         return SeriesFuture
                 .wrap(isolatePromise)
-                .async(o -> o.call("function (selector){return document.querySelector(selector);}", selector))
+                .async(o -> o.call("function (selector){return document.querySelector(selector);}", (Object) selector))
                 .sync(o -> {
                     if (o == null) {
                         throw new NoSuchElementException(selector);
@@ -239,7 +239,7 @@ public class ChromeFrame implements Frame {
     public Future<Element[]> querySelectorAll(String selector) {
         return SeriesFuture
                 .wrap(isolatePromise)
-                .async(o -> o.call("function (selector){return document.querySelectorAll(selector);}", selector))
+                .async(o -> o.call("function (selector){return document.querySelectorAll(selector);}", (Object) selector))
                 .async(BrowserObject::getProperties)
                 .sync(o -> {
                     Isolate isolate = isolatePromise.getNow();
@@ -271,7 +271,7 @@ public class ChromeFrame implements Frame {
     public Future html(String html) {
         return SeriesFuture
                 .wrap(isolatePromise)
-                .async(o -> o.call("function (html){document.documentElement.outerHTML=html;}", html));
+                .async(o -> o.call("function (html){document.documentElement.outerHTML=html;}", (Object) html));
     }
 
 }

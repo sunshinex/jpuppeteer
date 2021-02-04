@@ -4,10 +4,12 @@ import com.google.common.collect.Lists;
 import io.netty.util.concurrent.Future;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.PageEvent;
+import jpuppeteer.cdp.client.constant.browser.WindowState;
 import jpuppeteer.cdp.client.constant.emulation.ScreenOrientationType;
 import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration;
 import jpuppeteer.cdp.client.constant.fetch.RequestStage;
 import jpuppeteer.cdp.client.constant.page.CaptureScreenshotRequestFormat;
+import jpuppeteer.cdp.client.entity.browser.Bounds;
 import jpuppeteer.cdp.client.entity.emulation.ScreenOrientation;
 import jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetUserAgentOverrideRequest;
@@ -158,6 +160,16 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     default Future setDevice(ScreenOrientationType screenOrientation, int width, int height) {
         return setDevice(screenOrientation, width, height, 1, false);
+    }
+
+    Future setWindow(Bounds bounds);
+
+    default Future setWindow(int width, int height) {
+        return setWindow(new Bounds(null, null, width, height, null));
+    }
+
+    default Future setWindow(int width, int height, WindowState state) {
+        return setWindow(new Bounds(null, null, width, height, state));
     }
 
     Future<byte[]> screenshot(CaptureScreenshotRequest request);

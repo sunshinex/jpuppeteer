@@ -196,11 +196,9 @@ public class ChromeElement implements Element {
                 .sync(o -> {
                     BoxModel boxModel = (BoxModel) o;
                     int left = boxModel.content.get(0).intValue();
-                    int width = boxModel.content.get(2).intValue() - left;
                     int top = boxModel.content.get(1).intValue();
-                    int height = boxModel.content.get(5).intValue() - top;
-                    int x = left + (width / 2);
-                    int y = top + (height / 2);
+                    int x = left + (boxModel.width / 2);
+                    int y = top + (boxModel.height / 2);
                     return new Coordinate(x, y);
                 });
     }

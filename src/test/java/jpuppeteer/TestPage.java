@@ -131,8 +131,6 @@ public class TestPage {
     public void fake() throws ExecutionException, InterruptedException {
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         loggerContext.getLogger("root").setLevel(Level.INFO);
-        page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/fake.js")).get();
-        page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/trackmouse.js")).get();
         page.addListener(new AbstractListener<DialogEvent>() {
             @Override
             public void accept(DialogEvent dialog) {
