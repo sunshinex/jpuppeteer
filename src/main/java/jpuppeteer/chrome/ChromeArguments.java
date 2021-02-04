@@ -33,6 +33,7 @@ public class ChromeArguments {
             //"--enable-automation",
             "--password-store=basic",
             "--use-mock-keychain",
+            "--disable-blink-features=AutomationControlled",
 //            "--disable-web-security",
 //            "--disable-xss-auditor",
 //            "--disable-features=IsolateOrigins,site-per-process,TranslateUI,BlinkGenPropertyTrees"
