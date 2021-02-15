@@ -12,12 +12,14 @@ import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.CDPSession;
 import jpuppeteer.cdp.client.constant.browser.PermissionType;
+import jpuppeteer.cdp.client.constant.storage.StorageType;
 import jpuppeteer.cdp.client.domain.Storage;
 import jpuppeteer.cdp.client.domain.Target;
 import jpuppeteer.cdp.client.entity.browser.*;
 import jpuppeteer.cdp.client.entity.network.Cookie;
 import jpuppeteer.cdp.client.entity.network.CookieParam;
 import jpuppeteer.cdp.client.entity.storage.ClearCookiesRequest;
+import jpuppeteer.cdp.client.entity.storage.ClearDataForOriginRequest;
 import jpuppeteer.cdp.client.entity.storage.GetCookiesRequest;
 import jpuppeteer.cdp.client.entity.storage.SetCookiesRequest;
 import jpuppeteer.cdp.client.entity.target.*;
@@ -26,10 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
@@ -298,6 +297,15 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
         return SeriesFuture
                 .wrap(browser.getWindowForTarget(new GetWindowForTargetRequest(targetId)))
                 .async(o -> browser.setWindowBounds(new SetWindowBoundsRequest(o.windowId, bounds)));
+    }
+
+    @Override
+    public Future clearData(String origin, StorageType... storageTypes) {
+        List<String> types = Arrays.stream(storageTypes)
+                .map(t -> t.value())
+                .collect(Collectors.toList());
+        ClearDataForOriginRequest request = new ClearDataForOriginRequest(origin, StringUtils.join(types, ","));
+        return storage.clearDataForOrigin(request);
     }
 
     @Override

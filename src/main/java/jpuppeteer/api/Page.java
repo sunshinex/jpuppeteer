@@ -168,8 +168,8 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
         return setWindow(new Bounds(null, null, width, height, null));
     }
 
-    default Future setWindow(int width, int height, WindowState state) {
-        return setWindow(new Bounds(null, null, width, height, state));
+    default Future setWindow(WindowState state) {
+        return setWindow(new Bounds(null, null, null, null, state));
     }
 
     Future<byte[]> screenshot(CaptureScreenshotRequest request);

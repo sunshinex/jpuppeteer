@@ -112,7 +112,7 @@ public class ChromeArguments {
         }
         arguments.args.addAll(Lists.newArrayList(args));
         if (arguments.headless) {
-            arguments.args.add("--hide-scrollbars");
+            //arguments.args.add("--hide-scrollbars");
             arguments.args.add("--mute-audio");
         }
         if (StringUtils.isEmpty(arguments.userDataDir)) {
