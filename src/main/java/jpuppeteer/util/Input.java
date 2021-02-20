@@ -3,22 +3,21 @@ package jpuppeteer.util;
 import com.google.common.collect.Lists;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.Promise;
 import jpuppeteer.cdp.client.constant.input.*;
 import jpuppeteer.cdp.client.entity.input.InsertTextRequest;
 import jpuppeteer.cdp.client.entity.input.TouchPoint;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
-import jpuppeteer.entity.Coordinate;
+import jpuppeteer.entity.Point;
+import jpuppeteer.util.mouse.MouseMotionFactory;
+import jpuppeteer.util.mouse.MouseMotionNature;
+import jpuppeteer.util.mouse.ScreenSize;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 public class Input {
     
@@ -36,11 +35,17 @@ public class Input {
      */
     private final Set<MouseDefinition> pressedButtons;
 
+    private final MouseMotionFactory mouseMotionFactory;
+
     public Input(jpuppeteer.cdp.client.domain.Input input, EventExecutor executor) {
         this.input = input;
         this.executor = executor;
         this.pressedKeys = ConcurrentHashMap.newKeySet();
         this.pressedButtons = ConcurrentHashMap.newKeySet();
+        ScreenSize screenSize = new ScreenSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        Point initMouse = new Point(0, 0);
+        MouseMotionNature nature = new MouseMotionNature(screenSize, initMouse);
+        this.mouseMotionFactory = MouseMotionFactory.createAverageComputerUserMotionFactory(nature, executor);
     }
 
     private static int getModifier(Set<USKeyboardDefinition> modifiers) {
@@ -157,43 +162,64 @@ public class Input {
     }
 
     
-    public Future<Coordinate> mouseDown(MouseDefinition mouseDefinition, int x, int y) {
-        return mouseDown(mouseDefinition, x, y, 1);
+    public Future<Point> mouseDown(MouseDefinition mouseDefinition) {
+        return mouseDown(mouseDefinition, 1);
     }
 
-    public Future<Coordinate> mouseDown(MouseDefinition mouseDefinition, int x, int y, int count) {
+    public Future<Point> mouseDown(MouseDefinition mouseDefinition, int count) {
+        Point mousePosition = mouseMotionFactory.getMouseInfo().getMousePosition();
         pressedButtons.add(mouseDefinition);
-        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, x, y);
+        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, mousePosition.x, mousePosition.y);
         builder.type(DispatchMouseEventRequestType.MOUSEPRESSED);
         builder.clickCount(count);
         return SeriesFuture
                 .wrap(input.dispatchMouseEvent(builder.build()))
-                .sync(o -> new Coordinate(x, y));
+                .sync(o -> mousePosition);
     }
 
     
-    public Future<Coordinate> mouseUp(MouseDefinition mouseDefinition, int x, int y) {
-        return mouseUp(mouseDefinition, x, y, 1);
+    public Future<Point> mouseUp(MouseDefinition mouseDefinition) {
+        return mouseUp(mouseDefinition, 1);
     }
 
-    public Future<Coordinate> mouseUp(MouseDefinition mouseDefinition, int x, int y, int count) {
-        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, x, y);
+    public Future<Point> mouseUp(MouseDefinition mouseDefinition, int count) {
+        Point mousePosition = mouseMotionFactory.getMouseInfo().getMousePosition();
+        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, mousePosition.x, mousePosition.y);
         builder.type(DispatchMouseEventRequestType.MOUSERELEASED);
         builder.clickCount(count);
         pressedButtons.remove(mouseDefinition);
         return SeriesFuture
                 .wrap(input.dispatchMouseEvent(builder.build()))
-                .sync(o -> new Coordinate(x, y));
+                .sync(o -> mousePosition);
     }
 
-    public Future<Coordinate> mouseMove(MouseDefinition mouseDefinition, int x, int y) {
+    public Future<Point> click(MouseDefinition mouseDefinition, int delay) {
+        Point mousePosition = mouseMotionFactory.getMouseInfo().getMousePosition();
+        return SeriesFuture
+                .wrap(mouseMove(MouseDefinition.NONE, mousePosition.x, mousePosition.y))
+                .async(o -> mouseDown(mouseDefinition))
+                //此处单纯为了延迟，没啥鸟用
+                .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
+                .async(o -> mouseUp(mouseDefinition));
+    }
+
+    private Future<Point> mouseMoveTo(MouseDefinition mouseDefinition, int x, int y) {
         DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, x, y);
         builder.type(DispatchMouseEventRequestType.MOUSEMOVED);
         builder.x(BigDecimal.valueOf(x));
         builder.y(BigDecimal.valueOf(y));
         return SeriesFuture
                 .wrap(input.dispatchMouseEvent(builder.build()))
-                .sync(o -> new Coordinate(x, y));
+                .sync(o -> new Point(x, y));
+    }
+
+    public Future<Point> mouseTo(MouseDefinition mouseDefinition, int x, int y) {
+        this.mouseMotionFactory.getMouseInfo().setMousePosition(x, y);
+        return mouseMoveTo(mouseDefinition, x, y);
+    }
+
+    public Future<Point> mouseMove(MouseDefinition mouseDefinition, int x, int y) {
+        return this.mouseMotionFactory.move(x, y, point -> mouseMoveTo(mouseDefinition, point.x, point.y));
     }
 
     private DispatchTouchEventRequestBuilder touchEventBuilder(TouchPoint[] touchPoints) {

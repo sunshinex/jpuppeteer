@@ -15,6 +15,7 @@ import jpuppeteer.api.event.page.LoadedEvent;
 import jpuppeteer.api.event.page.RequestFinishedEvent;
 import jpuppeteer.cdp.client.entity.dom.BoxModel;
 import jpuppeteer.chrome.ChromeLauncher;
+import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesFuture;
 import org.junit.*;
@@ -139,6 +140,22 @@ public class TestPage {
         });
         page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36").get();
         page.navigate("https://detail.m.tmall.com/item.htm?id=633695953246");
+        TimeUnit.DAYS.sleep(1);
+    }
+
+    @Test
+    public void testMouseMove() throws Exception {
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        loggerContext.getLogger("root").setLevel(Level.TRACE);
+        page.addListener(new AbstractListener<LoadedEvent>() {
+            @Override
+            public void accept(LoadedEvent dialog) {
+                page.mouseMove(MouseDefinition.NONE, 330, 200);
+            }
+        });
+        page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/trackmouse.js")).get();
+        page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36").get();
+        page.navigate("https://www.baidu.com/");
         TimeUnit.DAYS.sleep(1);
     }
 

@@ -196,19 +196,23 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     }
 
     //mouse event
-    Future mouseDown(MouseDefinition mouseDefinition, int x, int y);
+    Future mouseDown(MouseDefinition mouseDefinition);
 
-    default Future mouseDown(int x, int y) {
-        return mouseDown(MouseDefinition.LEFT, x, y);
+    default Future mouseDown() {
+        return mouseDown(MouseDefinition.LEFT);
     }
 
-    Future mouseUp(MouseDefinition mouseDefinition, int x, int y);
+    Future mouseUp(MouseDefinition mouseDefinition);
 
-    default Future mouseUp(int x, int y) {
-        return mouseUp(MouseDefinition.LEFT, x, y);
+    default Future mouseUp() {
+        return mouseUp(MouseDefinition.LEFT);
     }
+
+    Future click(MouseDefinition mouseDefinition, int delay);
 
     Future mouseMove(MouseDefinition mouseDefinition, int x, int y);
+
+    Future mouseTo(MouseDefinition mouseDefinition, int x, int y);
 
     //touch event
     Future touchStart(TouchPoint[] touchPoints);

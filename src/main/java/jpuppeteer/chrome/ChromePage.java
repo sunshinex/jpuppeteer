@@ -651,18 +651,28 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public Future mouseDown(MouseDefinition mouseDefinition, int x, int y) {
-        return input.mouseDown(mouseDefinition, x, y);
+    public Future mouseDown(MouseDefinition mouseDefinition) {
+        return input.mouseDown(mouseDefinition);
     }
 
     @Override
-    public Future mouseUp(MouseDefinition mouseDefinition, int x, int y) {
-        return input.mouseUp(mouseDefinition, x, y);
+    public Future mouseUp(MouseDefinition mouseDefinition) {
+        return input.mouseUp(mouseDefinition);
+    }
+
+    @Override
+    public Future click(MouseDefinition mouseDefinition, int delay) {
+        return input.click(mouseDefinition, delay);
     }
 
     @Override
     public Future mouseMove(MouseDefinition mouseDefinition, int x, int y) {
         return input.mouseMove(mouseDefinition, x, y);
+    }
+
+    @Override
+    public Future mouseTo(MouseDefinition mouseDefinition, int x, int y) {
+        return input.mouseTo(mouseDefinition, x, y);
     }
 
     @Override

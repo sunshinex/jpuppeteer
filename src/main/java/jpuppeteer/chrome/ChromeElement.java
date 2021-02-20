@@ -12,7 +12,7 @@ import jpuppeteer.cdp.client.domain.Runtime;
 import jpuppeteer.cdp.client.entity.dom.*;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
-import jpuppeteer.entity.Coordinate;
+import jpuppeteer.entity.Point;
 import jpuppeteer.util.Input;
 import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesFuture;
@@ -189,7 +189,7 @@ public class ChromeElement implements Element {
         return isolate.call(SCRIPT_SELECT, objectId(), Lists.newArrayList(values));
     }
 
-    private Future<Coordinate> center() {
+    private Future<Point> center() {
         return SeriesFuture
                 .wrap(scrollIntoView())//滚动到可见区域
                 .async(o -> boxModel())
@@ -199,7 +199,7 @@ public class ChromeElement implements Element {
                     int top = boxModel.content.get(1).intValue();
                     int x = left + (boxModel.width / 2);
                     int y = top + (boxModel.height / 2);
-                    return new Coordinate(x, y);
+                    return new Point(x, y);
                 });
     }
 
@@ -207,10 +207,11 @@ public class ChromeElement implements Element {
     public Future click(MouseDefinition buttonType, int delay) {
         return SeriesFuture
                 .wrap(center())
-                .async(o -> input.mouseDown(buttonType, Double.valueOf(o.x).intValue(), Double.valueOf(o.y).intValue()))
+                .async(o -> input.mouseMove(MouseDefinition.NONE, o.x, o.y))
+                .async(o -> input.mouseDown(buttonType))
                 //此处单纯为了延迟，没啥鸟用
                 .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
-                .async(o -> input.mouseUp(buttonType, Double.valueOf(o.x).intValue(), Double.valueOf(o.y).intValue()));
+                .async(o -> input.mouseUp(buttonType));
     }
 
     @Override
