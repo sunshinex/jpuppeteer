@@ -222,6 +222,15 @@ public class Input {
         return this.mouseMotionFactory.move(x, y, point -> mouseMoveTo(mouseDefinition, point.x, point.y));
     }
 
+    public Future mouseWheel(int deltaX, int deltaY) {
+        Point mousePosition = mouseMotionFactory.getMouseInfo().getMousePosition();
+        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(MouseDefinition.NONE, mousePosition.x, mousePosition.y);
+        builder.type(DispatchMouseEventRequestType.MOUSEWHEEL)
+                .deltaX(BigDecimal.valueOf(deltaX))
+                .deltaY(BigDecimal.valueOf(deltaY));
+        return input.dispatchMouseEvent(builder.build());
+    }
+
     private DispatchTouchEventRequestBuilder touchEventBuilder(TouchPoint[] touchPoints) {
         DispatchTouchEventRequestBuilder builder = new DispatchTouchEventRequestBuilder();
         builder.modifiers(getModifier(pressedKeys));

@@ -676,6 +676,11 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
+    public Future mouseWheel(int deltaX, int deltaY) {
+        return input.mouseWheel(deltaX, deltaY);
+    }
+
+    @Override
     public Future touchStart(TouchPoint[] touchPoints) {
         return input.touchStart(touchPoints);
     }

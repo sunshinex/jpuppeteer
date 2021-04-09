@@ -214,6 +214,8 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     Future mouseTo(MouseDefinition mouseDefinition, int x, int y);
 
+    Future mouseWheel(int deltaX, int deltaY);
+
     //touch event
     Future touchStart(TouchPoint[] touchPoints);
 

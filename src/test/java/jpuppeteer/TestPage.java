@@ -149,13 +149,20 @@ public class TestPage {
         loggerContext.getLogger("root").setLevel(Level.TRACE);
         page.addListener(new AbstractListener<LoadedEvent>() {
             @Override
-            public void accept(LoadedEvent dialog) {
-                page.mouseMove(MouseDefinition.NONE, 330, 200);
+            public void accept(LoadedEvent loadedEvent) {
+                page.mouseTo(MouseDefinition.NONE, 100, 100);
+                SeriesFuture next = SeriesFuture.wrap(page.mouseWheel(0, 100));
+                for(int i=0; i<100; i++) {
+                    next = next.async(o -> page.mouseWheel(0, 100));
+                }
+                next.addListener(f -> {
+                    System.out.println(f);
+                });
             }
         });
-        page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/trackmouse.js")).get();
+//        page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/trackmouse.js")).get();
         page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36").get();
-        page.navigate("https://www.baidu.com/");
+        page.navigate("https://www.163.com/");
         TimeUnit.DAYS.sleep(1);
     }
 
