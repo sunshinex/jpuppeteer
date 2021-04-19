@@ -72,11 +72,11 @@ public class ChromeLauncher implements Launcher {
         errThread.start();
 
         try {
-            Runtime.getRuntime().addShutdownHook(new Thread(process::destroy));
+            //Runtime.getRuntime().addShutdownHook(new Thread(process::destroy));
             //等待5s, 等chrome启动成功, 如果5s没有启动成功, 则强制关闭chrome进程
             String uri = future.get(5, TimeUnit.SECONDS);
             CDPConnection connection = new CDPConnection(uri);
-            return new ChromeBrowser(connection);
+            return new ChromeBrowser(connection, process);
         } catch (Throwable cause) {
             errThread.interrupt();
             process.destroy();

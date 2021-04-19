@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.stream.Collectors;
@@ -46,6 +47,8 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
     private final String name;
 
     private final CDPConnection connection;
+
+    private final Process process;
 
     private final jpuppeteer.cdp.client.domain.Browser browser;
 
@@ -65,9 +68,10 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
 
     private volatile Promise closeFuture;
 
-    public ChromeBrowser(CDPConnection connection) {
+    public ChromeBrowser(CDPConnection connection, Process process) {
         this.name = "browser";
         this.connection = connection;
+        this.process = process;
         this.browser = new jpuppeteer.cdp.client.domain.Browser(connection);
         this.target = new Target(connection);
         this.storage = new Storage(connection);
@@ -324,6 +328,8 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
                 }
             });
         });
+        //最多延迟10s结束chrome进程
+        GlobalEventExecutor.INSTANCE.schedule(process::destroy, 10, TimeUnit.SECONDS);
         return closeFuture;
     }
 }
