@@ -37,7 +37,7 @@ public class ChromeArguments {
 //            "--disable-web-security",
 //            "--disable-xss-auditor",
 //            "--disable-features=IsolateOrigins,site-per-process,TranslateUI,BlinkGenPropertyTrees"
-            "--disable-features=TranslateUI,BlinkGenPropertyTrees,RendererCodeIntegrity"
+            "--disable-features=TranslateUI,BlinkGenPropertyTrees,RendererCodeIntegrity,IsolateOrigins,site-per-process"
     };
 
     private String executable;
