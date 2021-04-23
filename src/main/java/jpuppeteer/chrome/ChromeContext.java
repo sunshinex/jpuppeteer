@@ -244,6 +244,10 @@ public class ChromeContext implements BrowserContext {
         return browser.executor();
     }
 
+    public Future activateTarget(String targetId) {
+        return browser.activateTarget(targetId);
+    }
+
     public Future closeTarget(String targetId) {
         ChromePage page = targetMap.remove(targetId);
         if (page == null) {

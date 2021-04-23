@@ -292,6 +292,10 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
         return browser.resetPermissions(request);
     }
 
+    public Future activateTarget(String targetId) {
+        return target.activateTarget(new ActivateTargetRequest(targetId));
+    }
+
     public Future closeTarget(String targetId) {
         CloseTargetRequest request = new CloseTargetRequest(targetId);
         return target.closeTarget(request);

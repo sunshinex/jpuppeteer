@@ -229,6 +229,8 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     Future touchCancel();
 
+    Future activate();
+
     Future close();
 
 }

@@ -2,25 +2,28 @@ package jpuppeteer;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.SettableFuture;
-import jpuppeteer.api.Browser;
-import jpuppeteer.api.BrowserContext;
-import jpuppeteer.api.Element;
-import jpuppeteer.api.Page;
+import io.netty.util.concurrent.Future;
+import jpuppeteer.api.*;
 import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.api.event.PageEvent;
-import jpuppeteer.api.event.page.DialogEvent;
-import jpuppeteer.api.event.page.DomReadyEvent;
-import jpuppeteer.api.event.page.LoadedEvent;
-import jpuppeteer.api.event.page.RequestFinishedEvent;
+import jpuppeteer.api.event.page.*;
+import jpuppeteer.cdp.client.constant.emulation.ScreenOrientationType;
+import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration;
 import jpuppeteer.cdp.client.entity.dom.BoxModel;
+import jpuppeteer.cdp.client.entity.emulation.SetUserAgentOverrideRequest;
+import jpuppeteer.cdp.client.entity.input.TouchPoint;
 import jpuppeteer.chrome.ChromeLauncher;
+import jpuppeteer.constant.LifecyclePhase;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesFuture;
 import org.junit.*;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -147,22 +150,29 @@ public class TestPage {
     public void testMouseMove() throws Exception {
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         loggerContext.getLogger("root").setLevel(Level.TRACE);
-        page.addListener(new AbstractListener<LoadedEvent>() {
-            @Override
-            public void accept(LoadedEvent loadedEvent) {
-                page.mouseTo(MouseDefinition.NONE, 100, 100);
-                SeriesFuture next = SeriesFuture.wrap(page.mouseWheel(0, 100));
-                for(int i=0; i<100; i++) {
-                    next = next.async(o -> page.mouseWheel(0, 100));
-                }
-                next.addListener(f -> {
-                    System.out.println(f);
-                });
-            }
-        });
-//        page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/trackmouse.js")).get();
-        page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36").get();
-        page.navigate("https://www.163.com/");
+        page.setUserAgent(new SetUserAgentOverrideRequest("Mozilla/5.0 (Linux; Android 11; Redmi K30 5G Build/RQ1A.210105.003) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/87.0.4280.101 Mobile Safari/537.36", "zh-CN,en-US", "Linux armv8l"))
+                .get(5, TimeUnit.SECONDS);
+        page.setDevice(ScreenOrientationType.PORTRAITPRIMARY, 393, 873, 1, true)
+                .get(5, TimeUnit.SECONDS);
+        page.enableTouchEmulation(true, 5)
+                .get(5, TimeUnit.SECONDS);
+        page.enableEmitTouchEventsForMouse(true, SetEmitTouchEventsForMouseRequestConfiguration.DESKTOP)
+                .get(5, TimeUnit.SECONDS);
+        page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/fake.js"))
+                .get(5, TimeUnit.SECONDS);
+        page.addScriptToEvaluateOnNewDocument("const addEventListener = EventTarget.prototype.addEventListener;\n" +
+                "    const injectAddEventListener = function(){\n" +
+                "        let args = Array.prototype.slice.call(arguments);\n" +
+                "        console.log(\"event=\", args[0]);\n" +
+                "        if (args[0].indexOf('mouse') === -1) {\n" +
+                "            return addEventListener.apply(this, args);\n" +
+                "        }\n" +
+                "        return undefined;\n" +
+                "    }\n" +
+                "    window.addEventListener = injectAddEventListener;\n" +
+                "    EventTarget.prototype.addEventListener = injectAddEventListener;");
+        page.navigate("https://h5.m.taobao.com/awp/core/detail.htm?spm=a21bo.7929913.198967.13.69784174TlpS4Z&id=534668093680")
+                .get(10,TimeUnit.SECONDS);
         TimeUnit.DAYS.sleep(1);
     }
 

@@ -709,4 +709,9 @@ public class ChromePage extends ChromeFrame implements Page {
     public Future touchCancel() {
         return input.touchCancel();
     }
+
+    @Override
+    public Future activate() {
+        return browserContext.activateTarget(targetId());
+    }
 }
