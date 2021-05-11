@@ -233,7 +233,7 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
 
     public Future<CDPSession> createTarget(String browserContextId, String url, Integer width, Integer height) {
         return SeriesFuture
-                .wrap(target.createTarget(new CreateTargetRequest(url, width, height, browserContextId, null, null, null)))
+                .wrap(target.createTarget(new CreateTargetRequest(url, width, height, browserContextId, null, null, true)))
                 .async(o -> {
                     ChromeContext ctx = browserContextId != null ? contextMap.get(browserContextId) : defaultContext;
                     if (ctx == null) {
