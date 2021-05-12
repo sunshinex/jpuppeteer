@@ -20,6 +20,7 @@ import jpuppeteer.cdp.client.entity.page.CaptureScreenshotRequest;
 import jpuppeteer.cdp.client.entity.page.ReloadRequest;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
+import jpuppeteer.entity.Point;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -212,7 +213,7 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     Future mouseMove(MouseDefinition mouseDefinition, int x, int y);
 
-    Future mouseTo(MouseDefinition mouseDefinition, int x, int y);
+    Point mousePosition();
 
     Future mouseWheel(int deltaX, int deltaY);
 

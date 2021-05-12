@@ -1,23 +1,25 @@
 package jpuppeteer.util;
 
 import com.google.common.collect.Lists;
+import io.netty.util.concurrent.DefaultEventExecutor;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.Future;
-import jpuppeteer.cdp.client.constant.input.*;
+import jpuppeteer.cdp.client.constant.input.DispatchKeyEventRequestType;
+import jpuppeteer.cdp.client.constant.input.DispatchMouseEventRequestPointerType;
+import jpuppeteer.cdp.client.constant.input.DispatchMouseEventRequestType;
+import jpuppeteer.cdp.client.constant.input.DispatchTouchEventRequestType;
 import jpuppeteer.cdp.client.entity.input.InsertTextRequest;
 import jpuppeteer.cdp.client.entity.input.TouchPoint;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
 import jpuppeteer.entity.Point;
-import jpuppeteer.util.mouse.MouseMotionFactory;
-import jpuppeteer.util.mouse.MouseMotionNature;
-import jpuppeteer.util.mouse.ScreenSize;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Input {
     
@@ -35,17 +37,22 @@ public class Input {
      */
     private final Set<MouseDefinition> pressedButtons;
 
-    private final MouseMotionFactory mouseMotionFactory;
+    private final EventExecutor inputExecutor;
+
+    private final AtomicInteger mouseX;
+
+    private final AtomicInteger mouseY;
 
     public Input(jpuppeteer.cdp.client.domain.Input input, EventExecutor executor) {
         this.input = input;
         this.executor = executor;
         this.pressedKeys = ConcurrentHashMap.newKeySet();
         this.pressedButtons = ConcurrentHashMap.newKeySet();
-        ScreenSize screenSize = new ScreenSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
-        Point initMouse = new Point(0, 0);
-        MouseMotionNature nature = new MouseMotionNature(screenSize, initMouse);
-        this.mouseMotionFactory = MouseMotionFactory.createAverageComputerUserMotionFactory(nature, executor);
+        this.inputExecutor = new DefaultEventExecutor(r -> {
+            return new Thread(r, "INPUT-THREAD");
+        });
+        this.mouseX = new AtomicInteger(0);
+        this.mouseY = new AtomicInteger(0);
     }
 
     private static int getModifier(Set<USKeyboardDefinition> modifiers) {
@@ -167,7 +174,7 @@ public class Input {
     }
 
     public Future<Point> mouseDown(MouseDefinition mouseDefinition, int count) {
-        Point mousePosition = mouseMotionFactory.getMouseInfo().getMousePosition();
+        Point mousePosition = new Point(mouseX.get(), mouseY.get());
         pressedButtons.add(mouseDefinition);
         DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, mousePosition.x, mousePosition.y);
         builder.type(DispatchMouseEventRequestType.MOUSEPRESSED);
@@ -183,7 +190,7 @@ public class Input {
     }
 
     public Future<Point> mouseUp(MouseDefinition mouseDefinition, int count) {
-        Point mousePosition = mouseMotionFactory.getMouseInfo().getMousePosition();
+        Point mousePosition = new Point(mouseX.get(), mouseY.get());
         DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, mousePosition.x, mousePosition.y);
         builder.type(DispatchMouseEventRequestType.MOUSERELEASED);
         builder.clickCount(count);
@@ -194,7 +201,7 @@ public class Input {
     }
 
     public Future<Point> click(MouseDefinition mouseDefinition, int delay) {
-        Point mousePosition = mouseMotionFactory.getMouseInfo().getMousePosition();
+        Point mousePosition = new Point(mouseX.get(), mouseY.get());
         return SeriesFuture
                 .wrap(mouseMove(MouseDefinition.NONE, mousePosition.x, mousePosition.y))
                 .async(o -> mouseDown(mouseDefinition))
@@ -203,27 +210,26 @@ public class Input {
                 .async(o -> mouseUp(mouseDefinition));
     }
 
-    private Future<Point> mouseMoveTo(MouseDefinition mouseDefinition, int x, int y) {
+    public Future<Point> mouseMove(MouseDefinition mouseDefinition, int x, int y) {
         DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, x, y);
         builder.type(DispatchMouseEventRequestType.MOUSEMOVED);
         builder.x(BigDecimal.valueOf(x));
         builder.y(BigDecimal.valueOf(y));
         return SeriesFuture
                 .wrap(input.dispatchMouseEvent(builder.build()))
-                .sync(o -> new Point(x, y));
+                .sync(o -> {
+                    mouseX.set(x);
+                    mouseY.set(y);
+                    return new Point(x, y);
+                });
     }
 
-    public Future<Point> mouseTo(MouseDefinition mouseDefinition, int x, int y) {
-        this.mouseMotionFactory.getMouseInfo().setMousePosition(x, y);
-        return mouseMoveTo(mouseDefinition, x, y);
-    }
-
-    public Future<Point> mouseMove(MouseDefinition mouseDefinition, int x, int y) {
-        return this.mouseMotionFactory.move(x, y, point -> mouseMoveTo(mouseDefinition, point.x, point.y));
+    public Point mousePosition() {
+        return new Point(mouseX.get(), mouseY.get());
     }
 
     public Future mouseWheel(int deltaX, int deltaY) {
-        Point mousePosition = mouseMotionFactory.getMouseInfo().getMousePosition();
+        Point mousePosition = new Point(mouseX.get(), mouseY.get());
         DispatchMouseEventRequestBuilder builder = mouseEventBuilder(MouseDefinition.NONE, mousePosition.x, mousePosition.y);
         builder.type(DispatchMouseEventRequestType.MOUSEWHEEL)
                 .deltaX(BigDecimal.valueOf(deltaX))

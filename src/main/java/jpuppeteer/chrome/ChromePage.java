@@ -39,6 +39,7 @@ import jpuppeteer.constant.LifecyclePhase;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
 import jpuppeteer.entity.BasicHttpHeader;
+import jpuppeteer.entity.Point;
 import jpuppeteer.util.Input;
 import jpuppeteer.util.SeriesFuture;
 import org.apache.commons.lang3.StringUtils;
@@ -671,8 +672,8 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public Future mouseTo(MouseDefinition mouseDefinition, int x, int y) {
-        return input.mouseTo(mouseDefinition, x, y);
+    public Point mousePosition() {
+        return input.mousePosition();
     }
 
     @Override
