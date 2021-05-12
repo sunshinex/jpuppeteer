@@ -207,7 +207,7 @@ public class ChromeElement implements Element {
     public Future click(MouseDefinition buttonType, int delay) {
         return SeriesFuture
                 .wrap(center())
-                .async(o -> input.mouseMove(MouseDefinition.NONE, o.x, o.y))
+                .async(o -> input.mouseMove(o.x, o.y))
                 .async(o -> input.mouseDown(buttonType))
                 //此处单纯为了延迟，没啥鸟用
                 .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))

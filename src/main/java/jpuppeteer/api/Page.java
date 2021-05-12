@@ -211,7 +211,7 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     Future click(MouseDefinition mouseDefinition, int delay);
 
-    Future mouseMove(MouseDefinition mouseDefinition, int x, int y);
+    Future mouseMove(int x, int y);
 
     Point mousePosition();
 

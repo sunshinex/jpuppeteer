@@ -203,15 +203,15 @@ public class Input {
     public Future<Point> click(MouseDefinition mouseDefinition, int delay) {
         Point mousePosition = new Point(mouseX.get(), mouseY.get());
         return SeriesFuture
-                .wrap(mouseMove(MouseDefinition.NONE, mousePosition.x, mousePosition.y))
+                .wrap(mouseMove(mousePosition.x, mousePosition.y))
                 .async(o -> mouseDown(mouseDefinition))
                 //此处单纯为了延迟，没啥鸟用
                 .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
                 .async(o -> mouseUp(mouseDefinition));
     }
 
-    public Future<Point> mouseMove(MouseDefinition mouseDefinition, int x, int y) {
-        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, x, y);
+    public Future<Point> mouseMove(int x, int y) {
+        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(MouseDefinition.NONE, x, y);
         builder.type(DispatchMouseEventRequestType.MOUSEMOVED);
         builder.x(BigDecimal.valueOf(x));
         builder.y(BigDecimal.valueOf(y));
