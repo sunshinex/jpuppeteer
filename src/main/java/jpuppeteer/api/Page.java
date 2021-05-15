@@ -185,6 +185,12 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     Future stopLoading();
 
+    Future expose(String bindingName);
+
+    Future enableInput();
+
+    Future disableInput();
+
     //keyboard event;
     Future keyDown(USKeyboardDefinition key);
 

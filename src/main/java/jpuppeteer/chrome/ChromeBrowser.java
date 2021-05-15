@@ -251,6 +251,10 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
                 });
     }
 
+    public Future exposeTarget(String targetId, String bindingName) {
+        return target.exposeDevToolsProtocol(new ExposeDevToolsProtocolRequest(targetId, bindingName));
+    }
+
     public Future setCookies(String browserContextId, CookieParam... cookies) {
         SetCookiesRequest request = new SetCookiesRequest(Lists.newArrayList(cookies), browserContextId);
         return storage.setCookies(request);

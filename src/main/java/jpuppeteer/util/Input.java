@@ -9,6 +9,7 @@ import jpuppeteer.cdp.client.constant.input.DispatchMouseEventRequestPointerType
 import jpuppeteer.cdp.client.constant.input.DispatchMouseEventRequestType;
 import jpuppeteer.cdp.client.constant.input.DispatchTouchEventRequestType;
 import jpuppeteer.cdp.client.entity.input.InsertTextRequest;
+import jpuppeteer.cdp.client.entity.input.SetIgnoreInputEventsRequest;
 import jpuppeteer.cdp.client.entity.input.TouchPoint;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
@@ -94,6 +95,14 @@ public class Input {
             mod |= btn.getCode();
         }
         return mod;
+    }
+
+    public Future enable() {
+        return input.setIgnoreInputEvents(new SetIgnoreInputEventsRequest(false));
+    }
+
+    public Future disable() {
+        return input.setIgnoreInputEvents(new SetIgnoreInputEventsRequest(true));
     }
     
     public Future keyDown(USKeyboardDefinition key) {

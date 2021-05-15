@@ -632,6 +632,21 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
+    public Future expose(String bindingName) {
+        return browserContext.exposeTarget(targetId(), bindingName);
+    }
+
+    @Override
+    public Future enableInput() {
+        return input.enable();
+    }
+
+    @Override
+    public Future disableInput() {
+        return input.disable();
+    }
+
+    @Override
     public String toString() {
         return name;
     }

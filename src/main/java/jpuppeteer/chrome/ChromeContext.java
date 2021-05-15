@@ -259,4 +259,8 @@ public class ChromeContext implements BrowserContext {
             return browser.closeTarget(targetId);
         }
     }
+
+    public Future exposeTarget(String targetId, String bindingName) {
+        return browser.exposeTarget(targetId, bindingName);
+    }
 }
