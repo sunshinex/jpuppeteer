@@ -62,7 +62,7 @@ public class TestContext {
 
     @Test
     public void setCookies() throws ExecutionException, InterruptedException {
-        context.setCookies(new CookieParam("cookie_name", "cookie_value", null, "www.baidu.com", null, null, null, null, null, null)).get();
+        context.setCookies(new CookieParam("cookie_name", "cookie_value", null, "www.baidu.com", null, null, null, null, null, null, null, null, null)).get();
     }
 
     @Test

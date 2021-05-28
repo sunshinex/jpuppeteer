@@ -129,7 +129,7 @@ public class ChromeFrame implements Frame {
     @Override
     public Future<String> navigate(String url, String referer) {
         return SeriesFuture
-                .wrap(pageDomain.navigate(new NavigateRequest(url, referer, null, frameId)))
+                .wrap(pageDomain.navigate(new NavigateRequest(url, referer, null, frameId, null)))
                 .sync(o -> {
                     if (StringUtils.isNoneEmpty(o.errorText)) {
                         throw new RuntimeException(o.errorText);

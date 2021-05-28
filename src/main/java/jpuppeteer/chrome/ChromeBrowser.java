@@ -201,7 +201,7 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
     @Override
     public Future<BrowserContext> createContext() {
         return SeriesFuture
-                .wrap(target.createBrowserContext())
+                .wrap(target.createBrowserContext(new CreateBrowserContextRequest()))
                 .sync(o -> {
                     String name = name() + ":context:" + contextIdGen.getAndIncrement();
                     ChromeContext context = new ChromeContext(name, this, o.browserContextId);
@@ -287,7 +287,7 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
     }
 
     public Future grantPermissions(String browserContextId, String origin, PermissionType... permissions) {
-        GrantPermissionsRequest request = new GrantPermissionsRequest(origin, Lists.newArrayList(permissions), browserContextId);
+        GrantPermissionsRequest request = new GrantPermissionsRequest(Lists.newArrayList(permissions), origin, browserContextId);
         return browser.grantPermissions(request);
     }
 

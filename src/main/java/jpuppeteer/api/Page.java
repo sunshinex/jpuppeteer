@@ -21,6 +21,7 @@ import jpuppeteer.cdp.client.entity.page.ReloadRequest;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
 import jpuppeteer.entity.Point;
+import jpuppeteer.util.DeviceMetricsOverrideRequestBuilder;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -142,21 +143,23 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     Future setUserAgent(SetUserAgentOverrideRequest userAgent);
 
     default Future setUserAgent(String userAgent) {
-        return setUserAgent(new SetUserAgentOverrideRequest(userAgent, "zh-CN,zh;q=0.9", "Win32"));
+        return setUserAgent(new SetUserAgentOverrideRequest(userAgent, "zh-CN,zh;q=0.9", "Win32", null));
     }
 
     Future setDevice(SetDeviceMetricsOverrideRequest device);
 
     default Future setDevice(ScreenOrientationType screenOrientation, int width, int height, double scale, boolean isMobile) {
-        return setDevice(
-                new SetDeviceMetricsOverrideRequest(
-                        width, height, BigDecimal.valueOf(scale),
-                        isMobile, null, width, height,
-                        null, null, null,
-                        new ScreenOrientation(screenOrientation, 0),
-                        null
-                )
-        );
+        SetDeviceMetricsOverrideRequest request = new DeviceMetricsOverrideRequestBuilder()
+                .width(width)
+                .height(height)
+                .deviceScaleFactor(BigDecimal.valueOf(scale))
+                .scale(null)
+                .mobile(isMobile)
+                .screenWidth(width)
+                .screenHeight(height)
+                .screenOrientation(new ScreenOrientation(screenOrientation, 0))
+                .build();
+        return setDevice(request);
     }
 
     default Future setDevice(ScreenOrientationType screenOrientation, int width, int height) {
@@ -176,7 +179,7 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     Future<byte[]> screenshot(CaptureScreenshotRequest request);
 
     default Future<byte[]> screenshot(Integer quality) {
-        return screenshot(new CaptureScreenshotRequest(CaptureScreenshotRequestFormat.JPEG, quality, null, null));
+        return screenshot(new CaptureScreenshotRequest(CaptureScreenshotRequestFormat.JPEG, quality, null, null, null));
     }
 
     default Future<byte[]> screenshot() {

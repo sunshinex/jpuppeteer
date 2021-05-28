@@ -1,7 +1,7 @@
 package jpuppeteer.cdp;
 
-import jpuppeteer.cdp.client.CDPEventType;
 
+import jpuppeteer.cdp.client.CDPEventType;
 
 public class CDPEvent {
 

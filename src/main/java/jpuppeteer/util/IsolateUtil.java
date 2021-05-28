@@ -44,12 +44,19 @@ public class IsolateUtil {
     }
 
     public static EvaluateRequest buildEvaluateRequest(String expression, Integer isolateId, boolean returnValue, Integer timeout) {
-        return new EvaluateRequest(
-                expression, null, true, true,
-                isolateId, returnValue, false, true,
-                true, false, timeout != null ? BigDecimal.valueOf(timeout) : null, true,
-                true
-        );
+        return new EvaluateRequestBuilder()
+                .expression(expression)
+                .includeCommandLineAPI(true)
+                .silent(true)
+                .contextId(isolateId)
+                .returnByValue(returnValue)
+                .generatePreview(false)
+                .userGesture(true)
+                .awaitPromise(true)
+                .throwOnSideEffect(false)
+                .timeout(timeout != null ? BigDecimal.valueOf(timeout) : null)
+                .disableBreaks(true)
+                .build();
     }
 
     public static CallFunctionOnRequest buildCallRequest(String declaration, String objectId, boolean returnValue, Integer isolateId, Object... args) {

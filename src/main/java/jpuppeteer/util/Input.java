@@ -188,6 +188,7 @@ public class Input {
         DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, mousePosition.x, mousePosition.y);
         builder.type(DispatchMouseEventRequestType.MOUSEPRESSED);
         builder.clickCount(count);
+        builder.force(BigDecimal.ONE);
         return SeriesFuture
                 .wrap(input.dispatchMouseEvent(builder.build()))
                 .sync(o -> mousePosition);
@@ -224,11 +225,13 @@ public class Input {
         builder.type(DispatchMouseEventRequestType.MOUSEMOVED);
         builder.x(BigDecimal.valueOf(x));
         builder.y(BigDecimal.valueOf(y));
+        mouseX.set(x);
+        mouseY.set(y);
         return SeriesFuture
                 .wrap(input.dispatchMouseEvent(builder.build()))
                 .sync(o -> {
-                    mouseX.set(x);
-                    mouseY.set(y);
+                    //mouseX.set(x);
+                    //mouseY.set(y);
                     return new Point(x, y);
                 });
     }

@@ -150,7 +150,7 @@ public class TestPage {
     public void testMouseMove() throws Exception {
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         loggerContext.getLogger("root").setLevel(Level.TRACE);
-        page.setUserAgent(new SetUserAgentOverrideRequest("Mozilla/5.0 (Linux; Android 11; Redmi K30 5G Build/RQ1A.210105.003) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/87.0.4280.101 Mobile Safari/537.36", "zh-CN,en-US", "Linux armv8l"))
+        page.setUserAgent(new SetUserAgentOverrideRequest("Mozilla/5.0 (Linux; Android 11; Redmi K30 5G Build/RQ1A.210105.003) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/87.0.4280.101 Mobile Safari/537.36", "zh-CN,en-US", "Linux armv8l", null))
                 .get(5, TimeUnit.SECONDS);
         page.setDevice(ScreenOrientationType.PORTRAITPRIMARY, 393, 873, 1, true)
                 .get(5, TimeUnit.SECONDS);
