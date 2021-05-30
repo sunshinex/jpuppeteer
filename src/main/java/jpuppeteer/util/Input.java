@@ -224,13 +224,11 @@ public class Input {
         builder.type(DispatchMouseEventRequestType.MOUSEMOVED);
         builder.x(BigDecimal.valueOf(x));
         builder.y(BigDecimal.valueOf(y));
+        mouseX.set(x);
+        mouseY.set(y);
         return SeriesFuture
                 .wrap(input.dispatchMouseEvent(builder.build()))
-                .sync(o -> {
-                    mouseX.set(x);
-                    mouseY.set(y);
-                    return new Point(x, y);
-                });
+                .sync(o -> new Point(x, y));
     }
 
     public Point mousePosition() {
