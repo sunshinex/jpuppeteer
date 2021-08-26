@@ -24,6 +24,6 @@ public interface Browser extends EventEmitter<CDPEvent> {
         return clearData(origin, StorageType.ALL);
     }
 
-    Future close();
+    void close();
 
 }

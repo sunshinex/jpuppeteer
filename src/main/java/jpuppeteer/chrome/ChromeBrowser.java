@@ -41,9 +41,6 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeBrowser.class);
 
-    private static final AtomicReferenceFieldUpdater<ChromeBrowser, Promise> CLOSE_FUTURE_UPDATER
-            = AtomicReferenceFieldUpdater.newUpdater(ChromeBrowser.class, Promise.class, "closeFuture");
-
     private final String name;
 
     private final CDPConnection connection;
@@ -278,7 +275,7 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
     public Future closeContext(String browserContextId) {
         if (browserContextId == null) {
             //当关闭的是默认上下文，则直接关闭整个浏览器
-            return close();
+            return GlobalEventExecutor.INSTANCE.submit(this::close);
         } else {
             contextMap.remove(browserContextId);
             DisposeBrowserContextRequest request = new DisposeBrowserContextRequest(browserContextId);
@@ -321,23 +318,17 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
     }
 
     @Override
-    public Future close() {
-        if (!CLOSE_FUTURE_UPDATER.compareAndSet(
-                this, null, new DefaultPromise<>(GlobalEventExecutor.INSTANCE))) {
-            return closeFuture;
+    public void close() {
+        try {
+            browser.close().get(5, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            //发生异常, 强行结束进程
+            process.destroy();
+        } finally {
+            //关闭浏览器之后销毁这些映射
+            contextMap.clear();
+            sessionContextMap.clear();
+            targetContextMap.clear();
         }
-        browser.close().addListener(f0 -> {
-            connection.close().addListener(f1 -> {
-                Throwable cause = f0.cause() != null ? f0.cause() : f1.cause();
-                if (cause != null) {
-                    closeFuture.tryFailure(cause);
-                } else {
-                    closeFuture.trySuccess(null);
-                }
-            });
-        });
-        //最多延迟10s结束chrome进程
-        GlobalEventExecutor.INSTANCE.schedule(process::destroy, 10, TimeUnit.SECONDS);
-        return closeFuture;
     }
 }
