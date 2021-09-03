@@ -20,7 +20,7 @@ public class TestContext {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        browser.close().get();
+        browser.close();
     }
 
     private BrowserContext context;

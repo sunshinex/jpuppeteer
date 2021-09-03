@@ -1,6 +1,12 @@
 (function () {
-  //chrome启动命令行加了一个选项, 默认就没有navigator.webdriver, 所以此处不需要伪造了
-  window.log = console.log;
+  /**
+   * 适配chrome 89
+   * @see https://www.browserling.com/blog/5620-chrome-89-released
+   * 直接删除webdriver定义
+   */
+  delete Navigator.prototype.webdriver;
+  window.xconsole = {};
+  Object.assign(window.xconsole, window.console);
   //针对所有的控制台都不输出
   const context = console.context();
   const csl = {
@@ -90,13 +96,13 @@
     get: () => Math.round(20 * window.fakeRandom)
   });
   //伪造屏幕高度
-  // Object.defineProperty(Screen.prototype, "availHeight", {
-  //   get: function(){
-  //     return this.height - 40;
-  //   }
-  // });
+  Object.defineProperty(Screen.prototype, "availHeight", {
+    get: function(){
+      return this.height - 40;
+    }
+  });
   //伪造硬件信息
-  const allCpus = [2, 4, 8];
+  const allCpus = [2, 4, 8, 16];
   const cpuIndex = Math.ceil(100 * window.fakeRandom) % allCpus.length;
   const cpu = allCpus[cpuIndex];
   Object.defineProperty(Navigator.prototype, "hardwareConcurrency", {
@@ -194,7 +200,16 @@
               val = 2147483647;
               break;
             case 37446:
-              val = "ANGLE (Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0)";
+              val = config.random.item([
+                "ANGLE (Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0)",
+                "ANGLE (AMD Radeon HD 7300 Series Direct3D11 vs_5_0 ps_5_0)",
+                "ANGLE (AMD Radeon RX 6000 Series Direct3D11 vs_5_0 ps_5_0)",
+                "ANGLE (AMD Radeon RX 6800 Series Direct3D11 vs_5_0 ps_5_0)",
+                "ANGLE (AMD Radeon RX 5000 Series Direct3D11 vs_5_0 ps_5_0)",
+                "ANGLE (AMD Radeon RX 500 Series Direct3D11 vs_5_0 ps_5_0)",
+                "ANGLE (AMD Radeon RX 6900 Series Direct3D11 vs_5_0 ps_5_0)",
+                "ANGLE (NVIDIA GEFORCE RTX 30 Series Direct3D11 vs_5_0 ps_5_0)"
+              ]);
               break;
             default:
               let args = Array.prototype.slice.call(arguments);
@@ -238,7 +253,7 @@
     fakeBufferData(WebGL2RenderingContext);
     fakeGetParameter(WebGL2RenderingContext);
     fakeGetSupportedExtensions(WebGL2RenderingContext);
-  } catch (err) {log(err)}
+  } catch (err) {xconsole.log(err)}
   //伪造Canvas
   try {
     const toBlob = HTMLCanvasElement.prototype.toBlob;
@@ -293,5 +308,113 @@
         return getImageData.apply(this, arguments);
       }
     });
-  } catch (err) {log(err)}
+  } catch (err) {xconsole.log(err)}
+  //伪造AudioContext指纹
+  try {
+    const context = {
+      "BUFFER": null,
+      "getChannelData": function (e) {
+        const getChannelData = e.prototype.getChannelData;
+        Object.defineProperty(e.prototype, "getChannelData", {
+          "value": function () {
+            const results_1 = getChannelData.apply(this, arguments);
+            if (context.BUFFER !== results_1) {
+              context.BUFFER = results_1;
+              for (let i = 0; i < results_1.length; i += 100) {
+                let index = Math.floor(window.fakeRandom * i);
+                results_1[index] = results_1[index] + window.fakeRandom * 0.0000001;
+              }
+            }
+            return results_1;
+          }
+        });
+      },
+      "createAnalyser": function (e) {
+        const createAnalyser = e.prototype.__proto__.createAnalyser;
+        Object.defineProperty(e.prototype.__proto__, "createAnalyser", {
+          "value": function () {
+            const results_2 = createAnalyser.apply(this, arguments);
+            const getFloatFrequencyData = results_2.__proto__.getFloatFrequencyData;
+            Object.defineProperty(results_2.__proto__, "getFloatFrequencyData", {
+              "value": function () {
+                const results_3 = getFloatFrequencyData.apply(this, arguments);
+                for (let i = 0; i < arguments[0].length; i += 100) {
+                  let index = Math.floor(window.fakeRandom * i);
+                  arguments[0][index] = arguments[0][index] + window.fakeRandom * 0.1;
+                }
+                return results_3;
+              }
+            });
+            return results_2;
+          }
+        });
+      }
+    };
+
+    context.getChannelData(AudioBuffer);
+    context.createAnalyser(AudioContext);
+    context.getChannelData(OfflineAudioContext);
+    context.createAnalyser(OfflineAudioContext);
+  } catch (err) {xconsole.log(err)}
+
+  //伪造DOMRect, DOMRectReadOnly
+  try {
+    function fakeDOMRectReadonly(name) {
+      const prop = Object.getOwnPropertyDescriptor(DOMRectReadOnly.prototype, name);
+      Object.defineProperty(DOMRectReadOnly.prototype, name, {
+        get: function () {
+          let val = prop.get.call(this);
+          if (val !== 0) {
+            val += (window.fakeRandom / 1000);
+          }
+          return val;
+        }
+      })
+    }
+
+    function fakeDOMRect(name) {
+      const prop = Object.getOwnPropertyDescriptor(DOMRect.prototype, name);
+      Object.defineProperty(DOMRect.prototype, name, {
+        set: function (val) {
+          return prop.set.call(this, val);
+        },
+        get: function () {
+          let val = prop.get.call(this);
+          if (val !== 0) {
+            val += (window.fakeRandom / 1000);
+          }
+          return val;
+        }
+      })
+    }
+
+    fakeDOMRectReadonly("x");
+    fakeDOMRectReadonly("y");
+    fakeDOMRectReadonly("width");
+    fakeDOMRectReadonly("height");
+    fakeDOMRectReadonly("left");
+    fakeDOMRectReadonly("right");
+    fakeDOMRectReadonly("top");
+    fakeDOMRectReadonly("bottom");
+    const toJSONProp = Object.getOwnPropertyDescriptor(DOMRectReadOnly.prototype, "toJSON");
+    Object.defineProperty(DOMRectReadOnly.prototype, "toJSON", {
+      value: function () {
+        let json = toJSONProp.value.call(this);
+        json.x = this.x;
+        json.y = this.y;
+        json.width = this.width;
+        json.height = this.height;
+        json.left = this.left;
+        json.right = this.right;
+        json.top = this.top;
+        json.bottom = this.bottom;
+        return json;
+      }
+    });
+
+    fakeDOMRect("x");
+    fakeDOMRect("y");
+    fakeDOMRect("width");
+    fakeDOMRect("height");
+  } catch (err) {xconsole.log(err)}
 })();

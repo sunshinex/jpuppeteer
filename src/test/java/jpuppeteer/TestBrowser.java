@@ -22,7 +22,7 @@ public class TestBrowser {
 
     @AfterClass
     public static void tearDown() throws Exception {
-        browser.close().get();
+        browser.close();
     }
 
     @Test

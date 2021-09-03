@@ -5,7 +5,10 @@ import ch.qos.logback.classic.LoggerContext;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.util.concurrent.SettableFuture;
-import io.netty.util.concurrent.Future;
+import io.netty.util.AttributeKey;
+import io.netty.util.AttributeMap;
+import io.netty.util.DefaultAttributeMap;
+import io.netty.util.concurrent.*;
 import jpuppeteer.api.*;
 import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.api.event.PageEvent;
@@ -20,6 +23,7 @@ import jpuppeteer.constant.LifecyclePhase;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesFuture;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.*;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +42,7 @@ public class TestPage {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        browser.close().get();
+        browser.close();
     }
 
     private BrowserContext context;
@@ -150,30 +154,194 @@ public class TestPage {
     public void testMouseMove() throws Exception {
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         loggerContext.getLogger("root").setLevel(Level.TRACE);
-        page.setUserAgent(new SetUserAgentOverrideRequest("Mozilla/5.0 (Linux; Android 11; Redmi K30 5G Build/RQ1A.210105.003) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/87.0.4280.101 Mobile Safari/537.36", "zh-CN,en-US", "Linux armv8l"))
-                .get(5, TimeUnit.SECONDS);
-        page.setDevice(ScreenOrientationType.PORTRAITPRIMARY, 393, 873, 1, true)
-                .get(5, TimeUnit.SECONDS);
-        page.enableTouchEmulation(true, 5)
-                .get(5, TimeUnit.SECONDS);
-        page.enableEmitTouchEventsForMouse(true, SetEmitTouchEventsForMouseRequestConfiguration.DESKTOP)
-                .get(5, TimeUnit.SECONDS);
         page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/fake.js"))
                 .get(5, TimeUnit.SECONDS);
-        page.addScriptToEvaluateOnNewDocument("const addEventListener = EventTarget.prototype.addEventListener;\n" +
-                "    const injectAddEventListener = function(){\n" +
-                "        let args = Array.prototype.slice.call(arguments);\n" +
-                "        console.log(\"event=\", args[0]);\n" +
-                "        if (args[0].indexOf('mouse') === -1) {\n" +
-                "            return addEventListener.apply(this, args);\n" +
-                "        }\n" +
-                "        return undefined;\n" +
-                "    }\n" +
-                "    window.addEventListener = injectAddEventListener;\n" +
-                "    EventTarget.prototype.addEventListener = injectAddEventListener;");
-        page.navigate("https://h5.m.taobao.com/awp/core/detail.htm?spm=a21bo.7929913.198967.13.69784174TlpS4Z&id=534668093680")
+        page.addListener(new AbstractListener<LoadedEvent>() {
+            @Override
+            public void accept(LoadedEvent event) {
+                page.browserContext().getCookies().addListener(f -> {
+                    System.out.println(f.getNow());
+                });
+            }
+        });
+        page.navigate("http://epub.cnipa.gov.cn/")
                 .get(10,TimeUnit.SECONDS);
         TimeUnit.DAYS.sleep(1);
+    }
+
+    @Test
+    public void testx1() {
+        int[] range = new int[]{78, 101};
+        for(int i=0; i<12; i++) {
+            System.out.println("echo " + Integer.toHexString(1 << i) + " | sudo tee /proc/irq/" + (range[0]) + "/smp_affinity");
+            range[0]++;
+            System.out.println("echo " + Integer.toHexString(1 << i) + " | sudo tee /proc/irq/" + (range[1]) + "/smp_affinity");
+            range[1]--;
+        }
+        range = new int[]{104, 127};
+        for(int i=12; i<24; i++) {
+            System.out.println("echo " + Integer.toHexString(1 << i) + " | sudo tee /proc/irq/" + (range[0]) + "/smp_affinity");
+            range[0]++;
+            System.out.println("echo " + Integer.toHexString(1 << i) + " | sudo tee /proc/irq/" + (range[1]) + "/smp_affinity");
+            range[1]--;
+        }
+    }
+
+    @Test
+    public void testxxx() throws Exception {
+        String shopListStr = "https://yichenghuayi.world.tmall.com\n" +
+                "https://qianrengangoutlets.tmall.com\n" +
+                "https://list.tmall.com\n" +
+                "https://www.tmall.com\n" +
+                "https://gmftz.tmall.com\n" +
+                "https://freetexglobal.tmall.hk\n" +
+                "https://yahjjry.tmall.com\n" +
+                "https://dianshiguo.world.tmall.com\n" +
+                "https://gecai.tmall.com\n" +
+                "https://huanglongxuan.tmall.com\n" +
+                "https://luoganzhen.tmall.com\n" +
+                "https://ouyu.tmall.com\n" +
+                "https://shengchendq.tmall.com\n" +
+                "https://tongxiaochu.tmall.com\n" +
+                "https://tuofu.tmall.com\n" +
+                "https://xiangcang.tmall.com\n" +
+                "https://zhide.tmall.com\n" +
+                "https://carin.tmall.hk\n" +
+                "https://minghaozb.tmall.com\n" +
+                "https://jingnuo.tmall.com\n" +
+                "https://jinjiafu.tmall.com\n" +
+                "https://huangjinjiasp.tmall.com\n" +
+                "https://kach.tmall.com\n" +
+                "https://hanfenna.tmall.com\n" +
+                "https://christopherobin.tmall.hk\n" +
+                "https://cinemasecrets.tmall.hk\n" +
+                "https://malingoetz.tmall.hk\n" +
+                "https://drunkelephant.tmall.hk\n" +
+                "https://100pure.tmall.hk\n" +
+                "https://fragrancenet.tmall.hk\n" +
+                "https://charlottetilbury.tmall.hk\n" +
+                "https://lagirl.tmall.hk\n" +
+                "https://feelunique.tmall.hk\n" +
+                "https://mariobadescu.tmall.hk\n" +
+                "https://penhaligons.tmall.hk\n" +
+                "https://rosebud.tmall.hk\n" +
+                "https://boots.tmall.hk\n" +
+                "https://thebodyshop.tmall.hk\n" +
+                "https://anastasiabeverlyhillsglobal.tmall.hk\n" +
+                "https://apivita.tmall.hk\n" +
+                "https://dermafirm.tmall.hk\n" +
+                "https://ruiladiyafusi.tmall.com\n" +
+                "https://hudabeauty.tmall.hk\n" +
+                "https://livingproof.tmall.hk\n" +
+                "https://panpuriofficial.tmall.hk\n" +
+                "https://roundlab.tmall.hk\n" +
+                "https://revisionskincare.tmall.hk\n" +
+                "https://sepai.tmall.hk\n" +
+                "https://imunny.tmall.hk\n" +
+                "https://babyglobal.tmall.hk\n" +
+                "https://luoliluo.tmall.com\n" +
+                "https://shenlaobo.tmall.com\n" +
+                "https://dashengtulou.tmall.com\n" +
+                "https://damohong.tmall.com\n" +
+                "https://zhangxiaoma.tmall.com\n" +
+                "https://changjiping.tmall.com\n" +
+                "https://sangshutang.tmall.com\n" +
+                "https://oryxs.tmall.com\n" +
+                "https://pages.tmall.com\n" +
+                "https://farminapetfoods.tmall.hk\n" +
+                "https://yichiwj.tmall.com\n" +
+                "https://zhanji.tmall.com\n" +
+                "https://nutriciamuying.tmall.hk\n" +
+                "https://yikouxiang.tmall.com\n" +
+                "https://jlyjx.tmall.com\n" +
+                "https://boyakejl.tmall.com\n" +
+                "https://topsglobal.tmall.hk\n" +
+                "https://probio7.tmall.hk\n" +
+                "https://superdiet.tmall.hk\n" +
+                "https://jarrow.tmall.hk\n" +
+                "https://lambertz.tmall.hk\n" +
+                "https://lifenutrition.tmall.hk\n" +
+                "https://risal.tmall.hk\n" +
+                "https://folotto.tmall.hk\n" +
+                "https://drvitamins.tmall.hk\n" +
+                "https://irvinsglobal.tmall.hk\n" +
+                "https://astaxin.tmall.hk\n" +
+                "https://biomenta.tmall.hk\n" +
+                "https://naturescare.tmall.hk\n" +
+                "https://emart.tmall.hk\n" +
+                "https://huebner.tmall.hk\n" +
+                "https://oceanfit.tmall.hk\n" +
+                "https://hkgangpinyijia.tmall.hk\n" +
+                "https://drdunnerbjsp.tmall.hk\n" +
+                "https://estheprolabo.tmall.hk\n" +
+                "https://vitamore-au.tmall.hk\n" +
+                "https://vogels.tmall.hk\n" +
+                "https://vitasedds.tmall.hk\n";
+
+
+        String[] shopList = shopListStr.split("\n");
+        StringBuilder sb = new StringBuilder();
+        for(String shop : shopList) {
+            shop = StringUtils.trim(shop);
+            if (StringUtils.isEmpty(shop)) {
+                continue;
+            }
+            String shopUrl = shop.replace(".tmall.com", ".m.tmall.com")
+                    .replace(".tmall.hk", ".m.tmall.com");
+            Promise promise = GlobalEventExecutor.INSTANCE.newPromise();
+            AbstractListener<LoadedEvent> listener = new AbstractListener<LoadedEvent>() {
+                @Override
+                public void accept(LoadedEvent event) {
+                    page.url().addListener(f -> {
+                        if (f.cause() != null) {
+                            promise.tryFailure(new Exception("failed"));
+                            return;
+                        }
+                        String url = (String) f.getNow();
+                        if (url.contains("err.tmall.com")) {
+                            promise.tryFailure(new Exception("noshop"));
+                            return;
+                        }
+                        if (!url.contains(".m.tmall.com")) {
+                            promise.tryFailure(new Exception(url));
+                            return;
+                        }
+                        page.eval("window.__vmGlobalData__", 1000, JSONObject.class)
+                                .addListener(f1 -> {
+                                    if (f1.cause() != null) {
+                                        promise.tryFailure(new Exception("failed"));
+                                        return;
+                                    }
+                                    promise.trySuccess(f1.getNow());
+                                });
+                    });
+                }
+            };
+            page.addListener(listener);
+            page.navigate(shopUrl);
+            try {
+                JSONObject object = (JSONObject) promise.get();
+                sb.append(shop)
+                        .append("\t")
+                        .append(object.getString("shopId"))
+                        .append("\t")
+                        .append(object.getString("sellerId"))
+                        .append("\t")
+                        .append("success");
+            } catch (Exception cause) {
+                sb.append(shop)
+                        .append("\t")
+                        .append("0")
+                        .append("\t")
+                        .append("0")
+                        .append("\t")
+                        .append(cause.getMessage());
+            } finally {
+                page.removeListener(listener);
+            }
+            sb.append("\r\n");
+        }
+        System.out.println(sb.toString());
     }
 
 }
