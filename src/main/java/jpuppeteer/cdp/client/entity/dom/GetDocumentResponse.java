@@ -7,9 +7,9 @@ public class GetDocumentResponse {
     /**
     * Resulting node.
     */
-    public final Node root;
+    public final jpuppeteer.cdp.client.entity.dom.Node root;
 
-    public GetDocumentResponse(Node root) {
+    public GetDocumentResponse(jpuppeteer.cdp.client.entity.dom.Node root) {
         this.root = root;
     }
 

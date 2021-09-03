@@ -9,9 +9,9 @@ public class AnimationStartedEvent {
     /**
     * Animation that was started.
     */
-    public final Animation animation;
+    public final jpuppeteer.cdp.client.entity.animation.Animation animation;
 
-    public AnimationStartedEvent(Animation animation) {
+    public AnimationStartedEvent(jpuppeteer.cdp.client.entity.animation.Animation animation) {
         this.animation = animation;
     }
 

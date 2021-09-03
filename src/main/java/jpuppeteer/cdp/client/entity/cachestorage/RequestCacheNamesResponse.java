@@ -8,9 +8,9 @@ public class RequestCacheNamesResponse {
     /**
     * Caches for the security origin.
     */
-    public final java.util.List<Cache> caches;
+    public final java.util.List<jpuppeteer.cdp.client.entity.cachestorage.Cache> caches;
 
-    public RequestCacheNamesResponse(java.util.List<Cache> caches) {
+    public RequestCacheNamesResponse(java.util.List<jpuppeteer.cdp.client.entity.cachestorage.Cache> caches) {
         this.caches = caches;
     }
 

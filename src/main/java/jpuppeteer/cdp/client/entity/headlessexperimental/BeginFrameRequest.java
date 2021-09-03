@@ -23,9 +23,9 @@ public class BeginFrameRequest {
     /**
     * If set, a screenshot of the frame will be captured and returned in the response. Otherwise, no screenshot will be captured. Note that capturing a screenshot can fail, for example, during renderer initialization. In such a case, no screenshot data will be returned.
     */
-    public final ScreenshotParams screenshot;
+    public final jpuppeteer.cdp.client.entity.headlessexperimental.ScreenshotParams screenshot;
 
-    public BeginFrameRequest(java.math.BigDecimal frameTimeTicks, java.math.BigDecimal interval, Boolean noDisplayUpdates, ScreenshotParams screenshot) {
+    public BeginFrameRequest(java.math.BigDecimal frameTimeTicks, java.math.BigDecimal interval, Boolean noDisplayUpdates, jpuppeteer.cdp.client.entity.headlessexperimental.ScreenshotParams screenshot) {
         this.frameTimeTicks = frameTimeTicks;
         this.interval = interval;
         this.noDisplayUpdates = noDisplayUpdates;

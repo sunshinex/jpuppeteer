@@ -14,7 +14,7 @@ public class ContinueInterceptedRequestRequest {
     public final jpuppeteer.cdp.client.constant.network.ErrorReason errorReason;
 
     /**
-    * If set the requests completes using with the provided base64 encoded raw response, including HTTP status line and headers etc... Must not be set in response to an authChallenge.
+    * If set the requests completes using with the provided base64 encoded raw response, including HTTP status line and headers etc... Must not be set in response to an authChallenge. (Encoded as a base64 string when passed over JSON)
     */
     public final String rawResponse;
 
@@ -41,9 +41,9 @@ public class ContinueInterceptedRequestRequest {
     /**
     * Response to a requestIntercepted with an authChallenge. Must not be set otherwise.
     */
-    public final AuthChallengeResponse authChallengeResponse;
+    public final jpuppeteer.cdp.client.entity.network.AuthChallengeResponse authChallengeResponse;
 
-    public ContinueInterceptedRequestRequest(String interceptionId, jpuppeteer.cdp.client.constant.network.ErrorReason errorReason, String rawResponse, String url, String method, String postData, java.util.Map<String, Object> headers, AuthChallengeResponse authChallengeResponse) {
+    public ContinueInterceptedRequestRequest(String interceptionId, jpuppeteer.cdp.client.constant.network.ErrorReason errorReason, String rawResponse, String url, String method, String postData, java.util.Map<String, Object> headers, jpuppeteer.cdp.client.entity.network.AuthChallengeResponse authChallengeResponse) {
         this.interceptionId = interceptionId;
         this.errorReason = errorReason;
         this.rawResponse = rawResponse;

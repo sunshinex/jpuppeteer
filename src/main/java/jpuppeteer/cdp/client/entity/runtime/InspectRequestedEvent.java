@@ -7,13 +7,13 @@ public class InspectRequestedEvent {
 
     /**
     */
-    public final RemoteObject object;
+    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject object;
 
     /**
     */
     public final java.util.Map<String, Object> hints;
 
-    public InspectRequestedEvent(RemoteObject object, java.util.Map<String, Object> hints) {
+    public InspectRequestedEvent(jpuppeteer.cdp.client.entity.runtime.RemoteObject object, java.util.Map<String, Object> hints) {
         this.object = object;
         this.hints = hints;
     }

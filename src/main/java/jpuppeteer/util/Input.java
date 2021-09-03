@@ -111,7 +111,7 @@ public class Input {
         boolean shift = (keyModifiers & 8) == 8;
         String keyStr = shift && key.getShiftKey() != null ? key.getShiftKey() : key.getKey();
 
-        DispatchKeyEventRequestBuilder builder = new DispatchKeyEventRequestBuilder();
+        DispatchKeyEventRequestBuilder builder = DispatchKeyEventRequestBuilder.newBuilder();
         builder.modifiers(keyModifiers);
         builder.windowsVirtualKeyCode(shift && key.getShiftKeyCode() != null ? key.getShiftKeyCode() : key.getKeyCode());
         builder.code(key.getCode());
@@ -139,7 +139,7 @@ public class Input {
     public Future keyUp(USKeyboardDefinition key) {
         int keyModifiers = getModifier(pressedKeys);
         boolean shift = (keyModifiers & 8) == 8;
-        DispatchKeyEventRequestBuilder builder = new DispatchKeyEventRequestBuilder();
+        DispatchKeyEventRequestBuilder builder = DispatchKeyEventRequestBuilder.newBuilder();
         builder.modifiers(keyModifiers);
         builder.windowsVirtualKeyCode(shift && key.getShiftKeyCode() != null ? key.getShiftKeyCode() : key.getKeyCode());
         builder.code(key.getCode());
@@ -167,7 +167,7 @@ public class Input {
 
     private DispatchMouseEventRequestBuilder mouseEventBuilder(MouseDefinition mouseDefinition, int x, int y) {
         int keyModifiers = getModifier(pressedKeys);
-        DispatchMouseEventRequestBuilder builder = new DispatchMouseEventRequestBuilder();
+        DispatchMouseEventRequestBuilder builder = DispatchMouseEventRequestBuilder.newBuilder();
         builder.button(mouseDefinition.getButton());
         builder.buttons(getButtons(pressedButtons));
         builder.modifiers(keyModifiers);

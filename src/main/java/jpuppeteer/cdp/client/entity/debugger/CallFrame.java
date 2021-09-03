@@ -18,12 +18,12 @@ public class CallFrame {
     /**
     * Location in the source code.
     */
-    public final Location functionLocation;
+    public final jpuppeteer.cdp.client.entity.debugger.Location functionLocation;
 
     /**
     * Location in the source code.
     */
-    public final Location location;
+    public final jpuppeteer.cdp.client.entity.debugger.Location location;
 
     /**
     * JavaScript script name or url.
@@ -33,7 +33,7 @@ public class CallFrame {
     /**
     * Scope chain for this call frame.
     */
-    public final java.util.List<Scope> scopeChain;
+    public final java.util.List<jpuppeteer.cdp.client.entity.debugger.Scope> scopeChain;
 
     /**
     * `this` object for this call frame.
@@ -45,7 +45,7 @@ public class CallFrame {
     */
     public final jpuppeteer.cdp.client.entity.runtime.RemoteObject returnValue;
 
-    public CallFrame(String callFrameId, String functionName, Location functionLocation, Location location, String url, java.util.List<Scope> scopeChain, jpuppeteer.cdp.client.entity.runtime.RemoteObject self, jpuppeteer.cdp.client.entity.runtime.RemoteObject returnValue) {
+    public CallFrame(String callFrameId, String functionName, jpuppeteer.cdp.client.entity.debugger.Location functionLocation, jpuppeteer.cdp.client.entity.debugger.Location location, String url, java.util.List<jpuppeteer.cdp.client.entity.debugger.Scope> scopeChain, jpuppeteer.cdp.client.entity.runtime.RemoteObject self, jpuppeteer.cdp.client.entity.runtime.RemoteObject returnValue) {
         this.callFrameId = callFrameId;
         this.functionName = functionName;
         this.functionLocation = functionLocation;
@@ -56,7 +56,7 @@ public class CallFrame {
         this.returnValue = returnValue;
     }
 
-    public CallFrame(String callFrameId, String functionName, Location location, String url, java.util.List<Scope> scopeChain, jpuppeteer.cdp.client.entity.runtime.RemoteObject self) {
+    public CallFrame(String callFrameId, String functionName, jpuppeteer.cdp.client.entity.debugger.Location location, String url, java.util.List<jpuppeteer.cdp.client.entity.debugger.Scope> scopeChain, jpuppeteer.cdp.client.entity.runtime.RemoteObject self) {
         this.callFrameId = callFrameId;
         this.functionName = functionName;
         this.functionLocation = null;

@@ -20,6 +20,7 @@ public enum ResourceType implements jpuppeteer.cdp.client.CDPEnum {
     SIGNEDEXCHANGE("SignedExchange"),
     PING("Ping"),
     CSPVIOLATIONREPORT("CSPViolationReport"),
+    PREFLIGHT("Preflight"),
     OTHER("Other"),
     ;
 

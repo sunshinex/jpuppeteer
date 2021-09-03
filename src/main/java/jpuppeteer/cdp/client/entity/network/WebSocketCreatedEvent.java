@@ -18,9 +18,9 @@ public class WebSocketCreatedEvent {
     /**
     * Request initiator.
     */
-    public final Initiator initiator;
+    public final jpuppeteer.cdp.client.entity.network.Initiator initiator;
 
-    public WebSocketCreatedEvent(String requestId, String url, Initiator initiator) {
+    public WebSocketCreatedEvent(String requestId, String url, jpuppeteer.cdp.client.entity.network.Initiator initiator) {
         this.requestId = requestId;
         this.url = url;
         this.initiator = initiator;

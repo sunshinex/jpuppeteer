@@ -5,6 +5,7 @@ import jpuppeteer.api.BrowserContext;
 import jpuppeteer.cdp.client.constant.browser.PermissionType;
 import jpuppeteer.cdp.client.entity.network.CookieParam;
 import jpuppeteer.chrome.ChromeLauncher;
+import jpuppeteer.util.CookieParamBuilder;
 import org.junit.*;
 
 import java.util.concurrent.ExecutionException;
@@ -62,7 +63,12 @@ public class TestContext {
 
     @Test
     public void setCookies() throws ExecutionException, InterruptedException {
-        context.setCookies(new CookieParam("cookie_name", "cookie_value", null, "www.baidu.com", null, null, null, null, null, null)).get();
+        CookieParam cookie = CookieParamBuilder.newBuilder()
+                .name("cookie_name")
+                .value("cookie_value")
+                .domain("www.baidu.com")
+                .build();
+        context.setCookies(cookie).get();
     }
 
     @Test

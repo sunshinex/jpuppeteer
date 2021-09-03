@@ -54,7 +54,7 @@ public class DOMNode {
     /**
     * Attributes of an `Element` node.
     */
-    public final java.util.List<NameValue> attributes;
+    public final java.util.List<jpuppeteer.cdp.client.entity.domsnapshot.NameValue> attributes;
 
     /**
     * Indexes of pseudo elements associated with this node in the `domNodes` array returned by `getSnapshot`, if any.
@@ -145,7 +145,7 @@ public class DOMNode {
     */
     public final java.math.BigDecimal scrollOffsetY;
 
-    public DOMNode(Integer nodeType, String nodeName, String nodeValue, String textValue, String inputValue, Boolean inputChecked, Boolean optionSelected, Integer backendNodeId, java.util.List<Integer> childNodeIndexes, java.util.List<NameValue> attributes, java.util.List<Integer> pseudoElementIndexes, Integer layoutNodeIndex, String documentURL, String baseURL, String contentLanguage, String documentEncoding, String publicId, String systemId, String frameId, Integer contentDocumentIndex, jpuppeteer.cdp.client.constant.dom.PseudoType pseudoType, jpuppeteer.cdp.client.constant.dom.ShadowRootType shadowRootType, Boolean isClickable, java.util.List<jpuppeteer.cdp.client.entity.domdebugger.EventListener> eventListeners, String currentSourceURL, String originURL, java.math.BigDecimal scrollOffsetX, java.math.BigDecimal scrollOffsetY) {
+    public DOMNode(Integer nodeType, String nodeName, String nodeValue, String textValue, String inputValue, Boolean inputChecked, Boolean optionSelected, Integer backendNodeId, java.util.List<Integer> childNodeIndexes, java.util.List<jpuppeteer.cdp.client.entity.domsnapshot.NameValue> attributes, java.util.List<Integer> pseudoElementIndexes, Integer layoutNodeIndex, String documentURL, String baseURL, String contentLanguage, String documentEncoding, String publicId, String systemId, String frameId, Integer contentDocumentIndex, jpuppeteer.cdp.client.constant.dom.PseudoType pseudoType, jpuppeteer.cdp.client.constant.dom.ShadowRootType shadowRootType, Boolean isClickable, java.util.List<jpuppeteer.cdp.client.entity.domdebugger.EventListener> eventListeners, String currentSourceURL, String originURL, java.math.BigDecimal scrollOffsetX, java.math.BigDecimal scrollOffsetY) {
         this.nodeType = nodeType;
         this.nodeName = nodeName;
         this.nodeValue = nodeValue;

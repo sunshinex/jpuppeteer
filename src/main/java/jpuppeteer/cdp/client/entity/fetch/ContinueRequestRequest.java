@@ -1,7 +1,6 @@
 package jpuppeteer.cdp.client.entity.fetch;
 
 /**
-* experimental
 */
 public class ContinueRequestRequest {
 
@@ -21,16 +20,16 @@ public class ContinueRequestRequest {
     public final String method;
 
     /**
-    * If set, overrides the post data in the request.
+    * If set, overrides the post data in the request. (Encoded as a base64 string when passed over JSON)
     */
     public final String postData;
 
     /**
-    * If set, overrides the request headrts.
+    * If set, overrides the request headers.
     */
-    public final java.util.List<HeaderEntry> headers;
+    public final java.util.List<jpuppeteer.cdp.client.entity.fetch.HeaderEntry> headers;
 
-    public ContinueRequestRequest(String requestId, String url, String method, String postData, java.util.List<HeaderEntry> headers) {
+    public ContinueRequestRequest(String requestId, String url, String method, String postData, java.util.List<jpuppeteer.cdp.client.entity.fetch.HeaderEntry> headers) {
         this.requestId = requestId;
         this.url = url;
         this.method = method;

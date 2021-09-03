@@ -7,19 +7,19 @@ public class EvaluateResponse {
     /**
     * Evaluation result.
     */
-    public final RemoteObject result;
+    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject result;
 
     /**
     * Exception details.
     */
-    public final ExceptionDetails exceptionDetails;
+    public final jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails;
 
-    public EvaluateResponse(RemoteObject result, ExceptionDetails exceptionDetails) {
+    public EvaluateResponse(jpuppeteer.cdp.client.entity.runtime.RemoteObject result, jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails) {
         this.result = result;
         this.exceptionDetails = exceptionDetails;
     }
 
-    public EvaluateResponse(RemoteObject result) {
+    public EvaluateResponse(jpuppeteer.cdp.client.entity.runtime.RemoteObject result) {
         this.result = result;
         this.exceptionDetails = null;
     }

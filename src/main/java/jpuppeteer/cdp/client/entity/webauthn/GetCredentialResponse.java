@@ -7,9 +7,9 @@ public class GetCredentialResponse {
 
     /**
     */
-    public final Credential credential;
+    public final jpuppeteer.cdp.client.entity.webauthn.Credential credential;
 
-    public GetCredentialResponse(Credential credential) {
+    public GetCredentialResponse(jpuppeteer.cdp.client.entity.webauthn.Credential credential) {
         this.credential = credential;
     }
 

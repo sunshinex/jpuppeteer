@@ -30,7 +30,7 @@ public class DOMSnapshot {
     /**
     * Returns a document snapshot, including the full DOM tree of the root node (including iframes, template contents, and imported documents) in a flattened array, as well as layout and white-listed computed style information for the nodes. Shadow DOM in the returned DOM tree is flattened.
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.domsnapshot.GetSnapshotResponse> getSnapshot(jpuppeteer.cdp.client.entity.domsnapshot.GetSnapshotRequest request) {
         return session.send("DOMSnapshot.getSnapshot", request, jpuppeteer.cdp.client.entity.domsnapshot.GetSnapshotResponse.class);
     }

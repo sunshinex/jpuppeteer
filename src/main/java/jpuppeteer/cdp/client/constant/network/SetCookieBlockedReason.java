@@ -17,6 +17,11 @@ public enum SetCookieBlockedReason implements jpuppeteer.cdp.client.CDPEnum {
     INVALIDDOMAIN("InvalidDomain"),
     INVALIDPREFIX("InvalidPrefix"),
     UNKNOWNERROR("UnknownError"),
+    SCHEMEFULSAMESITESTRICT("SchemefulSameSiteStrict"),
+    SCHEMEFULSAMESITELAX("SchemefulSameSiteLax"),
+    SCHEMEFULSAMESITEUNSPECIFIEDTREATEDASLAX("SchemefulSameSiteUnspecifiedTreatedAsLax"),
+    SAMEPARTYFROMCROSSPARTYCONTEXT("SamePartyFromCrossPartyContext"),
+    SAMEPARTYCONFLICTSWITHOTHERATTRIBUTES("SamePartyConflictsWithOtherAttributes"),
     ;
 
     private String value;

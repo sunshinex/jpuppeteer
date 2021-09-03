@@ -37,6 +37,15 @@ public class DOM {
 
 
     /**
+    * Scrolls the specified rect of the given node into view if not already visible. Note: exactly one between nodeId, backendNodeId and objectId should be passed to identify the node.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future scrollIntoViewIfNeeded(jpuppeteer.cdp.client.entity.dom.ScrollIntoViewIfNeededRequest request) {
+        return session.send("DOM.scrollIntoViewIfNeeded", request);
+    }
+
+
+    /**
     * Disables DOM agent for the given page.
     */
     public io.netty.util.concurrent.Future disable() {
@@ -103,10 +112,20 @@ public class DOM {
 
 
     /**
-    * Returns the root DOM node (and optionally the subtree) to the caller.
+    * Returns the root DOM node (and optionally the subtree) to the caller. Deprecated, as it is not designed to work well with the rest of the DOM agent. Use DOMSnapshot.captureSnapshot instead.
     */
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetFlattenedDocumentResponse> getFlattenedDocument(jpuppeteer.cdp.client.entity.dom.GetFlattenedDocumentRequest request) {
         return session.send("DOM.getFlattenedDocument", request, jpuppeteer.cdp.client.entity.dom.GetFlattenedDocumentResponse.class);
+    }
+
+
+    /**
+    * Finds nodes with a given computed style in a subtree.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetNodesForSubtreeByStyleResponse> getNodesForSubtreeByStyle(jpuppeteer.cdp.client.entity.dom.GetNodesForSubtreeByStyleRequest request) {
+        return session.send("DOM.getNodesForSubtreeByStyle", request, jpuppeteer.cdp.client.entity.dom.GetNodesForSubtreeByStyleResponse.class);
     }
 
 

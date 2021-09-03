@@ -18,14 +18,14 @@ public class CachedResource {
     /**
     * Cached response data.
     */
-    public final Response response;
+    public final jpuppeteer.cdp.client.entity.network.Response response;
 
     /**
     * Cached response body size.
     */
     public final java.math.BigDecimal bodySize;
 
-    public CachedResource(String url, jpuppeteer.cdp.client.constant.network.ResourceType type, Response response, java.math.BigDecimal bodySize) {
+    public CachedResource(String url, jpuppeteer.cdp.client.constant.network.ResourceType type, jpuppeteer.cdp.client.entity.network.Response response, java.math.BigDecimal bodySize) {
         this.url = url;
         this.type = type;
         this.response = response;

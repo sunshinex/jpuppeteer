@@ -19,9 +19,9 @@ public class DatabaseWithObjectStores {
     /**
     * Object stores in this database.
     */
-    public final java.util.List<ObjectStore> objectStores;
+    public final java.util.List<jpuppeteer.cdp.client.entity.indexeddb.ObjectStore> objectStores;
 
-    public DatabaseWithObjectStores(String name, java.math.BigDecimal version, java.util.List<ObjectStore> objectStores) {
+    public DatabaseWithObjectStores(String name, java.math.BigDecimal version, java.util.List<jpuppeteer.cdp.client.entity.indexeddb.ObjectStore> objectStores) {
         this.name = name;
         this.version = version;
         this.objectStores = objectStores;

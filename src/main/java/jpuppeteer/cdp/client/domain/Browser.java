@@ -38,6 +38,24 @@ public class Browser {
 
 
     /**
+    * Set the behavior when downloading a file.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future setDownloadBehavior(jpuppeteer.cdp.client.entity.browser.SetDownloadBehaviorRequest request) {
+        return connection.send("Browser.setDownloadBehavior", request);
+    }
+
+
+    /**
+    * Cancel a download if in progress
+    * experimental
+    */
+    public io.netty.util.concurrent.Future cancelDownload(jpuppeteer.cdp.client.entity.browser.CancelDownloadRequest request) {
+        return connection.send("Browser.cancelDownload", request);
+    }
+
+
+    /**
     * Close browser gracefully.
     */
     public io.netty.util.concurrent.Future close() {
@@ -131,6 +149,15 @@ public class Browser {
     */
     public io.netty.util.concurrent.Future setDockTile(jpuppeteer.cdp.client.entity.browser.SetDockTileRequest request) {
         return connection.send("Browser.setDockTile", request);
+    }
+
+
+    /**
+    * Invoke custom browser commands used by telemetry.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future executeBrowserCommand(jpuppeteer.cdp.client.entity.browser.ExecuteBrowserCommandRequest request) {
+        return connection.send("Browser.executeBrowserCommand", request);
     }
 
 }

@@ -7,9 +7,9 @@ public class GetRealtimeDataResponse {
 
     /**
     */
-    public final ContextRealtimeData realtimeData;
+    public final jpuppeteer.cdp.client.entity.webaudio.ContextRealtimeData realtimeData;
 
-    public GetRealtimeDataResponse(ContextRealtimeData realtimeData) {
+    public GetRealtimeDataResponse(jpuppeteer.cdp.client.entity.webaudio.ContextRealtimeData realtimeData) {
         this.realtimeData = realtimeData;
     }
 

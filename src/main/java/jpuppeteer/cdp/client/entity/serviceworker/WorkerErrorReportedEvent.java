@@ -7,9 +7,9 @@ public class WorkerErrorReportedEvent {
 
     /**
     */
-    public final ServiceWorkerErrorMessage errorMessage;
+    public final jpuppeteer.cdp.client.entity.serviceworker.ServiceWorkerErrorMessage errorMessage;
 
-    public WorkerErrorReportedEvent(ServiceWorkerErrorMessage errorMessage) {
+    public WorkerErrorReportedEvent(jpuppeteer.cdp.client.entity.serviceworker.ServiceWorkerErrorMessage errorMessage) {
         this.errorMessage = errorMessage;
     }
 

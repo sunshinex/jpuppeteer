@@ -38,19 +38,19 @@ public class ExceptionDetails {
     /**
     * JavaScript stack trace if available.
     */
-    public final StackTrace stackTrace;
+    public final jpuppeteer.cdp.client.entity.runtime.StackTrace stackTrace;
 
     /**
     * Exception object if available.
     */
-    public final RemoteObject exception;
+    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject exception;
 
     /**
     * Identifier of the context where exception happened.
     */
     public final Integer executionContextId;
 
-    public ExceptionDetails(Integer exceptionId, String text, Integer lineNumber, Integer columnNumber, String scriptId, String url, StackTrace stackTrace, RemoteObject exception, Integer executionContextId) {
+    public ExceptionDetails(Integer exceptionId, String text, Integer lineNumber, Integer columnNumber, String scriptId, String url, jpuppeteer.cdp.client.entity.runtime.StackTrace stackTrace, jpuppeteer.cdp.client.entity.runtime.RemoteObject exception, Integer executionContextId) {
         this.exceptionId = exceptionId;
         this.text = text;
         this.lineNumber = lineNumber;

@@ -2,7 +2,6 @@ package jpuppeteer.cdp.client.entity.fetch;
 
 /**
 * Issued when the domain is enabled with handleAuthRequests set to true. The request is paused until client responds with continueWithAuth.
-* experimental
 */
 public class AuthRequiredEvent {
 
@@ -29,9 +28,9 @@ public class AuthRequiredEvent {
     /**
     * Details of the Authorization Challenge encountered. If this is set, client should respond with continueRequest that contains AuthChallengeResponse.
     */
-    public final AuthChallenge authChallenge;
+    public final jpuppeteer.cdp.client.entity.fetch.AuthChallenge authChallenge;
 
-    public AuthRequiredEvent(String requestId, jpuppeteer.cdp.client.entity.network.Request request, String frameId, jpuppeteer.cdp.client.constant.network.ResourceType resourceType, AuthChallenge authChallenge) {
+    public AuthRequiredEvent(String requestId, jpuppeteer.cdp.client.entity.network.Request request, String frameId, jpuppeteer.cdp.client.constant.network.ResourceType resourceType, jpuppeteer.cdp.client.entity.fetch.AuthChallenge authChallenge) {
         this.requestId = requestId;
         this.request = request;
         this.frameId = frameId;

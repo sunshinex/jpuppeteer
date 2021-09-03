@@ -7,9 +7,9 @@ public class TargetInfoChangedEvent {
 
     /**
     */
-    public final TargetInfo targetInfo;
+    public final jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo;
 
-    public TargetInfoChangedEvent(TargetInfo targetInfo) {
+    public TargetInfoChangedEvent(jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo) {
         this.targetInfo = targetInfo;
     }
 

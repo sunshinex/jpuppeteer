@@ -13,7 +13,7 @@ public class ResponseReceivedExtraInfoEvent {
     /**
     * A list of cookies which were not stored from the response along with the corresponding reasons for blocking. The cookies here may not be valid due to syntax errors, which are represented by the invalid cookie line string instead of a proper cookie.
     */
-    public final java.util.List<BlockedSetCookieWithReason> blockedCookies;
+    public final java.util.List<jpuppeteer.cdp.client.entity.network.BlockedSetCookieWithReason> blockedCookies;
 
     /**
     * Raw response headers as they were received over the wire.
@@ -21,21 +21,28 @@ public class ResponseReceivedExtraInfoEvent {
     public final java.util.Map<String, Object> headers;
 
     /**
+    * The IP address space of the resource. The address space can only be determined once the transport established the connection, so we can't send it in `requestWillBeSentExtraInfo`.
+    */
+    public final jpuppeteer.cdp.client.constant.network.IPAddressSpace resourceIPAddressSpace;
+
+    /**
     * Raw response header text as it was received over the wire. The raw text may not always be available, such as in the case of HTTP/2 or QUIC.
     */
     public final String headersText;
 
-    public ResponseReceivedExtraInfoEvent(String requestId, java.util.List<BlockedSetCookieWithReason> blockedCookies, java.util.Map<String, Object> headers, String headersText) {
+    public ResponseReceivedExtraInfoEvent(String requestId, java.util.List<jpuppeteer.cdp.client.entity.network.BlockedSetCookieWithReason> blockedCookies, java.util.Map<String, Object> headers, jpuppeteer.cdp.client.constant.network.IPAddressSpace resourceIPAddressSpace, String headersText) {
         this.requestId = requestId;
         this.blockedCookies = blockedCookies;
         this.headers = headers;
+        this.resourceIPAddressSpace = resourceIPAddressSpace;
         this.headersText = headersText;
     }
 
-    public ResponseReceivedExtraInfoEvent(String requestId, java.util.List<BlockedSetCookieWithReason> blockedCookies, java.util.Map<String, Object> headers) {
+    public ResponseReceivedExtraInfoEvent(String requestId, java.util.List<jpuppeteer.cdp.client.entity.network.BlockedSetCookieWithReason> blockedCookies, java.util.Map<String, Object> headers, jpuppeteer.cdp.client.constant.network.IPAddressSpace resourceIPAddressSpace) {
         this.requestId = requestId;
         this.blockedCookies = blockedCookies;
         this.headers = headers;
+        this.resourceIPAddressSpace = resourceIPAddressSpace;
         this.headersText = null;
     }
 

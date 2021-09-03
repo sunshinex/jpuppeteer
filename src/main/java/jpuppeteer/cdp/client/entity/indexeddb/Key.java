@@ -29,9 +29,9 @@ public class Key {
     /**
     * Array value.
     */
-    public final java.util.List<Key> array;
+    public final java.util.List<jpuppeteer.cdp.client.entity.indexeddb.Key> array;
 
-    public Key(jpuppeteer.cdp.client.constant.indexeddb.KeyType type, java.math.BigDecimal number, String string, java.math.BigDecimal date, java.util.List<Key> array) {
+    public Key(jpuppeteer.cdp.client.constant.indexeddb.KeyType type, java.math.BigDecimal number, String string, java.math.BigDecimal date, java.util.List<jpuppeteer.cdp.client.entity.indexeddb.Key> array) {
         this.type = type;
         this.number = number;
         this.string = string;

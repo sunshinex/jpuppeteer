@@ -38,9 +38,9 @@ public class BoxModel {
     /**
     * Shape outside coordinates
     */
-    public final ShapeOutsideInfo shapeOutside;
+    public final jpuppeteer.cdp.client.entity.dom.ShapeOutsideInfo shapeOutside;
 
-    public BoxModel(java.util.List<java.math.BigDecimal> content, java.util.List<java.math.BigDecimal> padding, java.util.List<java.math.BigDecimal> border, java.util.List<java.math.BigDecimal> margin, Integer width, Integer height, ShapeOutsideInfo shapeOutside) {
+    public BoxModel(java.util.List<java.math.BigDecimal> content, java.util.List<java.math.BigDecimal> padding, java.util.List<java.math.BigDecimal> border, java.util.List<java.math.BigDecimal> margin, Integer width, Integer height, jpuppeteer.cdp.client.entity.dom.ShapeOutsideInfo shapeOutside) {
         this.content = content;
         this.padding = padding;
         this.border = border;

@@ -20,9 +20,9 @@ public class DeleteObjectStoreEntriesRequest {
     /**
     * Range of entry keys to delete
     */
-    public final KeyRange keyRange;
+    public final jpuppeteer.cdp.client.entity.indexeddb.KeyRange keyRange;
 
-    public DeleteObjectStoreEntriesRequest(String securityOrigin, String databaseName, String objectStoreName, KeyRange keyRange) {
+    public DeleteObjectStoreEntriesRequest(String securityOrigin, String databaseName, String objectStoreName, jpuppeteer.cdp.client.entity.indexeddb.KeyRange keyRange) {
         this.securityOrigin = securityOrigin;
         this.databaseName = databaseName;
         this.objectStoreName = objectStoreName;

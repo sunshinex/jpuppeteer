@@ -18,9 +18,9 @@ public class AddRuleRequest {
     /**
     * Text position of a new rule in the target style sheet.
     */
-    public final SourceRange location;
+    public final jpuppeteer.cdp.client.entity.css.SourceRange location;
 
-    public AddRuleRequest(String styleSheetId, String ruleText, SourceRange location) {
+    public AddRuleRequest(String styleSheetId, String ruleText, jpuppeteer.cdp.client.entity.css.SourceRange location) {
         this.styleSheetId = styleSheetId;
         this.ruleText = ruleText;
         this.location = location;

@@ -2,7 +2,7 @@ package jpuppeteer.cdp.client.domain;
 
 /**
 */
-@Deprecated
+@java.lang.Deprecated
 public class Console {
 
     private jpuppeteer.cdp.CDPSession session;

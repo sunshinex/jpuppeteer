@@ -6,10 +6,10 @@ public class GetInstallabilityErrorsResponse {
 
     /**
     */
-    public final java.util.List<String> errors;
+    public final java.util.List<jpuppeteer.cdp.client.entity.page.InstallabilityError> installabilityErrors;
 
-    public GetInstallabilityErrorsResponse(java.util.List<String> errors) {
-        this.errors = errors;
+    public GetInstallabilityErrorsResponse(java.util.List<jpuppeteer.cdp.client.entity.page.InstallabilityError> installabilityErrors) {
+        this.installabilityErrors = installabilityErrors;
     }
 
 }

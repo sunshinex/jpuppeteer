@@ -14,19 +14,19 @@ public class ImageDecodeAcceleratorCapability {
     /**
     * Maximum supported dimensions of the image in pixels.
     */
-    public final Size maxDimensions;
+    public final jpuppeteer.cdp.client.entity.systeminfo.Size maxDimensions;
 
     /**
     * Minimum supported dimensions of the image in pixels.
     */
-    public final Size minDimensions;
+    public final jpuppeteer.cdp.client.entity.systeminfo.Size minDimensions;
 
     /**
     * Optional array of supported subsampling formats, e.g. 4:2:0, if known.
     */
     public final java.util.List<jpuppeteer.cdp.client.constant.systeminfo.SubsamplingFormat> subsamplings;
 
-    public ImageDecodeAcceleratorCapability(jpuppeteer.cdp.client.constant.systeminfo.ImageType imageType, Size maxDimensions, Size minDimensions, java.util.List<jpuppeteer.cdp.client.constant.systeminfo.SubsamplingFormat> subsamplings) {
+    public ImageDecodeAcceleratorCapability(jpuppeteer.cdp.client.constant.systeminfo.ImageType imageType, jpuppeteer.cdp.client.entity.systeminfo.Size maxDimensions, jpuppeteer.cdp.client.entity.systeminfo.Size minDimensions, java.util.List<jpuppeteer.cdp.client.constant.systeminfo.SubsamplingFormat> subsamplings) {
         this.imageType = imageType;
         this.maxDimensions = maxDimensions;
         this.minDimensions = minDimensions;

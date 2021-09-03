@@ -14,9 +14,9 @@ public class Value {
     /**
     * Value range in the underlying resource (if available).
     */
-    public final SourceRange range;
+    public final jpuppeteer.cdp.client.entity.css.SourceRange range;
 
-    public Value(String text, SourceRange range) {
+    public Value(String text, jpuppeteer.cdp.client.entity.css.SourceRange range) {
         this.text = text;
         this.range = range;
     }

@@ -9,14 +9,14 @@ public class SelectorList {
     /**
     * Selectors in the list.
     */
-    public final java.util.List<Value> selectors;
+    public final java.util.List<jpuppeteer.cdp.client.entity.css.Value> selectors;
 
     /**
     * Rule selector text.
     */
     public final String text;
 
-    public SelectorList(java.util.List<Value> selectors, String text) {
+    public SelectorList(java.util.List<jpuppeteer.cdp.client.entity.css.Value> selectors, String text) {
         this.selectors = selectors;
         this.text = text;
     }

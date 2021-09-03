@@ -56,8 +56,8 @@ public class Target {
     * Creates a new empty BrowserContext. Similar to an incognito profile but you can have more than one.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.target.CreateBrowserContextResponse> createBrowserContext() {
-        return connection.send("Target.createBrowserContext", null, jpuppeteer.cdp.client.entity.target.CreateBrowserContextResponse.class);
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.target.CreateBrowserContextResponse> createBrowserContext(jpuppeteer.cdp.client.entity.target.CreateBrowserContextRequest request) {
+        return connection.send("Target.createBrowserContext", request, jpuppeteer.cdp.client.entity.target.CreateBrowserContextResponse.class);
     }
 
 
@@ -115,7 +115,7 @@ public class Target {
     /**
     * Sends protocol message over session with given id. Consider using flat mode instead; see commands attachToTarget, setAutoAttach, and crbug.com/991325.
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future sendMessageToTarget(jpuppeteer.cdp.client.entity.target.SendMessageToTargetRequest request) {
         return connection.send("Target.sendMessageToTarget", request);
     }

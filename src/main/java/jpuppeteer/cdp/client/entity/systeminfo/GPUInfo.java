@@ -9,7 +9,7 @@ public class GPUInfo {
     /**
     * The graphics devices on the system. Element 0 is the primary GPU.
     */
-    public final java.util.List<GPUDevice> devices;
+    public final java.util.List<jpuppeteer.cdp.client.entity.systeminfo.GPUDevice> devices;
 
     /**
     * An optional dictionary of additional GPU related attributes.
@@ -29,19 +29,19 @@ public class GPUInfo {
     /**
     * Supported accelerated video decoding capabilities.
     */
-    public final java.util.List<VideoDecodeAcceleratorCapability> videoDecoding;
+    public final java.util.List<jpuppeteer.cdp.client.entity.systeminfo.VideoDecodeAcceleratorCapability> videoDecoding;
 
     /**
     * Supported accelerated video encoding capabilities.
     */
-    public final java.util.List<VideoEncodeAcceleratorCapability> videoEncoding;
+    public final java.util.List<jpuppeteer.cdp.client.entity.systeminfo.VideoEncodeAcceleratorCapability> videoEncoding;
 
     /**
     * Supported accelerated image decoding capabilities.
     */
-    public final java.util.List<ImageDecodeAcceleratorCapability> imageDecoding;
+    public final java.util.List<jpuppeteer.cdp.client.entity.systeminfo.ImageDecodeAcceleratorCapability> imageDecoding;
 
-    public GPUInfo(java.util.List<GPUDevice> devices, java.util.Map<String, Object> auxAttributes, java.util.Map<String, Object> featureStatus, java.util.List<String> driverBugWorkarounds, java.util.List<VideoDecodeAcceleratorCapability> videoDecoding, java.util.List<VideoEncodeAcceleratorCapability> videoEncoding, java.util.List<ImageDecodeAcceleratorCapability> imageDecoding) {
+    public GPUInfo(java.util.List<jpuppeteer.cdp.client.entity.systeminfo.GPUDevice> devices, java.util.Map<String, Object> auxAttributes, java.util.Map<String, Object> featureStatus, java.util.List<String> driverBugWorkarounds, java.util.List<jpuppeteer.cdp.client.entity.systeminfo.VideoDecodeAcceleratorCapability> videoDecoding, java.util.List<jpuppeteer.cdp.client.entity.systeminfo.VideoEncodeAcceleratorCapability> videoEncoding, java.util.List<jpuppeteer.cdp.client.entity.systeminfo.ImageDecodeAcceleratorCapability> imageDecoding) {
         this.devices = devices;
         this.auxAttributes = auxAttributes;
         this.featureStatus = featureStatus;
@@ -51,7 +51,7 @@ public class GPUInfo {
         this.imageDecoding = imageDecoding;
     }
 
-    public GPUInfo(java.util.List<GPUDevice> devices, java.util.List<String> driverBugWorkarounds, java.util.List<VideoDecodeAcceleratorCapability> videoDecoding, java.util.List<VideoEncodeAcceleratorCapability> videoEncoding, java.util.List<ImageDecodeAcceleratorCapability> imageDecoding) {
+    public GPUInfo(java.util.List<jpuppeteer.cdp.client.entity.systeminfo.GPUDevice> devices, java.util.List<String> driverBugWorkarounds, java.util.List<jpuppeteer.cdp.client.entity.systeminfo.VideoDecodeAcceleratorCapability> videoDecoding, java.util.List<jpuppeteer.cdp.client.entity.systeminfo.VideoEncodeAcceleratorCapability> videoEncoding, java.util.List<jpuppeteer.cdp.client.entity.systeminfo.ImageDecodeAcceleratorCapability> imageDecoding) {
         this.devices = devices;
         this.auxAttributes = null;
         this.featureStatus = null;

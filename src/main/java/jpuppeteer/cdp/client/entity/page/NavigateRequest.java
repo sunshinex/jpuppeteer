@@ -24,11 +24,17 @@ public class NavigateRequest {
     */
     public final String frameId;
 
-    public NavigateRequest(String url, String referrer, jpuppeteer.cdp.client.constant.page.TransitionType transitionType, String frameId) {
+    /**
+    * Referrer-policy used for the navigation.
+    */
+    public final jpuppeteer.cdp.client.constant.page.ReferrerPolicy referrerPolicy;
+
+    public NavigateRequest(String url, String referrer, jpuppeteer.cdp.client.constant.page.TransitionType transitionType, String frameId, jpuppeteer.cdp.client.constant.page.ReferrerPolicy referrerPolicy) {
         this.url = url;
         this.referrer = referrer;
         this.transitionType = transitionType;
         this.frameId = frameId;
+        this.referrerPolicy = referrerPolicy;
     }
 
     public NavigateRequest(String url) {
@@ -36,6 +42,7 @@ public class NavigateRequest {
         this.referrer = null;
         this.transitionType = null;
         this.frameId = null;
+        this.referrerPolicy = null;
     }
 
 }

@@ -12,7 +12,7 @@ public class ContextRealtimeData {
     public final java.math.BigDecimal currentTime;
 
     /**
-    * The time spent on rendering graph divided by render qunatum duration, and multiplied by 100. 100 means the audio renderer reached the full capacity and glitch may occur.
+    * The time spent on rendering graph divided by render quantum duration, and multiplied by 100. 100 means the audio renderer reached the full capacity and glitch may occur.
     */
     public final java.math.BigDecimal renderCapacity;
 

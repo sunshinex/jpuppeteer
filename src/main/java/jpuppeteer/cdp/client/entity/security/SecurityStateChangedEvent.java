@@ -18,19 +18,19 @@ public class SecurityStateChangedEvent {
     /**
     * List of explanations for the security state. If the overall security state is `insecure` or `warning`, at least one corresponding explanation should be included.
     */
-    public final java.util.List<SecurityStateExplanation> explanations;
+    public final java.util.List<jpuppeteer.cdp.client.entity.security.SecurityStateExplanation> explanations;
 
     /**
     * Information about insecure content on the page.
     */
-    public final InsecureContentStatus insecureContentStatus;
+    public final jpuppeteer.cdp.client.entity.security.InsecureContentStatus insecureContentStatus;
 
     /**
     * Overrides user-visible description of the state.
     */
     public final String summary;
 
-    public SecurityStateChangedEvent(jpuppeteer.cdp.client.constant.security.SecurityState securityState, Boolean schemeIsCryptographic, java.util.List<SecurityStateExplanation> explanations, InsecureContentStatus insecureContentStatus, String summary) {
+    public SecurityStateChangedEvent(jpuppeteer.cdp.client.constant.security.SecurityState securityState, Boolean schemeIsCryptographic, java.util.List<jpuppeteer.cdp.client.entity.security.SecurityStateExplanation> explanations, jpuppeteer.cdp.client.entity.security.InsecureContentStatus insecureContentStatus, String summary) {
         this.securityState = securityState;
         this.schemeIsCryptographic = schemeIsCryptographic;
         this.explanations = explanations;
@@ -38,7 +38,7 @@ public class SecurityStateChangedEvent {
         this.summary = summary;
     }
 
-    public SecurityStateChangedEvent(jpuppeteer.cdp.client.constant.security.SecurityState securityState, Boolean schemeIsCryptographic, java.util.List<SecurityStateExplanation> explanations, InsecureContentStatus insecureContentStatus) {
+    public SecurityStateChangedEvent(jpuppeteer.cdp.client.constant.security.SecurityState securityState, Boolean schemeIsCryptographic, java.util.List<jpuppeteer.cdp.client.entity.security.SecurityStateExplanation> explanations, jpuppeteer.cdp.client.entity.security.InsecureContentStatus insecureContentStatus) {
         this.securityState = securityState;
         this.schemeIsCryptographic = schemeIsCryptographic;
         this.explanations = explanations;

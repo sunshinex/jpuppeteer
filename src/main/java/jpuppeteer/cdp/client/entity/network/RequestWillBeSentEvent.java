@@ -23,7 +23,7 @@ public class RequestWillBeSentEvent {
     /**
     * Request data.
     */
-    public final Request request;
+    public final jpuppeteer.cdp.client.entity.network.Request request;
 
     /**
     * Timestamp.
@@ -38,12 +38,12 @@ public class RequestWillBeSentEvent {
     /**
     * Request initiator.
     */
-    public final Initiator initiator;
+    public final jpuppeteer.cdp.client.entity.network.Initiator initiator;
 
     /**
     * Redirect response data.
     */
-    public final Response redirectResponse;
+    public final jpuppeteer.cdp.client.entity.network.Response redirectResponse;
 
     /**
     * Type of this resource.
@@ -60,7 +60,7 @@ public class RequestWillBeSentEvent {
     */
     public final Boolean hasUserGesture;
 
-    public RequestWillBeSentEvent(String requestId, String loaderId, String documentURL, Request request, java.math.BigDecimal timestamp, java.math.BigDecimal wallTime, Initiator initiator, Response redirectResponse, jpuppeteer.cdp.client.constant.network.ResourceType type, String frameId, Boolean hasUserGesture) {
+    public RequestWillBeSentEvent(String requestId, String loaderId, String documentURL, jpuppeteer.cdp.client.entity.network.Request request, java.math.BigDecimal timestamp, java.math.BigDecimal wallTime, jpuppeteer.cdp.client.entity.network.Initiator initiator, jpuppeteer.cdp.client.entity.network.Response redirectResponse, jpuppeteer.cdp.client.constant.network.ResourceType type, String frameId, Boolean hasUserGesture) {
         this.requestId = requestId;
         this.loaderId = loaderId;
         this.documentURL = documentURL;
@@ -74,7 +74,7 @@ public class RequestWillBeSentEvent {
         this.hasUserGesture = hasUserGesture;
     }
 
-    public RequestWillBeSentEvent(String requestId, String loaderId, String documentURL, Request request, java.math.BigDecimal timestamp, java.math.BigDecimal wallTime, Initiator initiator) {
+    public RequestWillBeSentEvent(String requestId, String loaderId, String documentURL, jpuppeteer.cdp.client.entity.network.Request request, java.math.BigDecimal timestamp, java.math.BigDecimal wallTime, jpuppeteer.cdp.client.entity.network.Initiator initiator) {
         this.requestId = requestId;
         this.loaderId = loaderId;
         this.documentURL = documentURL;

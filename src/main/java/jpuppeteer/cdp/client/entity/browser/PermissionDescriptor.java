@@ -21,29 +21,29 @@ public class PermissionDescriptor {
     public final Boolean userVisibleOnly;
 
     /**
-    * For "wake-lock" permission, must specify type as either "screen" or "system".
-    */
-    public final String type;
-
-    /**
     * For "clipboard" permission, may specify allowWithoutSanitization.
     */
     public final Boolean allowWithoutSanitization;
 
-    public PermissionDescriptor(String name, Boolean sysex, Boolean userVisibleOnly, String type, Boolean allowWithoutSanitization) {
+    /**
+    * For "camera" permission, may specify panTiltZoom.
+    */
+    public final Boolean panTiltZoom;
+
+    public PermissionDescriptor(String name, Boolean sysex, Boolean userVisibleOnly, Boolean allowWithoutSanitization, Boolean panTiltZoom) {
         this.name = name;
         this.sysex = sysex;
         this.userVisibleOnly = userVisibleOnly;
-        this.type = type;
         this.allowWithoutSanitization = allowWithoutSanitization;
+        this.panTiltZoom = panTiltZoom;
     }
 
     public PermissionDescriptor(String name) {
         this.name = name;
         this.sysex = null;
         this.userVisibleOnly = null;
-        this.type = null;
         this.allowWithoutSanitization = null;
+        this.panTiltZoom = null;
     }
 
 }

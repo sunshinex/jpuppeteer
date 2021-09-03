@@ -12,13 +12,13 @@ public class AttachedToTargetEvent {
 
     /**
     */
-    public final TargetInfo targetInfo;
+    public final jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo;
 
     /**
     */
     public final Boolean waitingForDebugger;
 
-    public AttachedToTargetEvent(String sessionId, TargetInfo targetInfo, Boolean waitingForDebugger) {
+    public AttachedToTargetEvent(String sessionId, jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo, Boolean waitingForDebugger) {
         this.sessionId = sessionId;
         this.targetInfo = targetInfo;
         this.waitingForDebugger = waitingForDebugger;

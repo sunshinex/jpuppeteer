@@ -12,9 +12,9 @@ public class SetWindowBoundsRequest {
     /**
     * New window bounds. The 'minimized', 'maximized' and 'fullscreen' states cannot be combined with 'left', 'top', 'width' or 'height'. Leaves unspecified fields unchanged.
     */
-    public final Bounds bounds;
+    public final jpuppeteer.cdp.client.entity.browser.Bounds bounds;
 
-    public SetWindowBoundsRequest(Integer windowId, Bounds bounds) {
+    public SetWindowBoundsRequest(Integer windowId, jpuppeteer.cdp.client.entity.browser.Bounds bounds) {
         this.windowId = windowId;
         this.bounds = bounds;
     }

@@ -23,14 +23,14 @@ public class SignedExchangeHeader {
     /**
     * Signed exchange response signature.
     */
-    public final java.util.List<SignedExchangeSignature> signatures;
+    public final java.util.List<jpuppeteer.cdp.client.entity.network.SignedExchangeSignature> signatures;
 
     /**
     * Signed exchange header integrity hash in the form of "sha256-<base64-hash-value>".
     */
     public final String headerIntegrity;
 
-    public SignedExchangeHeader(String requestUrl, Integer responseCode, java.util.Map<String, Object> responseHeaders, java.util.List<SignedExchangeSignature> signatures, String headerIntegrity) {
+    public SignedExchangeHeader(String requestUrl, Integer responseCode, java.util.Map<String, Object> responseHeaders, java.util.List<jpuppeteer.cdp.client.entity.network.SignedExchangeSignature> signatures, String headerIntegrity) {
         this.requestUrl = requestUrl;
         this.responseCode = responseCode;
         this.responseHeaders = responseHeaders;

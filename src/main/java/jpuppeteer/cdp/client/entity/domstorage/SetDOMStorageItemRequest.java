@@ -7,7 +7,7 @@ public class SetDOMStorageItemRequest {
 
     /**
     */
-    public final StorageId storageId;
+    public final jpuppeteer.cdp.client.entity.domstorage.StorageId storageId;
 
     /**
     */
@@ -17,7 +17,7 @@ public class SetDOMStorageItemRequest {
     */
     public final String value;
 
-    public SetDOMStorageItemRequest(StorageId storageId, String key, String value) {
+    public SetDOMStorageItemRequest(jpuppeteer.cdp.client.entity.domstorage.StorageId storageId, String key, String value) {
         this.storageId = storageId;
         this.key = key;
         this.value = value;

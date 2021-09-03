@@ -1,7 +1,7 @@
 package jpuppeteer.cdp.client.entity.media;
 
 /**
-* Player Property type
+* Corresponds to kMediaPropertyChange
 * experimental
 */
 public class PlayerProperty {
@@ -17,11 +17,6 @@ public class PlayerProperty {
     public PlayerProperty(String name, String value) {
         this.name = name;
         this.value = value;
-    }
-
-    public PlayerProperty(String name) {
-        this.name = name;
-        this.value = null;
     }
 
 }

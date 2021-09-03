@@ -1,7 +1,6 @@
 package jpuppeteer.cdp.client.entity.fetch;
 
 /**
-* experimental
 */
 public class FulfillRequestRequest {
 
@@ -18,15 +17,15 @@ public class FulfillRequestRequest {
     /**
     * Response headers.
     */
-    public final java.util.List<HeaderEntry> responseHeaders;
+    public final java.util.List<jpuppeteer.cdp.client.entity.fetch.HeaderEntry> responseHeaders;
 
     /**
-    * Alternative way of specifying response headers as a \0-separated series of name: value pairs. Prefer the above method unless you need to represent some non-UTF8 values that can't be transmitted over the protocol as text.
+    * Alternative way of specifying response headers as a \0-separated series of name: value pairs. Prefer the above method unless you need to represent some non-UTF8 values that can't be transmitted over the protocol as text. (Encoded as a base64 string when passed over JSON)
     */
     public final String binaryResponseHeaders;
 
     /**
-    * A response body.
+    * A response body. (Encoded as a base64 string when passed over JSON)
     */
     public final String body;
 
@@ -35,7 +34,7 @@ public class FulfillRequestRequest {
     */
     public final String responsePhrase;
 
-    public FulfillRequestRequest(String requestId, Integer responseCode, java.util.List<HeaderEntry> responseHeaders, String binaryResponseHeaders, String body, String responsePhrase) {
+    public FulfillRequestRequest(String requestId, Integer responseCode, java.util.List<jpuppeteer.cdp.client.entity.fetch.HeaderEntry> responseHeaders, String binaryResponseHeaders, String body, String responsePhrase) {
         this.requestId = requestId;
         this.responseCode = responseCode;
         this.responseHeaders = responseHeaders;

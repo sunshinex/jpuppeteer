@@ -11,9 +11,27 @@ public class Network {
     }
 
     /**
+    * Sets a list of content encodings that will be accepted. Empty list means no encoding is accepted.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future setAcceptedEncodings(jpuppeteer.cdp.client.entity.network.SetAcceptedEncodingsRequest request) {
+        return session.send("Network.setAcceptedEncodings", request);
+    }
+
+
+    /**
+    * Clears accepted encodings set by setAcceptedEncodings
+    * experimental
+    */
+    public io.netty.util.concurrent.Future clearAcceptedEncodingsOverride() {
+        return session.send("Network.clearAcceptedEncodingsOverride", null);
+    }
+
+
+    /**
     * Tells whether clearing browser cache is supported.
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.CanClearBrowserCacheResponse> canClearBrowserCache() {
         return session.send("Network.canClearBrowserCache", null, jpuppeteer.cdp.client.entity.network.CanClearBrowserCacheResponse.class);
     }
@@ -22,7 +40,7 @@ public class Network {
     /**
     * Tells whether clearing browser cookies is supported.
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.CanClearBrowserCookiesResponse> canClearBrowserCookies() {
         return session.send("Network.canClearBrowserCookies", null, jpuppeteer.cdp.client.entity.network.CanClearBrowserCookiesResponse.class);
     }
@@ -31,7 +49,7 @@ public class Network {
     /**
     * Tells whether emulation of network conditions is supported.
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.CanEmulateNetworkConditionsResponse> canEmulateNetworkConditions() {
         return session.send("Network.canEmulateNetworkConditions", null, jpuppeteer.cdp.client.entity.network.CanEmulateNetworkConditionsResponse.class);
     }
@@ -57,7 +75,7 @@ public class Network {
     * Response to Network.requestIntercepted which either modifies the request to continue with any modifications, or blocks it, or completes it with the provided response bytes. If a network fetch occurs as a result which encounters a redirect an additional Network.requestIntercepted event will be sent with the same InterceptionId. Deprecated, use Fetch.continueRequest, Fetch.fulfillRequest and Fetch.failRequest instead.
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future continueInterceptedRequest(jpuppeteer.cdp.client.entity.network.ContinueInterceptedRequestRequest request) {
         return session.send("Network.continueInterceptedRequest", request);
     }
@@ -232,10 +250,19 @@ public class Network {
 
 
     /**
+    * Specifies whether to attach a page script stack id in requests
+    * experimental
+    */
+    public io.netty.util.concurrent.Future setAttachDebugStack(jpuppeteer.cdp.client.entity.network.SetAttachDebugStackRequest request) {
+        return session.send("Network.setAttachDebugStack", request);
+    }
+
+
+    /**
     * Sets the requests to intercept that match the provided patterns and optionally resource types. Deprecated, please use Fetch.enable instead.
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future setRequestInterception(jpuppeteer.cdp.client.entity.network.SetRequestInterceptionRequest request) {
         return session.send("Network.setRequestInterception", request);
     }
@@ -246,6 +273,24 @@ public class Network {
     */
     public io.netty.util.concurrent.Future setUserAgentOverride(jpuppeteer.cdp.client.entity.network.SetUserAgentOverrideRequest request) {
         return session.send("Network.setUserAgentOverride", request);
+    }
+
+
+    /**
+    * Returns information about the COEP/COOP isolation status.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.GetSecurityIsolationStatusResponse> getSecurityIsolationStatus(jpuppeteer.cdp.client.entity.network.GetSecurityIsolationStatusRequest request) {
+        return session.send("Network.getSecurityIsolationStatus", request, jpuppeteer.cdp.client.entity.network.GetSecurityIsolationStatusResponse.class);
+    }
+
+
+    /**
+    * Fetches the resource and returns the content.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.LoadNetworkResourceResponse> loadNetworkResource(jpuppeteer.cdp.client.entity.network.LoadNetworkResourceRequest request) {
+        return session.send("Network.loadNetworkResource", request, jpuppeteer.cdp.client.entity.network.LoadNetworkResourceResponse.class);
     }
 
 }

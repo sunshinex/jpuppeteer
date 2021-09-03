@@ -13,9 +13,9 @@ public class SignedExchangeReceivedEvent {
     /**
     * Information about the signed exchange response.
     */
-    public final SignedExchangeInfo info;
+    public final jpuppeteer.cdp.client.entity.network.SignedExchangeInfo info;
 
-    public SignedExchangeReceivedEvent(String requestId, SignedExchangeInfo info) {
+    public SignedExchangeReceivedEvent(String requestId, jpuppeteer.cdp.client.entity.network.SignedExchangeInfo info) {
         this.requestId = requestId;
         this.info = info;
     }

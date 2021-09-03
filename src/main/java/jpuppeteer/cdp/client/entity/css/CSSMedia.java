@@ -24,7 +24,7 @@ public class CSSMedia {
     /**
     * The associated rule (@media or @import) header range in the enclosing stylesheet (if available).
     */
-    public final SourceRange range;
+    public final jpuppeteer.cdp.client.entity.css.SourceRange range;
 
     /**
     * Identifier of the stylesheet containing this object (if exists).
@@ -34,9 +34,9 @@ public class CSSMedia {
     /**
     * Array of media queries.
     */
-    public final java.util.List<MediaQuery> mediaList;
+    public final java.util.List<jpuppeteer.cdp.client.entity.css.MediaQuery> mediaList;
 
-    public CSSMedia(String text, jpuppeteer.cdp.client.constant.css.CSSMediaSource source, String sourceURL, SourceRange range, String styleSheetId, java.util.List<MediaQuery> mediaList) {
+    public CSSMedia(String text, jpuppeteer.cdp.client.constant.css.CSSMediaSource source, String sourceURL, jpuppeteer.cdp.client.entity.css.SourceRange range, String styleSheetId, java.util.List<jpuppeteer.cdp.client.entity.css.MediaQuery> mediaList) {
         this.text = text;
         this.source = source;
         this.sourceURL = sourceURL;

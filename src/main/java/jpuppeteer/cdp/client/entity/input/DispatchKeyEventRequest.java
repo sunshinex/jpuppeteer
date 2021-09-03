@@ -74,7 +74,12 @@ public class DispatchKeyEventRequest {
     */
     public final Integer location;
 
-    public DispatchKeyEventRequest(jpuppeteer.cdp.client.constant.input.DispatchKeyEventRequestType type, Integer modifiers, java.math.BigDecimal timestamp, String text, String unmodifiedText, String keyIdentifier, String code, String key, Integer windowsVirtualKeyCode, Integer nativeVirtualKeyCode, Boolean autoRepeat, Boolean isKeypad, Boolean isSystemKey, Integer location) {
+    /**
+    * Editing commands to send with the key event (e.g., 'selectAll') (default: []). These are related to but not equal the command names used in `document.execCommand` and NSStandardKeyBindingResponding. See https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/editing/commands/editor_command_names.h for valid command names.
+    */
+    public final java.util.List<String> commands;
+
+    public DispatchKeyEventRequest(jpuppeteer.cdp.client.constant.input.DispatchKeyEventRequestType type, Integer modifiers, java.math.BigDecimal timestamp, String text, String unmodifiedText, String keyIdentifier, String code, String key, Integer windowsVirtualKeyCode, Integer nativeVirtualKeyCode, Boolean autoRepeat, Boolean isKeypad, Boolean isSystemKey, Integer location, java.util.List<String> commands) {
         this.type = type;
         this.modifiers = modifiers;
         this.timestamp = timestamp;
@@ -89,6 +94,7 @@ public class DispatchKeyEventRequest {
         this.isKeypad = isKeypad;
         this.isSystemKey = isSystemKey;
         this.location = location;
+        this.commands = commands;
     }
 
     public DispatchKeyEventRequest(jpuppeteer.cdp.client.constant.input.DispatchKeyEventRequestType type) {
@@ -106,6 +112,7 @@ public class DispatchKeyEventRequest {
         this.isKeypad = null;
         this.isSystemKey = null;
         this.location = null;
+        this.commands = null;
     }
 
 }

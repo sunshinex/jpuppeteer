@@ -1,7 +1,6 @@
 package jpuppeteer.cdp.client.entity.fetch;
 
 /**
-* experimental
 */
 public class ContinueWithAuthRequest {
 
@@ -13,9 +12,9 @@ public class ContinueWithAuthRequest {
     /**
     * Response to  with an authChallenge.
     */
-    public final AuthChallengeResponse authChallengeResponse;
+    public final jpuppeteer.cdp.client.entity.fetch.AuthChallengeResponse authChallengeResponse;
 
-    public ContinueWithAuthRequest(String requestId, AuthChallengeResponse authChallengeResponse) {
+    public ContinueWithAuthRequest(String requestId, jpuppeteer.cdp.client.entity.fetch.AuthChallengeResponse authChallengeResponse) {
         this.requestId = requestId;
         this.authChallengeResponse = authChallengeResponse;
     }

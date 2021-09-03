@@ -19,12 +19,12 @@ public class Credential {
     public final String rpId;
 
     /**
-    * The ECDSA P-256 private key in PKCS#8 format.
+    * The ECDSA P-256 private key in PKCS#8 format. (Encoded as a base64 string when passed over JSON)
     */
     public final String privateKey;
 
     /**
-    * An opaque byte sequence with a maximum size of 64 bytes mapping the credential to a specific user.
+    * An opaque byte sequence with a maximum size of 64 bytes mapping the credential to a specific user. (Encoded as a base64 string when passed over JSON)
     */
     public final String userHandle;
 
@@ -33,13 +33,19 @@ public class Credential {
     */
     public final Integer signCount;
 
-    public Credential(String credentialId, Boolean isResidentCredential, String rpId, String privateKey, String userHandle, Integer signCount) {
+    /**
+    * The large blob associated with the credential. See https://w3c.github.io/webauthn/#sctn-large-blob-extension (Encoded as a base64 string when passed over JSON)
+    */
+    public final String largeBlob;
+
+    public Credential(String credentialId, Boolean isResidentCredential, String rpId, String privateKey, String userHandle, Integer signCount, String largeBlob) {
         this.credentialId = credentialId;
         this.isResidentCredential = isResidentCredential;
         this.rpId = rpId;
         this.privateKey = privateKey;
         this.userHandle = userHandle;
         this.signCount = signCount;
+        this.largeBlob = largeBlob;
     }
 
     public Credential(String credentialId, Boolean isResidentCredential, String privateKey, Integer signCount) {
@@ -49,6 +55,7 @@ public class Credential {
         this.privateKey = privateKey;
         this.userHandle = null;
         this.signCount = signCount;
+        this.largeBlob = null;
     }
 
 }

@@ -12,9 +12,9 @@ public class ExceptionThrownEvent {
 
     /**
     */
-    public final ExceptionDetails exceptionDetails;
+    public final jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails;
 
-    public ExceptionThrownEvent(java.math.BigDecimal timestamp, ExceptionDetails exceptionDetails) {
+    public ExceptionThrownEvent(java.math.BigDecimal timestamp, jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails) {
         this.timestamp = timestamp;
         this.exceptionDetails = exceptionDetails;
     }

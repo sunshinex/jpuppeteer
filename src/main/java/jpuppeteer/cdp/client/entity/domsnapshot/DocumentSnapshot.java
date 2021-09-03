@@ -49,17 +49,17 @@ public class DocumentSnapshot {
     /**
     * A table with dom nodes.
     */
-    public final NodeTreeSnapshot nodes;
+    public final jpuppeteer.cdp.client.entity.domsnapshot.NodeTreeSnapshot nodes;
 
     /**
     * The nodes in the layout tree.
     */
-    public final LayoutTreeSnapshot layout;
+    public final jpuppeteer.cdp.client.entity.domsnapshot.LayoutTreeSnapshot layout;
 
     /**
     * The post-layout inline text nodes.
     */
-    public final TextBoxSnapshot textBoxes;
+    public final jpuppeteer.cdp.client.entity.domsnapshot.TextBoxSnapshot textBoxes;
 
     /**
     * Horizontal scroll offset.
@@ -81,7 +81,7 @@ public class DocumentSnapshot {
     */
     public final java.math.BigDecimal contentHeight;
 
-    public DocumentSnapshot(Integer documentURL, Integer title, Integer baseURL, Integer contentLanguage, Integer encodingName, Integer publicId, Integer systemId, Integer frameId, NodeTreeSnapshot nodes, LayoutTreeSnapshot layout, TextBoxSnapshot textBoxes, java.math.BigDecimal scrollOffsetX, java.math.BigDecimal scrollOffsetY, java.math.BigDecimal contentWidth, java.math.BigDecimal contentHeight) {
+    public DocumentSnapshot(Integer documentURL, Integer title, Integer baseURL, Integer contentLanguage, Integer encodingName, Integer publicId, Integer systemId, Integer frameId, jpuppeteer.cdp.client.entity.domsnapshot.NodeTreeSnapshot nodes, jpuppeteer.cdp.client.entity.domsnapshot.LayoutTreeSnapshot layout, jpuppeteer.cdp.client.entity.domsnapshot.TextBoxSnapshot textBoxes, java.math.BigDecimal scrollOffsetX, java.math.BigDecimal scrollOffsetY, java.math.BigDecimal contentWidth, java.math.BigDecimal contentHeight) {
         this.documentURL = documentURL;
         this.title = title;
         this.baseURL = baseURL;
@@ -99,7 +99,7 @@ public class DocumentSnapshot {
         this.contentHeight = contentHeight;
     }
 
-    public DocumentSnapshot(Integer documentURL, Integer title, Integer baseURL, Integer contentLanguage, Integer encodingName, Integer publicId, Integer systemId, Integer frameId, NodeTreeSnapshot nodes, LayoutTreeSnapshot layout, TextBoxSnapshot textBoxes) {
+    public DocumentSnapshot(Integer documentURL, Integer title, Integer baseURL, Integer contentLanguage, Integer encodingName, Integer publicId, Integer systemId, Integer frameId, jpuppeteer.cdp.client.entity.domsnapshot.NodeTreeSnapshot nodes, jpuppeteer.cdp.client.entity.domsnapshot.LayoutTreeSnapshot layout, jpuppeteer.cdp.client.entity.domsnapshot.TextBoxSnapshot textBoxes) {
         this.documentURL = documentURL;
         this.title = title;
         this.baseURL = baseURL;

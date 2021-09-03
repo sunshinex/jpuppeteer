@@ -57,14 +57,19 @@ public class SetDeviceMetricsOverrideRequest {
     /**
     * Screen orientation override.
     */
-    public final ScreenOrientation screenOrientation;
+    public final jpuppeteer.cdp.client.entity.emulation.ScreenOrientation screenOrientation;
 
     /**
     * If set, the visible area of the page will be overridden to this viewport. This viewport change is not observed by the page, e.g. viewport-relative elements do not change positions.
     */
     public final jpuppeteer.cdp.client.entity.page.Viewport viewport;
 
-    public SetDeviceMetricsOverrideRequest(Integer width, Integer height, java.math.BigDecimal deviceScaleFactor, Boolean mobile, java.math.BigDecimal scale, Integer screenWidth, Integer screenHeight, Integer positionX, Integer positionY, Boolean dontSetVisibleSize, ScreenOrientation screenOrientation, jpuppeteer.cdp.client.entity.page.Viewport viewport) {
+    /**
+    * If set, the display feature of a multi-segment screen. If not set, multi-segment support is turned-off.
+    */
+    public final jpuppeteer.cdp.client.entity.emulation.DisplayFeature displayFeature;
+
+    public SetDeviceMetricsOverrideRequest(Integer width, Integer height, java.math.BigDecimal deviceScaleFactor, Boolean mobile, java.math.BigDecimal scale, Integer screenWidth, Integer screenHeight, Integer positionX, Integer positionY, Boolean dontSetVisibleSize, jpuppeteer.cdp.client.entity.emulation.ScreenOrientation screenOrientation, jpuppeteer.cdp.client.entity.page.Viewport viewport, jpuppeteer.cdp.client.entity.emulation.DisplayFeature displayFeature) {
         this.width = width;
         this.height = height;
         this.deviceScaleFactor = deviceScaleFactor;
@@ -77,6 +82,7 @@ public class SetDeviceMetricsOverrideRequest {
         this.dontSetVisibleSize = dontSetVisibleSize;
         this.screenOrientation = screenOrientation;
         this.viewport = viewport;
+        this.displayFeature = displayFeature;
     }
 
     public SetDeviceMetricsOverrideRequest(Integer width, Integer height, java.math.BigDecimal deviceScaleFactor, Boolean mobile) {
@@ -92,6 +98,7 @@ public class SetDeviceMetricsOverrideRequest {
         this.dontSetVisibleSize = null;
         this.screenOrientation = null;
         this.viewport = null;
+        this.displayFeature = null;
     }
 
 }

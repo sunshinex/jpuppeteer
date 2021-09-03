@@ -20,10 +20,16 @@ public class FrameRequestedNavigationEvent {
     */
     public final String url;
 
-    public FrameRequestedNavigationEvent(String frameId, jpuppeteer.cdp.client.constant.page.ClientNavigationReason reason, String url) {
+    /**
+    * The disposition for the navigation.
+    */
+    public final jpuppeteer.cdp.client.constant.page.ClientNavigationDisposition disposition;
+
+    public FrameRequestedNavigationEvent(String frameId, jpuppeteer.cdp.client.constant.page.ClientNavigationReason reason, String url, jpuppeteer.cdp.client.constant.page.ClientNavigationDisposition disposition) {
         this.frameId = frameId;
         this.reason = reason;
         this.url = url;
+        this.disposition = disposition;
     }
 
 }

@@ -13,9 +13,9 @@ public class PseudoElementAddedEvent {
     /**
     * The added pseudo element.
     */
-    public final Node pseudoElement;
+    public final jpuppeteer.cdp.client.entity.dom.Node pseudoElement;
 
-    public PseudoElementAddedEvent(Integer parentId, Node pseudoElement) {
+    public PseudoElementAddedEvent(Integer parentId, jpuppeteer.cdp.client.entity.dom.Node pseudoElement) {
         this.parentId = parentId;
         this.pseudoElement = pseudoElement;
     }

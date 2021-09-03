@@ -5,14 +5,9 @@ package jpuppeteer.cdp.client.entity.browser;
 public class SetPermissionRequest {
 
     /**
-    * Origin the permission applies to.
-    */
-    public final String origin;
-
-    /**
     * Descriptor of permission to override.
     */
-    public final PermissionDescriptor permission;
+    public final jpuppeteer.cdp.client.entity.browser.PermissionDescriptor permission;
 
     /**
     * Setting of the permission.
@@ -20,21 +15,26 @@ public class SetPermissionRequest {
     public final jpuppeteer.cdp.client.constant.browser.PermissionSetting setting;
 
     /**
+    * Origin the permission applies to, all origins if not specified.
+    */
+    public final String origin;
+
+    /**
     * Context to override. When omitted, default browser context is used.
     */
     public final String browserContextId;
 
-    public SetPermissionRequest(String origin, PermissionDescriptor permission, jpuppeteer.cdp.client.constant.browser.PermissionSetting setting, String browserContextId) {
-        this.origin = origin;
+    public SetPermissionRequest(jpuppeteer.cdp.client.entity.browser.PermissionDescriptor permission, jpuppeteer.cdp.client.constant.browser.PermissionSetting setting, String origin, String browserContextId) {
         this.permission = permission;
         this.setting = setting;
+        this.origin = origin;
         this.browserContextId = browserContextId;
     }
 
-    public SetPermissionRequest(String origin, PermissionDescriptor permission, jpuppeteer.cdp.client.constant.browser.PermissionSetting setting) {
-        this.origin = origin;
+    public SetPermissionRequest(jpuppeteer.cdp.client.entity.browser.PermissionDescriptor permission, jpuppeteer.cdp.client.constant.browser.PermissionSetting setting) {
         this.permission = permission;
         this.setting = setting;
+        this.origin = null;
         this.browserContextId = null;
     }
 

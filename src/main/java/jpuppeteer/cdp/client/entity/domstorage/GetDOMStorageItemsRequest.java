@@ -7,9 +7,9 @@ public class GetDOMStorageItemsRequest {
 
     /**
     */
-    public final StorageId storageId;
+    public final jpuppeteer.cdp.client.entity.domstorage.StorageId storageId;
 
-    public GetDOMStorageItemsRequest(StorageId storageId) {
+    public GetDOMStorageItemsRequest(jpuppeteer.cdp.client.entity.domstorage.StorageId storageId) {
         this.storageId = storageId;
     }
 

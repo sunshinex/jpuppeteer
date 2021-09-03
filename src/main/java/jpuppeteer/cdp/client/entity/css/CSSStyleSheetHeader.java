@@ -57,6 +57,16 @@ public class CSSStyleSheetHeader {
     public final Boolean isInline;
 
     /**
+    * Whether this stylesheet is mutable. Inline stylesheets become mutable after they have been modified via CSSOM API. <link> element's stylesheets become mutable only if DevTools modifies them. Constructed stylesheets (new CSSStyleSheet()) are mutable immediately after creation.
+    */
+    public final Boolean isMutable;
+
+    /**
+    * Whether this stylesheet is a constructed stylesheet (created using new CSSStyleSheet()).
+    */
+    public final Boolean isConstructed;
+
+    /**
     * Line offset of the stylesheet within the resource (zero based).
     */
     public final java.math.BigDecimal startLine;
@@ -81,7 +91,7 @@ public class CSSStyleSheetHeader {
     */
     public final java.math.BigDecimal endColumn;
 
-    public CSSStyleSheetHeader(String styleSheetId, String frameId, String sourceURL, String sourceMapURL, jpuppeteer.cdp.client.constant.css.StyleSheetOrigin origin, String title, Integer ownerNode, Boolean disabled, Boolean hasSourceURL, Boolean isInline, java.math.BigDecimal startLine, java.math.BigDecimal startColumn, java.math.BigDecimal length, java.math.BigDecimal endLine, java.math.BigDecimal endColumn) {
+    public CSSStyleSheetHeader(String styleSheetId, String frameId, String sourceURL, String sourceMapURL, jpuppeteer.cdp.client.constant.css.StyleSheetOrigin origin, String title, Integer ownerNode, Boolean disabled, Boolean hasSourceURL, Boolean isInline, Boolean isMutable, Boolean isConstructed, java.math.BigDecimal startLine, java.math.BigDecimal startColumn, java.math.BigDecimal length, java.math.BigDecimal endLine, java.math.BigDecimal endColumn) {
         this.styleSheetId = styleSheetId;
         this.frameId = frameId;
         this.sourceURL = sourceURL;
@@ -92,6 +102,8 @@ public class CSSStyleSheetHeader {
         this.disabled = disabled;
         this.hasSourceURL = hasSourceURL;
         this.isInline = isInline;
+        this.isMutable = isMutable;
+        this.isConstructed = isConstructed;
         this.startLine = startLine;
         this.startColumn = startColumn;
         this.length = length;
@@ -99,7 +111,7 @@ public class CSSStyleSheetHeader {
         this.endColumn = endColumn;
     }
 
-    public CSSStyleSheetHeader(String styleSheetId, String frameId, String sourceURL, jpuppeteer.cdp.client.constant.css.StyleSheetOrigin origin, String title, Boolean disabled, Boolean isInline, java.math.BigDecimal startLine, java.math.BigDecimal startColumn, java.math.BigDecimal length, java.math.BigDecimal endLine, java.math.BigDecimal endColumn) {
+    public CSSStyleSheetHeader(String styleSheetId, String frameId, String sourceURL, jpuppeteer.cdp.client.constant.css.StyleSheetOrigin origin, String title, Boolean disabled, Boolean isInline, Boolean isMutable, Boolean isConstructed, java.math.BigDecimal startLine, java.math.BigDecimal startColumn, java.math.BigDecimal length, java.math.BigDecimal endLine, java.math.BigDecimal endColumn) {
         this.styleSheetId = styleSheetId;
         this.frameId = frameId;
         this.sourceURL = sourceURL;
@@ -110,6 +122,8 @@ public class CSSStyleSheetHeader {
         this.disabled = disabled;
         this.hasSourceURL = null;
         this.isInline = isInline;
+        this.isMutable = isMutable;
+        this.isConstructed = isConstructed;
         this.startLine = startLine;
         this.startColumn = startColumn;
         this.length = length;

@@ -8,19 +8,19 @@ public class FrameTree {
     /**
     * Frame information for this tree item.
     */
-    public final Frame frame;
+    public final jpuppeteer.cdp.client.entity.page.Frame frame;
 
     /**
     * Child frames.
     */
-    public final java.util.List<FrameTree> childFrames;
+    public final java.util.List<jpuppeteer.cdp.client.entity.page.FrameTree> childFrames;
 
-    public FrameTree(Frame frame, java.util.List<FrameTree> childFrames) {
+    public FrameTree(jpuppeteer.cdp.client.entity.page.Frame frame, java.util.List<jpuppeteer.cdp.client.entity.page.FrameTree> childFrames) {
         this.frame = frame;
         this.childFrames = childFrames;
     }
 
-    public FrameTree(Frame frame) {
+    public FrameTree(jpuppeteer.cdp.client.entity.page.Frame frame) {
         this.frame = frame;
         this.childFrames = null;
     }

@@ -7,9 +7,9 @@ public class GetHistogramResponse {
     /**
     * Histogram.
     */
-    public final Histogram histogram;
+    public final jpuppeteer.cdp.client.entity.browser.Histogram histogram;
 
-    public GetHistogramResponse(Histogram histogram) {
+    public GetHistogramResponse(jpuppeteer.cdp.client.entity.browser.Histogram histogram) {
         this.histogram = histogram;
     }
 

@@ -5,7 +5,7 @@ package jpuppeteer.cdp.client.entity.page;
 public class PrintToPDFResponse {
 
     /**
-    * Base64-encoded pdf data. Empty if |returnAsStream| is specified.
+    * Base64-encoded pdf data. Empty if |returnAsStream| is specified. (Encoded as a base64 string when passed over JSON)
     */
     public final String data;
 

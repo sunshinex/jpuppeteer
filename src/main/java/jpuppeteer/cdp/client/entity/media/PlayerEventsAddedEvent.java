@@ -12,9 +12,9 @@ public class PlayerEventsAddedEvent {
 
     /**
     */
-    public final java.util.List<PlayerEvent> events;
+    public final java.util.List<jpuppeteer.cdp.client.entity.media.PlayerEvent> events;
 
-    public PlayerEventsAddedEvent(String playerId, java.util.List<PlayerEvent> events) {
+    public PlayerEventsAddedEvent(String playerId, java.util.List<jpuppeteer.cdp.client.entity.media.PlayerEvent> events) {
         this.playerId = playerId;
         this.events = events;
     }

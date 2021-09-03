@@ -88,7 +88,22 @@ public class Response {
     /**
     * Timing information for the given request.
     */
-    public final ResourceTiming timing;
+    public final jpuppeteer.cdp.client.entity.network.ResourceTiming timing;
+
+    /**
+    * Response source of response from ServiceWorker.
+    */
+    public final jpuppeteer.cdp.client.constant.network.ServiceWorkerResponseSource serviceWorkerResponseSource;
+
+    /**
+    * The time at which the returned response was generated.
+    */
+    public final java.math.BigDecimal responseTime;
+
+    /**
+    * Cache Storage Cache Name.
+    */
+    public final String cacheStorageCacheName;
 
     /**
     * Protocol used to fetch this request.
@@ -103,9 +118,9 @@ public class Response {
     /**
     * Security details for the request.
     */
-    public final SecurityDetails securityDetails;
+    public final jpuppeteer.cdp.client.entity.network.SecurityDetails securityDetails;
 
-    public Response(String url, Integer status, String statusText, java.util.Map<String, Object> headers, String headersText, String mimeType, java.util.Map<String, Object> requestHeaders, String requestHeadersText, Boolean connectionReused, java.math.BigDecimal connectionId, String remoteIPAddress, Integer remotePort, Boolean fromDiskCache, Boolean fromServiceWorker, Boolean fromPrefetchCache, java.math.BigDecimal encodedDataLength, ResourceTiming timing, String protocol, jpuppeteer.cdp.client.constant.security.SecurityState securityState, SecurityDetails securityDetails) {
+    public Response(String url, Integer status, String statusText, java.util.Map<String, Object> headers, String headersText, String mimeType, java.util.Map<String, Object> requestHeaders, String requestHeadersText, Boolean connectionReused, java.math.BigDecimal connectionId, String remoteIPAddress, Integer remotePort, Boolean fromDiskCache, Boolean fromServiceWorker, Boolean fromPrefetchCache, java.math.BigDecimal encodedDataLength, jpuppeteer.cdp.client.entity.network.ResourceTiming timing, jpuppeteer.cdp.client.constant.network.ServiceWorkerResponseSource serviceWorkerResponseSource, java.math.BigDecimal responseTime, String cacheStorageCacheName, String protocol, jpuppeteer.cdp.client.constant.security.SecurityState securityState, jpuppeteer.cdp.client.entity.network.SecurityDetails securityDetails) {
         this.url = url;
         this.status = status;
         this.statusText = statusText;
@@ -123,6 +138,9 @@ public class Response {
         this.fromPrefetchCache = fromPrefetchCache;
         this.encodedDataLength = encodedDataLength;
         this.timing = timing;
+        this.serviceWorkerResponseSource = serviceWorkerResponseSource;
+        this.responseTime = responseTime;
+        this.cacheStorageCacheName = cacheStorageCacheName;
         this.protocol = protocol;
         this.securityState = securityState;
         this.securityDetails = securityDetails;
@@ -146,6 +164,9 @@ public class Response {
         this.fromPrefetchCache = null;
         this.encodedDataLength = encodedDataLength;
         this.timing = null;
+        this.serviceWorkerResponseSource = null;
+        this.responseTime = null;
+        this.cacheStorageCacheName = null;
         this.protocol = null;
         this.securityState = securityState;
         this.securityDetails = null;

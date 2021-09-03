@@ -15,9 +15,9 @@ public class ExecuteSQLResponse {
 
     /**
     */
-    public final Error sqlError;
+    public final jpuppeteer.cdp.client.entity.database.Error sqlError;
 
-    public ExecuteSQLResponse(java.util.List<String> columnNames, java.util.List<Object> values, Error sqlError) {
+    public ExecuteSQLResponse(java.util.List<String> columnNames, java.util.List<Object> values, jpuppeteer.cdp.client.entity.database.Error sqlError) {
         this.columnNames = columnNames;
         this.values = values;
         this.sqlError = sqlError;

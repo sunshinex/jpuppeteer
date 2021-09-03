@@ -15,21 +15,21 @@ public class ConsoleProfileFinishedEvent {
 
     /**
     */
-    public final Profile profile;
+    public final jpuppeteer.cdp.client.entity.profiler.Profile profile;
 
     /**
     * Profile title passed as an argument to console.profile().
     */
     public final String title;
 
-    public ConsoleProfileFinishedEvent(String id, jpuppeteer.cdp.client.entity.debugger.Location location, Profile profile, String title) {
+    public ConsoleProfileFinishedEvent(String id, jpuppeteer.cdp.client.entity.debugger.Location location, jpuppeteer.cdp.client.entity.profiler.Profile profile, String title) {
         this.id = id;
         this.location = location;
         this.profile = profile;
         this.title = title;
     }
 
-    public ConsoleProfileFinishedEvent(String id, jpuppeteer.cdp.client.entity.debugger.Location location, Profile profile) {
+    public ConsoleProfileFinishedEvent(String id, jpuppeteer.cdp.client.entity.debugger.Location location, jpuppeteer.cdp.client.entity.profiler.Profile profile) {
         this.id = id;
         this.location = location;
         this.profile = profile;

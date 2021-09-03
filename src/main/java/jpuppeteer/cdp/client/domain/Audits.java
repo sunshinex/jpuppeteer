@@ -18,4 +18,28 @@ public class Audits {
         return session.send("Audits.getEncodedResponse", request, jpuppeteer.cdp.client.entity.audits.GetEncodedResponseResponse.class);
     }
 
+
+    /**
+    * Disables issues domain, prevents further issues from being reported to the client.
+    */
+    public io.netty.util.concurrent.Future disable() {
+        return session.send("Audits.disable", null);
+    }
+
+
+    /**
+    * Enables issues domain, sends the issues collected so far to the client by means of the `issueAdded` event.
+    */
+    public io.netty.util.concurrent.Future enable() {
+        return session.send("Audits.enable", null);
+    }
+
+
+    /**
+    * Runs the contrast check for the target page. Found issues are reported using Audits.issueAdded event.
+    */
+    public io.netty.util.concurrent.Future checkContrast(jpuppeteer.cdp.client.entity.audits.CheckContrastRequest request) {
+        return session.send("Audits.checkContrast", request);
+    }
+
 }

@@ -7,9 +7,9 @@ public class AddVirtualAuthenticatorRequest {
 
     /**
     */
-    public final VirtualAuthenticatorOptions options;
+    public final jpuppeteer.cdp.client.entity.webauthn.VirtualAuthenticatorOptions options;
 
-    public AddVirtualAuthenticatorRequest(VirtualAuthenticatorOptions options) {
+    public AddVirtualAuthenticatorRequest(jpuppeteer.cdp.client.entity.webauthn.VirtualAuthenticatorOptions options) {
         this.options = options;
     }
 

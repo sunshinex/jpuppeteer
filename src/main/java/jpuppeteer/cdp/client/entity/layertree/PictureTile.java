@@ -17,7 +17,7 @@ public class PictureTile {
     public final java.math.BigDecimal y;
 
     /**
-    * Base64-encoded snapshot data.
+    * Base64-encoded snapshot data. (Encoded as a base64 string when passed over JSON)
     */
     public final String picture;
 

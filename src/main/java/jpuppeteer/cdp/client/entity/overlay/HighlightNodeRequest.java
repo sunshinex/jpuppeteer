@@ -8,7 +8,7 @@ public class HighlightNodeRequest {
     /**
     * A descriptor for the highlight appearance.
     */
-    public final HighlightConfig highlightConfig;
+    public final jpuppeteer.cdp.client.entity.overlay.HighlightConfig highlightConfig;
 
     /**
     * Identifier of the node to highlight.
@@ -30,7 +30,7 @@ public class HighlightNodeRequest {
     */
     public final String selector;
 
-    public HighlightNodeRequest(HighlightConfig highlightConfig, Integer nodeId, Integer backendNodeId, String objectId, String selector) {
+    public HighlightNodeRequest(jpuppeteer.cdp.client.entity.overlay.HighlightConfig highlightConfig, Integer nodeId, Integer backendNodeId, String objectId, String selector) {
         this.highlightConfig = highlightConfig;
         this.nodeId = nodeId;
         this.backendNodeId = backendNodeId;
@@ -38,7 +38,7 @@ public class HighlightNodeRequest {
         this.selector = selector;
     }
 
-    public HighlightNodeRequest(HighlightConfig highlightConfig) {
+    public HighlightNodeRequest(jpuppeteer.cdp.client.entity.overlay.HighlightConfig highlightConfig) {
         this.highlightConfig = highlightConfig;
         this.nodeId = null;
         this.backendNodeId = null;

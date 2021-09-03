@@ -7,9 +7,9 @@ public class SetCookiesRequest {
     /**
     * Cookies to be set.
     */
-    public final java.util.List<CookieParam> cookies;
+    public final java.util.List<jpuppeteer.cdp.client.entity.network.CookieParam> cookies;
 
-    public SetCookiesRequest(java.util.List<CookieParam> cookies) {
+    public SetCookiesRequest(java.util.List<jpuppeteer.cdp.client.entity.network.CookieParam> cookies) {
         this.cookies = cookies;
     }
 

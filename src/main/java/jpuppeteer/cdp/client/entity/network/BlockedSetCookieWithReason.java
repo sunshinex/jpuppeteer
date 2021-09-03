@@ -18,9 +18,9 @@ public class BlockedSetCookieWithReason {
     /**
     * The cookie object which represents the cookie which was not stored. It is optional because sometimes complete cookie information is not available, such as in the case of parsing errors.
     */
-    public final Cookie cookie;
+    public final jpuppeteer.cdp.client.entity.network.Cookie cookie;
 
-    public BlockedSetCookieWithReason(java.util.List<jpuppeteer.cdp.client.constant.network.SetCookieBlockedReason> blockedReasons, String cookieLine, Cookie cookie) {
+    public BlockedSetCookieWithReason(java.util.List<jpuppeteer.cdp.client.constant.network.SetCookieBlockedReason> blockedReasons, String cookieLine, jpuppeteer.cdp.client.entity.network.Cookie cookie) {
         this.blockedReasons = blockedReasons;
         this.cookieLine = cookieLine;
         this.cookie = cookie;

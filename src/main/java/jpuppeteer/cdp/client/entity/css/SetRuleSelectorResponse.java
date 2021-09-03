@@ -8,9 +8,9 @@ public class SetRuleSelectorResponse {
     /**
     * The resulting selector list after modification.
     */
-    public final SelectorList selectorList;
+    public final jpuppeteer.cdp.client.entity.css.SelectorList selectorList;
 
-    public SetRuleSelectorResponse(SelectorList selectorList) {
+    public SetRuleSelectorResponse(jpuppeteer.cdp.client.entity.css.SelectorList selectorList) {
         this.selectorList = selectorList;
     }
 

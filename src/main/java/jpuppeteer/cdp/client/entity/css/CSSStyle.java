@@ -14,12 +14,12 @@ public class CSSStyle {
     /**
     * CSS properties in the style.
     */
-    public final java.util.List<CSSProperty> cssProperties;
+    public final java.util.List<jpuppeteer.cdp.client.entity.css.CSSProperty> cssProperties;
 
     /**
     * Computed values for all shorthands found in the style.
     */
-    public final java.util.List<ShorthandEntry> shorthandEntries;
+    public final java.util.List<jpuppeteer.cdp.client.entity.css.ShorthandEntry> shorthandEntries;
 
     /**
     * Style declaration text (if available).
@@ -29,9 +29,9 @@ public class CSSStyle {
     /**
     * Style declaration range in the enclosing stylesheet (if available).
     */
-    public final SourceRange range;
+    public final jpuppeteer.cdp.client.entity.css.SourceRange range;
 
-    public CSSStyle(String styleSheetId, java.util.List<CSSProperty> cssProperties, java.util.List<ShorthandEntry> shorthandEntries, String cssText, SourceRange range) {
+    public CSSStyle(String styleSheetId, java.util.List<jpuppeteer.cdp.client.entity.css.CSSProperty> cssProperties, java.util.List<jpuppeteer.cdp.client.entity.css.ShorthandEntry> shorthandEntries, String cssText, jpuppeteer.cdp.client.entity.css.SourceRange range) {
         this.styleSheetId = styleSheetId;
         this.cssProperties = cssProperties;
         this.shorthandEntries = shorthandEntries;
@@ -39,7 +39,7 @@ public class CSSStyle {
         this.range = range;
     }
 
-    public CSSStyle(java.util.List<CSSProperty> cssProperties, java.util.List<ShorthandEntry> shorthandEntries) {
+    public CSSStyle(java.util.List<jpuppeteer.cdp.client.entity.css.CSSProperty> cssProperties, java.util.List<jpuppeteer.cdp.client.entity.css.ShorthandEntry> shorthandEntries) {
         this.styleSheetId = null;
         this.cssProperties = cssProperties;
         this.shorthandEntries = shorthandEntries;

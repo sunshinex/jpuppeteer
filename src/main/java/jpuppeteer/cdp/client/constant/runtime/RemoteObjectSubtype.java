@@ -21,6 +21,8 @@ public enum RemoteObjectSubtype implements jpuppeteer.cdp.client.CDPEnum {
     TYPEDARRAY("typedarray"),
     ARRAYBUFFER("arraybuffer"),
     DATAVIEW("dataview"),
+    WEBASSEMBLYMEMORY("webassemblymemory"),
+    WASMVALUE("wasmvalue"),
     ;
 
     private String value;

@@ -7,13 +7,13 @@ public class DomStorageItemRemovedEvent {
 
     /**
     */
-    public final StorageId storageId;
+    public final jpuppeteer.cdp.client.entity.domstorage.StorageId storageId;
 
     /**
     */
     public final String key;
 
-    public DomStorageItemRemovedEvent(StorageId storageId, String key) {
+    public DomStorageItemRemovedEvent(jpuppeteer.cdp.client.entity.domstorage.StorageId storageId, String key) {
         this.storageId = storageId;
         this.key = key;
     }

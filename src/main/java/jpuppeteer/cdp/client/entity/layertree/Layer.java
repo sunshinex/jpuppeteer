@@ -79,14 +79,14 @@ public class Layer {
     /**
     * Rectangles scrolling on main thread only.
     */
-    public final java.util.List<ScrollRect> scrollRects;
+    public final java.util.List<jpuppeteer.cdp.client.entity.layertree.ScrollRect> scrollRects;
 
     /**
     * Sticky position constraint information
     */
-    public final StickyPositionConstraint stickyPositionConstraint;
+    public final jpuppeteer.cdp.client.entity.layertree.StickyPositionConstraint stickyPositionConstraint;
 
-    public Layer(String layerId, String parentLayerId, Integer backendNodeId, java.math.BigDecimal offsetX, java.math.BigDecimal offsetY, java.math.BigDecimal width, java.math.BigDecimal height, java.util.List<java.math.BigDecimal> transform, java.math.BigDecimal anchorX, java.math.BigDecimal anchorY, java.math.BigDecimal anchorZ, Integer paintCount, Boolean drawsContent, Boolean invisible, java.util.List<ScrollRect> scrollRects, StickyPositionConstraint stickyPositionConstraint) {
+    public Layer(String layerId, String parentLayerId, Integer backendNodeId, java.math.BigDecimal offsetX, java.math.BigDecimal offsetY, java.math.BigDecimal width, java.math.BigDecimal height, java.util.List<java.math.BigDecimal> transform, java.math.BigDecimal anchorX, java.math.BigDecimal anchorY, java.math.BigDecimal anchorZ, Integer paintCount, Boolean drawsContent, Boolean invisible, java.util.List<jpuppeteer.cdp.client.entity.layertree.ScrollRect> scrollRects, jpuppeteer.cdp.client.entity.layertree.StickyPositionConstraint stickyPositionConstraint) {
         this.layerId = layerId;
         this.parentLayerId = parentLayerId;
         this.backendNodeId = backendNodeId;

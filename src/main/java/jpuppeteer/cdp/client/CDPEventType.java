@@ -24,6 +24,8 @@ public enum CDPEventType {
 
     APPLICATIONCACHE_NETWORKSTATEUPDATED("ApplicationCache.networkStateUpdated", jpuppeteer.cdp.client.entity.applicationcache.NetworkStateUpdatedEvent.class),
 
+    AUDITS_ISSUEADDED("Audits.issueAdded", jpuppeteer.cdp.client.entity.audits.IssueAddedEvent.class),
+
     /**
     * Called when the recording state for the service has been updated.
     * @see jpuppeteer.cdp.client.entity.backgroundservice.RecordingStateChangedEvent
@@ -35,6 +37,18 @@ public enum CDPEventType {
     * @see jpuppeteer.cdp.client.entity.backgroundservice.BackgroundServiceEventReceivedEvent
     */
     BACKGROUNDSERVICE_BACKGROUNDSERVICEEVENTRECEIVED("BackgroundService.backgroundServiceEventReceived", jpuppeteer.cdp.client.entity.backgroundservice.BackgroundServiceEventReceivedEvent.class),
+
+    /**
+    * Fired when page is about to start a download.
+    * @see jpuppeteer.cdp.client.entity.browser.DownloadWillBeginEvent
+    */
+    BROWSER_DOWNLOADWILLBEGIN("Browser.downloadWillBegin", jpuppeteer.cdp.client.entity.browser.DownloadWillBeginEvent.class),
+
+    /**
+    * Fired when download makes progress. Last call has |done| == true.
+    * @see jpuppeteer.cdp.client.entity.browser.DownloadProgressEvent
+    */
+    BROWSER_DOWNLOADPROGRESS("Browser.downloadProgress", jpuppeteer.cdp.client.entity.browser.DownloadProgressEvent.class),
 
     /**
     * Fires whenever a web font is updated.  A non-empty font parameter indicates a successfully loaded web font
@@ -111,7 +125,7 @@ public enum CDPEventType {
     DOM_CHILDNODEREMOVED("DOM.childNodeRemoved", jpuppeteer.cdp.client.entity.dom.ChildNodeRemovedEvent.class),
 
     /**
-    * Called when distrubution is changed.
+    * Called when distribution is changed.
     * @see jpuppeteer.cdp.client.entity.dom.DistributedNodesUpdatedEvent
     */
     DOM_DISTRIBUTEDNODESUPDATED("DOM.distributedNodesUpdated", jpuppeteer.cdp.client.entity.dom.DistributedNodesUpdatedEvent.class),
@@ -171,6 +185,12 @@ public enum CDPEventType {
     * @see jpuppeteer.cdp.client.entity.headlessexperimental.NeedsBeginFramesChangedEvent
     */
     HEADLESSEXPERIMENTAL_NEEDSBEGINFRAMESCHANGED("HeadlessExperimental.needsBeginFramesChanged", jpuppeteer.cdp.client.entity.headlessexperimental.NeedsBeginFramesChangedEvent.class),
+
+    /**
+    * Emitted only when `Input.setInterceptDrags` is enabled. Use this data with `Input.dispatchDragEvent` to restore normal drag and drop behavior.
+    * @see jpuppeteer.cdp.client.entity.input.DragInterceptedEvent
+    */
+    INPUT_DRAGINTERCEPTED("Input.dragIntercepted", jpuppeteer.cdp.client.entity.input.DragInterceptedEvent.class),
 
     /**
     * Fired when remote debugging connection is about to be terminated. Contains detach reason.
@@ -295,6 +315,24 @@ public enum CDPEventType {
     NETWORK_WEBSOCKETWILLSENDHANDSHAKEREQUEST("Network.webSocketWillSendHandshakeRequest", jpuppeteer.cdp.client.entity.network.WebSocketWillSendHandshakeRequestEvent.class),
 
     /**
+    * Fired upon WebTransport creation.
+    * @see jpuppeteer.cdp.client.entity.network.WebTransportCreatedEvent
+    */
+    NETWORK_WEBTRANSPORTCREATED("Network.webTransportCreated", jpuppeteer.cdp.client.entity.network.WebTransportCreatedEvent.class),
+
+    /**
+    * Fired when WebTransport handshake is finished.
+    * @see jpuppeteer.cdp.client.entity.network.WebTransportConnectionEstablishedEvent
+    */
+    NETWORK_WEBTRANSPORTCONNECTIONESTABLISHED("Network.webTransportConnectionEstablished", jpuppeteer.cdp.client.entity.network.WebTransportConnectionEstablishedEvent.class),
+
+    /**
+    * Fired when WebTransport is disposed.
+    * @see jpuppeteer.cdp.client.entity.network.WebTransportClosedEvent
+    */
+    NETWORK_WEBTRANSPORTCLOSED("Network.webTransportClosed", jpuppeteer.cdp.client.entity.network.WebTransportClosedEvent.class),
+
+    /**
     * Fired when additional information about a requestWillBeSent event is available from the network stack. Not every requestWillBeSent event will have an additional requestWillBeSentExtraInfo fired for it, and there is no guarantee whether requestWillBeSent or requestWillBeSentExtraInfo will be fired first for the same request.
     * @see jpuppeteer.cdp.client.entity.network.RequestWillBeSentExtraInfoEvent
     */
@@ -305,6 +343,36 @@ public enum CDPEventType {
     * @see jpuppeteer.cdp.client.entity.network.ResponseReceivedExtraInfoEvent
     */
     NETWORK_RESPONSERECEIVEDEXTRAINFO("Network.responseReceivedExtraInfo", jpuppeteer.cdp.client.entity.network.ResponseReceivedExtraInfoEvent.class),
+
+    /**
+    * Fired exactly once for each Trust Token operation. Depending on the type of the operation and whether the operation succeeded or failed, the event is fired before the corresponding request was sent or after the response was received.
+    * @see jpuppeteer.cdp.client.entity.network.TrustTokenOperationDoneEvent
+    */
+    NETWORK_TRUSTTOKENOPERATIONDONE("Network.trustTokenOperationDone", jpuppeteer.cdp.client.entity.network.TrustTokenOperationDoneEvent.class),
+
+    /**
+    * Fired once when parsing the .wbn file has succeeded. The event contains the information about the web bundle contents.
+    * @see jpuppeteer.cdp.client.entity.network.SubresourceWebBundleMetadataReceivedEvent
+    */
+    NETWORK_SUBRESOURCEWEBBUNDLEMETADATARECEIVED("Network.subresourceWebBundleMetadataReceived", jpuppeteer.cdp.client.entity.network.SubresourceWebBundleMetadataReceivedEvent.class),
+
+    /**
+    * Fired once when parsing the .wbn file has failed.
+    * @see jpuppeteer.cdp.client.entity.network.SubresourceWebBundleMetadataErrorEvent
+    */
+    NETWORK_SUBRESOURCEWEBBUNDLEMETADATAERROR("Network.subresourceWebBundleMetadataError", jpuppeteer.cdp.client.entity.network.SubresourceWebBundleMetadataErrorEvent.class),
+
+    /**
+    * Fired when handling requests for resources within a .wbn file. Note: this will only be fired for resources that are requested by the webpage.
+    * @see jpuppeteer.cdp.client.entity.network.SubresourceWebBundleInnerResponseParsedEvent
+    */
+    NETWORK_SUBRESOURCEWEBBUNDLEINNERRESPONSEPARSED("Network.subresourceWebBundleInnerResponseParsed", jpuppeteer.cdp.client.entity.network.SubresourceWebBundleInnerResponseParsedEvent.class),
+
+    /**
+    * Fired when request for resources within a .wbn file failed.
+    * @see jpuppeteer.cdp.client.entity.network.SubresourceWebBundleInnerResponseErrorEvent
+    */
+    NETWORK_SUBRESOURCEWEBBUNDLEINNERRESPONSEERROR("Network.subresourceWebBundleInnerResponseError", jpuppeteer.cdp.client.entity.network.SubresourceWebBundleInnerResponseErrorEvent.class),
 
     /**
     * Fired when the node should be inspected. This happens after call to `setInspectMode` or when user manually inspects an element.
@@ -358,6 +426,12 @@ public enum CDPEventType {
     */
     PAGE_FRAMENAVIGATED("Page.frameNavigated", jpuppeteer.cdp.client.entity.page.FrameNavigatedEvent.class),
 
+    /**
+    * Fired when opening document to write to.
+    * @see jpuppeteer.cdp.client.entity.page.DocumentOpenedEvent
+    */
+    PAGE_DOCUMENTOPENED("Page.documentOpened", jpuppeteer.cdp.client.entity.page.DocumentOpenedEvent.class),
+
     PAGE_FRAMERESIZED("Page.frameResized", null),
 
     /**
@@ -385,10 +459,16 @@ public enum CDPEventType {
     PAGE_FRAMESTOPPEDLOADING("Page.frameStoppedLoading", jpuppeteer.cdp.client.entity.page.FrameStoppedLoadingEvent.class),
 
     /**
-    * Fired when page is about to start a download.
+    * Fired when page is about to start a download. Deprecated. Use Browser.downloadWillBegin instead.
     * @see jpuppeteer.cdp.client.entity.page.DownloadWillBeginEvent
     */
     PAGE_DOWNLOADWILLBEGIN("Page.downloadWillBegin", jpuppeteer.cdp.client.entity.page.DownloadWillBeginEvent.class),
+
+    /**
+    * Fired when download makes progress. Last call has |done| == true. Deprecated. Use Browser.downloadProgress instead.
+    * @see jpuppeteer.cdp.client.entity.page.DownloadProgressEvent
+    */
+    PAGE_DOWNLOADPROGRESS("Page.downloadProgress", jpuppeteer.cdp.client.entity.page.DownloadProgressEvent.class),
 
     PAGE_INTERSTITIALHIDDEN("Page.interstitialHidden", null),
 
@@ -411,6 +491,12 @@ public enum CDPEventType {
     * @see jpuppeteer.cdp.client.entity.page.LifecycleEvent
     */
     PAGE_LIFECYCLEEVENT("Page.lifecycleEvent", jpuppeteer.cdp.client.entity.page.LifecycleEvent.class),
+
+    /**
+    * Fired for failed bfcache history navigations if BackForwardCache feature is enabled. Do not assume any ordering with the Page.frameNavigated event. This event is fired only for main-frame history navigation where the document changes (non-same-document navigations), when bfcache navigation fails.
+    * @see jpuppeteer.cdp.client.entity.page.BackForwardCacheNotUsedEvent
+    */
+    PAGE_BACKFORWARDCACHENOTUSED("Page.backForwardCacheNotUsed", jpuppeteer.cdp.client.entity.page.BackForwardCacheNotUsedEvent.class),
 
     PAGE_LOADEVENTFIRED("Page.loadEventFired", jpuppeteer.cdp.client.entity.page.LoadEventFiredEvent.class),
 
@@ -449,6 +535,12 @@ public enum CDPEventType {
     * @see jpuppeteer.cdp.client.entity.performance.MetricsEvent
     */
     PERFORMANCE_METRICS("Performance.metrics", jpuppeteer.cdp.client.entity.performance.MetricsEvent.class),
+
+    /**
+    * Sent when a performance timeline event is added. See reportPerformanceTimeline method.
+    * @see jpuppeteer.cdp.client.entity.performancetimeline.TimelineEventAddedEvent
+    */
+    PERFORMANCETIMELINE_TIMELINEEVENTADDED("PerformanceTimeline.timelineEventAdded", jpuppeteer.cdp.client.entity.performancetimeline.TimelineEventAddedEvent.class),
 
     /**
     * There is a certificate error. If overriding certificate errors is enabled, then it should be handled with the `handleCertificateError` command. Note: this event does not fire if the certificate error has been allowed internally. Only one client per target should override certificate errors at the same time.
@@ -663,7 +755,19 @@ public enum CDPEventType {
     MEDIA_PLAYEREVENTSADDED("Media.playerEventsAdded", jpuppeteer.cdp.client.entity.media.PlayerEventsAddedEvent.class),
 
     /**
-    * Called whenever a player is created, or when a new agent joins and recieves a list of active players. If an agent is restored, it will recieve the full list of player ids and all events again.
+    * Send a list of any messages that need to be delivered.
+    * @see jpuppeteer.cdp.client.entity.media.PlayerMessagesLoggedEvent
+    */
+    MEDIA_PLAYERMESSAGESLOGGED("Media.playerMessagesLogged", jpuppeteer.cdp.client.entity.media.PlayerMessagesLoggedEvent.class),
+
+    /**
+    * Send a list of any errors that need to be delivered.
+    * @see jpuppeteer.cdp.client.entity.media.PlayerErrorsRaisedEvent
+    */
+    MEDIA_PLAYERERRORSRAISED("Media.playerErrorsRaised", jpuppeteer.cdp.client.entity.media.PlayerErrorsRaisedEvent.class),
+
+    /**
+    * Called whenever a player is created, or when a new agent joins and receives a list of active players. If an agent is restored, it will receive the full list of player ids and all events again.
     * @see jpuppeteer.cdp.client.entity.media.PlayersCreatedEvent
     */
     MEDIA_PLAYERSCREATED("Media.playersCreated", jpuppeteer.cdp.client.entity.media.PlayersCreatedEvent.class),
@@ -725,6 +829,12 @@ public enum CDPEventType {
     * @see jpuppeteer.cdp.client.entity.profiler.ConsoleProfileStartedEvent
     */
     PROFILER_CONSOLEPROFILESTARTED("Profiler.consoleProfileStarted", jpuppeteer.cdp.client.entity.profiler.ConsoleProfileStartedEvent.class),
+
+    /**
+    * Reports coverage delta since the last poll (either from an event like this, or from `takePreciseCoverage` for the current isolate. May only be sent if precise code coverage has been started. This event can be trigged by the embedder to, for example, trigger collection of coverage data immediatelly at a certain point in time.
+    * @see jpuppeteer.cdp.client.entity.profiler.PreciseCoverageDeltaUpdateEvent
+    */
+    PROFILER_PRECISECOVERAGEDELTAUPDATE("Profiler.preciseCoverageDeltaUpdate", jpuppeteer.cdp.client.entity.profiler.PreciseCoverageDeltaUpdateEvent.class),
 
     /**
     * Notification is issued every time when binding is called.

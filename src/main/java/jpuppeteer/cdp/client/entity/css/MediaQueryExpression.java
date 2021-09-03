@@ -24,14 +24,14 @@ public class MediaQueryExpression {
     /**
     * The associated range of the value text in the enclosing stylesheet (if available).
     */
-    public final SourceRange valueRange;
+    public final jpuppeteer.cdp.client.entity.css.SourceRange valueRange;
 
     /**
     * Computed length of media query expression (if applicable).
     */
     public final java.math.BigDecimal computedLength;
 
-    public MediaQueryExpression(java.math.BigDecimal value, String unit, String feature, SourceRange valueRange, java.math.BigDecimal computedLength) {
+    public MediaQueryExpression(java.math.BigDecimal value, String unit, String feature, jpuppeteer.cdp.client.entity.css.SourceRange valueRange, java.math.BigDecimal computedLength) {
         this.value = value;
         this.unit = unit;
         this.feature = feature;

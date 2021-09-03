@@ -12,9 +12,9 @@ public class SetBreakpointResponse {
     /**
     * Location this breakpoint resolved into.
     */
-    public final Location actualLocation;
+    public final jpuppeteer.cdp.client.entity.debugger.Location actualLocation;
 
-    public SetBreakpointResponse(String breakpointId, Location actualLocation) {
+    public SetBreakpointResponse(String breakpointId, jpuppeteer.cdp.client.entity.debugger.Location actualLocation) {
         this.breakpointId = breakpointId;
         this.actualLocation = actualLocation;
     }

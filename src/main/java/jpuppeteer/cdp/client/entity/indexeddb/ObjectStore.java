@@ -14,7 +14,7 @@ public class ObjectStore {
     /**
     * Object store key path.
     */
-    public final KeyPath keyPath;
+    public final jpuppeteer.cdp.client.entity.indexeddb.KeyPath keyPath;
 
     /**
     * If true, object store has auto increment flag set.
@@ -24,9 +24,9 @@ public class ObjectStore {
     /**
     * Indexes in this object store.
     */
-    public final java.util.List<ObjectStoreIndex> indexes;
+    public final java.util.List<jpuppeteer.cdp.client.entity.indexeddb.ObjectStoreIndex> indexes;
 
-    public ObjectStore(String name, KeyPath keyPath, Boolean autoIncrement, java.util.List<ObjectStoreIndex> indexes) {
+    public ObjectStore(String name, jpuppeteer.cdp.client.entity.indexeddb.KeyPath keyPath, Boolean autoIncrement, java.util.List<jpuppeteer.cdp.client.entity.indexeddb.ObjectStoreIndex> indexes) {
         this.name = name;
         this.keyPath = keyPath;
         this.autoIncrement = autoIncrement;

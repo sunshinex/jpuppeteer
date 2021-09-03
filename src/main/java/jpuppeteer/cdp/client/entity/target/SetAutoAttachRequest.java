@@ -19,23 +19,16 @@ public class SetAutoAttachRequest {
     */
     public final Boolean flatten;
 
-    /**
-    * Auto-attach to the targets created via window.open from current target.
-    */
-    public final Boolean windowOpen;
-
-    public SetAutoAttachRequest(Boolean autoAttach, Boolean waitForDebuggerOnStart, Boolean flatten, Boolean windowOpen) {
+    public SetAutoAttachRequest(Boolean autoAttach, Boolean waitForDebuggerOnStart, Boolean flatten) {
         this.autoAttach = autoAttach;
         this.waitForDebuggerOnStart = waitForDebuggerOnStart;
         this.flatten = flatten;
-        this.windowOpen = windowOpen;
     }
 
     public SetAutoAttachRequest(Boolean autoAttach, Boolean waitForDebuggerOnStart) {
         this.autoAttach = autoAttach;
         this.waitForDebuggerOnStart = waitForDebuggerOnStart;
         this.flatten = null;
-        this.windowOpen = null;
     }
 
 }

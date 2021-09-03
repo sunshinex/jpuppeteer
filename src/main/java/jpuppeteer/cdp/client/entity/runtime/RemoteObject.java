@@ -11,7 +11,7 @@ public class RemoteObject {
     public final jpuppeteer.cdp.client.constant.runtime.RemoteObjectType type;
 
     /**
-    * Object subtype hint. Specified for `object` type values only.
+    * Object subtype hint. Specified for `object` type values only. NOTE: If you change anything here, make sure to also update `subtype` in `ObjectPreview` and `PropertyPreview` below.
     */
     public final jpuppeteer.cdp.client.constant.runtime.RemoteObjectSubtype subtype;
 
@@ -43,13 +43,13 @@ public class RemoteObject {
     /**
     * Preview containing abbreviated property values. Specified for `object` type values only.
     */
-    public final ObjectPreview preview;
+    public final jpuppeteer.cdp.client.entity.runtime.ObjectPreview preview;
 
     /**
     */
-    public final CustomPreview customPreview;
+    public final jpuppeteer.cdp.client.entity.runtime.CustomPreview customPreview;
 
-    public RemoteObject(jpuppeteer.cdp.client.constant.runtime.RemoteObjectType type, jpuppeteer.cdp.client.constant.runtime.RemoteObjectSubtype subtype, String className, Object value, String unserializableValue, String description, String objectId, ObjectPreview preview, CustomPreview customPreview) {
+    public RemoteObject(jpuppeteer.cdp.client.constant.runtime.RemoteObjectType type, jpuppeteer.cdp.client.constant.runtime.RemoteObjectSubtype subtype, String className, Object value, String unserializableValue, String description, String objectId, jpuppeteer.cdp.client.entity.runtime.ObjectPreview preview, jpuppeteer.cdp.client.entity.runtime.CustomPreview customPreview) {
         this.type = type;
         this.subtype = subtype;
         this.className = className;

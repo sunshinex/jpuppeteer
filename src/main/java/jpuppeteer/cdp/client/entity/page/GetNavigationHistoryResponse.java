@@ -12,9 +12,9 @@ public class GetNavigationHistoryResponse {
     /**
     * Array of navigation history entries.
     */
-    public final java.util.List<NavigationEntry> entries;
+    public final java.util.List<jpuppeteer.cdp.client.entity.page.NavigationEntry> entries;
 
-    public GetNavigationHistoryResponse(Integer currentIndex, java.util.List<NavigationEntry> entries) {
+    public GetNavigationHistoryResponse(Integer currentIndex, java.util.List<jpuppeteer.cdp.client.entity.page.NavigationEntry> entries) {
         this.currentIndex = currentIndex;
         this.entries = entries;
     }

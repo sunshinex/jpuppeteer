@@ -19,7 +19,7 @@ public class Emulation {
 
 
     /**
-    * Clears the overriden device metrics.
+    * Clears the overridden device metrics.
     */
     public io.netty.util.concurrent.Future clearDeviceMetricsOverride() {
         return session.send("Emulation.clearDeviceMetricsOverride", null);
@@ -27,7 +27,7 @@ public class Emulation {
 
 
     /**
-    * Clears the overriden Geolocation Position and Error.
+    * Clears the overridden Geolocation Position and Error.
     */
     public io.netty.util.concurrent.Future clearGeolocationOverride() {
         return session.send("Emulation.clearGeolocationOverride", null);
@@ -110,6 +110,15 @@ public class Emulation {
 
 
     /**
+    * Emulates the given vision deficiency.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future setEmulatedVisionDeficiency(jpuppeteer.cdp.client.entity.emulation.SetEmulatedVisionDeficiencyRequest request) {
+        return session.send("Emulation.setEmulatedVisionDeficiency", request);
+    }
+
+
+    /**
     * Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position unavailable.
     */
     public io.netty.util.concurrent.Future setGeolocationOverride(jpuppeteer.cdp.client.entity.emulation.SetGeolocationOverrideRequest request) {
@@ -118,10 +127,28 @@ public class Emulation {
 
 
     /**
+    * Overrides the Idle state.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future setIdleOverride(jpuppeteer.cdp.client.entity.emulation.SetIdleOverrideRequest request) {
+        return session.send("Emulation.setIdleOverride", request);
+    }
+
+
+    /**
+    * Clears Idle state overrides.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future clearIdleOverride() {
+        return session.send("Emulation.clearIdleOverride", null);
+    }
+
+
+    /**
     * Overrides value returned by the javascript navigator object.
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future setNavigatorOverrides(jpuppeteer.cdp.client.entity.emulation.SetNavigatorOverridesRequest request) {
         return session.send("Emulation.setNavigatorOverrides", request);
     }
@@ -162,6 +189,15 @@ public class Emulation {
 
 
     /**
+    * Overrides default host system locale with the specified one.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future setLocaleOverride(jpuppeteer.cdp.client.entity.emulation.SetLocaleOverrideRequest request) {
+        return session.send("Emulation.setLocaleOverride", request);
+    }
+
+
+    /**
     * Overrides default host system timezone with the specified one.
     * experimental
     */
@@ -174,9 +210,17 @@ public class Emulation {
     * Resizes the frame/viewport of the page. Note that this does not affect the frame's container (e.g. browser window). Can be used to produce screenshots of the specified size. Not supported on Android.
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future setVisibleSize(jpuppeteer.cdp.client.entity.emulation.SetVisibleSizeRequest request) {
         return session.send("Emulation.setVisibleSize", request);
+    }
+
+
+    /**
+    * experimental
+    */
+    public io.netty.util.concurrent.Future setDisabledImageTypes(jpuppeteer.cdp.client.entity.emulation.SetDisabledImageTypesRequest request) {
+        return session.send("Emulation.setDisabledImageTypes", request);
     }
 
 

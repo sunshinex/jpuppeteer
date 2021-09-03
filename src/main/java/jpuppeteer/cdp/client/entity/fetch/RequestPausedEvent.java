@@ -2,7 +2,6 @@ package jpuppeteer.cdp.client.entity.fetch;
 
 /**
 * Issued when the domain is enabled and the request URL matches the specified filter. The request is paused until the client responds with one of continueRequest, failRequest or fulfillRequest. The stage of the request can be determined by presence of responseErrorReason and responseStatusCode -- the request is at the response stage if either of these fields is present and in the request stage otherwise.
-* experimental
 */
 public class RequestPausedEvent {
 
@@ -39,14 +38,14 @@ public class RequestPausedEvent {
     /**
     * Response headers if intercepted at the response stage.
     */
-    public final java.util.List<HeaderEntry> responseHeaders;
+    public final java.util.List<jpuppeteer.cdp.client.entity.fetch.HeaderEntry> responseHeaders;
 
     /**
     * If the intercepted request had a corresponding Network.requestWillBeSent event fired for it, then this networkId will be the same as the requestId present in the requestWillBeSent event.
     */
     public final String networkId;
 
-    public RequestPausedEvent(String requestId, jpuppeteer.cdp.client.entity.network.Request request, String frameId, jpuppeteer.cdp.client.constant.network.ResourceType resourceType, jpuppeteer.cdp.client.constant.network.ErrorReason responseErrorReason, Integer responseStatusCode, java.util.List<HeaderEntry> responseHeaders, String networkId) {
+    public RequestPausedEvent(String requestId, jpuppeteer.cdp.client.entity.network.Request request, String frameId, jpuppeteer.cdp.client.constant.network.ResourceType resourceType, jpuppeteer.cdp.client.constant.network.ErrorReason responseErrorReason, Integer responseStatusCode, java.util.List<jpuppeteer.cdp.client.entity.fetch.HeaderEntry> responseHeaders, String networkId) {
         this.requestId = requestId;
         this.request = request;
         this.frameId = frameId;

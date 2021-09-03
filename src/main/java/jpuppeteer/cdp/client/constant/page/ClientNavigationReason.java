@@ -11,6 +11,7 @@ public enum ClientNavigationReason implements jpuppeteer.cdp.client.CDPEnum {
     METATAGREFRESH("metaTagRefresh"),
     PAGEBLOCKINTERSTITIAL("pageBlockInterstitial"),
     RELOAD("reload"),
+    ANCHORCLICK("anchorClick"),
     ;
 
     private String value;

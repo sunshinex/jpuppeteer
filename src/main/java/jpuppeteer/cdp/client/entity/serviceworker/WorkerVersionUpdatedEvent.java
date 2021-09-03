@@ -7,9 +7,9 @@ public class WorkerVersionUpdatedEvent {
 
     /**
     */
-    public final java.util.List<ServiceWorkerVersion> versions;
+    public final java.util.List<jpuppeteer.cdp.client.entity.serviceworker.ServiceWorkerVersion> versions;
 
-    public WorkerVersionUpdatedEvent(java.util.List<ServiceWorkerVersion> versions) {
+    public WorkerVersionUpdatedEvent(java.util.List<jpuppeteer.cdp.client.entity.serviceworker.ServiceWorkerVersion> versions) {
         this.versions = versions;
     }
 

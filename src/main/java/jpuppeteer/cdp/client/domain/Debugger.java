@@ -61,7 +61,7 @@ public class Debugger {
     /**
     * This command is deprecated. Use getScriptSource instead.
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.GetWasmBytecodeResponse> getWasmBytecode(jpuppeteer.cdp.client.entity.debugger.GetWasmBytecodeRequest request) {
         return session.send("Debugger.getWasmBytecode", request, jpuppeteer.cdp.client.entity.debugger.GetWasmBytecodeResponse.class);
     }
@@ -87,7 +87,7 @@ public class Debugger {
     /**
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future pauseOnAsyncCall(jpuppeteer.cdp.client.entity.debugger.PauseOnAsyncCallRequest request) {
         return session.send("Debugger.pauseOnAsyncCall", request);
     }
@@ -112,8 +112,8 @@ public class Debugger {
     /**
     * Resumes JavaScript execution.
     */
-    public io.netty.util.concurrent.Future resume() {
-        return session.send("Debugger.resume", null);
+    public io.netty.util.concurrent.Future resume(jpuppeteer.cdp.client.entity.debugger.ResumeRequest request) {
+        return session.send("Debugger.resume", request);
     }
 
 
@@ -252,8 +252,8 @@ public class Debugger {
     /**
     * Steps over the statement.
     */
-    public io.netty.util.concurrent.Future stepOver() {
-        return session.send("Debugger.stepOver", null);
+    public io.netty.util.concurrent.Future stepOver(jpuppeteer.cdp.client.entity.debugger.StepOverRequest request) {
+        return session.send("Debugger.stepOver", request);
     }
 
 }

@@ -8,9 +8,9 @@ public class MessageAddedEvent {
     /**
     * Console message that has been added.
     */
-    public final ConsoleMessage message;
+    public final jpuppeteer.cdp.client.entity.console.ConsoleMessage message;
 
-    public MessageAddedEvent(ConsoleMessage message) {
+    public MessageAddedEvent(jpuppeteer.cdp.client.entity.console.ConsoleMessage message) {
         this.message = message;
     }
 

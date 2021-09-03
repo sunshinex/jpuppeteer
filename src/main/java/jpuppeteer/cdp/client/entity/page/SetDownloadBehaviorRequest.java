@@ -10,7 +10,7 @@ public class SetDownloadBehaviorRequest {
     public final jpuppeteer.cdp.client.constant.page.SetDownloadBehaviorRequestBehavior behavior;
 
     /**
-    * The default path to save downloaded files to. This is requred if behavior is set to 'allow'
+    * The default path to save downloaded files to. This is required if behavior is set to 'allow'
     */
     public final String downloadPath;
 

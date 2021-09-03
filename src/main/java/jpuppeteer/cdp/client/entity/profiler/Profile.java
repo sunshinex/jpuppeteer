@@ -8,7 +8,7 @@ public class Profile {
     /**
     * The list of profile nodes. First item is the root node.
     */
-    public final java.util.List<ProfileNode> nodes;
+    public final java.util.List<jpuppeteer.cdp.client.entity.profiler.ProfileNode> nodes;
 
     /**
     * Profiling start timestamp in microseconds.
@@ -30,7 +30,7 @@ public class Profile {
     */
     public final java.util.List<Integer> timeDeltas;
 
-    public Profile(java.util.List<ProfileNode> nodes, java.math.BigDecimal startTime, java.math.BigDecimal endTime, java.util.List<Integer> samples, java.util.List<Integer> timeDeltas) {
+    public Profile(java.util.List<jpuppeteer.cdp.client.entity.profiler.ProfileNode> nodes, java.math.BigDecimal startTime, java.math.BigDecimal endTime, java.util.List<Integer> samples, java.util.List<Integer> timeDeltas) {
         this.nodes = nodes;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -38,7 +38,7 @@ public class Profile {
         this.timeDeltas = timeDeltas;
     }
 
-    public Profile(java.util.List<ProfileNode> nodes, java.math.BigDecimal startTime, java.math.BigDecimal endTime) {
+    public Profile(java.util.List<jpuppeteer.cdp.client.entity.profiler.ProfileNode> nodes, java.math.BigDecimal startTime, java.math.BigDecimal endTime) {
         this.nodes = nodes;
         this.startTime = startTime;
         this.endTime = endTime;

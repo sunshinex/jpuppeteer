@@ -11,7 +11,7 @@ public class GetAppManifestResponse {
 
     /**
     */
-    public final java.util.List<AppManifestError> errors;
+    public final java.util.List<jpuppeteer.cdp.client.entity.page.AppManifestError> errors;
 
     /**
     * Manifest content.
@@ -21,16 +21,16 @@ public class GetAppManifestResponse {
     /**
     * Parsed manifest properties
     */
-    public final AppManifestParsedProperties parsed;
+    public final jpuppeteer.cdp.client.entity.page.AppManifestParsedProperties parsed;
 
-    public GetAppManifestResponse(String url, java.util.List<AppManifestError> errors, String data, AppManifestParsedProperties parsed) {
+    public GetAppManifestResponse(String url, java.util.List<jpuppeteer.cdp.client.entity.page.AppManifestError> errors, String data, jpuppeteer.cdp.client.entity.page.AppManifestParsedProperties parsed) {
         this.url = url;
         this.errors = errors;
         this.data = data;
         this.parsed = parsed;
     }
 
-    public GetAppManifestResponse(String url, java.util.List<AppManifestError> errors) {
+    public GetAppManifestResponse(String url, java.util.List<jpuppeteer.cdp.client.entity.page.AppManifestError> errors) {
         this.url = url;
         this.errors = errors;
         this.data = null;

@@ -19,7 +19,7 @@ public class DataEntry {
     /**
     * Request headers
     */
-    public final java.util.List<Header> requestHeaders;
+    public final java.util.List<jpuppeteer.cdp.client.entity.cachestorage.Header> requestHeaders;
 
     /**
     * Number of seconds since epoch.
@@ -44,9 +44,9 @@ public class DataEntry {
     /**
     * Response headers
     */
-    public final java.util.List<Header> responseHeaders;
+    public final java.util.List<jpuppeteer.cdp.client.entity.cachestorage.Header> responseHeaders;
 
-    public DataEntry(String requestURL, String requestMethod, java.util.List<Header> requestHeaders, java.math.BigDecimal responseTime, Integer responseStatus, String responseStatusText, jpuppeteer.cdp.client.constant.cachestorage.CachedResponseType responseType, java.util.List<Header> responseHeaders) {
+    public DataEntry(String requestURL, String requestMethod, java.util.List<jpuppeteer.cdp.client.entity.cachestorage.Header> requestHeaders, java.math.BigDecimal responseTime, Integer responseStatus, String responseStatusText, jpuppeteer.cdp.client.constant.cachestorage.CachedResponseType responseType, java.util.List<jpuppeteer.cdp.client.entity.cachestorage.Header> responseHeaders) {
         this.requestURL = requestURL;
         this.requestMethod = requestMethod;
         this.requestHeaders = requestHeaders;

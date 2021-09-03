@@ -5,7 +5,7 @@ package jpuppeteer.cdp.client.entity.network;
 public class SetCookieResponse {
 
     /**
-    * True if successfully set cookie.
+    * Always set to true. If an error occurs, the response indicates protocol error.
     */
     public final Boolean success;
 

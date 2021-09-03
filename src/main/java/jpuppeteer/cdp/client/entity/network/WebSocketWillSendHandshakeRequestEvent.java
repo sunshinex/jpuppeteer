@@ -23,9 +23,9 @@ public class WebSocketWillSendHandshakeRequestEvent {
     /**
     * WebSocket request data.
     */
-    public final WebSocketRequest request;
+    public final jpuppeteer.cdp.client.entity.network.WebSocketRequest request;
 
-    public WebSocketWillSendHandshakeRequestEvent(String requestId, java.math.BigDecimal timestamp, java.math.BigDecimal wallTime, WebSocketRequest request) {
+    public WebSocketWillSendHandshakeRequestEvent(String requestId, java.math.BigDecimal timestamp, java.math.BigDecimal wallTime, jpuppeteer.cdp.client.entity.network.WebSocketRequest request) {
         this.requestId = requestId;
         this.timestamp = timestamp;
         this.wallTime = wallTime;

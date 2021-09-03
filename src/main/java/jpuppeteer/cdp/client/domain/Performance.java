@@ -21,8 +21,8 @@ public class Performance {
     /**
     * Enable collecting and reporting metrics.
     */
-    public io.netty.util.concurrent.Future enable() {
-        return session.send("Performance.enable", null);
+    public io.netty.util.concurrent.Future enable(jpuppeteer.cdp.client.entity.performance.EnableRequest request) {
+        return session.send("Performance.enable", request);
     }
 
 
@@ -30,6 +30,7 @@ public class Performance {
     * Sets time domain to use for collecting and reporting duration metrics. Note that this must be called before enabling metrics collection. Calling this method while metrics collection is enabled returns an error.
     * experimental
     */
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future setTimeDomain(jpuppeteer.cdp.client.entity.performance.SetTimeDomainRequest request) {
         return session.send("Performance.setTimeDomain", request);
     }

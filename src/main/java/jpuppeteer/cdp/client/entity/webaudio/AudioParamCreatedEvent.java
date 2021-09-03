@@ -8,9 +8,9 @@ public class AudioParamCreatedEvent {
 
     /**
     */
-    public final AudioParam param;
+    public final jpuppeteer.cdp.client.entity.webaudio.AudioParam param;
 
-    public AudioParamCreatedEvent(AudioParam param) {
+    public AudioParamCreatedEvent(jpuppeteer.cdp.client.entity.webaudio.AudioParam param) {
         this.param = param;
     }
 

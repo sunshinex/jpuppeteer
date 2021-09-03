@@ -8,19 +8,28 @@ import jpuppeteer.cdp.client.entity.input.DispatchMouseEventRequest;
 import java.math.BigDecimal;
 
 public final class DispatchMouseEventRequestBuilder {
-    private DispatchMouseEventRequestType type;
+    private jpuppeteer.cdp.client.constant.input.DispatchMouseEventRequestType type;
     private java.math.BigDecimal x;
     private java.math.BigDecimal y;
     private Integer modifiers;
     private java.math.BigDecimal timestamp;
-    private MouseButton button;
+    private jpuppeteer.cdp.client.constant.input.MouseButton button;
     private Integer buttons;
     private Integer clickCount;
+    private java.math.BigDecimal force;
+    private java.math.BigDecimal tangentialPressure;
+    private Integer tiltX;
+    private Integer tiltY;
+    private Integer twist;
     private java.math.BigDecimal deltaX;
     private java.math.BigDecimal deltaY;
-    private DispatchMouseEventRequestPointerType pointerType;
+    private jpuppeteer.cdp.client.constant.input.DispatchMouseEventRequestPointerType pointerType;
 
-    public DispatchMouseEventRequestBuilder() {
+    private DispatchMouseEventRequestBuilder() {
+    }
+
+    public static DispatchMouseEventRequestBuilder newBuilder() {
+        return new DispatchMouseEventRequestBuilder();
     }
 
     public DispatchMouseEventRequestBuilder type(DispatchMouseEventRequestType type) {
@@ -63,6 +72,31 @@ public final class DispatchMouseEventRequestBuilder {
         return this;
     }
 
+    public DispatchMouseEventRequestBuilder force(BigDecimal force) {
+        this.force = force;
+        return this;
+    }
+
+    public DispatchMouseEventRequestBuilder tangentialPressure(BigDecimal tangentialPressure) {
+        this.tangentialPressure = tangentialPressure;
+        return this;
+    }
+
+    public DispatchMouseEventRequestBuilder tiltX(Integer tiltX) {
+        this.tiltX = tiltX;
+        return this;
+    }
+
+    public DispatchMouseEventRequestBuilder tiltY(Integer tiltY) {
+        this.tiltY = tiltY;
+        return this;
+    }
+
+    public DispatchMouseEventRequestBuilder twist(Integer twist) {
+        this.twist = twist;
+        return this;
+    }
+
     public DispatchMouseEventRequestBuilder deltaX(BigDecimal deltaX) {
         this.deltaX = deltaX;
         return this;
@@ -79,6 +113,6 @@ public final class DispatchMouseEventRequestBuilder {
     }
 
     public DispatchMouseEventRequest build() {
-        return new DispatchMouseEventRequest(type, x, y, modifiers, timestamp, button, buttons, clickCount, deltaX, deltaY, pointerType);
+        return new DispatchMouseEventRequest(type, x, y, modifiers, timestamp, button, buttons, clickCount, force, tangentialPressure, tiltX, tiltY, twist, deltaX, deltaY, pointerType);
     }
 }

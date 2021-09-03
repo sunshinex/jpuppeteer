@@ -14,7 +14,7 @@ public class AXValueSource {
     /**
     * The value of this property source.
     */
-    public final AXValue value;
+    public final jpuppeteer.cdp.client.entity.accessibility.AXValue value;
 
     /**
     * The name of the relevant attribute, if any.
@@ -24,7 +24,7 @@ public class AXValueSource {
     /**
     * The value of the relevant attribute, if any.
     */
-    public final AXValue attributeValue;
+    public final jpuppeteer.cdp.client.entity.accessibility.AXValue attributeValue;
 
     /**
     * Whether this source is superseded by a higher priority source.
@@ -39,7 +39,7 @@ public class AXValueSource {
     /**
     * The value, such as a node or node list, of the native source.
     */
-    public final AXValue nativeSourceValue;
+    public final jpuppeteer.cdp.client.entity.accessibility.AXValue nativeSourceValue;
 
     /**
     * Whether the value for this property is invalid.
@@ -51,7 +51,7 @@ public class AXValueSource {
     */
     public final String invalidReason;
 
-    public AXValueSource(jpuppeteer.cdp.client.constant.accessibility.AXValueSourceType type, AXValue value, String attribute, AXValue attributeValue, Boolean superseded, jpuppeteer.cdp.client.constant.accessibility.AXValueNativeSourceType nativeSource, AXValue nativeSourceValue, Boolean invalid, String invalidReason) {
+    public AXValueSource(jpuppeteer.cdp.client.constant.accessibility.AXValueSourceType type, jpuppeteer.cdp.client.entity.accessibility.AXValue value, String attribute, jpuppeteer.cdp.client.entity.accessibility.AXValue attributeValue, Boolean superseded, jpuppeteer.cdp.client.constant.accessibility.AXValueNativeSourceType nativeSource, jpuppeteer.cdp.client.entity.accessibility.AXValue nativeSourceValue, Boolean invalid, String invalidReason) {
         this.type = type;
         this.value = value;
         this.attribute = attribute;

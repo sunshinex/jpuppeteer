@@ -12,9 +12,9 @@ public class CompileScriptResponse {
     /**
     * Exception details.
     */
-    public final ExceptionDetails exceptionDetails;
+    public final jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails;
 
-    public CompileScriptResponse(String scriptId, ExceptionDetails exceptionDetails) {
+    public CompileScriptResponse(String scriptId, jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails) {
         this.scriptId = scriptId;
         this.exceptionDetails = exceptionDetails;
     }

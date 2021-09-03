@@ -6,26 +6,27 @@ public class GrantPermissionsRequest {
 
     /**
     */
-    public final String origin;
+    public final java.util.List<jpuppeteer.cdp.client.constant.browser.PermissionType> permissions;
 
     /**
+    * Origin the permission applies to, all origins if not specified.
     */
-    public final java.util.List<jpuppeteer.cdp.client.constant.browser.PermissionType> permissions;
+    public final String origin;
 
     /**
     * BrowserContext to override permissions. When omitted, default browser context is used.
     */
     public final String browserContextId;
 
-    public GrantPermissionsRequest(String origin, java.util.List<jpuppeteer.cdp.client.constant.browser.PermissionType> permissions, String browserContextId) {
-        this.origin = origin;
+    public GrantPermissionsRequest(java.util.List<jpuppeteer.cdp.client.constant.browser.PermissionType> permissions, String origin, String browserContextId) {
         this.permissions = permissions;
+        this.origin = origin;
         this.browserContextId = browserContextId;
     }
 
-    public GrantPermissionsRequest(String origin, java.util.List<jpuppeteer.cdp.client.constant.browser.PermissionType> permissions) {
-        this.origin = origin;
+    public GrantPermissionsRequest(java.util.List<jpuppeteer.cdp.client.constant.browser.PermissionType> permissions) {
         this.permissions = permissions;
+        this.origin = null;
         this.browserContextId = null;
     }
 

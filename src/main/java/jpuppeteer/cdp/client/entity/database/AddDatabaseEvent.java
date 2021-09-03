@@ -7,9 +7,9 @@ public class AddDatabaseEvent {
 
     /**
     */
-    public final Database database;
+    public final jpuppeteer.cdp.client.entity.database.Database database;
 
-    public AddDatabaseEvent(Database database) {
+    public AddDatabaseEvent(jpuppeteer.cdp.client.entity.database.Database database) {
         this.database = database;
     }
 

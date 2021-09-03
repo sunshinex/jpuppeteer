@@ -10,6 +10,7 @@ import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseReques
 import jpuppeteer.cdp.client.constant.fetch.RequestStage;
 import jpuppeteer.cdp.client.constant.page.CaptureScreenshotRequestFormat;
 import jpuppeteer.cdp.client.entity.browser.Bounds;
+import jpuppeteer.cdp.client.entity.emulation.DisplayFeature;
 import jpuppeteer.cdp.client.entity.emulation.ScreenOrientation;
 import jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetUserAgentOverrideRequest;
@@ -142,7 +143,7 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     Future setUserAgent(SetUserAgentOverrideRequest userAgent);
 
     default Future setUserAgent(String userAgent) {
-        return setUserAgent(new SetUserAgentOverrideRequest(userAgent, "zh-CN,zh;q=0.9", "Win32"));
+        return setUserAgent(new SetUserAgentOverrideRequest(userAgent, "zh-CN,zh;q=0.9", "Win32", null));
     }
 
     Future setDevice(SetDeviceMetricsOverrideRequest device);
@@ -154,7 +155,7 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
                         isMobile, null, width, height,
                         null, null, null,
                         new ScreenOrientation(screenOrientation, 0),
-                        null
+                        null, null
                 )
         );
     }
@@ -176,7 +177,7 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     Future<byte[]> screenshot(CaptureScreenshotRequest request);
 
     default Future<byte[]> screenshot(Integer quality) {
-        return screenshot(new CaptureScreenshotRequest(CaptureScreenshotRequestFormat.JPEG, quality, null, null));
+        return screenshot(new CaptureScreenshotRequest(CaptureScreenshotRequestFormat.JPEG, quality, null, null, null));
     }
 
     default Future<byte[]> screenshot() {

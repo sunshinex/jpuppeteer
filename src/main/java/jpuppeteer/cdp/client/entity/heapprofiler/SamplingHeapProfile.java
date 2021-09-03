@@ -8,13 +8,13 @@ public class SamplingHeapProfile {
 
     /**
     */
-    public final SamplingHeapProfileNode head;
+    public final jpuppeteer.cdp.client.entity.heapprofiler.SamplingHeapProfileNode head;
 
     /**
     */
-    public final java.util.List<SamplingHeapProfileSample> samples;
+    public final java.util.List<jpuppeteer.cdp.client.entity.heapprofiler.SamplingHeapProfileSample> samples;
 
-    public SamplingHeapProfile(SamplingHeapProfileNode head, java.util.List<SamplingHeapProfileSample> samples) {
+    public SamplingHeapProfile(jpuppeteer.cdp.client.entity.heapprofiler.SamplingHeapProfileNode head, java.util.List<jpuppeteer.cdp.client.entity.heapprofiler.SamplingHeapProfileSample> samples) {
         this.head = head;
         this.samples = samples;
     }

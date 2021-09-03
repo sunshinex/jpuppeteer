@@ -2,7 +2,6 @@ package jpuppeteer.cdp.client.entity.fetch;
 
 /**
 * Authorization challenge for HTTP status code 401 or 407.
-* experimental
 */
 public class AuthChallenge {
 

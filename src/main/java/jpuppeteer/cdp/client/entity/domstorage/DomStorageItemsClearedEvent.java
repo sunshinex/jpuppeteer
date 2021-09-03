@@ -7,9 +7,9 @@ public class DomStorageItemsClearedEvent {
 
     /**
     */
-    public final StorageId storageId;
+    public final jpuppeteer.cdp.client.entity.domstorage.StorageId storageId;
 
-    public DomStorageItemsClearedEvent(StorageId storageId) {
+    public DomStorageItemsClearedEvent(jpuppeteer.cdp.client.entity.domstorage.StorageId storageId) {
         this.storageId = storageId;
     }
 

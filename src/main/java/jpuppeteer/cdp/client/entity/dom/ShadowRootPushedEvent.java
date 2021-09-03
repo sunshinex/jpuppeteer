@@ -13,9 +13,9 @@ public class ShadowRootPushedEvent {
     /**
     * Shadow root.
     */
-    public final Node root;
+    public final jpuppeteer.cdp.client.entity.dom.Node root;
 
-    public ShadowRootPushedEvent(Integer hostId, Node root) {
+    public ShadowRootPushedEvent(Integer hostId, jpuppeteer.cdp.client.entity.dom.Node root) {
         this.hostId = hostId;
         this.root = root;
     }

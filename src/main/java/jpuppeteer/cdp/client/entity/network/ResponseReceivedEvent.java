@@ -28,14 +28,14 @@ public class ResponseReceivedEvent {
     /**
     * Response data.
     */
-    public final Response response;
+    public final jpuppeteer.cdp.client.entity.network.Response response;
 
     /**
     * Frame identifier.
     */
     public final String frameId;
 
-    public ResponseReceivedEvent(String requestId, String loaderId, java.math.BigDecimal timestamp, jpuppeteer.cdp.client.constant.network.ResourceType type, Response response, String frameId) {
+    public ResponseReceivedEvent(String requestId, String loaderId, java.math.BigDecimal timestamp, jpuppeteer.cdp.client.constant.network.ResourceType type, jpuppeteer.cdp.client.entity.network.Response response, String frameId) {
         this.requestId = requestId;
         this.loaderId = loaderId;
         this.timestamp = timestamp;
@@ -44,7 +44,7 @@ public class ResponseReceivedEvent {
         this.frameId = frameId;
     }
 
-    public ResponseReceivedEvent(String requestId, String loaderId, java.math.BigDecimal timestamp, jpuppeteer.cdp.client.constant.network.ResourceType type, Response response) {
+    public ResponseReceivedEvent(String requestId, String loaderId, java.math.BigDecimal timestamp, jpuppeteer.cdp.client.constant.network.ResourceType type, jpuppeteer.cdp.client.entity.network.Response response) {
         this.requestId = requestId;
         this.loaderId = loaderId;
         this.timestamp = timestamp;

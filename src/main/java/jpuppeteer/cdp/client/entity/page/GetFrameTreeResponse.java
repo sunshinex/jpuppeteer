@@ -7,9 +7,9 @@ public class GetFrameTreeResponse {
     /**
     * Present frame tree structure.
     */
-    public final FrameTree frameTree;
+    public final jpuppeteer.cdp.client.entity.page.FrameTree frameTree;
 
-    public GetFrameTreeResponse(FrameTree frameTree) {
+    public GetFrameTreeResponse(jpuppeteer.cdp.client.entity.page.FrameTree frameTree) {
         this.frameTree = frameTree;
     }
 

@@ -8,9 +8,9 @@ public class AudioListenerCreatedEvent {
 
     /**
     */
-    public final AudioListener listener;
+    public final jpuppeteer.cdp.client.entity.webaudio.AudioListener listener;
 
-    public AudioListenerCreatedEvent(AudioListener listener) {
+    public AudioListenerCreatedEvent(jpuppeteer.cdp.client.entity.webaudio.AudioListener listener) {
         this.listener = listener;
     }
 

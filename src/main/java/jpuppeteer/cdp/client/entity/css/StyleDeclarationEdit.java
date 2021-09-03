@@ -14,14 +14,14 @@ public class StyleDeclarationEdit {
     /**
     * The range of the style text in the enclosing stylesheet.
     */
-    public final SourceRange range;
+    public final jpuppeteer.cdp.client.entity.css.SourceRange range;
 
     /**
     * New style text.
     */
     public final String text;
 
-    public StyleDeclarationEdit(String styleSheetId, SourceRange range, String text) {
+    public StyleDeclarationEdit(String styleSheetId, jpuppeteer.cdp.client.entity.css.SourceRange range, String text) {
         this.styleSheetId = styleSheetId;
         this.range = range;
         this.text = text;

@@ -14,7 +14,7 @@ public class Page {
     * Deprecated, please use addScriptToEvaluateOnNewDocument instead.
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.AddScriptToEvaluateOnLoadResponse> addScriptToEvaluateOnLoad(jpuppeteer.cdp.client.entity.page.AddScriptToEvaluateOnLoadRequest request) {
         return session.send("Page.addScriptToEvaluateOnLoad", request, jpuppeteer.cdp.client.entity.page.AddScriptToEvaluateOnLoadResponse.class);
     }
@@ -54,10 +54,10 @@ public class Page {
 
 
     /**
-    * Clears the overriden device metrics.
+    * Clears the overridden device metrics.
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future clearDeviceMetricsOverride() {
         return session.send("Page.clearDeviceMetricsOverride", null);
     }
@@ -67,16 +67,16 @@ public class Page {
     * Clears the overridden Device Orientation.
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future clearDeviceOrientationOverride() {
         return session.send("Page.clearDeviceOrientationOverride", null);
     }
 
 
     /**
-    * Clears the overriden Geolocation Position and Error.
+    * Clears the overridden Geolocation Position and Error.
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future clearGeolocationOverride() {
         return session.send("Page.clearGeolocationOverride", null);
     }
@@ -94,7 +94,7 @@ public class Page {
     * Deletes browser cookie with given name, domain and path.
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future deleteCookie(jpuppeteer.cdp.client.entity.page.DeleteCookieRequest request) {
         return session.send("Page.deleteCookie", request);
     }
@@ -143,7 +143,7 @@ public class Page {
     * Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the `cookies` field.
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.GetCookiesResponse> getCookies() {
         return session.send("Page.getCookies", null, jpuppeteer.cdp.client.entity.page.GetCookiesResponse.class);
     }
@@ -243,7 +243,7 @@ public class Page {
     * Deprecated, please use removeScriptToEvaluateOnNewDocument instead.
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future removeScriptToEvaluateOnLoad(jpuppeteer.cdp.client.entity.page.RemoveScriptToEvaluateOnLoadRequest request) {
         return session.send("Page.removeScriptToEvaluateOnLoad", request);
     }
@@ -294,10 +294,19 @@ public class Page {
 
 
     /**
+    * Get Permissions Policy state on given frame.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.GetPermissionsPolicyStateResponse> getPermissionsPolicyState(jpuppeteer.cdp.client.entity.page.GetPermissionsPolicyStateRequest request) {
+        return session.send("Page.getPermissionsPolicyState", request, jpuppeteer.cdp.client.entity.page.GetPermissionsPolicyStateResponse.class);
+    }
+
+
+    /**
     * Overrides the values of device screen dimensions (window.screen.width, window.screen.height, window.innerWidth, window.innerHeight, and "device-width"/"device-height"-related CSS media query results).
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future setDeviceMetricsOverride(jpuppeteer.cdp.client.entity.page.SetDeviceMetricsOverrideRequest request) {
         return session.send("Page.setDeviceMetricsOverride", request);
     }
@@ -307,7 +316,7 @@ public class Page {
     * Overrides the Device Orientation.
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future setDeviceOrientationOverride(jpuppeteer.cdp.client.entity.page.SetDeviceOrientationOverrideRequest request) {
         return session.send("Page.setDeviceOrientationOverride", request);
     }
@@ -343,6 +352,7 @@ public class Page {
     * Set the behavior when downloading a file.
     * experimental
     */
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future setDownloadBehavior(jpuppeteer.cdp.client.entity.page.SetDownloadBehaviorRequest request) {
         return session.send("Page.setDownloadBehavior", request);
     }
@@ -351,7 +361,7 @@ public class Page {
     /**
     * Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position unavailable.
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future setGeolocationOverride(jpuppeteer.cdp.client.entity.page.SetGeolocationOverrideRequest request) {
         return session.send("Page.setGeolocationOverride", request);
     }
@@ -370,7 +380,7 @@ public class Page {
     * Toggles mouse event-based touch event emulation.
     * experimental
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future setTouchEmulationEnabled(jpuppeteer.cdp.client.entity.page.SetTouchEmulationEnabledRequest request) {
         return session.send("Page.setTouchEmulationEnabled", request);
     }
@@ -430,11 +440,20 @@ public class Page {
 
 
     /**
-    * Forces compilation cache to be generated for every subresource script.
+    * Forces compilation cache to be generated for every subresource script. See also: `Page.produceCompilationCache`.
     * experimental
     */
     public io.netty.util.concurrent.Future setProduceCompilationCache(jpuppeteer.cdp.client.entity.page.SetProduceCompilationCacheRequest request) {
         return session.send("Page.setProduceCompilationCache", request);
+    }
+
+
+    /**
+    * Requests backend to produce compilation cache for the specified scripts. Unlike setProduceCompilationCache, this allows client to only produce cache for specific scripts. `scripts` are appeneded to the list of scripts for which the cache for would produced. Disabling compilation cache with `setProduceCompilationCache` would reset all pending cache requests. The list may also be reset during page navigation. When script with a matching URL is encountered, the cache is optionally produced upon backend discretion, based on internal heuristics. See also: `Page.compilationCacheProduced`.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future produceCompilationCache(jpuppeteer.cdp.client.entity.page.ProduceCompilationCacheRequest request) {
+        return session.send("Page.produceCompilationCache", request);
     }
 
 

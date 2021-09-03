@@ -24,7 +24,7 @@ public class SetVirtualTimePolicyRequest {
     public final Boolean waitForNavigation;
 
     /**
-    * If set, base::Time::Now will be overriden to initially return this value.
+    * If set, base::Time::Now will be overridden to initially return this value.
     */
     public final java.math.BigDecimal initialVirtualTime;
 

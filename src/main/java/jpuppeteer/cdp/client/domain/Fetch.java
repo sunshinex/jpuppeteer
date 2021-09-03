@@ -1,7 +1,6 @@
 package jpuppeteer.cdp.client.domain;
 
 /**
-* experimental
 */
 public class Fetch {
 

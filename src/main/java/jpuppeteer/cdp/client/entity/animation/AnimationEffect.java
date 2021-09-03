@@ -49,14 +49,14 @@ public class AnimationEffect {
     /**
     * `AnimationEffect`'s keyframes.
     */
-    public final KeyframesRule keyframesRule;
+    public final jpuppeteer.cdp.client.entity.animation.KeyframesRule keyframesRule;
 
     /**
     * `AnimationEffect`'s timing function.
     */
     public final String easing;
 
-    public AnimationEffect(java.math.BigDecimal delay, java.math.BigDecimal endDelay, java.math.BigDecimal iterationStart, java.math.BigDecimal iterations, java.math.BigDecimal duration, String direction, String fill, Integer backendNodeId, KeyframesRule keyframesRule, String easing) {
+    public AnimationEffect(java.math.BigDecimal delay, java.math.BigDecimal endDelay, java.math.BigDecimal iterationStart, java.math.BigDecimal iterations, java.math.BigDecimal duration, String direction, String fill, Integer backendNodeId, jpuppeteer.cdp.client.entity.animation.KeyframesRule keyframesRule, String easing) {
         this.delay = delay;
         this.endDelay = endDelay;
         this.iterationStart = iterationStart;

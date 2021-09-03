@@ -13,9 +13,9 @@ public class BreakpointResolvedEvent {
     /**
     * Actual breakpoint location.
     */
-    public final Location location;
+    public final jpuppeteer.cdp.client.entity.debugger.Location location;
 
-    public BreakpointResolvedEvent(String breakpointId, Location location) {
+    public BreakpointResolvedEvent(String breakpointId, jpuppeteer.cdp.client.entity.debugger.Location location) {
         this.breakpointId = breakpointId;
         this.location = location;
     }

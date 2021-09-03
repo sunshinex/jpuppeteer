@@ -18,9 +18,9 @@ public class ChildNodeInsertedEvent {
     /**
     * Inserted node data.
     */
-    public final Node node;
+    public final jpuppeteer.cdp.client.entity.dom.Node node;
 
-    public ChildNodeInsertedEvent(Integer parentNodeId, Integer previousNodeId, Node node) {
+    public ChildNodeInsertedEvent(Integer parentNodeId, Integer previousNodeId, jpuppeteer.cdp.client.entity.dom.Node node) {
         this.parentNodeId = parentNodeId;
         this.previousNodeId = previousNodeId;
         this.node = node;

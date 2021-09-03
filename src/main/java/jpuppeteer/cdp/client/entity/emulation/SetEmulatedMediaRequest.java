@@ -12,9 +12,9 @@ public class SetEmulatedMediaRequest {
     /**
     * Media features to emulate.
     */
-    public final java.util.List<MediaFeature> features;
+    public final java.util.List<jpuppeteer.cdp.client.entity.emulation.MediaFeature> features;
 
-    public SetEmulatedMediaRequest(String media, java.util.List<MediaFeature> features) {
+    public SetEmulatedMediaRequest(String media, java.util.List<jpuppeteer.cdp.client.entity.emulation.MediaFeature> features) {
         this.media = media;
         this.features = features;
     }

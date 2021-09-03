@@ -8,7 +8,7 @@ public class PausedEvent {
     /**
     * Call stack the virtual machine stopped on.
     */
-    public final java.util.List<CallFrame> callFrames;
+    public final java.util.List<jpuppeteer.cdp.client.entity.debugger.CallFrame> callFrames;
 
     /**
     * Pause reason.
@@ -40,7 +40,7 @@ public class PausedEvent {
     */
     public final jpuppeteer.cdp.client.entity.runtime.StackTraceId asyncCallStackTraceId;
 
-    public PausedEvent(java.util.List<CallFrame> callFrames, jpuppeteer.cdp.client.constant.debugger.PausedEventReason reason, java.util.Map<String, Object> data, java.util.List<String> hitBreakpoints, jpuppeteer.cdp.client.entity.runtime.StackTrace asyncStackTrace, jpuppeteer.cdp.client.entity.runtime.StackTraceId asyncStackTraceId, jpuppeteer.cdp.client.entity.runtime.StackTraceId asyncCallStackTraceId) {
+    public PausedEvent(java.util.List<jpuppeteer.cdp.client.entity.debugger.CallFrame> callFrames, jpuppeteer.cdp.client.constant.debugger.PausedEventReason reason, java.util.Map<String, Object> data, java.util.List<String> hitBreakpoints, jpuppeteer.cdp.client.entity.runtime.StackTrace asyncStackTrace, jpuppeteer.cdp.client.entity.runtime.StackTraceId asyncStackTraceId, jpuppeteer.cdp.client.entity.runtime.StackTraceId asyncCallStackTraceId) {
         this.callFrames = callFrames;
         this.reason = reason;
         this.data = data;
@@ -50,7 +50,7 @@ public class PausedEvent {
         this.asyncCallStackTraceId = asyncCallStackTraceId;
     }
 
-    public PausedEvent(java.util.List<CallFrame> callFrames, jpuppeteer.cdp.client.constant.debugger.PausedEventReason reason) {
+    public PausedEvent(java.util.List<jpuppeteer.cdp.client.entity.debugger.CallFrame> callFrames, jpuppeteer.cdp.client.constant.debugger.PausedEventReason reason) {
         this.callFrames = callFrames;
         this.reason = reason;
         this.data = null;

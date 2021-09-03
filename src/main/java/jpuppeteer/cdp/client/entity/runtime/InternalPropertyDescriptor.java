@@ -13,9 +13,9 @@ public class InternalPropertyDescriptor {
     /**
     * The value associated with the property.
     */
-    public final RemoteObject value;
+    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject value;
 
-    public InternalPropertyDescriptor(String name, RemoteObject value) {
+    public InternalPropertyDescriptor(String name, jpuppeteer.cdp.client.entity.runtime.RemoteObject value) {
         this.name = name;
         this.value = value;
     }

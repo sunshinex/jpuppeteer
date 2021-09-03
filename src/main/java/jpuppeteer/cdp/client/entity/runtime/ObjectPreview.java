@@ -28,14 +28,14 @@ public class ObjectPreview {
     /**
     * List of the properties.
     */
-    public final java.util.List<PropertyPreview> properties;
+    public final java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyPreview> properties;
 
     /**
     * List of the entries. Specified for `map` and `set` subtype values only.
     */
-    public final java.util.List<EntryPreview> entries;
+    public final java.util.List<jpuppeteer.cdp.client.entity.runtime.EntryPreview> entries;
 
-    public ObjectPreview(jpuppeteer.cdp.client.constant.runtime.ObjectPreviewType type, jpuppeteer.cdp.client.constant.runtime.ObjectPreviewSubtype subtype, String description, Boolean overflow, java.util.List<PropertyPreview> properties, java.util.List<EntryPreview> entries) {
+    public ObjectPreview(jpuppeteer.cdp.client.constant.runtime.ObjectPreviewType type, jpuppeteer.cdp.client.constant.runtime.ObjectPreviewSubtype subtype, String description, Boolean overflow, java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyPreview> properties, java.util.List<jpuppeteer.cdp.client.entity.runtime.EntryPreview> entries) {
         this.type = type;
         this.subtype = subtype;
         this.description = description;
@@ -44,7 +44,7 @@ public class ObjectPreview {
         this.entries = entries;
     }
 
-    public ObjectPreview(jpuppeteer.cdp.client.constant.runtime.ObjectPreviewType type, Boolean overflow, java.util.List<PropertyPreview> properties) {
+    public ObjectPreview(jpuppeteer.cdp.client.constant.runtime.ObjectPreviewType type, Boolean overflow, java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyPreview> properties) {
         this.type = type;
         this.subtype = null;
         this.description = null;

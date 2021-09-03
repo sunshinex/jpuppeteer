@@ -1,7 +1,6 @@
 package jpuppeteer.cdp.client.constant.fetch;
 
 /**
-* experimental
 */
 public enum AuthChallengeSource implements jpuppeteer.cdp.client.CDPEnum {
 

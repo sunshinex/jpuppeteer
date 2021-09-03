@@ -540,7 +540,7 @@ public class ChromePage extends ChromeFrame implements Page {
 
     @Override
     public Future addBinding(String name, BindingFunction function) {
-        AddBindingRequest request = new AddBindingRequest(name, null);
+        AddBindingRequest request = new AddBindingRequest(name, null, null);
         bindingMap.put(name, function);
         return runtime.addBinding(request);
     }

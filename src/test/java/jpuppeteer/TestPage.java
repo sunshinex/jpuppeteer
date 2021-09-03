@@ -51,17 +51,17 @@ public class TestPage {
 
     @Before
     public void setUp() throws Exception {
-        context = browser.createContext().get();
-        page = context.newPage().get();
+//        context = browser.createContext().get();
+//        page = context.newPage().get();
     }
 
     @After
     public void tearDown() throws Exception {
-        try {
-            page.close().get();
-        } finally {
-            context.close().get();
-        }
+//        try {
+//            page.close().get();
+//        } finally {
+//            context.close().get();
+//        }
     }
 
     @Test
@@ -342,6 +342,14 @@ public class TestPage {
             sb.append("\r\n");
         }
         System.out.println(sb.toString());
+    }
+
+    @Test
+    public void testx2() throws Exception {
+        BrowserContext ctx = browser.createContext("127.0.0.1:8889").get();
+        Page page = ctx.newPage().get();
+        page.navigate("http://www.163.com/").get();
+        TimeUnit.DAYS.sleep(1);
     }
 
 }

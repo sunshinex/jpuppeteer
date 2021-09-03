@@ -15,7 +15,7 @@ public class ReadResponse {
     public final String data;
 
     /**
-    * Set if the end-of-file condition occured while reading.
+    * Set if the end-of-file condition occurred while reading.
     */
     public final Boolean eof;
 

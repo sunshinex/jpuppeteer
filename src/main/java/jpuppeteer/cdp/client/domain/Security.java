@@ -38,7 +38,7 @@ public class Security {
     /**
     * Handles a certificate error that fired a certificateError event.
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future handleCertificateError(jpuppeteer.cdp.client.entity.security.HandleCertificateErrorRequest request) {
         return session.send("Security.handleCertificateError", request);
     }
@@ -47,7 +47,7 @@ public class Security {
     /**
     * Enable/disable overriding certificate errors. If enabled, all certificate error events need to be handled by the DevTools client and should be answered with `handleCertificateError` commands.
     */
-    @Deprecated
+    @java.lang.Deprecated
     public io.netty.util.concurrent.Future setOverrideCertificateErrors(jpuppeteer.cdp.client.entity.security.SetOverrideCertificateErrorsRequest request) {
         return session.send("Security.setOverrideCertificateErrors", request);
     }

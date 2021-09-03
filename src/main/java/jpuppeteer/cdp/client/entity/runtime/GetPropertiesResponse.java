@@ -7,31 +7,31 @@ public class GetPropertiesResponse {
     /**
     * Object properties.
     */
-    public final java.util.List<PropertyDescriptor> result;
+    public final java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyDescriptor> result;
 
     /**
     * Internal object properties (only of the element itself).
     */
-    public final java.util.List<InternalPropertyDescriptor> internalProperties;
+    public final java.util.List<jpuppeteer.cdp.client.entity.runtime.InternalPropertyDescriptor> internalProperties;
 
     /**
     * Object private properties.
     */
-    public final java.util.List<PrivatePropertyDescriptor> privateProperties;
+    public final java.util.List<jpuppeteer.cdp.client.entity.runtime.PrivatePropertyDescriptor> privateProperties;
 
     /**
     * Exception details.
     */
-    public final ExceptionDetails exceptionDetails;
+    public final jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails;
 
-    public GetPropertiesResponse(java.util.List<PropertyDescriptor> result, java.util.List<InternalPropertyDescriptor> internalProperties, java.util.List<PrivatePropertyDescriptor> privateProperties, ExceptionDetails exceptionDetails) {
+    public GetPropertiesResponse(java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyDescriptor> result, java.util.List<jpuppeteer.cdp.client.entity.runtime.InternalPropertyDescriptor> internalProperties, java.util.List<jpuppeteer.cdp.client.entity.runtime.PrivatePropertyDescriptor> privateProperties, jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails) {
         this.result = result;
         this.internalProperties = internalProperties;
         this.privateProperties = privateProperties;
         this.exceptionDetails = exceptionDetails;
     }
 
-    public GetPropertiesResponse(java.util.List<PropertyDescriptor> result) {
+    public GetPropertiesResponse(java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyDescriptor> result) {
         this.result = result;
         this.internalProperties = null;
         this.privateProperties = null;

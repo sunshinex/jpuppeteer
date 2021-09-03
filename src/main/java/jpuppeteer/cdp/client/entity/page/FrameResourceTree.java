@@ -8,25 +8,25 @@ public class FrameResourceTree {
     /**
     * Frame information for this tree item.
     */
-    public final Frame frame;
+    public final jpuppeteer.cdp.client.entity.page.Frame frame;
 
     /**
     * Child frames.
     */
-    public final java.util.List<FrameResourceTree> childFrames;
+    public final java.util.List<jpuppeteer.cdp.client.entity.page.FrameResourceTree> childFrames;
 
     /**
     * Information about frame resources.
     */
-    public final java.util.List<FrameResource> resources;
+    public final java.util.List<jpuppeteer.cdp.client.entity.page.FrameResource> resources;
 
-    public FrameResourceTree(Frame frame, java.util.List<FrameResourceTree> childFrames, java.util.List<FrameResource> resources) {
+    public FrameResourceTree(jpuppeteer.cdp.client.entity.page.Frame frame, java.util.List<jpuppeteer.cdp.client.entity.page.FrameResourceTree> childFrames, java.util.List<jpuppeteer.cdp.client.entity.page.FrameResource> resources) {
         this.frame = frame;
         this.childFrames = childFrames;
         this.resources = resources;
     }
 
-    public FrameResourceTree(Frame frame, java.util.List<FrameResource> resources) {
+    public FrameResourceTree(jpuppeteer.cdp.client.entity.page.Frame frame, java.util.List<jpuppeteer.cdp.client.entity.page.FrameResource> resources) {
         this.frame = frame;
         this.childFrames = null;
         this.resources = resources;

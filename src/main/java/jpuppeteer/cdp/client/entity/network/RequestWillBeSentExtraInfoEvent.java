@@ -11,19 +11,32 @@ public class RequestWillBeSentExtraInfoEvent {
     public final String requestId;
 
     /**
-    * A list of cookies which will not be sent with this request along with corresponding reasons for blocking.
+    * A list of cookies potentially associated to the requested URL. This includes both cookies sent with the request and the ones not sent; the latter are distinguished by having blockedReason field set.
     */
-    public final java.util.List<BlockedCookieWithReason> blockedCookies;
+    public final java.util.List<jpuppeteer.cdp.client.entity.network.BlockedCookieWithReason> associatedCookies;
 
     /**
     * Raw request headers as they will be sent over the wire.
     */
     public final java.util.Map<String, Object> headers;
 
-    public RequestWillBeSentExtraInfoEvent(String requestId, java.util.List<BlockedCookieWithReason> blockedCookies, java.util.Map<String, Object> headers) {
+    /**
+    * The client security state set for the request.
+    */
+    public final jpuppeteer.cdp.client.entity.network.ClientSecurityState clientSecurityState;
+
+    public RequestWillBeSentExtraInfoEvent(String requestId, java.util.List<jpuppeteer.cdp.client.entity.network.BlockedCookieWithReason> associatedCookies, java.util.Map<String, Object> headers, jpuppeteer.cdp.client.entity.network.ClientSecurityState clientSecurityState) {
         this.requestId = requestId;
-        this.blockedCookies = blockedCookies;
+        this.associatedCookies = associatedCookies;
         this.headers = headers;
+        this.clientSecurityState = clientSecurityState;
+    }
+
+    public RequestWillBeSentExtraInfoEvent(String requestId, java.util.List<jpuppeteer.cdp.client.entity.network.BlockedCookieWithReason> associatedCookies, java.util.Map<String, Object> headers) {
+        this.requestId = requestId;
+        this.associatedCookies = associatedCookies;
+        this.headers = headers;
+        this.clientSecurityState = null;
     }
 
 }

@@ -29,9 +29,9 @@ public class ApplicationCache {
     /**
     * Application cache resources.
     */
-    public final java.util.List<ApplicationCacheResource> resources;
+    public final java.util.List<jpuppeteer.cdp.client.entity.applicationcache.ApplicationCacheResource> resources;
 
-    public ApplicationCache(String manifestURL, java.math.BigDecimal size, java.math.BigDecimal creationTime, java.math.BigDecimal updateTime, java.util.List<ApplicationCacheResource> resources) {
+    public ApplicationCache(String manifestURL, java.math.BigDecimal size, java.math.BigDecimal creationTime, java.math.BigDecimal updateTime, java.util.List<jpuppeteer.cdp.client.entity.applicationcache.ApplicationCacheResource> resources) {
         this.manifestURL = manifestURL;
         this.size = size;
         this.creationTime = creationTime;

@@ -9,7 +9,7 @@ public class AddCompilationCacheRequest {
     public final String url;
 
     /**
-    * Base64-encoded data
+    * Base64-encoded data (Encoded as a base64 string when passed over JSON)
     */
     public final String data;
 

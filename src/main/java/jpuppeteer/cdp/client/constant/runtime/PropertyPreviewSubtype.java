@@ -16,6 +16,13 @@ public enum PropertyPreviewSubtype implements jpuppeteer.cdp.client.CDPEnum {
     ITERATOR("iterator"),
     GENERATOR("generator"),
     ERROR("error"),
+    PROXY("proxy"),
+    PROMISE("promise"),
+    TYPEDARRAY("typedarray"),
+    ARRAYBUFFER("arraybuffer"),
+    DATAVIEW("dataview"),
+    WEBASSEMBLYMEMORY("webassemblymemory"),
+    WASMVALUE("wasmvalue"),
     ;
 
     private String value;

@@ -22,14 +22,14 @@ public class Scope {
     /**
     * Location in the source code where scope starts
     */
-    public final Location startLocation;
+    public final jpuppeteer.cdp.client.entity.debugger.Location startLocation;
 
     /**
     * Location in the source code where scope ends
     */
-    public final Location endLocation;
+    public final jpuppeteer.cdp.client.entity.debugger.Location endLocation;
 
-    public Scope(jpuppeteer.cdp.client.constant.debugger.ScopeType type, jpuppeteer.cdp.client.entity.runtime.RemoteObject object, String name, Location startLocation, Location endLocation) {
+    public Scope(jpuppeteer.cdp.client.constant.debugger.ScopeType type, jpuppeteer.cdp.client.entity.runtime.RemoteObject object, String name, jpuppeteer.cdp.client.entity.debugger.Location startLocation, jpuppeteer.cdp.client.entity.debugger.Location endLocation) {
         this.type = type;
         this.object = object;
         this.name = name;

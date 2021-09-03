@@ -10,7 +10,7 @@ public class GetScriptSourceResponse {
     public final String scriptSource;
 
     /**
-    * Wasm bytecode.
+    * Wasm bytecode. (Encoded as a base64 string when passed over JSON)
     */
     public final String bytecode;
 

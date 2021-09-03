@@ -62,9 +62,9 @@ public class SetDeviceMetricsOverrideRequest {
     /**
     * The viewport dimensions and scale. If not set, the override is cleared.
     */
-    public final Viewport viewport;
+    public final jpuppeteer.cdp.client.entity.page.Viewport viewport;
 
-    public SetDeviceMetricsOverrideRequest(Integer width, Integer height, java.math.BigDecimal deviceScaleFactor, Boolean mobile, java.math.BigDecimal scale, Integer screenWidth, Integer screenHeight, Integer positionX, Integer positionY, Boolean dontSetVisibleSize, jpuppeteer.cdp.client.entity.emulation.ScreenOrientation screenOrientation, Viewport viewport) {
+    public SetDeviceMetricsOverrideRequest(Integer width, Integer height, java.math.BigDecimal deviceScaleFactor, Boolean mobile, java.math.BigDecimal scale, Integer screenWidth, Integer screenHeight, Integer positionX, Integer positionY, Boolean dontSetVisibleSize, jpuppeteer.cdp.client.entity.emulation.ScreenOrientation screenOrientation, jpuppeteer.cdp.client.entity.page.Viewport viewport) {
         this.width = width;
         this.height = height;
         this.deviceScaleFactor = deviceScaleFactor;

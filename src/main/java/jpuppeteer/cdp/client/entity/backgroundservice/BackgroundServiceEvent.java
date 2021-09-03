@@ -38,9 +38,9 @@ public class BackgroundServiceEvent {
     /**
     * A list of event-specific information.
     */
-    public final java.util.List<EventMetadata> eventMetadata;
+    public final java.util.List<jpuppeteer.cdp.client.entity.backgroundservice.EventMetadata> eventMetadata;
 
-    public BackgroundServiceEvent(java.math.BigDecimal timestamp, String origin, String serviceWorkerRegistrationId, jpuppeteer.cdp.client.constant.backgroundservice.ServiceName service, String eventName, String instanceId, java.util.List<EventMetadata> eventMetadata) {
+    public BackgroundServiceEvent(java.math.BigDecimal timestamp, String origin, String serviceWorkerRegistrationId, jpuppeteer.cdp.client.constant.backgroundservice.ServiceName service, String eventName, String instanceId, java.util.List<jpuppeteer.cdp.client.entity.backgroundservice.EventMetadata> eventMetadata) {
         this.timestamp = timestamp;
         this.origin = origin;
         this.serviceWorkerRegistrationId = serviceWorkerRegistrationId;

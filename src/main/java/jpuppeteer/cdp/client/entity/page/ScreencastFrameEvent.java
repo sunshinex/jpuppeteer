@@ -6,21 +6,21 @@ package jpuppeteer.cdp.client.entity.page;
 public class ScreencastFrameEvent {
 
     /**
-    * Base64-encoded compressed image.
+    * Base64-encoded compressed image. (Encoded as a base64 string when passed over JSON)
     */
     public final String data;
 
     /**
     * Screencast frame metadata.
     */
-    public final ScreencastFrameMetadata metadata;
+    public final jpuppeteer.cdp.client.entity.page.ScreencastFrameMetadata metadata;
 
     /**
     * Frame number.
     */
     public final Integer sessionId;
 
-    public ScreencastFrameEvent(String data, ScreencastFrameMetadata metadata, Integer sessionId) {
+    public ScreencastFrameEvent(String data, jpuppeteer.cdp.client.entity.page.ScreencastFrameMetadata metadata, Integer sessionId) {
         this.data = data;
         this.metadata = metadata;
         this.sessionId = sessionId;

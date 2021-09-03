@@ -9,12 +9,19 @@ public class StepIntoRequest {
     */
     public final Boolean breakOnAsyncCall;
 
-    public StepIntoRequest(Boolean breakOnAsyncCall) {
+    /**
+    * The skipList specifies location ranges that should be skipped on step into.
+    */
+    public final java.util.List<jpuppeteer.cdp.client.entity.debugger.LocationRange> skipList;
+
+    public StepIntoRequest(Boolean breakOnAsyncCall, java.util.List<jpuppeteer.cdp.client.entity.debugger.LocationRange> skipList) {
         this.breakOnAsyncCall = breakOnAsyncCall;
+        this.skipList = skipList;
     }
 
     public StepIntoRequest() {
         this.breakOnAsyncCall = null;
+        this.skipList = null;
     }
 
 }

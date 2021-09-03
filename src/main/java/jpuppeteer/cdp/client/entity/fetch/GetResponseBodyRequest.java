@@ -1,7 +1,6 @@
 package jpuppeteer.cdp.client.entity.fetch;
 
 /**
-* experimental
 */
 public class GetResponseBodyRequest {
 

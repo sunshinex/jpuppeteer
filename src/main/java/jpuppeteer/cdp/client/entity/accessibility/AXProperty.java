@@ -13,9 +13,9 @@ public class AXProperty {
     /**
     * The value of this property.
     */
-    public final AXValue value;
+    public final jpuppeteer.cdp.client.entity.accessibility.AXValue value;
 
-    public AXProperty(jpuppeteer.cdp.client.constant.accessibility.AXPropertyName name, AXValue value) {
+    public AXProperty(jpuppeteer.cdp.client.constant.accessibility.AXPropertyName name, jpuppeteer.cdp.client.entity.accessibility.AXValue value) {
         this.name = name;
         this.value = value;
     }

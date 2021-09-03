@@ -12,9 +12,9 @@ public class SetBreakpointByUrlResponse {
     /**
     * List of the locations this breakpoint resolved into upon addition.
     */
-    public final java.util.List<Location> locations;
+    public final java.util.List<jpuppeteer.cdp.client.entity.debugger.Location> locations;
 
-    public SetBreakpointByUrlResponse(String breakpointId, java.util.List<Location> locations) {
+    public SetBreakpointByUrlResponse(String breakpointId, java.util.List<jpuppeteer.cdp.client.entity.debugger.Location> locations) {
         this.breakpointId = breakpointId;
         this.locations = locations;
     }

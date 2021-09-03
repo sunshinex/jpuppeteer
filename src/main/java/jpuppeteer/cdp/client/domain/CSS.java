@@ -115,6 +115,24 @@ public class CSS {
 
 
     /**
+    * Starts tracking the given computed styles for updates. The specified array of properties replaces the one previously specified. Pass empty array to disable tracking. Use takeComputedStyleUpdates to retrieve the list of nodes that had properties modified. The changes to computed style properties are only tracked for nodes pushed to the front-end by the DOM agent. If no changes to the tracked properties occur after the node has been pushed to the front-end, no updates will be issued for the node.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future trackComputedStyleUpdates(jpuppeteer.cdp.client.entity.css.TrackComputedStyleUpdatesRequest request) {
+        return session.send("CSS.trackComputedStyleUpdates", request);
+    }
+
+
+    /**
+    * Polls the next batch of computed style updates.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.TakeComputedStyleUpdatesResponse> takeComputedStyleUpdates() {
+        return session.send("CSS.takeComputedStyleUpdates", null, jpuppeteer.cdp.client.entity.css.TakeComputedStyleUpdatesResponse.class);
+    }
+
+
+    /**
     * Find a rule with the given active property for the given node and set the new value for this property
     */
     public io.netty.util.concurrent.Future setEffectivePropertyValueForNode(jpuppeteer.cdp.client.entity.css.SetEffectivePropertyValueForNodeRequest request) {
@@ -183,6 +201,15 @@ public class CSS {
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.TakeCoverageDeltaResponse> takeCoverageDelta() {
         return session.send("CSS.takeCoverageDelta", null, jpuppeteer.cdp.client.entity.css.TakeCoverageDeltaResponse.class);
+    }
+
+
+    /**
+    * Enables/disables rendering of local CSS fonts (enabled by default).
+    * experimental
+    */
+    public io.netty.util.concurrent.Future setLocalFontsEnabled(jpuppeteer.cdp.client.entity.css.SetLocalFontsEnabledRequest request) {
+        return session.send("CSS.setLocalFontsEnabled", request);
     }
 
 }

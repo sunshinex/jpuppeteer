@@ -50,8 +50,8 @@ public class Profiler {
     /**
     * Enable precise code coverage. Coverage data for JavaScript executed before enabling precise code coverage may be incomplete. Enabling prevents running optimized code and resets execution counters.
     */
-    public io.netty.util.concurrent.Future startPreciseCoverage(jpuppeteer.cdp.client.entity.profiler.StartPreciseCoverageRequest request) {
-        return session.send("Profiler.startPreciseCoverage", request);
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.profiler.StartPreciseCoverageResponse> startPreciseCoverage(jpuppeteer.cdp.client.entity.profiler.StartPreciseCoverageRequest request) {
+        return session.send("Profiler.startPreciseCoverage", request, jpuppeteer.cdp.client.entity.profiler.StartPreciseCoverageResponse.class);
     }
 
 
@@ -102,6 +102,33 @@ public class Profiler {
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.profiler.TakeTypeProfileResponse> takeTypeProfile() {
         return session.send("Profiler.takeTypeProfile", null, jpuppeteer.cdp.client.entity.profiler.TakeTypeProfileResponse.class);
+    }
+
+
+    /**
+    * Enable counters collection.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future enableCounters() {
+        return session.send("Profiler.enableCounters", null);
+    }
+
+
+    /**
+    * Disable counters collection.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future disableCounters() {
+        return session.send("Profiler.disableCounters", null);
+    }
+
+
+    /**
+    * Retrieve counters.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.profiler.GetCountersResponse> getCounters() {
+        return session.send("Profiler.getCounters", null, jpuppeteer.cdp.client.entity.profiler.GetCountersResponse.class);
     }
 
 

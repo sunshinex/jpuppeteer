@@ -8,9 +8,9 @@ public class VisibleSecurityStateChangedEvent {
     /**
     * Security state information about the page.
     */
-    public final VisibleSecurityState visibleSecurityState;
+    public final jpuppeteer.cdp.client.entity.security.VisibleSecurityState visibleSecurityState;
 
-    public VisibleSecurityStateChangedEvent(VisibleSecurityState visibleSecurityState) {
+    public VisibleSecurityStateChangedEvent(jpuppeteer.cdp.client.entity.security.VisibleSecurityState visibleSecurityState) {
         this.visibleSecurityState = visibleSecurityState;
     }
 

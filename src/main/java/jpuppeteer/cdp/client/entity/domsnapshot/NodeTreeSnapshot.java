@@ -39,49 +39,49 @@ public class NodeTreeSnapshot {
     /**
     * Only set for textarea elements, contains the text value.
     */
-    public final RareStringData textValue;
+    public final jpuppeteer.cdp.client.entity.domsnapshot.RareStringData textValue;
 
     /**
     * Only set for input elements, contains the input's associated text value.
     */
-    public final RareStringData inputValue;
+    public final jpuppeteer.cdp.client.entity.domsnapshot.RareStringData inputValue;
 
     /**
     * Only set for radio and checkbox input elements, indicates if the element has been checked
     */
-    public final RareBooleanData inputChecked;
+    public final jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData inputChecked;
 
     /**
     * Only set for option elements, indicates if the element has been selected
     */
-    public final RareBooleanData optionSelected;
+    public final jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData optionSelected;
 
     /**
     * The index of the document in the list of the snapshot documents.
     */
-    public final RareIntegerData contentDocumentIndex;
+    public final jpuppeteer.cdp.client.entity.domsnapshot.RareIntegerData contentDocumentIndex;
 
     /**
     * Type of a pseudo element node.
     */
-    public final RareStringData pseudoType;
+    public final jpuppeteer.cdp.client.entity.domsnapshot.RareStringData pseudoType;
 
     /**
     * Whether this DOM node responds to mouse clicks. This includes nodes that have had click event listeners attached via JavaScript as well as anchor tags that naturally navigate when clicked.
     */
-    public final RareBooleanData isClickable;
+    public final jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData isClickable;
 
     /**
     * The selected url for nodes with a srcset attribute.
     */
-    public final RareStringData currentSourceURL;
+    public final jpuppeteer.cdp.client.entity.domsnapshot.RareStringData currentSourceURL;
 
     /**
     * The url of the script (if any) that generates this node.
     */
-    public final RareStringData originURL;
+    public final jpuppeteer.cdp.client.entity.domsnapshot.RareStringData originURL;
 
-    public NodeTreeSnapshot(java.util.List<Integer> parentIndex, java.util.List<Integer> nodeType, java.util.List<Integer> nodeName, java.util.List<Integer> nodeValue, java.util.List<Integer> backendNodeId, java.util.List<java.util.List<Integer>> attributes, RareStringData textValue, RareStringData inputValue, RareBooleanData inputChecked, RareBooleanData optionSelected, RareIntegerData contentDocumentIndex, RareStringData pseudoType, RareBooleanData isClickable, RareStringData currentSourceURL, RareStringData originURL) {
+    public NodeTreeSnapshot(java.util.List<Integer> parentIndex, java.util.List<Integer> nodeType, java.util.List<Integer> nodeName, java.util.List<Integer> nodeValue, java.util.List<Integer> backendNodeId, java.util.List<java.util.List<Integer>> attributes, jpuppeteer.cdp.client.entity.domsnapshot.RareStringData textValue, jpuppeteer.cdp.client.entity.domsnapshot.RareStringData inputValue, jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData inputChecked, jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData optionSelected, jpuppeteer.cdp.client.entity.domsnapshot.RareIntegerData contentDocumentIndex, jpuppeteer.cdp.client.entity.domsnapshot.RareStringData pseudoType, jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData isClickable, jpuppeteer.cdp.client.entity.domsnapshot.RareStringData currentSourceURL, jpuppeteer.cdp.client.entity.domsnapshot.RareStringData originURL) {
         this.parentIndex = parentIndex;
         this.nodeType = nodeType;
         this.nodeName = nodeName;

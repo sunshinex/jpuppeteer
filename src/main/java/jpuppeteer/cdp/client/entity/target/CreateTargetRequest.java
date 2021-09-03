@@ -5,7 +5,7 @@ package jpuppeteer.cdp.client.entity.target;
 public class CreateTargetRequest {
 
     /**
-    * The initial URL the page will be navigated to.
+    * The initial URL the page will be navigated to. An empty string indicates about:blank.
     */
     public final String url;
 

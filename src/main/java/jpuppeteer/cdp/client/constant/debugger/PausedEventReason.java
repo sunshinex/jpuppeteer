@@ -6,6 +6,7 @@ public enum PausedEventReason implements jpuppeteer.cdp.client.CDPEnum {
 
     AMBIGUOUS("ambiguous"),
     ASSERT("assert"),
+    CSPVIOLATION("CSPViolation"),
     DEBUGCOMMAND("debugCommand"),
     DOM("DOM"),
     EVENTLISTENER("EventListener"),

@@ -20,16 +20,30 @@ public class CaptureSnapshotRequest {
     */
     public final Boolean includeDOMRects;
 
-    public CaptureSnapshotRequest(java.util.List<String> computedStyles, Boolean includePaintOrder, Boolean includeDOMRects) {
+    /**
+    * Whether to include blended background colors in the snapshot (default: false). Blended background color is achieved by blending background colors of all elements that overlap with the current element.
+    */
+    public final Boolean includeBlendedBackgroundColors;
+
+    /**
+    * Whether to include text color opacity in the snapshot (default: false). An element might have the opacity property set that affects the text color of the element. The final text color opacity is computed based on the opacity of all overlapping elements.
+    */
+    public final Boolean includeTextColorOpacities;
+
+    public CaptureSnapshotRequest(java.util.List<String> computedStyles, Boolean includePaintOrder, Boolean includeDOMRects, Boolean includeBlendedBackgroundColors, Boolean includeTextColorOpacities) {
         this.computedStyles = computedStyles;
         this.includePaintOrder = includePaintOrder;
         this.includeDOMRects = includeDOMRects;
+        this.includeBlendedBackgroundColors = includeBlendedBackgroundColors;
+        this.includeTextColorOpacities = includeTextColorOpacities;
     }
 
     public CaptureSnapshotRequest(java.util.List<String> computedStyles) {
         this.computedStyles = computedStyles;
         this.includePaintOrder = null;
         this.includeDOMRects = null;
+        this.includeBlendedBackgroundColors = null;
+        this.includeTextColorOpacities = null;
     }
 
 }

@@ -20,7 +20,7 @@ public class BaseAudioContext {
 
     /**
     */
-    public final ContextRealtimeData realtimeData;
+    public final jpuppeteer.cdp.client.entity.webaudio.ContextRealtimeData realtimeData;
 
     /**
     * Platform-dependent callback buffer size.
@@ -37,7 +37,7 @@ public class BaseAudioContext {
     */
     public final java.math.BigDecimal sampleRate;
 
-    public BaseAudioContext(String contextId, jpuppeteer.cdp.client.constant.webaudio.ContextType contextType, jpuppeteer.cdp.client.constant.webaudio.ContextState contextState, ContextRealtimeData realtimeData, java.math.BigDecimal callbackBufferSize, java.math.BigDecimal maxOutputChannelCount, java.math.BigDecimal sampleRate) {
+    public BaseAudioContext(String contextId, jpuppeteer.cdp.client.constant.webaudio.ContextType contextType, jpuppeteer.cdp.client.constant.webaudio.ContextState contextState, jpuppeteer.cdp.client.entity.webaudio.ContextRealtimeData realtimeData, java.math.BigDecimal callbackBufferSize, java.math.BigDecimal maxOutputChannelCount, java.math.BigDecimal sampleRate) {
         this.contextId = contextId;
         this.contextType = contextType;
         this.contextState = contextState;

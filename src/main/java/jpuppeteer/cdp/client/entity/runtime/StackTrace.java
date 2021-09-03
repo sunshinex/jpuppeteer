@@ -13,26 +13,26 @@ public class StackTrace {
     /**
     * JavaScript function name.
     */
-    public final java.util.List<CallFrame> callFrames;
+    public final java.util.List<jpuppeteer.cdp.client.entity.runtime.CallFrame> callFrames;
 
     /**
     * Asynchronous JavaScript stack trace that preceded this stack, if available.
     */
-    public final StackTrace parent;
+    public final jpuppeteer.cdp.client.entity.runtime.StackTrace parent;
 
     /**
     * Asynchronous JavaScript stack trace that preceded this stack, if available.
     */
-    public final StackTraceId parentId;
+    public final jpuppeteer.cdp.client.entity.runtime.StackTraceId parentId;
 
-    public StackTrace(String description, java.util.List<CallFrame> callFrames, StackTrace parent, StackTraceId parentId) {
+    public StackTrace(String description, java.util.List<jpuppeteer.cdp.client.entity.runtime.CallFrame> callFrames, jpuppeteer.cdp.client.entity.runtime.StackTrace parent, jpuppeteer.cdp.client.entity.runtime.StackTraceId parentId) {
         this.description = description;
         this.callFrames = callFrames;
         this.parent = parent;
         this.parentId = parentId;
     }
 
-    public StackTrace(java.util.List<CallFrame> callFrames) {
+    public StackTrace(java.util.List<jpuppeteer.cdp.client.entity.runtime.CallFrame> callFrames) {
         this.description = null;
         this.callFrames = callFrames;
         this.parent = null;

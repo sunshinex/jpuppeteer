@@ -37,11 +37,29 @@ public class Accessibility {
 
 
     /**
-    * Fetches the entire accessibility tree
+    * Fetches the entire accessibility tree for the root Document
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.accessibility.GetFullAXTreeResponse> getFullAXTree() {
-        return session.send("Accessibility.getFullAXTree", null, jpuppeteer.cdp.client.entity.accessibility.GetFullAXTreeResponse.class);
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.accessibility.GetFullAXTreeResponse> getFullAXTree(jpuppeteer.cdp.client.entity.accessibility.GetFullAXTreeRequest request) {
+        return session.send("Accessibility.getFullAXTree", request, jpuppeteer.cdp.client.entity.accessibility.GetFullAXTreeResponse.class);
+    }
+
+
+    /**
+    * Fetches a particular accessibility node by AXNodeId. Requires `enable()` to have been called previously.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.accessibility.GetChildAXNodesResponse> getChildAXNodes(jpuppeteer.cdp.client.entity.accessibility.GetChildAXNodesRequest request) {
+        return session.send("Accessibility.getChildAXNodes", request, jpuppeteer.cdp.client.entity.accessibility.GetChildAXNodesResponse.class);
+    }
+
+
+    /**
+    * Query a DOM node's accessibility subtree for accessible name and role. This command computes the name and role for all nodes in the subtree, including those that are ignored for accessibility, and returns those that mactch the specified name and role. If no DOM node is specified, or the DOM node does not exist, the command returns an error. If neither `accessibleName` or `role` is specified, it returns all the accessibility nodes in the subtree.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.accessibility.QueryAXTreeResponse> queryAXTree(jpuppeteer.cdp.client.entity.accessibility.QueryAXTreeRequest request) {
+        return session.send("Accessibility.queryAXTree", request, jpuppeteer.cdp.client.entity.accessibility.QueryAXTreeResponse.class);
     }
 
 }

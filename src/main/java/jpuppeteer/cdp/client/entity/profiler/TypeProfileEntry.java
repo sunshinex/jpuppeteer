@@ -13,9 +13,9 @@ public class TypeProfileEntry {
     /**
     * The types for this parameter or return value.
     */
-    public final java.util.List<TypeObject> types;
+    public final java.util.List<jpuppeteer.cdp.client.entity.profiler.TypeObject> types;
 
-    public TypeProfileEntry(Integer offset, java.util.List<TypeObject> types) {
+    public TypeProfileEntry(Integer offset, java.util.List<jpuppeteer.cdp.client.entity.profiler.TypeObject> types) {
         this.offset = offset;
         this.types = types;
     }

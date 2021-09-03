@@ -13,6 +13,7 @@ public enum ScopeType implements jpuppeteer.cdp.client.CDPEnum {
     SCRIPT("script"),
     EVAL("eval"),
     MODULE("module"),
+    WASM_EXPRESSION_STACK("wasm-expression-stack"),
     ;
 
     private String value;

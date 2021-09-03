@@ -35,17 +35,41 @@ public class TouchPoint {
     public final java.math.BigDecimal force;
 
     /**
+    * The normalized tangential pressure, which has a range of [-1,1] (default: 0).
+    */
+    public final java.math.BigDecimal tangentialPressure;
+
+    /**
+    * The plane angle between the Y-Z plane and the plane containing both the stylus axis and the Y axis, in degrees of the range [-90,90], a positive tiltX is to the right (default: 0)
+    */
+    public final Integer tiltX;
+
+    /**
+    * The plane angle between the X-Z plane and the plane containing both the stylus axis and the X axis, in degrees of the range [-90,90], a positive tiltY is towards the user (default: 0).
+    */
+    public final Integer tiltY;
+
+    /**
+    * The clockwise rotation of a pen stylus around its own major axis, in degrees in the range [0,359] (default: 0).
+    */
+    public final Integer twist;
+
+    /**
     * Identifier used to track touch sources between events, must be unique within an event.
     */
     public final java.math.BigDecimal id;
 
-    public TouchPoint(java.math.BigDecimal x, java.math.BigDecimal y, java.math.BigDecimal radiusX, java.math.BigDecimal radiusY, java.math.BigDecimal rotationAngle, java.math.BigDecimal force, java.math.BigDecimal id) {
+    public TouchPoint(java.math.BigDecimal x, java.math.BigDecimal y, java.math.BigDecimal radiusX, java.math.BigDecimal radiusY, java.math.BigDecimal rotationAngle, java.math.BigDecimal force, java.math.BigDecimal tangentialPressure, Integer tiltX, Integer tiltY, Integer twist, java.math.BigDecimal id) {
         this.x = x;
         this.y = y;
         this.radiusX = radiusX;
         this.radiusY = radiusY;
         this.rotationAngle = rotationAngle;
         this.force = force;
+        this.tangentialPressure = tangentialPressure;
+        this.tiltX = tiltX;
+        this.tiltY = tiltY;
+        this.twist = twist;
         this.id = id;
     }
 
@@ -56,6 +80,10 @@ public class TouchPoint {
         this.radiusY = null;
         this.rotationAngle = null;
         this.force = null;
+        this.tangentialPressure = null;
+        this.tiltX = null;
+        this.tiltY = null;
+        this.twist = null;
         this.id = null;
     }
 

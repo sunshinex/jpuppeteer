@@ -19,16 +19,23 @@ public class SetUserAgentOverrideRequest {
     */
     public final String platform;
 
-    public SetUserAgentOverrideRequest(String userAgent, String acceptLanguage, String platform) {
+    /**
+    * To be sent in Sec-CH-UA-* headers and returned in navigator.userAgentData
+    */
+    public final jpuppeteer.cdp.client.entity.emulation.UserAgentMetadata userAgentMetadata;
+
+    public SetUserAgentOverrideRequest(String userAgent, String acceptLanguage, String platform, jpuppeteer.cdp.client.entity.emulation.UserAgentMetadata userAgentMetadata) {
         this.userAgent = userAgent;
         this.acceptLanguage = acceptLanguage;
         this.platform = platform;
+        this.userAgentMetadata = userAgentMetadata;
     }
 
     public SetUserAgentOverrideRequest(String userAgent) {
         this.userAgent = userAgent;
         this.acceptLanguage = null;
         this.platform = null;
+        this.userAgentMetadata = null;
     }
 
 }

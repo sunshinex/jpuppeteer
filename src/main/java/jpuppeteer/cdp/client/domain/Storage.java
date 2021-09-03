@@ -52,6 +52,15 @@ public class Storage {
 
 
     /**
+    * Override quota for the specified origin
+    * experimental
+    */
+    public io.netty.util.concurrent.Future overrideQuotaForOrigin(jpuppeteer.cdp.client.entity.storage.OverrideQuotaForOriginRequest request) {
+        return connection.send("Storage.overrideQuotaForOrigin", request);
+    }
+
+
+    /**
     * Registers origin to be notified when an update occurs to its cache storage list.
     */
     public io.netty.util.concurrent.Future trackCacheStorageForOrigin(jpuppeteer.cdp.client.entity.storage.TrackCacheStorageForOriginRequest request) {
@@ -80,6 +89,24 @@ public class Storage {
     */
     public io.netty.util.concurrent.Future untrackIndexedDBForOrigin(jpuppeteer.cdp.client.entity.storage.UntrackIndexedDBForOriginRequest request) {
         return connection.send("Storage.untrackIndexedDBForOrigin", request);
+    }
+
+
+    /**
+    * Returns the number of stored Trust Tokens per issuer for the current browsing context.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.storage.GetTrustTokensResponse> getTrustTokens() {
+        return connection.send("Storage.getTrustTokens", null, jpuppeteer.cdp.client.entity.storage.GetTrustTokensResponse.class);
+    }
+
+
+    /**
+    * Removes all Trust Tokens issued by the provided issuerOrigin. Leaves other stored data, including the issuer's Redemption Records, intact.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.storage.ClearTrustTokensResponse> clearTrustTokens(jpuppeteer.cdp.client.entity.storage.ClearTrustTokensRequest request) {
+        return connection.send("Storage.clearTrustTokens", request, jpuppeteer.cdp.client.entity.storage.ClearTrustTokensResponse.class);
     }
 
 }

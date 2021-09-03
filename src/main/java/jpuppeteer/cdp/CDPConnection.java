@@ -2,10 +2,7 @@ package jpuppeteer.cdp;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
-import com.alibaba.fastjson.parser.DefaultJSONParser;
 import com.alibaba.fastjson.parser.ParserConfig;
-import com.alibaba.fastjson.parser.deserializer.ObjectDeserializer;
 import com.alibaba.fastjson.serializer.ValueFilter;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -27,12 +24,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.concurrent.Promise;
 import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.api.event.AbstractListener;
-import jpuppeteer.cdp.client.CDPEnum;
 import jpuppeteer.cdp.client.CDPEventType;
-import jpuppeteer.cdp.client.constant.accessibility.AXPropertyName;
-import jpuppeteer.cdp.client.constant.accessibility.AXValueType;
-import jpuppeteer.cdp.client.entity.accessibility.AXProperty;
-import jpuppeteer.cdp.client.entity.accessibility.AXValue;
 import jpuppeteer.util.CDPEnumFilter;
 import jpuppeteer.util.CDPException;
 import jpuppeteer.util.CDPParserConfig;
@@ -41,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLException;
-import java.lang.reflect.Type;
 import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -51,6 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+@SuppressWarnings("unchecked")
 public class CDPConnection extends AbstractEventEmitter<CDPEvent> {
 
     private static final Logger logger = LoggerFactory.getLogger(CDPConnection.class);

@@ -52,6 +52,15 @@ public class DOMDebugger {
 
 
     /**
+    * Sets breakpoint on particular CSP violations.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future setBreakOnCSPViolation(jpuppeteer.cdp.client.entity.domdebugger.SetBreakOnCSPViolationRequest request) {
+        return session.send("DOMDebugger.setBreakOnCSPViolation", request);
+    }
+
+
+    /**
     * Sets breakpoint on particular operation with DOM.
     */
     public io.netty.util.concurrent.Future setDOMBreakpoint(jpuppeteer.cdp.client.entity.domdebugger.SetDOMBreakpointRequest request) {

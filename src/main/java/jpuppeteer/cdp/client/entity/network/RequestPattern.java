@@ -6,7 +6,7 @@ package jpuppeteer.cdp.client.entity.network;
 public class RequestPattern {
 
     /**
-    * Wildcards ('*' -> zero or more, '?' -> exactly one) are allowed. Escape character is backslash. Omitting is equivalent to "*".
+    * Wildcards (`'*'` -> zero or more, `'?'` -> exactly one) are allowed. Escape character is backslash. Omitting is equivalent to `"*"`.
     */
     public final String urlPattern;
 
@@ -16,7 +16,7 @@ public class RequestPattern {
     public final jpuppeteer.cdp.client.constant.network.ResourceType resourceType;
 
     /**
-    * Stage at wich to begin intercepting requests. Default is Request.
+    * Stage at which to begin intercepting requests. Default is Request.
     */
     public final jpuppeteer.cdp.client.constant.network.InterceptionStage interceptionStage;
 

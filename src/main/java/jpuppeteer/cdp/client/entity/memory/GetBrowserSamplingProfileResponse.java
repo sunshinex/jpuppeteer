@@ -7,9 +7,9 @@ public class GetBrowserSamplingProfileResponse {
 
     /**
     */
-    public final SamplingProfile profile;
+    public final jpuppeteer.cdp.client.entity.memory.SamplingProfile profile;
 
-    public GetBrowserSamplingProfileResponse(SamplingProfile profile) {
+    public GetBrowserSamplingProfileResponse(jpuppeteer.cdp.client.entity.memory.SamplingProfile profile) {
         this.profile = profile;
     }
 

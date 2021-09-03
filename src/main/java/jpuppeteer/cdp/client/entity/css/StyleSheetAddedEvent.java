@@ -9,9 +9,9 @@ public class StyleSheetAddedEvent {
     /**
     * Added stylesheet metainfo.
     */
-    public final CSSStyleSheetHeader header;
+    public final jpuppeteer.cdp.client.entity.css.CSSStyleSheetHeader header;
 
-    public StyleSheetAddedEvent(CSSStyleSheetHeader header) {
+    public StyleSheetAddedEvent(jpuppeteer.cdp.client.entity.css.CSSStyleSheetHeader header) {
         this.header = header;
     }
 

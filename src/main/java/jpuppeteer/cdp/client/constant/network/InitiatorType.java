@@ -8,6 +8,7 @@ public enum InitiatorType implements jpuppeteer.cdp.client.CDPEnum {
     SCRIPT("script"),
     PRELOAD("preload"),
     SIGNEDEXCHANGE("SignedExchange"),
+    PREFLIGHT("preflight"),
     OTHER("other"),
     ;
 

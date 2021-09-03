@@ -18,9 +18,9 @@ public class WebSocketHandshakeResponseReceivedEvent {
     /**
     * WebSocket response data.
     */
-    public final WebSocketResponse response;
+    public final jpuppeteer.cdp.client.entity.network.WebSocketResponse response;
 
-    public WebSocketHandshakeResponseReceivedEvent(String requestId, java.math.BigDecimal timestamp, WebSocketResponse response) {
+    public WebSocketHandshakeResponseReceivedEvent(String requestId, java.math.BigDecimal timestamp, jpuppeteer.cdp.client.entity.network.WebSocketResponse response) {
         this.requestId = requestId;
         this.timestamp = timestamp;
         this.response = response;

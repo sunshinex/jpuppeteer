@@ -18,9 +18,9 @@ public class WebSocketFrameReceivedEvent {
     /**
     * WebSocket response data.
     */
-    public final WebSocketFrame response;
+    public final jpuppeteer.cdp.client.entity.network.WebSocketFrame response;
 
-    public WebSocketFrameReceivedEvent(String requestId, java.math.BigDecimal timestamp, WebSocketFrame response) {
+    public WebSocketFrameReceivedEvent(String requestId, java.math.BigDecimal timestamp, jpuppeteer.cdp.client.entity.network.WebSocketFrame response) {
         this.requestId = requestId;
         this.timestamp = timestamp;
         this.response = response;

@@ -29,7 +29,7 @@ public class LayoutTreeSnapshot {
     /**
     * Stacking context information.
     */
-    public final RareBooleanData stackingContexts;
+    public final jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData stackingContexts;
 
     /**
     * Global paint order index, which is determined by the stacking order of the nodes. Nodes that are painted together will have the same index. Only provided if includePaintOrder in captureSnapshot was true.
@@ -51,7 +51,17 @@ public class LayoutTreeSnapshot {
     */
     public final java.util.List<java.util.List<java.math.BigDecimal>> clientRects;
 
-    public LayoutTreeSnapshot(java.util.List<Integer> nodeIndex, java.util.List<java.util.List<Integer>> styles, java.util.List<java.util.List<java.math.BigDecimal>> bounds, java.util.List<Integer> text, RareBooleanData stackingContexts, java.util.List<Integer> paintOrders, java.util.List<java.util.List<java.math.BigDecimal>> offsetRects, java.util.List<java.util.List<java.math.BigDecimal>> scrollRects, java.util.List<java.util.List<java.math.BigDecimal>> clientRects) {
+    /**
+    * The list of background colors that are blended with colors of overlapping elements.
+    */
+    public final java.util.List<Integer> blendedBackgroundColors;
+
+    /**
+    * The list of computed text opacities.
+    */
+    public final java.util.List<java.math.BigDecimal> textColorOpacities;
+
+    public LayoutTreeSnapshot(java.util.List<Integer> nodeIndex, java.util.List<java.util.List<Integer>> styles, java.util.List<java.util.List<java.math.BigDecimal>> bounds, java.util.List<Integer> text, jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData stackingContexts, java.util.List<Integer> paintOrders, java.util.List<java.util.List<java.math.BigDecimal>> offsetRects, java.util.List<java.util.List<java.math.BigDecimal>> scrollRects, java.util.List<java.util.List<java.math.BigDecimal>> clientRects, java.util.List<Integer> blendedBackgroundColors, java.util.List<java.math.BigDecimal> textColorOpacities) {
         this.nodeIndex = nodeIndex;
         this.styles = styles;
         this.bounds = bounds;
@@ -61,9 +71,11 @@ public class LayoutTreeSnapshot {
         this.offsetRects = offsetRects;
         this.scrollRects = scrollRects;
         this.clientRects = clientRects;
+        this.blendedBackgroundColors = blendedBackgroundColors;
+        this.textColorOpacities = textColorOpacities;
     }
 
-    public LayoutTreeSnapshot(java.util.List<Integer> nodeIndex, java.util.List<java.util.List<Integer>> styles, java.util.List<java.util.List<java.math.BigDecimal>> bounds, java.util.List<Integer> text, RareBooleanData stackingContexts) {
+    public LayoutTreeSnapshot(java.util.List<Integer> nodeIndex, java.util.List<java.util.List<Integer>> styles, java.util.List<java.util.List<java.math.BigDecimal>> bounds, java.util.List<Integer> text, jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData stackingContexts) {
         this.nodeIndex = nodeIndex;
         this.styles = styles;
         this.bounds = bounds;
@@ -73,6 +85,8 @@ public class LayoutTreeSnapshot {
         this.offsetRects = null;
         this.scrollRects = null;
         this.clientRects = null;
+        this.blendedBackgroundColors = null;
+        this.textColorOpacities = null;
     }
 
 }

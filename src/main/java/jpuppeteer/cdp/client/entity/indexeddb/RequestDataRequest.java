@@ -38,9 +38,9 @@ public class RequestDataRequest {
     /**
     * Key range.
     */
-    public final KeyRange keyRange;
+    public final jpuppeteer.cdp.client.entity.indexeddb.KeyRange keyRange;
 
-    public RequestDataRequest(String securityOrigin, String databaseName, String objectStoreName, String indexName, Integer skipCount, Integer pageSize, KeyRange keyRange) {
+    public RequestDataRequest(String securityOrigin, String databaseName, String objectStoreName, String indexName, Integer skipCount, Integer pageSize, jpuppeteer.cdp.client.entity.indexeddb.KeyRange keyRange) {
         this.securityOrigin = securityOrigin;
         this.databaseName = databaseName;
         this.objectStoreName = objectStoreName;

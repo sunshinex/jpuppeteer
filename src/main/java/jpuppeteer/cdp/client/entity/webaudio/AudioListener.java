@@ -1,7 +1,7 @@
 package jpuppeteer.cdp.client.entity.webaudio;
 
 /**
-* Protocol object for AudioListner
+* Protocol object for AudioListener
 * experimental
 */
 public class AudioListener {

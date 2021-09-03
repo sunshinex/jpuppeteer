@@ -19,14 +19,14 @@ public class AXValue {
     /**
     * One or more related nodes, if applicable.
     */
-    public final java.util.List<AXRelatedNode> relatedNodes;
+    public final java.util.List<jpuppeteer.cdp.client.entity.accessibility.AXRelatedNode> relatedNodes;
 
     /**
     * The sources which contributed to the computation of this property.
     */
-    public final java.util.List<AXValueSource> sources;
+    public final java.util.List<jpuppeteer.cdp.client.entity.accessibility.AXValueSource> sources;
 
-    public AXValue(jpuppeteer.cdp.client.constant.accessibility.AXValueType type, Object value, java.util.List<AXRelatedNode> relatedNodes, java.util.List<AXValueSource> sources) {
+    public AXValue(jpuppeteer.cdp.client.constant.accessibility.AXValueType type, Object value, java.util.List<jpuppeteer.cdp.client.entity.accessibility.AXRelatedNode> relatedNodes, java.util.List<jpuppeteer.cdp.client.entity.accessibility.AXValueSource> sources) {
         this.type = type;
         this.value = value;
         this.relatedNodes = relatedNodes;

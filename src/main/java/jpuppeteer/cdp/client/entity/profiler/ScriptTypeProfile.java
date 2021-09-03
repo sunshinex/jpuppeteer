@@ -18,9 +18,9 @@ public class ScriptTypeProfile {
     /**
     * Type profile entries for parameters and return values of the functions in the script.
     */
-    public final java.util.List<TypeProfileEntry> entries;
+    public final java.util.List<jpuppeteer.cdp.client.entity.profiler.TypeProfileEntry> entries;
 
-    public ScriptTypeProfile(String scriptId, String url, java.util.List<TypeProfileEntry> entries) {
+    public ScriptTypeProfile(String scriptId, String url, java.util.List<jpuppeteer.cdp.client.entity.profiler.TypeProfileEntry> entries) {
         this.scriptId = scriptId;
         this.url = url;
         this.entries = entries;

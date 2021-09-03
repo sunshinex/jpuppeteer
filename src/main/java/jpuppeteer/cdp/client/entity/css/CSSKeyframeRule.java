@@ -19,21 +19,21 @@ public class CSSKeyframeRule {
     /**
     * Associated key text.
     */
-    public final Value keyText;
+    public final jpuppeteer.cdp.client.entity.css.Value keyText;
 
     /**
     * Associated style declaration.
     */
-    public final CSSStyle style;
+    public final jpuppeteer.cdp.client.entity.css.CSSStyle style;
 
-    public CSSKeyframeRule(String styleSheetId, jpuppeteer.cdp.client.constant.css.StyleSheetOrigin origin, Value keyText, CSSStyle style) {
+    public CSSKeyframeRule(String styleSheetId, jpuppeteer.cdp.client.constant.css.StyleSheetOrigin origin, jpuppeteer.cdp.client.entity.css.Value keyText, jpuppeteer.cdp.client.entity.css.CSSStyle style) {
         this.styleSheetId = styleSheetId;
         this.origin = origin;
         this.keyText = keyText;
         this.style = style;
     }
 
-    public CSSKeyframeRule(jpuppeteer.cdp.client.constant.css.StyleSheetOrigin origin, Value keyText, CSSStyle style) {
+    public CSSKeyframeRule(jpuppeteer.cdp.client.constant.css.StyleSheetOrigin origin, jpuppeteer.cdp.client.entity.css.Value keyText, jpuppeteer.cdp.client.entity.css.CSSStyle style) {
         this.styleSheetId = null;
         this.origin = origin;
         this.keyText = keyText;

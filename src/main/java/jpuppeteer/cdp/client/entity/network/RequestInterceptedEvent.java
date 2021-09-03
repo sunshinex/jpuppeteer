@@ -12,7 +12,7 @@ public class RequestInterceptedEvent {
 
     /**
     */
-    public final Request request;
+    public final jpuppeteer.cdp.client.entity.network.Request request;
 
     /**
     * The id of the frame that initiated the request.
@@ -42,7 +42,7 @@ public class RequestInterceptedEvent {
     /**
     * Details of the Authorization Challenge encountered. If this is set then continueInterceptedRequest must contain an authChallengeResponse.
     */
-    public final AuthChallenge authChallenge;
+    public final jpuppeteer.cdp.client.entity.network.AuthChallenge authChallenge;
 
     /**
     * Response error if intercepted at response stage or if redirect occurred while intercepting request.
@@ -64,7 +64,7 @@ public class RequestInterceptedEvent {
     */
     public final String requestId;
 
-    public RequestInterceptedEvent(String interceptionId, Request request, String frameId, jpuppeteer.cdp.client.constant.network.ResourceType resourceType, Boolean isNavigationRequest, Boolean isDownload, String redirectUrl, AuthChallenge authChallenge, jpuppeteer.cdp.client.constant.network.ErrorReason responseErrorReason, Integer responseStatusCode, java.util.Map<String, Object> responseHeaders, String requestId) {
+    public RequestInterceptedEvent(String interceptionId, jpuppeteer.cdp.client.entity.network.Request request, String frameId, jpuppeteer.cdp.client.constant.network.ResourceType resourceType, Boolean isNavigationRequest, Boolean isDownload, String redirectUrl, jpuppeteer.cdp.client.entity.network.AuthChallenge authChallenge, jpuppeteer.cdp.client.constant.network.ErrorReason responseErrorReason, Integer responseStatusCode, java.util.Map<String, Object> responseHeaders, String requestId) {
         this.interceptionId = interceptionId;
         this.request = request;
         this.frameId = frameId;
@@ -79,7 +79,7 @@ public class RequestInterceptedEvent {
         this.requestId = requestId;
     }
 
-    public RequestInterceptedEvent(String interceptionId, Request request, String frameId, jpuppeteer.cdp.client.constant.network.ResourceType resourceType, Boolean isNavigationRequest) {
+    public RequestInterceptedEvent(String interceptionId, jpuppeteer.cdp.client.entity.network.Request request, String frameId, jpuppeteer.cdp.client.constant.network.ResourceType resourceType, Boolean isNavigationRequest) {
         this.interceptionId = interceptionId;
         this.request = request;
         this.frameId = frameId;

@@ -9,7 +9,7 @@ public class SetDockTileRequest {
     public final String badgeLabel;
 
     /**
-    * Png encoded image.
+    * Png encoded image. (Encoded as a base64 string when passed over JSON)
     */
     public final String image;
 

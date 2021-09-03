@@ -7,19 +7,19 @@ public class RunScriptResponse {
     /**
     * Run result.
     */
-    public final RemoteObject result;
+    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject result;
 
     /**
     * Exception details.
     */
-    public final ExceptionDetails exceptionDetails;
+    public final jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails;
 
-    public RunScriptResponse(RemoteObject result, ExceptionDetails exceptionDetails) {
+    public RunScriptResponse(jpuppeteer.cdp.client.entity.runtime.RemoteObject result, jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails) {
         this.result = result;
         this.exceptionDetails = exceptionDetails;
     }
 
-    public RunScriptResponse(RemoteObject result) {
+    public RunScriptResponse(jpuppeteer.cdp.client.entity.runtime.RemoteObject result) {
         this.result = result;
         this.exceptionDetails = null;
     }

@@ -2,7 +2,6 @@ package jpuppeteer.cdp.client.entity.fetch;
 
 /**
 * Response to an AuthChallenge.
-* experimental
 */
 public class AuthChallengeResponse {
 

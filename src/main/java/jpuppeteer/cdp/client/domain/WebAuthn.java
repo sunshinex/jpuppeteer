@@ -90,4 +90,12 @@ public class WebAuthn {
         return session.send("WebAuthn.setUserVerified", request);
     }
 
+
+    /**
+    * Sets whether tests of user presence will succeed immediately (if true) or fail to resolve (if false) for an authenticator. The default is true.
+    */
+    public io.netty.util.concurrent.Future setAutomaticPresenceSimulation(jpuppeteer.cdp.client.entity.webauthn.SetAutomaticPresenceSimulationRequest request) {
+        return session.send("WebAuthn.setAutomaticPresenceSimulation", request);
+    }
+
 }

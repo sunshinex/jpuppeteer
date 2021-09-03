@@ -44,9 +44,9 @@ public class CSSProperty {
     /**
     * The entire property range in the enclosing style declaration (if available).
     */
-    public final SourceRange range;
+    public final jpuppeteer.cdp.client.entity.css.SourceRange range;
 
-    public CSSProperty(String name, String value, Boolean important, Boolean implicit, String text, Boolean parsedOk, Boolean disabled, SourceRange range) {
+    public CSSProperty(String name, String value, Boolean important, Boolean implicit, String text, Boolean parsedOk, Boolean disabled, jpuppeteer.cdp.client.entity.css.SourceRange range) {
         this.name = name;
         this.value = value;
         this.important = important;

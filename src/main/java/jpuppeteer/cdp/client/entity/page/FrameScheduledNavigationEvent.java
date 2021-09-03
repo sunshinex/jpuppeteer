@@ -18,14 +18,14 @@ public class FrameScheduledNavigationEvent {
     /**
     * The reason for the navigation.
     */
-    public final jpuppeteer.cdp.client.constant.page.FrameScheduledNavigationEventReason reason;
+    public final jpuppeteer.cdp.client.constant.page.ClientNavigationReason reason;
 
     /**
     * The destination URL for the scheduled navigation.
     */
     public final String url;
 
-    public FrameScheduledNavigationEvent(String frameId, java.math.BigDecimal delay, jpuppeteer.cdp.client.constant.page.FrameScheduledNavigationEventReason reason, String url) {
+    public FrameScheduledNavigationEvent(String frameId, java.math.BigDecimal delay, jpuppeteer.cdp.client.constant.page.ClientNavigationReason reason, String url) {
         this.frameId = frameId;
         this.delay = delay;
         this.reason = reason;

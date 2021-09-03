@@ -8,9 +8,9 @@ public class ContextChangedEvent {
 
     /**
     */
-    public final BaseAudioContext context;
+    public final jpuppeteer.cdp.client.entity.webaudio.BaseAudioContext context;
 
-    public ContextChangedEvent(BaseAudioContext context) {
+    public ContextChangedEvent(jpuppeteer.cdp.client.entity.webaudio.BaseAudioContext context) {
         this.context = context;
     }
 

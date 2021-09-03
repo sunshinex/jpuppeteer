@@ -14,14 +14,14 @@ public class VideoDecodeAcceleratorCapability {
     /**
     * Maximum video dimensions in pixels supported for this |profile|.
     */
-    public final Size maxResolution;
+    public final jpuppeteer.cdp.client.entity.systeminfo.Size maxResolution;
 
     /**
     * Minimum video dimensions in pixels supported for this |profile|.
     */
-    public final Size minResolution;
+    public final jpuppeteer.cdp.client.entity.systeminfo.Size minResolution;
 
-    public VideoDecodeAcceleratorCapability(String profile, Size maxResolution, Size minResolution) {
+    public VideoDecodeAcceleratorCapability(String profile, jpuppeteer.cdp.client.entity.systeminfo.Size maxResolution, jpuppeteer.cdp.client.entity.systeminfo.Size minResolution) {
         this.profile = profile;
         this.maxResolution = maxResolution;
         this.minResolution = minResolution;

@@ -7,9 +7,9 @@ public class QueryObjectsResponse {
     /**
     * Array with objects.
     */
-    public final RemoteObject objects;
+    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject objects;
 
-    public QueryObjectsResponse(RemoteObject objects) {
+    public QueryObjectsResponse(jpuppeteer.cdp.client.entity.runtime.RemoteObject objects) {
         this.objects = objects;
     }
 

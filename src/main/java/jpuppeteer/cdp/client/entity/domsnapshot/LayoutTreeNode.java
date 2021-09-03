@@ -24,7 +24,7 @@ public class LayoutTreeNode {
     /**
     * The post-layout inline text nodes, if any.
     */
-    public final java.util.List<InlineTextBox> inlineTextNodes;
+    public final java.util.List<jpuppeteer.cdp.client.entity.domsnapshot.InlineTextBox> inlineTextNodes;
 
     /**
     * Index into the `computedStyles` array returned by `getSnapshot`.
@@ -41,7 +41,7 @@ public class LayoutTreeNode {
     */
     public final Boolean isStackingContext;
 
-    public LayoutTreeNode(Integer domNodeIndex, jpuppeteer.cdp.client.entity.dom.Rect boundingBox, String layoutText, java.util.List<InlineTextBox> inlineTextNodes, Integer styleIndex, Integer paintOrder, Boolean isStackingContext) {
+    public LayoutTreeNode(Integer domNodeIndex, jpuppeteer.cdp.client.entity.dom.Rect boundingBox, String layoutText, java.util.List<jpuppeteer.cdp.client.entity.domsnapshot.InlineTextBox> inlineTextNodes, Integer styleIndex, Integer paintOrder, Boolean isStackingContext) {
         this.domNodeIndex = domNodeIndex;
         this.boundingBox = boundingBox;
         this.layoutText = layoutText;

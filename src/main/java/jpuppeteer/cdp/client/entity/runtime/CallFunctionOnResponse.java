@@ -7,19 +7,19 @@ public class CallFunctionOnResponse {
     /**
     * Call result.
     */
-    public final RemoteObject result;
+    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject result;
 
     /**
     * Exception details.
     */
-    public final ExceptionDetails exceptionDetails;
+    public final jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails;
 
-    public CallFunctionOnResponse(RemoteObject result, ExceptionDetails exceptionDetails) {
+    public CallFunctionOnResponse(jpuppeteer.cdp.client.entity.runtime.RemoteObject result, jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails) {
         this.result = result;
         this.exceptionDetails = exceptionDetails;
     }
 
-    public CallFunctionOnResponse(RemoteObject result) {
+    public CallFunctionOnResponse(jpuppeteer.cdp.client.entity.runtime.RemoteObject result) {
         this.result = result;
         this.exceptionDetails = null;
     }

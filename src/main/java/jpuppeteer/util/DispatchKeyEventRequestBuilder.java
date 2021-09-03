@@ -4,9 +4,10 @@ import jpuppeteer.cdp.client.constant.input.DispatchKeyEventRequestType;
 import jpuppeteer.cdp.client.entity.input.DispatchKeyEventRequest;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public final class DispatchKeyEventRequestBuilder {
-    private DispatchKeyEventRequestType type;
+    private jpuppeteer.cdp.client.constant.input.DispatchKeyEventRequestType type;
     private Integer modifiers;
     private java.math.BigDecimal timestamp;
     private String text;
@@ -20,8 +21,13 @@ public final class DispatchKeyEventRequestBuilder {
     private Boolean isKeypad;
     private Boolean isSystemKey;
     private Integer location;
+    private java.util.List<String> commands;
 
-    public DispatchKeyEventRequestBuilder() {
+    private DispatchKeyEventRequestBuilder() {
+    }
+
+    public static DispatchKeyEventRequestBuilder newBuilder() {
+        return new DispatchKeyEventRequestBuilder();
     }
 
     public DispatchKeyEventRequestBuilder type(DispatchKeyEventRequestType type) {
@@ -94,7 +100,12 @@ public final class DispatchKeyEventRequestBuilder {
         return this;
     }
 
+    public DispatchKeyEventRequestBuilder commands(List<String> commands) {
+        this.commands = commands;
+        return this;
+    }
+
     public DispatchKeyEventRequest build() {
-        return new DispatchKeyEventRequest(type, modifiers, timestamp, text, unmodifiedText, keyIdentifier, code, key, windowsVirtualKeyCode, nativeVirtualKeyCode, autoRepeat, isKeypad, isSystemKey, location);
+        return new DispatchKeyEventRequest(type, modifiers, timestamp, text, unmodifiedText, keyIdentifier, code, key, windowsVirtualKeyCode, nativeVirtualKeyCode, autoRepeat, isKeypad, isSystemKey, location, commands);
     }
 }

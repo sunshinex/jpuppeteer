@@ -7,9 +7,9 @@ public class ClearRequest {
 
     /**
     */
-    public final StorageId storageId;
+    public final jpuppeteer.cdp.client.entity.domstorage.StorageId storageId;
 
-    public ClearRequest(StorageId storageId) {
+    public ClearRequest(jpuppeteer.cdp.client.entity.domstorage.StorageId storageId) {
         this.storageId = storageId;
     }
 

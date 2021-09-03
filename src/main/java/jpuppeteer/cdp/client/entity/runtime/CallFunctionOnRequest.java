@@ -17,7 +17,7 @@ public class CallFunctionOnRequest {
     /**
     * Call arguments. All call arguments must belong to the same JavaScript world as the target object.
     */
-    public final java.util.List<CallArgument> arguments;
+    public final java.util.List<jpuppeteer.cdp.client.entity.runtime.CallArgument> arguments;
 
     /**
     * In silent mode exceptions thrown during evaluation are not reported and do not pause execution. Overrides `setPauseOnException` state.
@@ -54,7 +54,7 @@ public class CallFunctionOnRequest {
     */
     public final String objectGroup;
 
-    public CallFunctionOnRequest(String functionDeclaration, String objectId, java.util.List<CallArgument> arguments, Boolean silent, Boolean returnByValue, Boolean generatePreview, Boolean userGesture, Boolean awaitPromise, Integer executionContextId, String objectGroup) {
+    public CallFunctionOnRequest(String functionDeclaration, String objectId, java.util.List<jpuppeteer.cdp.client.entity.runtime.CallArgument> arguments, Boolean silent, Boolean returnByValue, Boolean generatePreview, Boolean userGesture, Boolean awaitPromise, Integer executionContextId, String objectGroup) {
         this.functionDeclaration = functionDeclaration;
         this.objectId = objectId;
         this.arguments = arguments;

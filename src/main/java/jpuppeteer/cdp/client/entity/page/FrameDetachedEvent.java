@@ -10,8 +10,13 @@ public class FrameDetachedEvent {
     */
     public final String frameId;
 
-    public FrameDetachedEvent(String frameId) {
+    /**
+    */
+    public final jpuppeteer.cdp.client.constant.page.FrameDetachedEventReason reason;
+
+    public FrameDetachedEvent(String frameId, jpuppeteer.cdp.client.constant.page.FrameDetachedEventReason reason) {
         this.frameId = frameId;
+        this.reason = reason;
     }
 
 }

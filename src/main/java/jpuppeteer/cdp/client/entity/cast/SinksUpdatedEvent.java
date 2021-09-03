@@ -8,9 +8,9 @@ public class SinksUpdatedEvent {
 
     /**
     */
-    public final java.util.List<Sink> sinks;
+    public final java.util.List<jpuppeteer.cdp.client.entity.cast.Sink> sinks;
 
-    public SinksUpdatedEvent(java.util.List<Sink> sinks) {
+    public SinksUpdatedEvent(java.util.List<jpuppeteer.cdp.client.entity.cast.Sink> sinks) {
         this.sinks = sinks;
     }
 

@@ -11,9 +11,9 @@ public class SetBlackboxedRangesRequest {
 
     /**
     */
-    public final java.util.List<ScriptPosition> positions;
+    public final java.util.List<jpuppeteer.cdp.client.entity.debugger.ScriptPosition> positions;
 
-    public SetBlackboxedRangesRequest(String scriptId, java.util.List<ScriptPosition> positions) {
+    public SetBlackboxedRangesRequest(String scriptId, java.util.List<jpuppeteer.cdp.client.entity.debugger.ScriptPosition> positions) {
         this.scriptId = scriptId;
         this.positions = positions;
     }

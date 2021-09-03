@@ -13,9 +13,9 @@ public class SetInspectModeRequest {
     /**
     * A descriptor for the highlight appearance of hovered-over nodes. May be omitted if `enabled == false`.
     */
-    public final HighlightConfig highlightConfig;
+    public final jpuppeteer.cdp.client.entity.overlay.HighlightConfig highlightConfig;
 
-    public SetInspectModeRequest(jpuppeteer.cdp.client.constant.overlay.InspectMode mode, HighlightConfig highlightConfig) {
+    public SetInspectModeRequest(jpuppeteer.cdp.client.constant.overlay.InspectMode mode, jpuppeteer.cdp.client.entity.overlay.HighlightConfig highlightConfig) {
         this.mode = mode;
         this.highlightConfig = highlightConfig;
     }

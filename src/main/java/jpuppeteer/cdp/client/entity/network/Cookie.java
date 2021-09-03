@@ -60,7 +60,22 @@ public class Cookie {
     */
     public final jpuppeteer.cdp.client.constant.network.CookiePriority priority;
 
-    public Cookie(String name, String value, String domain, String path, java.math.BigDecimal expires, Integer size, Boolean httpOnly, Boolean secure, Boolean session, jpuppeteer.cdp.client.constant.network.CookieSameSite sameSite, jpuppeteer.cdp.client.constant.network.CookiePriority priority) {
+    /**
+    * True if cookie is SameParty.
+    */
+    public final Boolean sameParty;
+
+    /**
+    * Cookie source scheme type.
+    */
+    public final jpuppeteer.cdp.client.constant.network.CookieSourceScheme sourceScheme;
+
+    /**
+    * Cookie source port. Valid values are {-1, [1, 65535]}, -1 indicates an unspecified port. An unspecified port value allows protocol clients to emulate legacy cookie scope for the port. This is a temporary ability and it will be removed in the future.
+    */
+    public final Integer sourcePort;
+
+    public Cookie(String name, String value, String domain, String path, java.math.BigDecimal expires, Integer size, Boolean httpOnly, Boolean secure, Boolean session, jpuppeteer.cdp.client.constant.network.CookieSameSite sameSite, jpuppeteer.cdp.client.constant.network.CookiePriority priority, Boolean sameParty, jpuppeteer.cdp.client.constant.network.CookieSourceScheme sourceScheme, Integer sourcePort) {
         this.name = name;
         this.value = value;
         this.domain = domain;
@@ -72,9 +87,12 @@ public class Cookie {
         this.session = session;
         this.sameSite = sameSite;
         this.priority = priority;
+        this.sameParty = sameParty;
+        this.sourceScheme = sourceScheme;
+        this.sourcePort = sourcePort;
     }
 
-    public Cookie(String name, String value, String domain, String path, java.math.BigDecimal expires, Integer size, Boolean httpOnly, Boolean secure, Boolean session, jpuppeteer.cdp.client.constant.network.CookiePriority priority) {
+    public Cookie(String name, String value, String domain, String path, java.math.BigDecimal expires, Integer size, Boolean httpOnly, Boolean secure, Boolean session, jpuppeteer.cdp.client.constant.network.CookiePriority priority, Boolean sameParty, jpuppeteer.cdp.client.constant.network.CookieSourceScheme sourceScheme, Integer sourcePort) {
         this.name = name;
         this.value = value;
         this.domain = domain;
@@ -86,6 +104,9 @@ public class Cookie {
         this.session = session;
         this.sameSite = null;
         this.priority = priority;
+        this.sameParty = sameParty;
+        this.sourceScheme = sourceScheme;
+        this.sourcePort = sourcePort;
     }
 
 }

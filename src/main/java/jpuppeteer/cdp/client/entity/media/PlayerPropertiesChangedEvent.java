@@ -12,9 +12,9 @@ public class PlayerPropertiesChangedEvent {
 
     /**
     */
-    public final java.util.List<PlayerProperty> properties;
+    public final java.util.List<jpuppeteer.cdp.client.entity.media.PlayerProperty> properties;
 
-    public PlayerPropertiesChangedEvent(String playerId, java.util.List<PlayerProperty> properties) {
+    public PlayerPropertiesChangedEvent(String playerId, java.util.List<jpuppeteer.cdp.client.entity.media.PlayerProperty> properties) {
         this.playerId = playerId;
         this.properties = properties;
     }

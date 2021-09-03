@@ -11,7 +11,7 @@ public class BeginFrameResponse {
     public final Boolean hasDamage;
 
     /**
-    * Base64-encoded image data of the screenshot, if one was requested and successfully taken.
+    * Base64-encoded image data of the screenshot, if one was requested and successfully taken. (Encoded as a base64 string when passed over JSON)
     */
     public final String screenshotData;
 

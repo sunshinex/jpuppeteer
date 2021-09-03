@@ -7,7 +7,7 @@ public class DomStorageItemUpdatedEvent {
 
     /**
     */
-    public final StorageId storageId;
+    public final jpuppeteer.cdp.client.entity.domstorage.StorageId storageId;
 
     /**
     */
@@ -21,7 +21,7 @@ public class DomStorageItemUpdatedEvent {
     */
     public final String newValue;
 
-    public DomStorageItemUpdatedEvent(StorageId storageId, String key, String oldValue, String newValue) {
+    public DomStorageItemUpdatedEvent(jpuppeteer.cdp.client.entity.domstorage.StorageId storageId, String key, String oldValue, String newValue) {
         this.storageId = storageId;
         this.key = key;
         this.oldValue = oldValue;

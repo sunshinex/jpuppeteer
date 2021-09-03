@@ -9,12 +9,12 @@ public class KeyRange {
     /**
     * Lower bound.
     */
-    public final Key lower;
+    public final jpuppeteer.cdp.client.entity.indexeddb.Key lower;
 
     /**
     * Upper bound.
     */
-    public final Key upper;
+    public final jpuppeteer.cdp.client.entity.indexeddb.Key upper;
 
     /**
     * If true lower bound is open.
@@ -26,7 +26,7 @@ public class KeyRange {
     */
     public final Boolean upperOpen;
 
-    public KeyRange(Key lower, Key upper, Boolean lowerOpen, Boolean upperOpen) {
+    public KeyRange(jpuppeteer.cdp.client.entity.indexeddb.Key lower, jpuppeteer.cdp.client.entity.indexeddb.Key upper, Boolean lowerOpen, Boolean upperOpen) {
         this.lower = lower;
         this.upper = upper;
         this.lowerOpen = lowerOpen;

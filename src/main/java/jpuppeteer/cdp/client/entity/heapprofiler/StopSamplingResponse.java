@@ -8,9 +8,9 @@ public class StopSamplingResponse {
     /**
     * Recorded sampling heap profile.
     */
-    public final SamplingHeapProfile profile;
+    public final jpuppeteer.cdp.client.entity.heapprofiler.SamplingHeapProfile profile;
 
-    public StopSamplingResponse(SamplingHeapProfile profile) {
+    public StopSamplingResponse(jpuppeteer.cdp.client.entity.heapprofiler.SamplingHeapProfile profile) {
         this.profile = profile;
     }
 

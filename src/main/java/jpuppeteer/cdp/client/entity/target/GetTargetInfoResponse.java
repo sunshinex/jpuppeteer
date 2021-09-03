@@ -6,9 +6,9 @@ public class GetTargetInfoResponse {
 
     /**
     */
-    public final TargetInfo targetInfo;
+    public final jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo;
 
-    public GetTargetInfoResponse(TargetInfo targetInfo) {
+    public GetTargetInfoResponse(jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo) {
         this.targetInfo = targetInfo;
     }
 

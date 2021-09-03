@@ -5,6 +5,7 @@ import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.client.constant.storage.StorageType;
 import jpuppeteer.cdp.client.entity.browser.GetVersionResponse;
+import jpuppeteer.cdp.client.entity.target.CreateBrowserContextRequest;
 
 public interface Browser extends EventEmitter<CDPEvent> {
 
@@ -14,7 +15,19 @@ public interface Browser extends EventEmitter<CDPEvent> {
 
     BrowserContext[] browserContexts();
 
-    Future<BrowserContext> createContext();
+    Future<BrowserContext> createContext(CreateBrowserContextRequest request);
+
+    default Future<BrowserContext> createContext(String proxyServer, String proxyBypassList) {
+        return createContext(new CreateBrowserContextRequest(false, proxyServer, proxyBypassList));
+    }
+
+    default Future<BrowserContext> createContext(String proxyServer) {
+        return createContext(new CreateBrowserContextRequest(false, proxyServer, null));
+    }
+
+    default Future<BrowserContext> createContext() {
+        return createContext(null, null);
+    }
 
     BrowserContext defaultContext();
 

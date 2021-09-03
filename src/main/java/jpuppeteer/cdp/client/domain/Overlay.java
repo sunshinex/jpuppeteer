@@ -36,6 +36,22 @@ public class Overlay {
 
 
     /**
+    * For Persistent Grid testing.
+    */
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.overlay.GetGridHighlightObjectsForTestResponse> getGridHighlightObjectsForTest(jpuppeteer.cdp.client.entity.overlay.GetGridHighlightObjectsForTestRequest request) {
+        return session.send("Overlay.getGridHighlightObjectsForTest", request, jpuppeteer.cdp.client.entity.overlay.GetGridHighlightObjectsForTestResponse.class);
+    }
+
+
+    /**
+    * For Source Order Viewer testing.
+    */
+    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.overlay.GetSourceOrderHighlightObjectForTestResponse> getSourceOrderHighlightObjectForTest(jpuppeteer.cdp.client.entity.overlay.GetSourceOrderHighlightObjectForTestRequest request) {
+        return session.send("Overlay.getSourceOrderHighlightObjectForTest", request, jpuppeteer.cdp.client.entity.overlay.GetSourceOrderHighlightObjectForTestResponse.class);
+    }
+
+
+    /**
     * Hides any highlight.
     */
     public io.netty.util.concurrent.Future hideHighlight() {
@@ -72,6 +88,14 @@ public class Overlay {
     */
     public io.netty.util.concurrent.Future highlightRect(jpuppeteer.cdp.client.entity.overlay.HighlightRectRequest request) {
         return session.send("Overlay.highlightRect", request);
+    }
+
+
+    /**
+    * Highlights the source order of the children of the DOM node with given id or with the given JavaScript object wrapper. Either nodeId or objectId must be specified.
+    */
+    public io.netty.util.concurrent.Future highlightSourceOrder(jpuppeteer.cdp.client.entity.overlay.HighlightSourceOrderRequest request) {
+        return session.send("Overlay.highlightSourceOrder", request);
     }
 
 
@@ -115,6 +139,28 @@ public class Overlay {
 
 
     /**
+    * Highlight multiple elements with the CSS Grid overlay.
+    */
+    public io.netty.util.concurrent.Future setShowGridOverlays(jpuppeteer.cdp.client.entity.overlay.SetShowGridOverlaysRequest request) {
+        return session.send("Overlay.setShowGridOverlays", request);
+    }
+
+
+    /**
+    */
+    public io.netty.util.concurrent.Future setShowFlexOverlays(jpuppeteer.cdp.client.entity.overlay.SetShowFlexOverlaysRequest request) {
+        return session.send("Overlay.setShowFlexOverlays", request);
+    }
+
+
+    /**
+    */
+    public io.netty.util.concurrent.Future setShowScrollSnapOverlays(jpuppeteer.cdp.client.entity.overlay.SetShowScrollSnapOverlaysRequest request) {
+        return session.send("Overlay.setShowScrollSnapOverlays", request);
+    }
+
+
+    /**
     * Requests that backend shows paint rectangles
     */
     public io.netty.util.concurrent.Future setShowPaintRects(jpuppeteer.cdp.client.entity.overlay.SetShowPaintRectsRequest request) {
@@ -147,10 +193,26 @@ public class Overlay {
 
 
     /**
+    * Request that backend shows an overlay with web vital metrics.
+    */
+    public io.netty.util.concurrent.Future setShowWebVitals(jpuppeteer.cdp.client.entity.overlay.SetShowWebVitalsRequest request) {
+        return session.send("Overlay.setShowWebVitals", request);
+    }
+
+
+    /**
     * Paints viewport size upon main frame resize.
     */
     public io.netty.util.concurrent.Future setShowViewportSizeOnResize(jpuppeteer.cdp.client.entity.overlay.SetShowViewportSizeOnResizeRequest request) {
         return session.send("Overlay.setShowViewportSizeOnResize", request);
+    }
+
+
+    /**
+    * Add a dual screen device hinge
+    */
+    public io.netty.util.concurrent.Future setShowHinge(jpuppeteer.cdp.client.entity.overlay.SetShowHingeRequest request) {
+        return session.send("Overlay.setShowHinge", request);
     }
 
 }

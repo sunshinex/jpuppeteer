@@ -7,9 +7,9 @@ public class GetSamplingProfileResponse {
 
     /**
     */
-    public final SamplingProfile profile;
+    public final jpuppeteer.cdp.client.entity.memory.SamplingProfile profile;
 
-    public GetSamplingProfileResponse(SamplingProfile profile) {
+    public GetSamplingProfileResponse(jpuppeteer.cdp.client.entity.memory.SamplingProfile profile) {
         this.profile = profile;
     }
 

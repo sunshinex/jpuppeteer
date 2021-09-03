@@ -24,9 +24,9 @@ public class SamplingHeapProfileNode {
     /**
     * Child nodes.
     */
-    public final java.util.List<SamplingHeapProfileNode> children;
+    public final java.util.List<jpuppeteer.cdp.client.entity.heapprofiler.SamplingHeapProfileNode> children;
 
-    public SamplingHeapProfileNode(jpuppeteer.cdp.client.entity.runtime.CallFrame callFrame, java.math.BigDecimal selfSize, Integer id, java.util.List<SamplingHeapProfileNode> children) {
+    public SamplingHeapProfileNode(jpuppeteer.cdp.client.entity.runtime.CallFrame callFrame, java.math.BigDecimal selfSize, Integer id, java.util.List<jpuppeteer.cdp.client.entity.heapprofiler.SamplingHeapProfileNode> children) {
         this.callFrame = callFrame;
         this.selfSize = selfSize;
         this.id = id;

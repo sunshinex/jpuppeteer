@@ -7,9 +7,9 @@ public class StartViolationsReportRequest {
     /**
     * Configuration for violations.
     */
-    public final java.util.List<ViolationSetting> config;
+    public final java.util.List<jpuppeteer.cdp.client.entity.log.ViolationSetting> config;
 
-    public StartViolationsReportRequest(java.util.List<ViolationSetting> config) {
+    public StartViolationsReportRequest(java.util.List<jpuppeteer.cdp.client.entity.log.ViolationSetting> config) {
         this.config = config;
     }
 

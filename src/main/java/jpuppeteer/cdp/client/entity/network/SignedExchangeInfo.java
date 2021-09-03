@@ -8,31 +8,31 @@ public class SignedExchangeInfo {
     /**
     * The outer response of signed HTTP exchange which was received from network.
     */
-    public final Response outerResponse;
+    public final jpuppeteer.cdp.client.entity.network.Response outerResponse;
 
     /**
     * Information about the signed exchange header.
     */
-    public final SignedExchangeHeader header;
+    public final jpuppeteer.cdp.client.entity.network.SignedExchangeHeader header;
 
     /**
     * Security details for the signed exchange header.
     */
-    public final SecurityDetails securityDetails;
+    public final jpuppeteer.cdp.client.entity.network.SecurityDetails securityDetails;
 
     /**
     * Errors occurred while handling the signed exchagne.
     */
-    public final java.util.List<SignedExchangeError> errors;
+    public final java.util.List<jpuppeteer.cdp.client.entity.network.SignedExchangeError> errors;
 
-    public SignedExchangeInfo(Response outerResponse, SignedExchangeHeader header, SecurityDetails securityDetails, java.util.List<SignedExchangeError> errors) {
+    public SignedExchangeInfo(jpuppeteer.cdp.client.entity.network.Response outerResponse, jpuppeteer.cdp.client.entity.network.SignedExchangeHeader header, jpuppeteer.cdp.client.entity.network.SecurityDetails securityDetails, java.util.List<jpuppeteer.cdp.client.entity.network.SignedExchangeError> errors) {
         this.outerResponse = outerResponse;
         this.header = header;
         this.securityDetails = securityDetails;
         this.errors = errors;
     }
 
-    public SignedExchangeInfo(Response outerResponse) {
+    public SignedExchangeInfo(jpuppeteer.cdp.client.entity.network.Response outerResponse) {
         this.outerResponse = outerResponse;
         this.header = null;
         this.securityDetails = null;

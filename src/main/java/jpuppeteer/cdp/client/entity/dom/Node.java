@@ -48,7 +48,7 @@ public class Node {
     /**
     * Child nodes of this node when requested with children.
     */
-    public final java.util.List<Node> children;
+    public final java.util.List<jpuppeteer.cdp.client.entity.dom.Node> children;
 
     /**
     * Attributes of the `Element` node in the form of flat array `[name1, value1, name2, value2]`.
@@ -113,39 +113,43 @@ public class Node {
     /**
     * Content document for frame owner elements.
     */
-    public final Node contentDocument;
+    public final jpuppeteer.cdp.client.entity.dom.Node contentDocument;
 
     /**
     * Shadow root list for given element host.
     */
-    public final java.util.List<Node> shadowRoots;
+    public final java.util.List<jpuppeteer.cdp.client.entity.dom.Node> shadowRoots;
 
     /**
     * Content document fragment for template elements.
     */
-    public final Node templateContent;
+    public final jpuppeteer.cdp.client.entity.dom.Node templateContent;
 
     /**
     * Pseudo elements associated with this node.
     */
-    public final java.util.List<Node> pseudoElements;
+    public final java.util.List<jpuppeteer.cdp.client.entity.dom.Node> pseudoElements;
 
     /**
-    * Import document for the HTMLImport links.
+    * Deprecated, as the HTML Imports API has been removed (crbug.com/937746). This property used to return the imported document for the HTMLImport links. The property is always undefined now.
     */
-    public final Node importedDocument;
+    public final jpuppeteer.cdp.client.entity.dom.Node importedDocument;
 
     /**
     * Distributed nodes for given insertion point.
     */
-    public final java.util.List<BackendNode> distributedNodes;
+    public final java.util.List<jpuppeteer.cdp.client.entity.dom.BackendNode> distributedNodes;
 
     /**
     * Whether the node is SVG.
     */
     public final Boolean isSVG;
 
-    public Node(Integer nodeId, Integer parentId, Integer backendNodeId, Integer nodeType, String nodeName, String localName, String nodeValue, Integer childNodeCount, java.util.List<Node> children, java.util.List<String> attributes, String documentURL, String baseURL, String publicId, String systemId, String internalSubset, String xmlVersion, String name, String value, jpuppeteer.cdp.client.constant.dom.PseudoType pseudoType, jpuppeteer.cdp.client.constant.dom.ShadowRootType shadowRootType, String frameId, Node contentDocument, java.util.List<Node> shadowRoots, Node templateContent, java.util.List<Node> pseudoElements, Node importedDocument, java.util.List<BackendNode> distributedNodes, Boolean isSVG) {
+    /**
+    */
+    public final jpuppeteer.cdp.client.constant.dom.CompatibilityMode compatibilityMode;
+
+    public Node(Integer nodeId, Integer parentId, Integer backendNodeId, Integer nodeType, String nodeName, String localName, String nodeValue, Integer childNodeCount, java.util.List<jpuppeteer.cdp.client.entity.dom.Node> children, java.util.List<String> attributes, String documentURL, String baseURL, String publicId, String systemId, String internalSubset, String xmlVersion, String name, String value, jpuppeteer.cdp.client.constant.dom.PseudoType pseudoType, jpuppeteer.cdp.client.constant.dom.ShadowRootType shadowRootType, String frameId, jpuppeteer.cdp.client.entity.dom.Node contentDocument, java.util.List<jpuppeteer.cdp.client.entity.dom.Node> shadowRoots, jpuppeteer.cdp.client.entity.dom.Node templateContent, java.util.List<jpuppeteer.cdp.client.entity.dom.Node> pseudoElements, jpuppeteer.cdp.client.entity.dom.Node importedDocument, java.util.List<jpuppeteer.cdp.client.entity.dom.BackendNode> distributedNodes, Boolean isSVG, jpuppeteer.cdp.client.constant.dom.CompatibilityMode compatibilityMode) {
         this.nodeId = nodeId;
         this.parentId = parentId;
         this.backendNodeId = backendNodeId;
@@ -174,6 +178,7 @@ public class Node {
         this.importedDocument = importedDocument;
         this.distributedNodes = distributedNodes;
         this.isSVG = isSVG;
+        this.compatibilityMode = compatibilityMode;
     }
 
     public Node(Integer nodeId, Integer backendNodeId, Integer nodeType, String nodeName, String localName, String nodeValue) {
@@ -205,6 +210,7 @@ public class Node {
         this.importedDocument = null;
         this.distributedNodes = null;
         this.isSVG = null;
+        this.compatibilityMode = null;
     }
 
 }

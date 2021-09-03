@@ -11,6 +11,7 @@ public enum AXValueNativeSourceType implements jpuppeteer.cdp.client.CDPEnum {
     LABELFOR("labelfor"),
     LABELWRAPPED("labelwrapped"),
     LEGEND("legend"),
+    RUBYANNOTATION("rubyannotation"),
     TABLECAPTION("tablecaption"),
     TITLE("title"),
     OTHER("other"),

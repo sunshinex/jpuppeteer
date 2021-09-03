@@ -63,14 +63,14 @@ public class SecurityDetails {
     /**
     * List of signed certificate timestamps (SCTs).
     */
-    public final java.util.List<SignedCertificateTimestamp> signedCertificateTimestampList;
+    public final java.util.List<jpuppeteer.cdp.client.entity.network.SignedCertificateTimestamp> signedCertificateTimestampList;
 
     /**
     * Whether the request complied with Certificate Transparency policy
     */
     public final jpuppeteer.cdp.client.constant.network.CertificateTransparencyCompliance certificateTransparencyCompliance;
 
-    public SecurityDetails(String protocol, String keyExchange, String keyExchangeGroup, String cipher, String mac, Integer certificateId, String subjectName, java.util.List<String> sanList, String issuer, java.math.BigDecimal validFrom, java.math.BigDecimal validTo, java.util.List<SignedCertificateTimestamp> signedCertificateTimestampList, jpuppeteer.cdp.client.constant.network.CertificateTransparencyCompliance certificateTransparencyCompliance) {
+    public SecurityDetails(String protocol, String keyExchange, String keyExchangeGroup, String cipher, String mac, Integer certificateId, String subjectName, java.util.List<String> sanList, String issuer, java.math.BigDecimal validFrom, java.math.BigDecimal validTo, java.util.List<jpuppeteer.cdp.client.entity.network.SignedCertificateTimestamp> signedCertificateTimestampList, jpuppeteer.cdp.client.constant.network.CertificateTransparencyCompliance certificateTransparencyCompliance) {
         this.protocol = protocol;
         this.keyExchange = keyExchange;
         this.keyExchangeGroup = keyExchangeGroup;
@@ -86,7 +86,7 @@ public class SecurityDetails {
         this.certificateTransparencyCompliance = certificateTransparencyCompliance;
     }
 
-    public SecurityDetails(String protocol, String keyExchange, String cipher, Integer certificateId, String subjectName, java.util.List<String> sanList, String issuer, java.math.BigDecimal validFrom, java.math.BigDecimal validTo, java.util.List<SignedCertificateTimestamp> signedCertificateTimestampList, jpuppeteer.cdp.client.constant.network.CertificateTransparencyCompliance certificateTransparencyCompliance) {
+    public SecurityDetails(String protocol, String keyExchange, String cipher, Integer certificateId, String subjectName, java.util.List<String> sanList, String issuer, java.math.BigDecimal validFrom, java.math.BigDecimal validTo, java.util.List<jpuppeteer.cdp.client.entity.network.SignedCertificateTimestamp> signedCertificateTimestampList, jpuppeteer.cdp.client.constant.network.CertificateTransparencyCompliance certificateTransparencyCompliance) {
         this.protocol = protocol;
         this.keyExchange = keyExchange;
         this.keyExchangeGroup = null;

@@ -75,7 +75,22 @@ public class ScriptFailedToParseEvent {
     */
     public final jpuppeteer.cdp.client.entity.runtime.StackTrace stackTrace;
 
-    public ScriptFailedToParseEvent(String scriptId, String url, Integer startLine, Integer startColumn, Integer endLine, Integer endColumn, Integer executionContextId, String hash, java.util.Map<String, Object> executionContextAuxData, String sourceMapURL, Boolean hasSourceURL, Boolean isModule, Integer length, jpuppeteer.cdp.client.entity.runtime.StackTrace stackTrace) {
+    /**
+    * If the scriptLanguage is WebAssembly, the code section offset in the module.
+    */
+    public final Integer codeOffset;
+
+    /**
+    * The language of the script.
+    */
+    public final jpuppeteer.cdp.client.constant.debugger.ScriptLanguage scriptLanguage;
+
+    /**
+    * The name the embedder supplied for this script.
+    */
+    public final String embedderName;
+
+    public ScriptFailedToParseEvent(String scriptId, String url, Integer startLine, Integer startColumn, Integer endLine, Integer endColumn, Integer executionContextId, String hash, java.util.Map<String, Object> executionContextAuxData, String sourceMapURL, Boolean hasSourceURL, Boolean isModule, Integer length, jpuppeteer.cdp.client.entity.runtime.StackTrace stackTrace, Integer codeOffset, jpuppeteer.cdp.client.constant.debugger.ScriptLanguage scriptLanguage, String embedderName) {
         this.scriptId = scriptId;
         this.url = url;
         this.startLine = startLine;
@@ -90,6 +105,9 @@ public class ScriptFailedToParseEvent {
         this.isModule = isModule;
         this.length = length;
         this.stackTrace = stackTrace;
+        this.codeOffset = codeOffset;
+        this.scriptLanguage = scriptLanguage;
+        this.embedderName = embedderName;
     }
 
     public ScriptFailedToParseEvent(String scriptId, String url, Integer startLine, Integer startColumn, Integer endLine, Integer endColumn, Integer executionContextId, String hash) {
@@ -107,6 +125,9 @@ public class ScriptFailedToParseEvent {
         this.isModule = null;
         this.length = null;
         this.stackTrace = null;
+        this.codeOffset = null;
+        this.scriptLanguage = null;
+        this.embedderName = null;
     }
 
 }

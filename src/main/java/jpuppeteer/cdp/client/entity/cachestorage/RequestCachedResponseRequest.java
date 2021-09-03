@@ -18,9 +18,9 @@ public class RequestCachedResponseRequest {
     /**
     * headers of the request.
     */
-    public final java.util.List<Header> requestHeaders;
+    public final java.util.List<jpuppeteer.cdp.client.entity.cachestorage.Header> requestHeaders;
 
-    public RequestCachedResponseRequest(String cacheId, String requestURL, java.util.List<Header> requestHeaders) {
+    public RequestCachedResponseRequest(String cacheId, String requestURL, java.util.List<jpuppeteer.cdp.client.entity.cachestorage.Header> requestHeaders) {
         this.cacheId = cacheId;
         this.requestURL = requestURL;
         this.requestHeaders = requestHeaders;

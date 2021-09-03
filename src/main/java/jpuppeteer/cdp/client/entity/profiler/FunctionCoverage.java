@@ -13,14 +13,14 @@ public class FunctionCoverage {
     /**
     * Source ranges inside the function with coverage data.
     */
-    public final java.util.List<CoverageRange> ranges;
+    public final java.util.List<jpuppeteer.cdp.client.entity.profiler.CoverageRange> ranges;
 
     /**
     * Whether coverage data for this function has block granularity.
     */
     public final Boolean isBlockCoverage;
 
-    public FunctionCoverage(String functionName, java.util.List<CoverageRange> ranges, Boolean isBlockCoverage) {
+    public FunctionCoverage(String functionName, java.util.List<jpuppeteer.cdp.client.entity.profiler.CoverageRange> ranges, Boolean isBlockCoverage) {
         this.functionName = functionName;
         this.ranges = ranges;
         this.isBlockCoverage = isBlockCoverage;

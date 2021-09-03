@@ -13,9 +13,9 @@ public class BlockedCookieWithReason {
     /**
     * The cookie object representing the cookie which was not sent.
     */
-    public final Cookie cookie;
+    public final jpuppeteer.cdp.client.entity.network.Cookie cookie;
 
-    public BlockedCookieWithReason(java.util.List<jpuppeteer.cdp.client.constant.network.CookieBlockedReason> blockedReasons, Cookie cookie) {
+    public BlockedCookieWithReason(java.util.List<jpuppeteer.cdp.client.constant.network.CookieBlockedReason> blockedReasons, jpuppeteer.cdp.client.entity.network.Cookie cookie) {
         this.blockedReasons = blockedReasons;
         this.cookie = cookie;
     }

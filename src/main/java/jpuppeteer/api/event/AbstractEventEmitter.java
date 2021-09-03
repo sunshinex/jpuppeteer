@@ -3,6 +3,7 @@ package jpuppeteer.api.event;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@SuppressWarnings("unchecked")
 public abstract class AbstractEventEmitter<E> implements EventEmitter<E> {
 
     private final Map<Long, AbstractListener<E>> listeners;

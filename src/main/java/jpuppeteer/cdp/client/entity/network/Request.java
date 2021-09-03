@@ -36,6 +36,11 @@ public class Request {
     public final Boolean hasPostData;
 
     /**
+    * Request body elements. This will be converted from base64 to binary
+    */
+    public final java.util.List<jpuppeteer.cdp.client.entity.network.PostDataEntry> postDataEntries;
+
+    /**
     * The mixed content type of the request.
     */
     public final jpuppeteer.cdp.client.constant.security.MixedContentType mixedContentType;
@@ -55,17 +60,24 @@ public class Request {
     */
     public final Boolean isLinkPreload;
 
-    public Request(String url, String urlFragment, String method, java.util.Map<String, Object> headers, String postData, Boolean hasPostData, jpuppeteer.cdp.client.constant.security.MixedContentType mixedContentType, jpuppeteer.cdp.client.constant.network.ResourcePriority initialPriority, jpuppeteer.cdp.client.constant.network.RequestReferrerPolicy referrerPolicy, Boolean isLinkPreload) {
+    /**
+    * Set for requests when the TrustToken API is used. Contains the parameters passed by the developer (e.g. via "fetch") as understood by the backend.
+    */
+    public final jpuppeteer.cdp.client.entity.network.TrustTokenParams trustTokenParams;
+
+    public Request(String url, String urlFragment, String method, java.util.Map<String, Object> headers, String postData, Boolean hasPostData, java.util.List<jpuppeteer.cdp.client.entity.network.PostDataEntry> postDataEntries, jpuppeteer.cdp.client.constant.security.MixedContentType mixedContentType, jpuppeteer.cdp.client.constant.network.ResourcePriority initialPriority, jpuppeteer.cdp.client.constant.network.RequestReferrerPolicy referrerPolicy, Boolean isLinkPreload, jpuppeteer.cdp.client.entity.network.TrustTokenParams trustTokenParams) {
         this.url = url;
         this.urlFragment = urlFragment;
         this.method = method;
         this.headers = headers;
         this.postData = postData;
         this.hasPostData = hasPostData;
+        this.postDataEntries = postDataEntries;
         this.mixedContentType = mixedContentType;
         this.initialPriority = initialPriority;
         this.referrerPolicy = referrerPolicy;
         this.isLinkPreload = isLinkPreload;
+        this.trustTokenParams = trustTokenParams;
     }
 
     public Request(String url, String method, java.util.Map<String, Object> headers, jpuppeteer.cdp.client.constant.network.ResourcePriority initialPriority, jpuppeteer.cdp.client.constant.network.RequestReferrerPolicy referrerPolicy) {
@@ -75,10 +87,12 @@ public class Request {
         this.headers = headers;
         this.postData = null;
         this.hasPostData = null;
+        this.postDataEntries = null;
         this.mixedContentType = null;
         this.initialPriority = initialPriority;
         this.referrerPolicy = referrerPolicy;
         this.isLinkPreload = null;
+        this.trustTokenParams = null;
     }
 
 }

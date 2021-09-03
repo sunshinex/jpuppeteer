@@ -33,9 +33,9 @@ public class ProfileNode {
     /**
     * An array of source position ticks.
     */
-    public final java.util.List<PositionTickInfo> positionTicks;
+    public final java.util.List<jpuppeteer.cdp.client.entity.profiler.PositionTickInfo> positionTicks;
 
-    public ProfileNode(Integer id, jpuppeteer.cdp.client.entity.runtime.CallFrame callFrame, Integer hitCount, java.util.List<Integer> children, String deoptReason, java.util.List<PositionTickInfo> positionTicks) {
+    public ProfileNode(Integer id, jpuppeteer.cdp.client.entity.runtime.CallFrame callFrame, Integer hitCount, java.util.List<Integer> children, String deoptReason, java.util.List<jpuppeteer.cdp.client.entity.profiler.PositionTickInfo> positionTicks) {
         this.id = id;
         this.callFrame = callFrame;
         this.hitCount = hitCount;

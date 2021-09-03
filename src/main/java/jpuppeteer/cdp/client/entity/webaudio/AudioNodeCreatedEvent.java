@@ -8,9 +8,9 @@ public class AudioNodeCreatedEvent {
 
     /**
     */
-    public final AudioNode node;
+    public final jpuppeteer.cdp.client.entity.webaudio.AudioNode node;
 
-    public AudioNodeCreatedEvent(AudioNode node) {
+    public AudioNodeCreatedEvent(jpuppeteer.cdp.client.entity.webaudio.AudioNode node) {
         this.node = node;
     }
 

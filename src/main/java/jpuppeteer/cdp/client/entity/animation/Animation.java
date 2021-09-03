@@ -49,14 +49,14 @@ public class Animation {
     /**
     * `Animation`'s source animation node.
     */
-    public final AnimationEffect source;
+    public final jpuppeteer.cdp.client.entity.animation.AnimationEffect source;
 
     /**
     * A unique ID for `Animation` representing the sources that triggered this CSS animation/transition.
     */
     public final String cssId;
 
-    public Animation(String id, String name, Boolean pausedState, String playState, java.math.BigDecimal playbackRate, java.math.BigDecimal startTime, java.math.BigDecimal currentTime, jpuppeteer.cdp.client.constant.animation.AnimationType type, AnimationEffect source, String cssId) {
+    public Animation(String id, String name, Boolean pausedState, String playState, java.math.BigDecimal playbackRate, java.math.BigDecimal startTime, java.math.BigDecimal currentTime, jpuppeteer.cdp.client.constant.animation.AnimationType type, jpuppeteer.cdp.client.entity.animation.AnimationEffect source, String cssId) {
         this.id = id;
         this.name = name;
         this.pausedState = pausedState;

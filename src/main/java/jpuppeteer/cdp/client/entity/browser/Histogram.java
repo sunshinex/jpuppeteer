@@ -23,9 +23,9 @@ public class Histogram {
     /**
     * Buckets.
     */
-    public final java.util.List<Bucket> buckets;
+    public final java.util.List<jpuppeteer.cdp.client.entity.browser.Bucket> buckets;
 
-    public Histogram(String name, Integer sum, Integer count, java.util.List<Bucket> buckets) {
+    public Histogram(String name, Integer sum, Integer count, java.util.List<jpuppeteer.cdp.client.entity.browser.Bucket> buckets) {
         this.name = name;
         this.sum = sum;
         this.count = count;

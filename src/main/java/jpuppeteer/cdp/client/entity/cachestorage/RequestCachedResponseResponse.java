@@ -8,9 +8,9 @@ public class RequestCachedResponseResponse {
     /**
     * Response read from the cache.
     */
-    public final CachedResponse response;
+    public final jpuppeteer.cdp.client.entity.cachestorage.CachedResponse response;
 
-    public RequestCachedResponseResponse(CachedResponse response) {
+    public RequestCachedResponseResponse(jpuppeteer.cdp.client.entity.cachestorage.CachedResponse response) {
         this.response = response;
     }
 

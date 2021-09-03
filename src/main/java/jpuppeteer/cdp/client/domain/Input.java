@@ -11,6 +11,15 @@ public class Input {
     }
 
     /**
+    * Dispatches a drag event into the page.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future dispatchDragEvent(jpuppeteer.cdp.client.entity.input.DispatchDragEventRequest request) {
+        return session.send("Input.dispatchDragEvent", request);
+    }
+
+
+    /**
     * Dispatches a key event to the page.
     */
     public io.netty.util.concurrent.Future dispatchKeyEvent(jpuppeteer.cdp.client.entity.input.DispatchKeyEventRequest request) {
@@ -57,6 +66,15 @@ public class Input {
     */
     public io.netty.util.concurrent.Future setIgnoreInputEvents(jpuppeteer.cdp.client.entity.input.SetIgnoreInputEventsRequest request) {
         return session.send("Input.setIgnoreInputEvents", request);
+    }
+
+
+    /**
+    * Prevents default drag and drop behavior and instead emits `Input.dragIntercepted` events. Drag and drop behavior can be directly controlled via `Input.dispatchDragEvent`.
+    * experimental
+    */
+    public io.netty.util.concurrent.Future setInterceptDrags(jpuppeteer.cdp.client.entity.input.SetInterceptDragsRequest request) {
+        return session.send("Input.setInterceptDrags", request);
     }
 
 

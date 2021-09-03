@@ -11,13 +11,13 @@ public class SetKeyframeKeyRequest {
 
     /**
     */
-    public final SourceRange range;
+    public final jpuppeteer.cdp.client.entity.css.SourceRange range;
 
     /**
     */
     public final String keyText;
 
-    public SetKeyframeKeyRequest(String styleSheetId, SourceRange range, String keyText) {
+    public SetKeyframeKeyRequest(String styleSheetId, jpuppeteer.cdp.client.entity.css.SourceRange range, String keyText) {
         this.styleSheetId = styleSheetId;
         this.range = range;
         this.keyText = keyText;

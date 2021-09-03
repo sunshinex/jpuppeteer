@@ -8,7 +8,7 @@ public class GetInfoResponse {
     /**
     * Information about the GPUs on the system.
     */
-    public final GPUInfo gpu;
+    public final jpuppeteer.cdp.client.entity.systeminfo.GPUInfo gpu;
 
     /**
     * A platform-dependent description of the model of the machine. On Mac OS, this is, for example, 'MacBookPro'. Will be the empty string if not supported.
@@ -25,7 +25,7 @@ public class GetInfoResponse {
     */
     public final String commandLine;
 
-    public GetInfoResponse(GPUInfo gpu, String modelName, String modelVersion, String commandLine) {
+    public GetInfoResponse(jpuppeteer.cdp.client.entity.systeminfo.GPUInfo gpu, String modelName, String modelVersion, String commandLine) {
         this.gpu = gpu;
         this.modelName = modelName;
         this.modelVersion = modelVersion;

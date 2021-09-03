@@ -7,9 +7,9 @@ public class DescribeNodeResponse {
     /**
     * Node description.
     */
-    public final Node node;
+    public final jpuppeteer.cdp.client.entity.dom.Node node;
 
-    public DescribeNodeResponse(Node node) {
+    public DescribeNodeResponse(jpuppeteer.cdp.client.entity.dom.Node node) {
         this.node = node;
     }
 

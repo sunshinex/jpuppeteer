@@ -61,6 +61,16 @@ public class ResourceTiming {
     public final java.math.BigDecimal workerReady;
 
     /**
+    * Started fetch event.
+    */
+    public final java.math.BigDecimal workerFetchStart;
+
+    /**
+    * Settled fetch event respondWith promise.
+    */
+    public final java.math.BigDecimal workerRespondWithSettled;
+
+    /**
     * Started sending request.
     */
     public final java.math.BigDecimal sendStart;
@@ -85,7 +95,7 @@ public class ResourceTiming {
     */
     public final java.math.BigDecimal receiveHeadersEnd;
 
-    public ResourceTiming(java.math.BigDecimal requestTime, java.math.BigDecimal proxyStart, java.math.BigDecimal proxyEnd, java.math.BigDecimal dnsStart, java.math.BigDecimal dnsEnd, java.math.BigDecimal connectStart, java.math.BigDecimal connectEnd, java.math.BigDecimal sslStart, java.math.BigDecimal sslEnd, java.math.BigDecimal workerStart, java.math.BigDecimal workerReady, java.math.BigDecimal sendStart, java.math.BigDecimal sendEnd, java.math.BigDecimal pushStart, java.math.BigDecimal pushEnd, java.math.BigDecimal receiveHeadersEnd) {
+    public ResourceTiming(java.math.BigDecimal requestTime, java.math.BigDecimal proxyStart, java.math.BigDecimal proxyEnd, java.math.BigDecimal dnsStart, java.math.BigDecimal dnsEnd, java.math.BigDecimal connectStart, java.math.BigDecimal connectEnd, java.math.BigDecimal sslStart, java.math.BigDecimal sslEnd, java.math.BigDecimal workerStart, java.math.BigDecimal workerReady, java.math.BigDecimal workerFetchStart, java.math.BigDecimal workerRespondWithSettled, java.math.BigDecimal sendStart, java.math.BigDecimal sendEnd, java.math.BigDecimal pushStart, java.math.BigDecimal pushEnd, java.math.BigDecimal receiveHeadersEnd) {
         this.requestTime = requestTime;
         this.proxyStart = proxyStart;
         this.proxyEnd = proxyEnd;
@@ -97,6 +107,8 @@ public class ResourceTiming {
         this.sslEnd = sslEnd;
         this.workerStart = workerStart;
         this.workerReady = workerReady;
+        this.workerFetchStart = workerFetchStart;
+        this.workerRespondWithSettled = workerRespondWithSettled;
         this.sendStart = sendStart;
         this.sendEnd = sendEnd;
         this.pushStart = pushStart;
