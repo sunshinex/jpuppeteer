@@ -176,7 +176,7 @@ public class ChromeElement implements Element {
             String chrStr = String.valueOf(chr);
             USKeyboardDefinition def = USKeyboardDefinition.find(chrStr);
             if (def != null) {
-                next = next.async(o -> input.press(def, 20));
+                next = next.async(o -> input.press(def, delay));
             } else {
                 next = next.async(o -> input.input(chrStr));
             }
