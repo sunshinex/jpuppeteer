@@ -95,6 +95,7 @@ public class ChromeArguments {
     public static ChromeArguments parse(String executable, String... args) throws IOException {
         ChromeArguments arguments = new ChromeArguments(executable);
         boolean hasDebugPort = false;
+        boolean hasProxy = false;
         for(String arg : args) {
             if (arg.startsWith("--remote-debugging-pipe")) {
                 //指定pipe作为输入输出通道, 而不是使用websocket
@@ -108,12 +109,17 @@ public class ChromeArguments {
                 arguments.headless = true;
             } else if (arg.startsWith("--remote-debugging-port")) {
                 hasDebugPort = true;
+            } else if (arg.startsWith("--proxy-server")) {
+                hasProxy = true;
             }
         }
         arguments.args.addAll(Lists.newArrayList(args));
         if (arguments.headless) {
             //arguments.args.add("--hide-scrollbars");
             arguments.args.add("--mute-audio");
+        }
+        if (!hasProxy) {
+            arguments.args.add("--proxy-server=");
         }
         if (StringUtils.isEmpty(arguments.userDataDir)) {
             //如果没有指定用户文件夹, 则使用临时文件夹
