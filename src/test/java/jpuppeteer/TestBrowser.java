@@ -2,6 +2,7 @@ package jpuppeteer;
 
 import jpuppeteer.api.Browser;
 import jpuppeteer.api.BrowserContext;
+import jpuppeteer.api.Page;
 import jpuppeteer.cdp.client.entity.browser.GetVersionResponse;
 import jpuppeteer.chrome.ChromeLauncher;
 import org.junit.AfterClass;
@@ -10,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class TestBrowser {
 
@@ -46,6 +48,16 @@ public class TestBrowser {
     @Test
     public void browserContexts() {
         Assert.assertEquals(0, browser.browserContexts().length);
+    }
+
+    @Test
+    public void testWatch() throws Exception {
+        Page page = browser.defaultContext().newPage().get();
+        page.watch(".abc", element -> {
+            System.out.println(element);
+        });
+        page.navigate("https://www.google.com/").get();
+        TimeUnit.DAYS.sleep(1);
     }
 
 }

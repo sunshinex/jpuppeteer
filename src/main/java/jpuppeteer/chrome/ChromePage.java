@@ -41,6 +41,7 @@ import jpuppeteer.constant.USKeyboardDefinition;
 import jpuppeteer.entity.BasicHttpHeader;
 import jpuppeteer.entity.Point;
 import jpuppeteer.util.Input;
+import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesFuture;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -50,11 +51,14 @@ import java.math.BigDecimal;
 import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 @SuppressWarnings("rawtypes")
 public class ChromePage extends ChromeFrame implements Page {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromePage.class);
+
+    private static final String SCRIPT_WATCH = ScriptUtil.load("script/watch.js");
 
     private final EventEmitter<PageEvent> emitter;
 
@@ -514,6 +518,33 @@ public class ChromePage extends ChromeFrame implements Page {
     public Future removeScriptToEvaluateOnNewDocument(String scriptId) {
         RemoveScriptToEvaluateOnNewDocumentRequest request = new RemoveScriptToEvaluateOnNewDocumentRequest(scriptId);
         return page.removeScriptToEvaluateOnNewDocument(request);
+    }
+
+    @Override
+    public Future watch(String selector, Consumer<Element> watchFunction) {
+        String functionName = "watch_" + UUID.randomUUID().toString().replace("-", "");
+        addListener(new AbstractListener<DomReadyEvent>() {
+            @Override
+            public void accept(DomReadyEvent event) {
+                call(SCRIPT_WATCH, (Object) selector, functionName).addListener(f -> {
+                    if (f.cause() != null) {
+                        logger.error("watch object failed, error={}", f.cause().getMessage(), f.cause());
+                    }
+                });
+            }
+        });
+        return addBinding(functionName, (isolate, hash) -> {
+            isolate.eval("window['" + hash + "']")
+                    .addListener(f -> {
+                        if (f.cause() != null) {
+                            logger.error("query watch object failed, error={}", f.cause().getMessage(), f.cause());
+                        } else {
+                            BrowserObject bo = (BrowserObject) f.getNow();
+                            Element node = new ChromeElement(ChromePage.this, dom(), isolate, runtime, input, bo, executor());
+                            watchFunction.accept(node);
+                        }
+                    });
+        });
     }
 
     @Override

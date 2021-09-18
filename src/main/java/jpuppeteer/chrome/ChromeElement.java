@@ -17,20 +17,29 @@ import jpuppeteer.util.Input;
 import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesFuture;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ChromeElement implements Element {
 
+    private static final Logger logger = LoggerFactory.getLogger(ChromeElement.class);
+
     private static final String SCRIPT_SELECT = ScriptUtil.load("script/select.js");
 
     private static final String SCRIPT_WAIT_SELECTOR = ScriptUtil.load("script/waitselector.js");
+
+    private static final String SCRIPT_WATCH = ScriptUtil.load("script/watch.js");
 
     private final Page page;
 
@@ -94,6 +103,26 @@ public class ChromeElement implements Element {
         return SeriesFuture
                 .wrap(isolate.call(SCRIPT_WAIT_SELECTOR, objectId(), (Object) selector, timeout))
                 .sync(o -> new ChromeElement(page, dom, isolate, runtime, input, o, executor));
+    }
+
+    @Override
+    public Future watch(String selector, Consumer<Element> watchFunction) {
+        String functionName = "watch_" + UUID.randomUUID().toString().replace("-", "");
+        return SeriesFuture.wrap(
+                page.addBinding(functionName, (i, hash) -> {
+                    i.eval("window['" + hash + "']")
+                            .addListener(f -> {
+                                if (f.cause() != null) {
+                                    logger.error("query watch object failed, error={}", f.cause().getMessage(), f.cause());
+                                } else {
+                                    BrowserObject bo = (BrowserObject) f.getNow();
+                                    Element node = new ChromeElement(page, dom, i, runtime, input, bo, executor);
+                                    watchFunction.accept(node);
+                                }
+                            });
+                })
+                )
+                .async(o -> isolate.call(SCRIPT_WATCH, objectId(), (Object) selector, functionName));
     }
 
     @Override

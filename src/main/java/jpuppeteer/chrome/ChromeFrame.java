@@ -18,11 +18,15 @@ import jpuppeteer.util.Input;
 import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesFuture;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 public class ChromeFrame implements Frame {
+
+    private static final Logger logger = LoggerFactory.getLogger(ChromeFrame.class);
 
     private static final String SCRIPT_WAIT_SELECTOR = ScriptUtil.load("script/waitselector.js");
 
