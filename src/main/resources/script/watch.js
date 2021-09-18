@@ -1,4 +1,4 @@
-function watchSelector(selector, notifyFunctionName) {
+function watchSelector(selector, notifyFunctionName, once) {
     let counter = 0;
     const root = this === window || this === undefined ? document : this;
     function checkType(node) {
@@ -41,6 +41,9 @@ function watchSelector(selector, notifyFunctionName) {
         const hash = notifyFunctionName + "_" + (++counter);
         window[hash] = node;
         window[notifyFunctionName](hash);
+        if (once) {
+            observer.disconnect();
+        }
     }
 
     const observer = new MutationObserver(function(mutationsList, observer){

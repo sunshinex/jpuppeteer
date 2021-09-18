@@ -106,7 +106,7 @@ public class ChromeElement implements Element {
     }
 
     @Override
-    public Future watch(String selector, Consumer<Element> watchFunction) {
+    public Future watch(String selector, Consumer<Element> watchFunction, boolean once) {
         String functionName = "watch_" + UUID.randomUUID().toString().replace("-", "");
         return SeriesFuture.wrap(
                 page.addBinding(functionName, (i, hash) -> {
@@ -122,7 +122,7 @@ public class ChromeElement implements Element {
                             });
                 })
                 )
-                .async(o -> isolate.call(SCRIPT_WATCH, objectId(), (Object) selector, functionName));
+                .async(o -> isolate.call(SCRIPT_WATCH, objectId(), (Object) selector, functionName, once));
     }
 
     @Override

@@ -55,7 +55,7 @@ public class TestBrowser {
         Page page = browser.defaultContext().newPage().get();
         page.watch(".abc", element -> {
             System.out.println(element);
-        });
+        }, true);
         page.navigate("https://www.google.com/").get();
         TimeUnit.DAYS.sleep(1);
     }

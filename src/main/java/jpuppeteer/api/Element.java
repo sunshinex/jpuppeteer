@@ -19,7 +19,11 @@ public interface Element extends BrowserObject {
 
     Future<Element> waitSelector(String selector, long timeout, TimeUnit unit);
 
-    Future watch(String selector, Consumer<Element> watchFunction);
+    Future watch(String selector, Consumer<Element> watchFunction, boolean once);
+
+    default Future watch(String selector, Consumer<Element> watchFunction) {
+        return watch(selector, watchFunction, false);
+    }
 
     Future<String> getAttribute(String name);
 

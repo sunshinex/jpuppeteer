@@ -1,7 +1,9 @@
 package jpuppeteer.chrome;
 
+import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.Promise;
 import jpuppeteer.api.Page;
 import jpuppeteer.api.Request;
 import jpuppeteer.api.Response;
@@ -521,19 +523,23 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public Future watch(String selector, Consumer<Element> watchFunction) {
+    public Future watch(String selector, Consumer<Element> watchFunction, boolean once) {
         String functionName = "watch_" + UUID.randomUUID().toString().replace("-", "");
-        addListener(new AbstractListener<DomReadyEvent>() {
+        AbstractListener<DomReadyEvent> listener = new AbstractListener<DomReadyEvent>() {
             @Override
             public void accept(DomReadyEvent event) {
-                call(SCRIPT_WATCH, (Object) selector, functionName).addListener(f -> {
+                call(SCRIPT_WATCH, (Object) selector, functionName, once).addListener(f -> {
                     if (f.cause() != null) {
                         logger.error("watch object failed, error={}", f.cause().getMessage(), f.cause());
                     }
                 });
             }
-        });
+        };
+        addListener(listener);
         return addBinding(functionName, (isolate, hash) -> {
+            if (once) {
+                removeListener(listener);
+            }
             isolate.eval("window['" + hash + "']")
                     .addListener(f -> {
                         if (f.cause() != null) {
