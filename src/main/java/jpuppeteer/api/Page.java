@@ -155,21 +155,17 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     Future setDevice(SetDeviceMetricsOverrideRequest device);
 
-    default Future setDevice(ScreenOrientationType screenOrientation, int width, int height, double scale, boolean isMobile) {
+    default Future setDevice(ScreenOrientationType screenOrientation, int width, int height, int screenWidth, int screenHeight, double scale, boolean isMobile) {
         SetDeviceMetricsOverrideRequest request = SetDeviceMetricsOverrideRequestBuilder.newBuilder()
+                .deviceScaleFactor(BigDecimal.valueOf(scale))
                 .width(width)
                 .height(height)
-                .deviceScaleFactor(BigDecimal.valueOf(scale))
                 .mobile(isMobile)
-                .screenWidth(width)
-                .screenHeight(height)
+                .screenWidth(screenWidth)
+                .screenHeight(screenHeight)
                 .screenOrientation(new ScreenOrientation(screenOrientation, 0))
                 .build();
         return setDevice(request);
-    }
-
-    default Future setDevice(ScreenOrientationType screenOrientation, int width, int height) {
-        return setDevice(screenOrientation, width, height, 1, false);
     }
 
     Future setWindow(Bounds bounds);

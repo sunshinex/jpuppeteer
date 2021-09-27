@@ -637,11 +637,7 @@ public class ChromePage extends ChromeFrame implements Page {
 
     @Override
     public Future setDevice(SetDeviceMetricsOverrideRequest device) {
-        ChromeBrowser browser = (ChromeBrowser) browserContext().browser();
-        Bounds bounds = new Bounds(0, 0, device.width, device.height, WindowState.NORMAL);
-        return SeriesFuture
-                .wrap(browser.setWindowBounds(targetId(), bounds))
-                .async(o -> emulation.setDeviceMetricsOverride(device));
+        return emulation.setDeviceMetricsOverride(device);
     }
 
     @Override
