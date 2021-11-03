@@ -5,17 +5,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class WebAuthn {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public WebAuthn(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public WebAuthn(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Enable the WebAuthn domain and start intercepting credential storage and retrieval with a virtual authenticator.
     */
     public io.netty.util.concurrent.Future enable() {
-        return session.send("WebAuthn.enable", null);
+        return connection.send("WebAuthn.enable", null);
     }
 
 
@@ -23,7 +23,7 @@ public class WebAuthn {
     * Disable the WebAuthn domain.
     */
     public io.netty.util.concurrent.Future disable() {
-        return session.send("WebAuthn.disable", null);
+        return connection.send("WebAuthn.disable", null);
     }
 
 
@@ -31,7 +31,7 @@ public class WebAuthn {
     * Creates and adds a virtual authenticator.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.webauthn.AddVirtualAuthenticatorResponse> addVirtualAuthenticator(jpuppeteer.cdp.client.entity.webauthn.AddVirtualAuthenticatorRequest request) {
-        return session.send("WebAuthn.addVirtualAuthenticator", request, jpuppeteer.cdp.client.entity.webauthn.AddVirtualAuthenticatorResponse.class);
+        return connection.send("WebAuthn.addVirtualAuthenticator", request, jpuppeteer.cdp.client.entity.webauthn.AddVirtualAuthenticatorResponse.class);
     }
 
 
@@ -39,7 +39,7 @@ public class WebAuthn {
     * Removes the given authenticator.
     */
     public io.netty.util.concurrent.Future removeVirtualAuthenticator(jpuppeteer.cdp.client.entity.webauthn.RemoveVirtualAuthenticatorRequest request) {
-        return session.send("WebAuthn.removeVirtualAuthenticator", request);
+        return connection.send("WebAuthn.removeVirtualAuthenticator", request);
     }
 
 
@@ -47,7 +47,7 @@ public class WebAuthn {
     * Adds the credential to the specified authenticator.
     */
     public io.netty.util.concurrent.Future addCredential(jpuppeteer.cdp.client.entity.webauthn.AddCredentialRequest request) {
-        return session.send("WebAuthn.addCredential", request);
+        return connection.send("WebAuthn.addCredential", request);
     }
 
 
@@ -55,7 +55,7 @@ public class WebAuthn {
     * Returns a single credential stored in the given virtual authenticator that matches the credential ID.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.webauthn.GetCredentialResponse> getCredential(jpuppeteer.cdp.client.entity.webauthn.GetCredentialRequest request) {
-        return session.send("WebAuthn.getCredential", request, jpuppeteer.cdp.client.entity.webauthn.GetCredentialResponse.class);
+        return connection.send("WebAuthn.getCredential", request, jpuppeteer.cdp.client.entity.webauthn.GetCredentialResponse.class);
     }
 
 
@@ -63,7 +63,7 @@ public class WebAuthn {
     * Returns all the credentials stored in the given virtual authenticator.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.webauthn.GetCredentialsResponse> getCredentials(jpuppeteer.cdp.client.entity.webauthn.GetCredentialsRequest request) {
-        return session.send("WebAuthn.getCredentials", request, jpuppeteer.cdp.client.entity.webauthn.GetCredentialsResponse.class);
+        return connection.send("WebAuthn.getCredentials", request, jpuppeteer.cdp.client.entity.webauthn.GetCredentialsResponse.class);
     }
 
 
@@ -71,7 +71,7 @@ public class WebAuthn {
     * Removes a credential from the authenticator.
     */
     public io.netty.util.concurrent.Future removeCredential(jpuppeteer.cdp.client.entity.webauthn.RemoveCredentialRequest request) {
-        return session.send("WebAuthn.removeCredential", request);
+        return connection.send("WebAuthn.removeCredential", request);
     }
 
 
@@ -79,7 +79,7 @@ public class WebAuthn {
     * Clears all the credentials from the specified device.
     */
     public io.netty.util.concurrent.Future clearCredentials(jpuppeteer.cdp.client.entity.webauthn.ClearCredentialsRequest request) {
-        return session.send("WebAuthn.clearCredentials", request);
+        return connection.send("WebAuthn.clearCredentials", request);
     }
 
 
@@ -87,7 +87,7 @@ public class WebAuthn {
     * Sets whether User Verification succeeds or fails for an authenticator. The default is true.
     */
     public io.netty.util.concurrent.Future setUserVerified(jpuppeteer.cdp.client.entity.webauthn.SetUserVerifiedRequest request) {
-        return session.send("WebAuthn.setUserVerified", request);
+        return connection.send("WebAuthn.setUserVerified", request);
     }
 
 
@@ -95,7 +95,7 @@ public class WebAuthn {
     * Sets whether tests of user presence will succeed immediately (if true) or fail to resolve (if false) for an authenticator. The default is true.
     */
     public io.netty.util.concurrent.Future setAutomaticPresenceSimulation(jpuppeteer.cdp.client.entity.webauthn.SetAutomaticPresenceSimulationRequest request) {
-        return session.send("WebAuthn.setAutomaticPresenceSimulation", request);
+        return connection.send("WebAuthn.setAutomaticPresenceSimulation", request);
     }
 
 }

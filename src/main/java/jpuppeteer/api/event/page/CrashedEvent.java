@@ -1,16 +1,18 @@
 package jpuppeteer.api.event.page;
 
-import jpuppeteer.api.event.PageEvent;
+import jpuppeteer.api.Frame;
+import jpuppeteer.api.event.FrameEvent;
 
-public class CrashedEvent extends PageEvent {
-
-    private final String status;
+public class CrashedEvent extends FrameEvent {
 
     private final int errorCode;
 
-    public CrashedEvent(String status, int errorCode) {
-        this.status = status;
+    private final String status;
+
+    public CrashedEvent(Frame frame, int errorCode, String status) {
+        super(frame);
         this.errorCode = errorCode;
+        this.status = status;
     }
 
     public String status() {

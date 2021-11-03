@@ -4,10 +4,10 @@ package jpuppeteer.cdp.client.domain;
 */
 public class Network {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public Network(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public Network(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
@@ -15,7 +15,7 @@ public class Network {
     * experimental
     */
     public io.netty.util.concurrent.Future setAcceptedEncodings(jpuppeteer.cdp.client.entity.network.SetAcceptedEncodingsRequest request) {
-        return session.send("Network.setAcceptedEncodings", request);
+        return connection.send("Network.setAcceptedEncodings", request);
     }
 
 
@@ -24,7 +24,7 @@ public class Network {
     * experimental
     */
     public io.netty.util.concurrent.Future clearAcceptedEncodingsOverride() {
-        return session.send("Network.clearAcceptedEncodingsOverride", null);
+        return connection.send("Network.clearAcceptedEncodingsOverride", null);
     }
 
 
@@ -33,7 +33,7 @@ public class Network {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.CanClearBrowserCacheResponse> canClearBrowserCache() {
-        return session.send("Network.canClearBrowserCache", null, jpuppeteer.cdp.client.entity.network.CanClearBrowserCacheResponse.class);
+        return connection.send("Network.canClearBrowserCache", null, jpuppeteer.cdp.client.entity.network.CanClearBrowserCacheResponse.class);
     }
 
 
@@ -42,7 +42,7 @@ public class Network {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.CanClearBrowserCookiesResponse> canClearBrowserCookies() {
-        return session.send("Network.canClearBrowserCookies", null, jpuppeteer.cdp.client.entity.network.CanClearBrowserCookiesResponse.class);
+        return connection.send("Network.canClearBrowserCookies", null, jpuppeteer.cdp.client.entity.network.CanClearBrowserCookiesResponse.class);
     }
 
 
@@ -51,7 +51,7 @@ public class Network {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.CanEmulateNetworkConditionsResponse> canEmulateNetworkConditions() {
-        return session.send("Network.canEmulateNetworkConditions", null, jpuppeteer.cdp.client.entity.network.CanEmulateNetworkConditionsResponse.class);
+        return connection.send("Network.canEmulateNetworkConditions", null, jpuppeteer.cdp.client.entity.network.CanEmulateNetworkConditionsResponse.class);
     }
 
 
@@ -59,7 +59,7 @@ public class Network {
     * Clears browser cache.
     */
     public io.netty.util.concurrent.Future clearBrowserCache() {
-        return session.send("Network.clearBrowserCache", null);
+        return connection.send("Network.clearBrowserCache", null);
     }
 
 
@@ -67,7 +67,7 @@ public class Network {
     * Clears browser cookies.
     */
     public io.netty.util.concurrent.Future clearBrowserCookies() {
-        return session.send("Network.clearBrowserCookies", null);
+        return connection.send("Network.clearBrowserCookies", null);
     }
 
 
@@ -77,7 +77,7 @@ public class Network {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future continueInterceptedRequest(jpuppeteer.cdp.client.entity.network.ContinueInterceptedRequestRequest request) {
-        return session.send("Network.continueInterceptedRequest", request);
+        return connection.send("Network.continueInterceptedRequest", request);
     }
 
 
@@ -85,7 +85,7 @@ public class Network {
     * Deletes browser cookies with matching name and url or domain/path pair.
     */
     public io.netty.util.concurrent.Future deleteCookies(jpuppeteer.cdp.client.entity.network.DeleteCookiesRequest request) {
-        return session.send("Network.deleteCookies", request);
+        return connection.send("Network.deleteCookies", request);
     }
 
 
@@ -93,7 +93,7 @@ public class Network {
     * Disables network tracking, prevents network events from being sent to the client.
     */
     public io.netty.util.concurrent.Future disable() {
-        return session.send("Network.disable", null);
+        return connection.send("Network.disable", null);
     }
 
 
@@ -101,7 +101,7 @@ public class Network {
     * Activates emulation of network conditions.
     */
     public io.netty.util.concurrent.Future emulateNetworkConditions(jpuppeteer.cdp.client.entity.network.EmulateNetworkConditionsRequest request) {
-        return session.send("Network.emulateNetworkConditions", request);
+        return connection.send("Network.emulateNetworkConditions", request);
     }
 
 
@@ -109,7 +109,7 @@ public class Network {
     * Enables network tracking, network events will now be delivered to the client.
     */
     public io.netty.util.concurrent.Future enable(jpuppeteer.cdp.client.entity.network.EnableRequest request) {
-        return session.send("Network.enable", request);
+        return connection.send("Network.enable", request);
     }
 
 
@@ -117,7 +117,7 @@ public class Network {
     * Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the `cookies` field.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.GetAllCookiesResponse> getAllCookies() {
-        return session.send("Network.getAllCookies", null, jpuppeteer.cdp.client.entity.network.GetAllCookiesResponse.class);
+        return connection.send("Network.getAllCookies", null, jpuppeteer.cdp.client.entity.network.GetAllCookiesResponse.class);
     }
 
 
@@ -126,7 +126,7 @@ public class Network {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.GetCertificateResponse> getCertificate(jpuppeteer.cdp.client.entity.network.GetCertificateRequest request) {
-        return session.send("Network.getCertificate", request, jpuppeteer.cdp.client.entity.network.GetCertificateResponse.class);
+        return connection.send("Network.getCertificate", request, jpuppeteer.cdp.client.entity.network.GetCertificateResponse.class);
     }
 
 
@@ -134,7 +134,7 @@ public class Network {
     * Returns all browser cookies for the current URL. Depending on the backend support, will return detailed cookie information in the `cookies` field.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.GetCookiesResponse> getCookies(jpuppeteer.cdp.client.entity.network.GetCookiesRequest request) {
-        return session.send("Network.getCookies", request, jpuppeteer.cdp.client.entity.network.GetCookiesResponse.class);
+        return connection.send("Network.getCookies", request, jpuppeteer.cdp.client.entity.network.GetCookiesResponse.class);
     }
 
 
@@ -142,7 +142,7 @@ public class Network {
     * Returns content served for the given request.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.GetResponseBodyResponse> getResponseBody(jpuppeteer.cdp.client.entity.network.GetResponseBodyRequest request) {
-        return session.send("Network.getResponseBody", request, jpuppeteer.cdp.client.entity.network.GetResponseBodyResponse.class);
+        return connection.send("Network.getResponseBody", request, jpuppeteer.cdp.client.entity.network.GetResponseBodyResponse.class);
     }
 
 
@@ -150,7 +150,7 @@ public class Network {
     * Returns post data sent with the request. Returns an error when no data was sent with the request.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.GetRequestPostDataResponse> getRequestPostData(jpuppeteer.cdp.client.entity.network.GetRequestPostDataRequest request) {
-        return session.send("Network.getRequestPostData", request, jpuppeteer.cdp.client.entity.network.GetRequestPostDataResponse.class);
+        return connection.send("Network.getRequestPostData", request, jpuppeteer.cdp.client.entity.network.GetRequestPostDataResponse.class);
     }
 
 
@@ -159,7 +159,7 @@ public class Network {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.GetResponseBodyForInterceptionResponse> getResponseBodyForInterception(jpuppeteer.cdp.client.entity.network.GetResponseBodyForInterceptionRequest request) {
-        return session.send("Network.getResponseBodyForInterception", request, jpuppeteer.cdp.client.entity.network.GetResponseBodyForInterceptionResponse.class);
+        return connection.send("Network.getResponseBodyForInterception", request, jpuppeteer.cdp.client.entity.network.GetResponseBodyForInterceptionResponse.class);
     }
 
 
@@ -168,7 +168,7 @@ public class Network {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.TakeResponseBodyForInterceptionAsStreamResponse> takeResponseBodyForInterceptionAsStream(jpuppeteer.cdp.client.entity.network.TakeResponseBodyForInterceptionAsStreamRequest request) {
-        return session.send("Network.takeResponseBodyForInterceptionAsStream", request, jpuppeteer.cdp.client.entity.network.TakeResponseBodyForInterceptionAsStreamResponse.class);
+        return connection.send("Network.takeResponseBodyForInterceptionAsStream", request, jpuppeteer.cdp.client.entity.network.TakeResponseBodyForInterceptionAsStreamResponse.class);
     }
 
 
@@ -177,7 +177,7 @@ public class Network {
     * experimental
     */
     public io.netty.util.concurrent.Future replayXHR(jpuppeteer.cdp.client.entity.network.ReplayXHRRequest request) {
-        return session.send("Network.replayXHR", request);
+        return connection.send("Network.replayXHR", request);
     }
 
 
@@ -186,7 +186,7 @@ public class Network {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.SearchInResponseBodyResponse> searchInResponseBody(jpuppeteer.cdp.client.entity.network.SearchInResponseBodyRequest request) {
-        return session.send("Network.searchInResponseBody", request, jpuppeteer.cdp.client.entity.network.SearchInResponseBodyResponse.class);
+        return connection.send("Network.searchInResponseBody", request, jpuppeteer.cdp.client.entity.network.SearchInResponseBodyResponse.class);
     }
 
 
@@ -195,7 +195,7 @@ public class Network {
     * experimental
     */
     public io.netty.util.concurrent.Future setBlockedURLs(jpuppeteer.cdp.client.entity.network.SetBlockedURLsRequest request) {
-        return session.send("Network.setBlockedURLs", request);
+        return connection.send("Network.setBlockedURLs", request);
     }
 
 
@@ -204,7 +204,7 @@ public class Network {
     * experimental
     */
     public io.netty.util.concurrent.Future setBypassServiceWorker(jpuppeteer.cdp.client.entity.network.SetBypassServiceWorkerRequest request) {
-        return session.send("Network.setBypassServiceWorker", request);
+        return connection.send("Network.setBypassServiceWorker", request);
     }
 
 
@@ -212,7 +212,7 @@ public class Network {
     * Toggles ignoring cache for each request. If `true`, cache will not be used.
     */
     public io.netty.util.concurrent.Future setCacheDisabled(jpuppeteer.cdp.client.entity.network.SetCacheDisabledRequest request) {
-        return session.send("Network.setCacheDisabled", request);
+        return connection.send("Network.setCacheDisabled", request);
     }
 
 
@@ -220,7 +220,7 @@ public class Network {
     * Sets a cookie with the given cookie data; may overwrite equivalent cookies if they exist.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.SetCookieResponse> setCookie(jpuppeteer.cdp.client.entity.network.SetCookieRequest request) {
-        return session.send("Network.setCookie", request, jpuppeteer.cdp.client.entity.network.SetCookieResponse.class);
+        return connection.send("Network.setCookie", request, jpuppeteer.cdp.client.entity.network.SetCookieResponse.class);
     }
 
 
@@ -228,7 +228,7 @@ public class Network {
     * Sets given cookies.
     */
     public io.netty.util.concurrent.Future setCookies(jpuppeteer.cdp.client.entity.network.SetCookiesRequest request) {
-        return session.send("Network.setCookies", request);
+        return connection.send("Network.setCookies", request);
     }
 
 
@@ -237,7 +237,7 @@ public class Network {
     * experimental
     */
     public io.netty.util.concurrent.Future setDataSizeLimitsForTest(jpuppeteer.cdp.client.entity.network.SetDataSizeLimitsForTestRequest request) {
-        return session.send("Network.setDataSizeLimitsForTest", request);
+        return connection.send("Network.setDataSizeLimitsForTest", request);
     }
 
 
@@ -245,7 +245,7 @@ public class Network {
     * Specifies whether to always send extra HTTP headers with the requests from this page.
     */
     public io.netty.util.concurrent.Future setExtraHTTPHeaders(jpuppeteer.cdp.client.entity.network.SetExtraHTTPHeadersRequest request) {
-        return session.send("Network.setExtraHTTPHeaders", request);
+        return connection.send("Network.setExtraHTTPHeaders", request);
     }
 
 
@@ -254,7 +254,7 @@ public class Network {
     * experimental
     */
     public io.netty.util.concurrent.Future setAttachDebugStack(jpuppeteer.cdp.client.entity.network.SetAttachDebugStackRequest request) {
-        return session.send("Network.setAttachDebugStack", request);
+        return connection.send("Network.setAttachDebugStack", request);
     }
 
 
@@ -264,7 +264,7 @@ public class Network {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future setRequestInterception(jpuppeteer.cdp.client.entity.network.SetRequestInterceptionRequest request) {
-        return session.send("Network.setRequestInterception", request);
+        return connection.send("Network.setRequestInterception", request);
     }
 
 
@@ -272,7 +272,7 @@ public class Network {
     * Allows overriding user agent with the given string.
     */
     public io.netty.util.concurrent.Future setUserAgentOverride(jpuppeteer.cdp.client.entity.network.SetUserAgentOverrideRequest request) {
-        return session.send("Network.setUserAgentOverride", request);
+        return connection.send("Network.setUserAgentOverride", request);
     }
 
 
@@ -281,7 +281,7 @@ public class Network {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.GetSecurityIsolationStatusResponse> getSecurityIsolationStatus(jpuppeteer.cdp.client.entity.network.GetSecurityIsolationStatusRequest request) {
-        return session.send("Network.getSecurityIsolationStatus", request, jpuppeteer.cdp.client.entity.network.GetSecurityIsolationStatusResponse.class);
+        return connection.send("Network.getSecurityIsolationStatus", request, jpuppeteer.cdp.client.entity.network.GetSecurityIsolationStatusResponse.class);
     }
 
 
@@ -290,7 +290,7 @@ public class Network {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.network.LoadNetworkResourceResponse> loadNetworkResource(jpuppeteer.cdp.client.entity.network.LoadNetworkResourceRequest request) {
-        return session.send("Network.loadNetworkResource", request, jpuppeteer.cdp.client.entity.network.LoadNetworkResourceResponse.class);
+        return connection.send("Network.loadNetworkResource", request, jpuppeteer.cdp.client.entity.network.LoadNetworkResourceResponse.class);
     }
 
 }

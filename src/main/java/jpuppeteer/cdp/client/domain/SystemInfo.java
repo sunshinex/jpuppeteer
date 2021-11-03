@@ -5,17 +5,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class SystemInfo {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public SystemInfo(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public SystemInfo(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Returns information about the system.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.systeminfo.GetInfoResponse> getInfo() {
-        return session.send("SystemInfo.getInfo", null, jpuppeteer.cdp.client.entity.systeminfo.GetInfoResponse.class);
+        return connection.send("SystemInfo.getInfo", null, jpuppeteer.cdp.client.entity.systeminfo.GetInfoResponse.class);
     }
 
 
@@ -23,7 +23,7 @@ public class SystemInfo {
     * Returns information about all running processes.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.systeminfo.GetProcessInfoResponse> getProcessInfo() {
-        return session.send("SystemInfo.getProcessInfo", null, jpuppeteer.cdp.client.entity.systeminfo.GetProcessInfoResponse.class);
+        return connection.send("SystemInfo.getProcessInfo", null, jpuppeteer.cdp.client.entity.systeminfo.GetProcessInfoResponse.class);
     }
 
 }

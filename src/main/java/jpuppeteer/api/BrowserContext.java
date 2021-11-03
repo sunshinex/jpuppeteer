@@ -7,8 +7,6 @@ import jpuppeteer.cdp.client.entity.network.CookieParam;
 
 public interface BrowserContext {
 
-    String name();
-
     Browser browser();
 
     Future grantPermissions(String origin, PermissionType... permissions);
@@ -24,8 +22,6 @@ public interface BrowserContext {
     default Future<Page> newPage() {
         return newPage("about:blank", null, null);
     }
-
-    Page[] pages();
 
     Future setCookies(CookieParam... cookies);
 

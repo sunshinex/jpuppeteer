@@ -4,17 +4,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class Security {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public Security(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public Security(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Disables tracking security state changes.
     */
     public io.netty.util.concurrent.Future disable() {
-        return session.send("Security.disable", null);
+        return connection.send("Security.disable", null);
     }
 
 
@@ -22,7 +22,7 @@ public class Security {
     * Enables tracking security state changes.
     */
     public io.netty.util.concurrent.Future enable() {
-        return session.send("Security.enable", null);
+        return connection.send("Security.enable", null);
     }
 
 
@@ -31,7 +31,7 @@ public class Security {
     * experimental
     */
     public io.netty.util.concurrent.Future setIgnoreCertificateErrors(jpuppeteer.cdp.client.entity.security.SetIgnoreCertificateErrorsRequest request) {
-        return session.send("Security.setIgnoreCertificateErrors", request);
+        return connection.send("Security.setIgnoreCertificateErrors", request);
     }
 
 
@@ -40,7 +40,7 @@ public class Security {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future handleCertificateError(jpuppeteer.cdp.client.entity.security.HandleCertificateErrorRequest request) {
-        return session.send("Security.handleCertificateError", request);
+        return connection.send("Security.handleCertificateError", request);
     }
 
 
@@ -49,7 +49,7 @@ public class Security {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future setOverrideCertificateErrors(jpuppeteer.cdp.client.entity.security.SetOverrideCertificateErrorsRequest request) {
-        return session.send("Security.setOverrideCertificateErrors", request);
+        return connection.send("Security.setOverrideCertificateErrors", request);
     }
 
 }

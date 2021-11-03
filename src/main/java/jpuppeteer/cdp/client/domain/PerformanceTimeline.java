@@ -5,17 +5,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class PerformanceTimeline {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public PerformanceTimeline(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public PerformanceTimeline(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Previously buffered events would be reported before method returns. See also: timelineEventAdded
     */
     public io.netty.util.concurrent.Future enable(jpuppeteer.cdp.client.entity.performancetimeline.EnableRequest request) {
-        return session.send("PerformanceTimeline.enable", request);
+        return connection.send("PerformanceTimeline.enable", request);
     }
 
 }

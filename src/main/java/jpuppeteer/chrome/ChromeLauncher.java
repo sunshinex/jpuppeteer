@@ -3,7 +3,6 @@ package jpuppeteer.chrome;
 import com.google.common.util.concurrent.SettableFuture;
 import jpuppeteer.api.Browser;
 import jpuppeteer.api.Launcher;
-import jpuppeteer.cdp.CDPConnection;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,8 +74,7 @@ public class ChromeLauncher implements Launcher {
             //Runtime.getRuntime().addShutdownHook(new Thread(process::destroy));
             //等待5s, 等chrome启动成功, 如果5s没有启动成功, 则强制关闭chrome进程
             String uri = future.get(5, TimeUnit.SECONDS);
-            CDPConnection connection = new CDPConnection(uri);
-            return new ChromeBrowser(connection, process);
+            return new ChromeBrowser(uri, process);
         } catch (Throwable cause) {
             errThread.interrupt();
             process.destroy();

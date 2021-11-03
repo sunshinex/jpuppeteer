@@ -5,17 +5,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class Tethering {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public Tethering(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public Tethering(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Request browser port binding.
     */
     public io.netty.util.concurrent.Future bind(jpuppeteer.cdp.client.entity.tethering.BindRequest request) {
-        return session.send("Tethering.bind", request);
+        return connection.send("Tethering.bind", request);
     }
 
 
@@ -23,7 +23,7 @@ public class Tethering {
     * Request browser port unbinding.
     */
     public io.netty.util.concurrent.Future unbind(jpuppeteer.cdp.client.entity.tethering.UnbindRequest request) {
-        return session.send("Tethering.unbind", request);
+        return connection.send("Tethering.unbind", request);
     }
 
 }

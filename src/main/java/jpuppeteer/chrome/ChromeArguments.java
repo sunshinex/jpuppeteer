@@ -37,6 +37,7 @@ public class ChromeArguments {
 //            "--disable-web-security",
 //            "--disable-xss-auditor",
 //            "--disable-features=IsolateOrigins,site-per-process,TranslateUI,BlinkGenPropertyTrees"
+            //一定禁用site-per-process，否则整个的机制会非常怪异
             "--disable-features=TranslateUI,BlinkGenPropertyTrees,RendererCodeIntegrity,IsolateOrigins,site-per-process"
     };
 

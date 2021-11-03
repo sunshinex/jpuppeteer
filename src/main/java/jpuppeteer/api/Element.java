@@ -5,13 +5,12 @@ import jpuppeteer.cdp.client.entity.dom.BoxModel;
 import jpuppeteer.constant.MouseDefinition;
 
 import java.io.File;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public interface Element extends BrowserObject {
 
-    Page page();
+    Frame frame();
 
     Future<Element> querySelector(String selector);
 

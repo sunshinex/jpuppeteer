@@ -2,15 +2,12 @@ package jpuppeteer.api;
 
 import com.google.common.collect.Lists;
 import io.netty.util.concurrent.Future;
-import jpuppeteer.api.event.EventEmitter;
-import jpuppeteer.api.event.PageEvent;
 import jpuppeteer.cdp.client.constant.browser.WindowState;
 import jpuppeteer.cdp.client.constant.emulation.ScreenOrientationType;
 import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration;
 import jpuppeteer.cdp.client.constant.fetch.RequestStage;
 import jpuppeteer.cdp.client.constant.page.CaptureScreenshotRequestFormat;
 import jpuppeteer.cdp.client.entity.browser.Bounds;
-import jpuppeteer.cdp.client.entity.emulation.DisplayFeature;
 import jpuppeteer.cdp.client.entity.emulation.ScreenOrientation;
 import jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetUserAgentOverrideRequest;
@@ -18,7 +15,6 @@ import jpuppeteer.cdp.client.entity.fetch.EnableRequest;
 import jpuppeteer.cdp.client.entity.fetch.RequestPattern;
 import jpuppeteer.cdp.client.entity.input.TouchPoint;
 import jpuppeteer.cdp.client.entity.page.CaptureScreenshotRequest;
-import jpuppeteer.cdp.client.entity.page.ReloadRequest;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
 import jpuppeteer.entity.Point;
@@ -30,9 +26,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public interface Page extends EventEmitter<PageEvent>, Frame {
+public interface Page extends Frame {
 
-    String name();
+    String title();
 
     Future reload(Boolean ignoreCache, String scriptToEvaluateOnLoad);
 
@@ -41,6 +37,8 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     }
 
     Page opener();
+
+    Frame openerFrame();
 
     BrowserContext browserContext();
 
@@ -67,8 +65,6 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     Future enableCache();
 
     Future disableCache();
-
-    Future addBinding(String name, BindingFunction function);
 
     Future removeBinding(String name);
 
@@ -190,11 +186,13 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
 
     Future stopLoading();
 
-    Future expose(String bindingName);
-
     Future enableInput();
 
     Future disableInput();
+
+    Future activate();
+
+    Future close();
 
     //keyboard event;
     Future keyDown(USKeyboardDefinition key);
@@ -240,9 +238,5 @@ public interface Page extends EventEmitter<PageEvent>, Frame {
     Future touchMove(int x, int y);
 
     Future touchCancel();
-
-    Future activate();
-
-    Future close();
 
 }

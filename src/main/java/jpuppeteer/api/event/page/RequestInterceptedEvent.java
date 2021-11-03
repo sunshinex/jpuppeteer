@@ -12,7 +12,7 @@ import jpuppeteer.cdp.client.constant.network.ErrorReason;
 import jpuppeteer.cdp.client.constant.network.ResourceType;
 import jpuppeteer.cdp.client.domain.Fetch;
 import jpuppeteer.cdp.client.entity.fetch.*;
-import jpuppeteer.util.SeriesFuture;
+import jpuppeteer.util.SeriesPromise;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -157,7 +157,7 @@ public class RequestInterceptedEvent extends FrameEvent implements InterceptedRe
 
     @Override
     public Future<byte[]> responseBody() {
-        return SeriesFuture
+        return SeriesPromise
                 .wrap(fetch.getResponseBody(new GetResponseBodyRequest(interceptorId)))
                 .sync(o -> o.base64Encoded ? Base64.getDecoder().decode(o.body) : o.body.getBytes(StandardCharsets.UTF_8));
     }

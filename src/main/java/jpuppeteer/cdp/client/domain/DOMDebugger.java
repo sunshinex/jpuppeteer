@@ -4,17 +4,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class DOMDebugger {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public DOMDebugger(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public DOMDebugger(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Returns event listeners of the given object.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.domdebugger.GetEventListenersResponse> getEventListeners(jpuppeteer.cdp.client.entity.domdebugger.GetEventListenersRequest request) {
-        return session.send("DOMDebugger.getEventListeners", request, jpuppeteer.cdp.client.entity.domdebugger.GetEventListenersResponse.class);
+        return connection.send("DOMDebugger.getEventListeners", request, jpuppeteer.cdp.client.entity.domdebugger.GetEventListenersResponse.class);
     }
 
 
@@ -22,7 +22,7 @@ public class DOMDebugger {
     * Removes DOM breakpoint that was set using `setDOMBreakpoint`.
     */
     public io.netty.util.concurrent.Future removeDOMBreakpoint(jpuppeteer.cdp.client.entity.domdebugger.RemoveDOMBreakpointRequest request) {
-        return session.send("DOMDebugger.removeDOMBreakpoint", request);
+        return connection.send("DOMDebugger.removeDOMBreakpoint", request);
     }
 
 
@@ -30,7 +30,7 @@ public class DOMDebugger {
     * Removes breakpoint on particular DOM event.
     */
     public io.netty.util.concurrent.Future removeEventListenerBreakpoint(jpuppeteer.cdp.client.entity.domdebugger.RemoveEventListenerBreakpointRequest request) {
-        return session.send("DOMDebugger.removeEventListenerBreakpoint", request);
+        return connection.send("DOMDebugger.removeEventListenerBreakpoint", request);
     }
 
 
@@ -39,7 +39,7 @@ public class DOMDebugger {
     * experimental
     */
     public io.netty.util.concurrent.Future removeInstrumentationBreakpoint(jpuppeteer.cdp.client.entity.domdebugger.RemoveInstrumentationBreakpointRequest request) {
-        return session.send("DOMDebugger.removeInstrumentationBreakpoint", request);
+        return connection.send("DOMDebugger.removeInstrumentationBreakpoint", request);
     }
 
 
@@ -47,7 +47,7 @@ public class DOMDebugger {
     * Removes breakpoint from XMLHttpRequest.
     */
     public io.netty.util.concurrent.Future removeXHRBreakpoint(jpuppeteer.cdp.client.entity.domdebugger.RemoveXHRBreakpointRequest request) {
-        return session.send("DOMDebugger.removeXHRBreakpoint", request);
+        return connection.send("DOMDebugger.removeXHRBreakpoint", request);
     }
 
 
@@ -56,7 +56,7 @@ public class DOMDebugger {
     * experimental
     */
     public io.netty.util.concurrent.Future setBreakOnCSPViolation(jpuppeteer.cdp.client.entity.domdebugger.SetBreakOnCSPViolationRequest request) {
-        return session.send("DOMDebugger.setBreakOnCSPViolation", request);
+        return connection.send("DOMDebugger.setBreakOnCSPViolation", request);
     }
 
 
@@ -64,7 +64,7 @@ public class DOMDebugger {
     * Sets breakpoint on particular operation with DOM.
     */
     public io.netty.util.concurrent.Future setDOMBreakpoint(jpuppeteer.cdp.client.entity.domdebugger.SetDOMBreakpointRequest request) {
-        return session.send("DOMDebugger.setDOMBreakpoint", request);
+        return connection.send("DOMDebugger.setDOMBreakpoint", request);
     }
 
 
@@ -72,7 +72,7 @@ public class DOMDebugger {
     * Sets breakpoint on particular DOM event.
     */
     public io.netty.util.concurrent.Future setEventListenerBreakpoint(jpuppeteer.cdp.client.entity.domdebugger.SetEventListenerBreakpointRequest request) {
-        return session.send("DOMDebugger.setEventListenerBreakpoint", request);
+        return connection.send("DOMDebugger.setEventListenerBreakpoint", request);
     }
 
 
@@ -81,7 +81,7 @@ public class DOMDebugger {
     * experimental
     */
     public io.netty.util.concurrent.Future setInstrumentationBreakpoint(jpuppeteer.cdp.client.entity.domdebugger.SetInstrumentationBreakpointRequest request) {
-        return session.send("DOMDebugger.setInstrumentationBreakpoint", request);
+        return connection.send("DOMDebugger.setInstrumentationBreakpoint", request);
     }
 
 
@@ -89,7 +89,7 @@ public class DOMDebugger {
     * Sets breakpoint on XMLHttpRequest.
     */
     public io.netty.util.concurrent.Future setXHRBreakpoint(jpuppeteer.cdp.client.entity.domdebugger.SetXHRBreakpointRequest request) {
-        return session.send("DOMDebugger.setXHRBreakpoint", request);
+        return connection.send("DOMDebugger.setXHRBreakpoint", request);
     }
 
 }

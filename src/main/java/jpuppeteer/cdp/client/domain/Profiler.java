@@ -4,23 +4,23 @@ package jpuppeteer.cdp.client.domain;
 */
 public class Profiler {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public Profiler(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public Profiler(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     */
     public io.netty.util.concurrent.Future disable() {
-        return session.send("Profiler.disable", null);
+        return connection.send("Profiler.disable", null);
     }
 
 
     /**
     */
     public io.netty.util.concurrent.Future enable() {
-        return session.send("Profiler.enable", null);
+        return connection.send("Profiler.enable", null);
     }
 
 
@@ -28,7 +28,7 @@ public class Profiler {
     * Collect coverage data for the current isolate. The coverage data may be incomplete due to garbage collection.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.profiler.GetBestEffortCoverageResponse> getBestEffortCoverage() {
-        return session.send("Profiler.getBestEffortCoverage", null, jpuppeteer.cdp.client.entity.profiler.GetBestEffortCoverageResponse.class);
+        return connection.send("Profiler.getBestEffortCoverage", null, jpuppeteer.cdp.client.entity.profiler.GetBestEffortCoverageResponse.class);
     }
 
 
@@ -36,14 +36,14 @@ public class Profiler {
     * Changes CPU profiler sampling interval. Must be called before CPU profiles recording started.
     */
     public io.netty.util.concurrent.Future setSamplingInterval(jpuppeteer.cdp.client.entity.profiler.SetSamplingIntervalRequest request) {
-        return session.send("Profiler.setSamplingInterval", request);
+        return connection.send("Profiler.setSamplingInterval", request);
     }
 
 
     /**
     */
     public io.netty.util.concurrent.Future start() {
-        return session.send("Profiler.start", null);
+        return connection.send("Profiler.start", null);
     }
 
 
@@ -51,7 +51,7 @@ public class Profiler {
     * Enable precise code coverage. Coverage data for JavaScript executed before enabling precise code coverage may be incomplete. Enabling prevents running optimized code and resets execution counters.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.profiler.StartPreciseCoverageResponse> startPreciseCoverage(jpuppeteer.cdp.client.entity.profiler.StartPreciseCoverageRequest request) {
-        return session.send("Profiler.startPreciseCoverage", request, jpuppeteer.cdp.client.entity.profiler.StartPreciseCoverageResponse.class);
+        return connection.send("Profiler.startPreciseCoverage", request, jpuppeteer.cdp.client.entity.profiler.StartPreciseCoverageResponse.class);
     }
 
 
@@ -60,14 +60,14 @@ public class Profiler {
     * experimental
     */
     public io.netty.util.concurrent.Future startTypeProfile() {
-        return session.send("Profiler.startTypeProfile", null);
+        return connection.send("Profiler.startTypeProfile", null);
     }
 
 
     /**
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.profiler.StopResponse> stop() {
-        return session.send("Profiler.stop", null, jpuppeteer.cdp.client.entity.profiler.StopResponse.class);
+        return connection.send("Profiler.stop", null, jpuppeteer.cdp.client.entity.profiler.StopResponse.class);
     }
 
 
@@ -75,7 +75,7 @@ public class Profiler {
     * Disable precise code coverage. Disabling releases unnecessary execution count records and allows executing optimized code.
     */
     public io.netty.util.concurrent.Future stopPreciseCoverage() {
-        return session.send("Profiler.stopPreciseCoverage", null);
+        return connection.send("Profiler.stopPreciseCoverage", null);
     }
 
 
@@ -84,7 +84,7 @@ public class Profiler {
     * experimental
     */
     public io.netty.util.concurrent.Future stopTypeProfile() {
-        return session.send("Profiler.stopTypeProfile", null);
+        return connection.send("Profiler.stopTypeProfile", null);
     }
 
 
@@ -92,7 +92,7 @@ public class Profiler {
     * Collect coverage data for the current isolate, and resets execution counters. Precise code coverage needs to have started.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.profiler.TakePreciseCoverageResponse> takePreciseCoverage() {
-        return session.send("Profiler.takePreciseCoverage", null, jpuppeteer.cdp.client.entity.profiler.TakePreciseCoverageResponse.class);
+        return connection.send("Profiler.takePreciseCoverage", null, jpuppeteer.cdp.client.entity.profiler.TakePreciseCoverageResponse.class);
     }
 
 
@@ -101,7 +101,7 @@ public class Profiler {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.profiler.TakeTypeProfileResponse> takeTypeProfile() {
-        return session.send("Profiler.takeTypeProfile", null, jpuppeteer.cdp.client.entity.profiler.TakeTypeProfileResponse.class);
+        return connection.send("Profiler.takeTypeProfile", null, jpuppeteer.cdp.client.entity.profiler.TakeTypeProfileResponse.class);
     }
 
 
@@ -110,7 +110,7 @@ public class Profiler {
     * experimental
     */
     public io.netty.util.concurrent.Future enableCounters() {
-        return session.send("Profiler.enableCounters", null);
+        return connection.send("Profiler.enableCounters", null);
     }
 
 
@@ -119,7 +119,7 @@ public class Profiler {
     * experimental
     */
     public io.netty.util.concurrent.Future disableCounters() {
-        return session.send("Profiler.disableCounters", null);
+        return connection.send("Profiler.disableCounters", null);
     }
 
 
@@ -128,7 +128,7 @@ public class Profiler {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.profiler.GetCountersResponse> getCounters() {
-        return session.send("Profiler.getCounters", null, jpuppeteer.cdp.client.entity.profiler.GetCountersResponse.class);
+        return connection.send("Profiler.getCounters", null, jpuppeteer.cdp.client.entity.profiler.GetCountersResponse.class);
     }
 
 
@@ -137,7 +137,7 @@ public class Profiler {
     * experimental
     */
     public io.netty.util.concurrent.Future enableRuntimeCallStats() {
-        return session.send("Profiler.enableRuntimeCallStats", null);
+        return connection.send("Profiler.enableRuntimeCallStats", null);
     }
 
 
@@ -146,7 +146,7 @@ public class Profiler {
     * experimental
     */
     public io.netty.util.concurrent.Future disableRuntimeCallStats() {
-        return session.send("Profiler.disableRuntimeCallStats", null);
+        return connection.send("Profiler.disableRuntimeCallStats", null);
     }
 
 
@@ -155,7 +155,7 @@ public class Profiler {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.profiler.GetRuntimeCallStatsResponse> getRuntimeCallStats() {
-        return session.send("Profiler.getRuntimeCallStats", null, jpuppeteer.cdp.client.entity.profiler.GetRuntimeCallStatsResponse.class);
+        return connection.send("Profiler.getRuntimeCallStats", null, jpuppeteer.cdp.client.entity.profiler.GetRuntimeCallStatsResponse.class);
     }
 
 }

@@ -5,23 +5,23 @@ package jpuppeteer.cdp.client.domain;
 */
 public class Memory {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public Memory(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public Memory(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.memory.GetDOMCountersResponse> getDOMCounters() {
-        return session.send("Memory.getDOMCounters", null, jpuppeteer.cdp.client.entity.memory.GetDOMCountersResponse.class);
+        return connection.send("Memory.getDOMCounters", null, jpuppeteer.cdp.client.entity.memory.GetDOMCountersResponse.class);
     }
 
 
     /**
     */
     public io.netty.util.concurrent.Future prepareForLeakDetection() {
-        return session.send("Memory.prepareForLeakDetection", null);
+        return connection.send("Memory.prepareForLeakDetection", null);
     }
 
 
@@ -29,7 +29,7 @@ public class Memory {
     * Simulate OomIntervention by purging V8 memory.
     */
     public io.netty.util.concurrent.Future forciblyPurgeJavaScriptMemory() {
-        return session.send("Memory.forciblyPurgeJavaScriptMemory", null);
+        return connection.send("Memory.forciblyPurgeJavaScriptMemory", null);
     }
 
 
@@ -37,7 +37,7 @@ public class Memory {
     * Enable/disable suppressing memory pressure notifications in all processes.
     */
     public io.netty.util.concurrent.Future setPressureNotificationsSuppressed(jpuppeteer.cdp.client.entity.memory.SetPressureNotificationsSuppressedRequest request) {
-        return session.send("Memory.setPressureNotificationsSuppressed", request);
+        return connection.send("Memory.setPressureNotificationsSuppressed", request);
     }
 
 
@@ -45,7 +45,7 @@ public class Memory {
     * Simulate a memory pressure notification in all processes.
     */
     public io.netty.util.concurrent.Future simulatePressureNotification(jpuppeteer.cdp.client.entity.memory.SimulatePressureNotificationRequest request) {
-        return session.send("Memory.simulatePressureNotification", request);
+        return connection.send("Memory.simulatePressureNotification", request);
     }
 
 
@@ -53,7 +53,7 @@ public class Memory {
     * Start collecting native memory profile.
     */
     public io.netty.util.concurrent.Future startSampling(jpuppeteer.cdp.client.entity.memory.StartSamplingRequest request) {
-        return session.send("Memory.startSampling", request);
+        return connection.send("Memory.startSampling", request);
     }
 
 
@@ -61,7 +61,7 @@ public class Memory {
     * Stop collecting native memory profile.
     */
     public io.netty.util.concurrent.Future stopSampling() {
-        return session.send("Memory.stopSampling", null);
+        return connection.send("Memory.stopSampling", null);
     }
 
 
@@ -69,7 +69,7 @@ public class Memory {
     * Retrieve native memory allocations profile collected since renderer process startup.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.memory.GetAllTimeSamplingProfileResponse> getAllTimeSamplingProfile() {
-        return session.send("Memory.getAllTimeSamplingProfile", null, jpuppeteer.cdp.client.entity.memory.GetAllTimeSamplingProfileResponse.class);
+        return connection.send("Memory.getAllTimeSamplingProfile", null, jpuppeteer.cdp.client.entity.memory.GetAllTimeSamplingProfileResponse.class);
     }
 
 
@@ -77,7 +77,7 @@ public class Memory {
     * Retrieve native memory allocations profile collected since browser process startup.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.memory.GetBrowserSamplingProfileResponse> getBrowserSamplingProfile() {
-        return session.send("Memory.getBrowserSamplingProfile", null, jpuppeteer.cdp.client.entity.memory.GetBrowserSamplingProfileResponse.class);
+        return connection.send("Memory.getBrowserSamplingProfile", null, jpuppeteer.cdp.client.entity.memory.GetBrowserSamplingProfileResponse.class);
     }
 
 
@@ -85,7 +85,7 @@ public class Memory {
     * Retrieve native memory allocations profile collected since last `startSampling` call.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.memory.GetSamplingProfileResponse> getSamplingProfile() {
-        return session.send("Memory.getSamplingProfile", null, jpuppeteer.cdp.client.entity.memory.GetSamplingProfileResponse.class);
+        return connection.send("Memory.getSamplingProfile", null, jpuppeteer.cdp.client.entity.memory.GetSamplingProfileResponse.class);
     }
 
 }

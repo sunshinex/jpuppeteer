@@ -1,118 +1,89 @@
 package jpuppeteer.chrome;
 
-import io.netty.util.concurrent.EventExecutor;
+import io.netty.channel.EventLoop;
 import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.Promise;
-import jpuppeteer.api.BrowserObject;
-import jpuppeteer.api.Element;
-import jpuppeteer.api.Frame;
-import jpuppeteer.api.Isolate;
-import jpuppeteer.cdp.client.domain.DOM;
-import jpuppeteer.cdp.client.domain.Page;
-import jpuppeteer.cdp.client.domain.Runtime;
+import jpuppeteer.api.*;
+import jpuppeteer.api.event.AbstractEventEmitter;
+import jpuppeteer.api.event.AbstractListener;
+import jpuppeteer.api.event.PageEvent;
 import jpuppeteer.cdp.client.entity.page.CreateIsolatedWorldRequest;
 import jpuppeteer.cdp.client.entity.page.NavigateRequest;
 import jpuppeteer.cdp.client.entity.runtime.CallFunctionOnRequest;
 import jpuppeteer.cdp.client.entity.runtime.EvaluateRequest;
-import jpuppeteer.util.Input;
+import jpuppeteer.entity.TargetBase;
 import jpuppeteer.util.ScriptUtil;
-import jpuppeteer.util.SeriesFuture;
+import jpuppeteer.util.SeriesPromise;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
-public class ChromeFrame implements Frame {
+public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Frame {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeFrame.class);
 
     private static final String SCRIPT_WAIT_SELECTOR = ScriptUtil.load("script/waitselector.js");
 
-    private final jpuppeteer.api.Page page;
+    private static final String SCRIPT_WATCH = ScriptUtil.load("script/watch.js");
+
+    private final ChromePage page;
 
     private final ChromeFrame parent;
 
-    private final String frameId;
+    private final TargetBase targetBase;
 
-    private final Future<Element> ownerFuture;
+    private volatile ChromeIsolate isolate;
 
-    private final Page pageDomain;
-
-    private final DOM dom;
-
-    private final Runtime runtime;
-
-    private final Input input;
-
-    private final EventExecutor executor;
-
-    private volatile Promise<ChromeIsolate> isolatePromise;
-
-    public ChromeFrame(jpuppeteer.api.Page page, ChromeFrame parent, String frameId, Future<Element> ownerFuture, Page pageDomain, DOM dom, Runtime runtime, Input input, EventExecutor executor) {
+    public ChromeFrame(ChromePage page, ChromeFrame parent, TargetBase targetBase) {
         this.page = page;
         this.parent = parent;
-        this.frameId = frameId;
-        this.ownerFuture = ownerFuture;
-        this.pageDomain = pageDomain;
-        this.dom = dom;
-        this.runtime = runtime;
-        this.input = input;
-        this.executor = executor;
-        this.isolatePromise = executor.newPromise();
+        this.targetBase = targetBase;
+        this.targetBase.setFrame(this);
     }
 
-    public Page pageDomain() {
-        return pageDomain;
+    protected EventLoop eventLoop() {
+        return page.eventLoop();
     }
 
-    public DOM dom() {
-        return dom;
+    protected ChromeFrame appendChild(TargetBase targetBase) {
+        return new ChromeFrame(page(), this, targetBase);
     }
 
-    public Runtime runtime() {
-        return runtime;
+    protected void setIsolate(ChromeIsolate isolate) {
+        this.isolate = isolate;
     }
 
-    public Input input() {
-        return input;
+    protected TargetBase targetBase() {
+        return targetBase;
     }
 
-    public EventExecutor executor() {
-        return executor;
-    }
-
-    public void createIsolate(Integer isolateId, String isolateName) {
-        ChromeIsolate isolate = new ChromeIsolate(runtime, isolateId, isolateName, this, executor);
-        isolatePromise.trySuccess(isolate);
-    }
-
-    public void destroyIsolate() {
-        Promise<ChromeIsolate> promise = this.isolatePromise;
-        if (promise != null) {
-            promise.tryFailure(new IllegalStateException("isolate destroyed"));
+    private ChromeIsolate assertIsolateNotNull() {
+        if (this.isolate == null) {
+            throw new IllegalStateException("isolate not ready");
         }
-        this.isolatePromise = executor.newPromise();
+        return isolate;
     }
 
     @Override
-    public jpuppeteer.api.Page page() {
+    protected void emitInternal(AbstractListener<PageEvent> listener, PageEvent event) {
+        if (eventLoop().inEventLoop()) {
+            listener.accept(event);
+        } else {
+            eventLoop().execute(() -> listener.accept(event));
+        }
+    }
+
+    @Override
+    public ChromePage page() {
         return page;
     }
 
     @Override
-    public Future<Element> owner() {
-        return ownerFuture;
-    }
-
-    public ChromeFrame appendChild(String frameId, Future<Element> ownerFuture) {
-        return new ChromeFrame(page(), this, frameId, ownerFuture, pageDomain, dom, runtime, input, executor);
-    }
-
-    @Override
     public String frameId() {
-        return frameId;
+        return targetBase.getTargetId();
     }
 
     @Override
@@ -121,19 +92,14 @@ public class ChromeFrame implements Frame {
     }
 
     @Override
-    public Future<String> title() {
-        return eval("document.title", null, String.class);
-    }
-
-    @Override
-    public Future<String> url() {
-        return eval("location.href", null, String.class);
+    public String url() {
+        return targetBase.getUrl();
     }
 
     @Override
     public Future<String> navigate(String url, String referer) {
-        return SeriesFuture
-                .wrap(pageDomain.navigate(new NavigateRequest(url, referer, null, frameId, null)))
+        return SeriesPromise
+                .wrap(page().connection().page.navigate(new NavigateRequest(url, referer, null, frameId(), null)))
                 .sync(o -> {
                     if (StringUtils.isNoneEmpty(o.errorText)) {
                         throw new RuntimeException(o.errorText);
@@ -145,9 +111,14 @@ public class ChromeFrame implements Frame {
 
     @Override
     public Future<Isolate> createIsolate(String isolateName) {
-        return SeriesFuture
-                .wrap(pageDomain.createIsolatedWorld(new CreateIsolatedWorldRequest(frameId, isolateName, true)))
-                .sync(o -> new ChromeIsolate(runtime, o.executionContextId, isolateName, this, executor));
+        return SeriesPromise
+                .wrap(page().connection().page.createIsolatedWorld(new CreateIsolatedWorldRequest(frameId(), isolateName, true)))
+                .sync(o -> new ChromeIsolate(this, o.executionContextId, isolateName));
+    }
+
+    @Override
+    public String name() {
+        return isolate.name();
     }
 
     @Override
@@ -157,99 +128,70 @@ public class ChromeFrame implements Frame {
 
     @Override
     public Future<BrowserObject> eval(EvaluateRequest request) {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.eval(request));
+        return assertIsolateNotNull().eval(request);
     }
 
     @Override
     public <R> Future<R> eval(EvaluateRequest request, Class<R> clazz) {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.eval(request, clazz));
+        return assertIsolateNotNull().eval(request, clazz);
     }
 
     @Override
     public Future<BrowserObject> eval(String expression, Integer timeout) {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.eval(expression, timeout));
+        return assertIsolateNotNull().eval(expression, timeout);
     }
 
     @Override
     public <R> Future<R> eval(String expression, Integer timeout, Class<R> clazz) {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.eval(expression, timeout, clazz));
+        return assertIsolateNotNull().eval(expression, timeout, clazz);
     }
 
     @Override
     public Future<BrowserObject> call(CallFunctionOnRequest request) {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.call(request));
+        return assertIsolateNotNull().call(request);
     }
 
     @Override
     public <R> Future<R> call(CallFunctionOnRequest request, Class<R> clazz) {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.call(request, clazz));
+        return assertIsolateNotNull().call(request, clazz);
     }
 
     @Override
     public Future<BrowserObject> call(String declaration, String objectId, Object... args) {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.call(declaration, objectId, args));
+        return assertIsolateNotNull().call(declaration, objectId, args);
     }
 
     @Override
     public <R> Future<R> call(String declaration, String objectId, Class<R> clazz, Object... args) {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.call(declaration, objectId, clazz, args));
+        return assertIsolateNotNull().call(declaration, objectId, clazz, args);
     }
 
     @Override
     public Future<BrowserObject> call(String declaration, Object... args) {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.call(declaration, args));
+        return assertIsolateNotNull().call(declaration, args);
     }
 
     @Override
     public <R> Future<R> call(String declaration, Class<R> clazz, Object... args) {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.call(declaration, clazz, args));
+        return assertIsolateNotNull().call(declaration, clazz, args);
     }
 
     @Override
     public Future<Element> querySelector(String selector) {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.call("function (selector){return document.querySelector(selector);}", (Object) selector))
-                .sync(o -> {
-                    if (o == null) {
-                        throw new NoSuchElementException(selector);
-                    } else {
-                        return new ChromeElement(page(), dom, isolatePromise.getNow(), runtime, input, o, executor);
-                    }
-                });
+        return SeriesPromise
+                .wrap(assertIsolateNotNull().call("function (selector){return document.querySelector(selector);}", (Object) selector))
+                .sync(o -> o != null ? new ChromeElement(this, o) : null);
     }
 
     @Override
     public Future<Element[]> querySelectorAll(String selector) {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.call("function (selector){return document.querySelectorAll(selector);}", (Object) selector))
+        return SeriesPromise
+                .wrap(assertIsolateNotNull().call("function (selector){return document.querySelectorAll(selector);}", (Object) selector))
                 .async(BrowserObject::getProperties)
-                .sync(o -> {
-                    Isolate isolate = isolatePromise.getNow();
-                    Element[] elements = new Element[o.length];
-                    for(int i=0; i<o.length; i++) {
-                        elements[i] = new ChromeElement(page(), dom, isolate, runtime, input, o[i], executor);
+                .sync(browserObjects -> {
+                    Element[] elements = new Element[browserObjects.length];
+                    for(int i=0; i<browserObjects.length; i++) {
+                        elements[i] = new ChromeElement(ChromeFrame.this, browserObjects[i]);
                     }
                     return elements;
                 });
@@ -258,24 +200,47 @@ public class ChromeFrame implements Frame {
     @Override
     public Future<Element> waitSelector(String selector, long timeout, TimeUnit unit) {
         timeout = unit.toMillis(timeout);
-        return SeriesFuture
-                .wrap(call(SCRIPT_WAIT_SELECTOR, (Object) selector, timeout))
-                .sync(o -> new ChromeElement(page(), dom, isolatePromise.getNow(), runtime, input, o, executor));
+        return SeriesPromise
+                .wrap(assertIsolateNotNull().call(SCRIPT_WAIT_SELECTOR, (Object) selector, timeout))
+                .sync(o -> new ChromeElement(this, o));
+    }
+
+    @Override
+    public Future watch(String selector, Consumer<Element> watchFunction, boolean once) {
+        String functionName = "watch_" + UUID.randomUUID().toString().replace("-", "");
+        return SeriesPromise
+                .wrap(call(SCRIPT_WATCH, (Object) selector, functionName, once))
+                .async(o -> addBinding(functionName, (isolate, hash) -> {
+                    isolate.eval("window['" + hash + "']")
+                            .addListener(f -> {
+                                if (f.cause() != null) {
+                                    logger.error("query watch object failed, error={}", f.cause().getMessage(), f.cause());
+                                } else {
+                                    Element node = new ChromeElement(this, (BrowserObject) f.getNow());
+                                    watchFunction.accept(node);
+                                }
+                            });
+                }));
+    }
+
+    @Override
+    public Future addBinding(String bindingName, BindingFunction function) {
+        return page().addBinding0(null, bindingName, function);
+    }
+
+    @Override
+    public Future removeBinding(String bindingName) {
+        return page().removeBinding0(bindingName);
     }
 
     @Override
     public Future<String> html() {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.eval("document.documentElement.outerHTML;", null, String.class));
+        return assertIsolateNotNull().eval("document.documentElement.outerHTML;", null, String.class);
     }
 
     @Override
     @SuppressWarnings("rawtypes")
     public Future html(String html) {
-        return SeriesFuture
-                .wrap(isolatePromise)
-                .async(o -> o.call("function (html){document.documentElement.outerHTML=html;}", (Object) html));
+        return assertIsolateNotNull().call("function (html){document.documentElement.outerHTML=html;}", (Object) html);
     }
-
 }

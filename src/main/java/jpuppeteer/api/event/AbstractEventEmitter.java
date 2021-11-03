@@ -14,8 +14,7 @@ public abstract class AbstractEventEmitter<E> implements EventEmitter<E> {
 
     protected abstract void emitInternal(AbstractListener<E> listener, E event);
 
-    @Override
-    public void emit(E event) {
+    protected void emit(E event) {
         listeners.entrySet().forEach(entry -> {
             AbstractListener<E> listener = entry.getValue();
             Class<? extends E> typeClass = listener.type();

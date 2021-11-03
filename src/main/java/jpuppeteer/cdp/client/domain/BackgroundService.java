@@ -5,17 +5,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class BackgroundService {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public BackgroundService(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public BackgroundService(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Enables event updates for the service.
     */
     public io.netty.util.concurrent.Future startObserving(jpuppeteer.cdp.client.entity.backgroundservice.StartObservingRequest request) {
-        return session.send("BackgroundService.startObserving", request);
+        return connection.send("BackgroundService.startObserving", request);
     }
 
 
@@ -23,7 +23,7 @@ public class BackgroundService {
     * Disables event updates for the service.
     */
     public io.netty.util.concurrent.Future stopObserving(jpuppeteer.cdp.client.entity.backgroundservice.StopObservingRequest request) {
-        return session.send("BackgroundService.stopObserving", request);
+        return connection.send("BackgroundService.stopObserving", request);
     }
 
 
@@ -31,7 +31,7 @@ public class BackgroundService {
     * Set the recording state for the service.
     */
     public io.netty.util.concurrent.Future setRecording(jpuppeteer.cdp.client.entity.backgroundservice.SetRecordingRequest request) {
-        return session.send("BackgroundService.setRecording", request);
+        return connection.send("BackgroundService.setRecording", request);
     }
 
 
@@ -39,7 +39,7 @@ public class BackgroundService {
     * Clears all stored data for the service.
     */
     public io.netty.util.concurrent.Future clearEvents(jpuppeteer.cdp.client.entity.backgroundservice.ClearEventsRequest request) {
-        return session.send("BackgroundService.clearEvents", request);
+        return connection.send("BackgroundService.clearEvents", request);
     }
 
 }

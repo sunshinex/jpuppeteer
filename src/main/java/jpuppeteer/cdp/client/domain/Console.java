@@ -5,17 +5,17 @@ package jpuppeteer.cdp.client.domain;
 @java.lang.Deprecated
 public class Console {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public Console(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public Console(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Does nothing.
     */
     public io.netty.util.concurrent.Future clearMessages() {
-        return session.send("Console.clearMessages", null);
+        return connection.send("Console.clearMessages", null);
     }
 
 
@@ -23,7 +23,7 @@ public class Console {
     * Disables console domain, prevents further console messages from being reported to the client.
     */
     public io.netty.util.concurrent.Future disable() {
-        return session.send("Console.disable", null);
+        return connection.send("Console.disable", null);
     }
 
 
@@ -31,7 +31,7 @@ public class Console {
     * Enables console domain, sends the messages collected so far to the client by means of the `messageAdded` notification.
     */
     public io.netty.util.concurrent.Future enable() {
-        return session.send("Console.enable", null);
+        return connection.send("Console.enable", null);
     }
 
 }

@@ -1,9 +1,6 @@
 package jpuppeteer.api.event.page;
 
-import io.netty.util.concurrent.DefaultPromise;
-import io.netty.util.concurrent.EventExecutor;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.Promise;
+import io.netty.util.concurrent.*;
 import jpuppeteer.api.Frame;
 import jpuppeteer.api.HttpHeader;
 import jpuppeteer.api.Request;
@@ -11,7 +8,7 @@ import jpuppeteer.api.event.FrameEvent;
 import jpuppeteer.cdp.client.constant.network.ResourceType;
 import jpuppeteer.cdp.client.domain.Network;
 import jpuppeteer.cdp.client.entity.network.GetRequestPostDataRequest;
-import jpuppeteer.util.SeriesFuture;
+import jpuppeteer.util.SeriesPromise;
 
 public class RequestEvent extends FrameEvent implements Request {
 
@@ -93,11 +90,9 @@ public class RequestEvent extends FrameEvent implements Request {
             return null;
         }
         if (postData != null) {
-            Promise<String> promise = new DefaultPromise<>(executor);
-            promise.trySuccess(postData);
-            return promise;
+            return new SucceededFuture<>(executor, postData);
         }
-        return SeriesFuture
+        return SeriesPromise
                 .wrap(network.getRequestPostData(new GetRequestPostDataRequest(requestId)))
                 .sync(o -> o.postData);
     }
@@ -121,10 +116,6 @@ public class RequestEvent extends FrameEvent implements Request {
         private Frame frame;
 
         private RequestEventBuilder() {
-        }
-
-        public static RequestEventBuilder aRequestEvent() {
-            return new RequestEventBuilder();
         }
 
         public RequestEventBuilder network(Network network) {

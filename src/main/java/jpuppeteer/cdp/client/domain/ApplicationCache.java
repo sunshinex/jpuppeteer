@@ -5,17 +5,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class ApplicationCache {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public ApplicationCache(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public ApplicationCache(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Enables application cache domain notifications.
     */
     public io.netty.util.concurrent.Future enable() {
-        return session.send("ApplicationCache.enable", null);
+        return connection.send("ApplicationCache.enable", null);
     }
 
 
@@ -23,7 +23,7 @@ public class ApplicationCache {
     * Returns relevant application cache data for the document in given frame.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.applicationcache.GetApplicationCacheForFrameResponse> getApplicationCacheForFrame(jpuppeteer.cdp.client.entity.applicationcache.GetApplicationCacheForFrameRequest request) {
-        return session.send("ApplicationCache.getApplicationCacheForFrame", request, jpuppeteer.cdp.client.entity.applicationcache.GetApplicationCacheForFrameResponse.class);
+        return connection.send("ApplicationCache.getApplicationCacheForFrame", request, jpuppeteer.cdp.client.entity.applicationcache.GetApplicationCacheForFrameResponse.class);
     }
 
 
@@ -31,7 +31,7 @@ public class ApplicationCache {
     * Returns array of frame identifiers with manifest urls for each frame containing a document associated with some application cache.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.applicationcache.GetFramesWithManifestsResponse> getFramesWithManifests() {
-        return session.send("ApplicationCache.getFramesWithManifests", null, jpuppeteer.cdp.client.entity.applicationcache.GetFramesWithManifestsResponse.class);
+        return connection.send("ApplicationCache.getFramesWithManifests", null, jpuppeteer.cdp.client.entity.applicationcache.GetFramesWithManifestsResponse.class);
     }
 
 
@@ -39,7 +39,7 @@ public class ApplicationCache {
     * Returns manifest URL for document in the given frame.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.applicationcache.GetManifestForFrameResponse> getManifestForFrame(jpuppeteer.cdp.client.entity.applicationcache.GetManifestForFrameRequest request) {
-        return session.send("ApplicationCache.getManifestForFrame", request, jpuppeteer.cdp.client.entity.applicationcache.GetManifestForFrameResponse.class);
+        return connection.send("ApplicationCache.getManifestForFrame", request, jpuppeteer.cdp.client.entity.applicationcache.GetManifestForFrameResponse.class);
     }
 
 }

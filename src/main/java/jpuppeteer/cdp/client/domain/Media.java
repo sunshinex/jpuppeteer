@@ -5,17 +5,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class Media {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public Media(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public Media(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Enables the Media domain
     */
     public io.netty.util.concurrent.Future enable() {
-        return session.send("Media.enable", null);
+        return connection.send("Media.enable", null);
     }
 
 
@@ -23,7 +23,7 @@ public class Media {
     * Disables the Media domain.
     */
     public io.netty.util.concurrent.Future disable() {
-        return session.send("Media.disable", null);
+        return connection.send("Media.disable", null);
     }
 
 }

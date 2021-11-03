@@ -4,10 +4,10 @@ package jpuppeteer.cdp.client.domain;
 */
 public class Input {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public Input(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public Input(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
@@ -15,7 +15,7 @@ public class Input {
     * experimental
     */
     public io.netty.util.concurrent.Future dispatchDragEvent(jpuppeteer.cdp.client.entity.input.DispatchDragEventRequest request) {
-        return session.send("Input.dispatchDragEvent", request);
+        return connection.send("Input.dispatchDragEvent", request);
     }
 
 
@@ -23,7 +23,7 @@ public class Input {
     * Dispatches a key event to the page.
     */
     public io.netty.util.concurrent.Future dispatchKeyEvent(jpuppeteer.cdp.client.entity.input.DispatchKeyEventRequest request) {
-        return session.send("Input.dispatchKeyEvent", request);
+        return connection.send("Input.dispatchKeyEvent", request);
     }
 
 
@@ -32,7 +32,7 @@ public class Input {
     * experimental
     */
     public io.netty.util.concurrent.Future insertText(jpuppeteer.cdp.client.entity.input.InsertTextRequest request) {
-        return session.send("Input.insertText", request);
+        return connection.send("Input.insertText", request);
     }
 
 
@@ -40,7 +40,7 @@ public class Input {
     * Dispatches a mouse event to the page.
     */
     public io.netty.util.concurrent.Future dispatchMouseEvent(jpuppeteer.cdp.client.entity.input.DispatchMouseEventRequest request) {
-        return session.send("Input.dispatchMouseEvent", request);
+        return connection.send("Input.dispatchMouseEvent", request);
     }
 
 
@@ -48,7 +48,7 @@ public class Input {
     * Dispatches a touch event to the page.
     */
     public io.netty.util.concurrent.Future dispatchTouchEvent(jpuppeteer.cdp.client.entity.input.DispatchTouchEventRequest request) {
-        return session.send("Input.dispatchTouchEvent", request);
+        return connection.send("Input.dispatchTouchEvent", request);
     }
 
 
@@ -57,7 +57,7 @@ public class Input {
     * experimental
     */
     public io.netty.util.concurrent.Future emulateTouchFromMouseEvent(jpuppeteer.cdp.client.entity.input.EmulateTouchFromMouseEventRequest request) {
-        return session.send("Input.emulateTouchFromMouseEvent", request);
+        return connection.send("Input.emulateTouchFromMouseEvent", request);
     }
 
 
@@ -65,7 +65,7 @@ public class Input {
     * Ignores input events (useful while auditing page).
     */
     public io.netty.util.concurrent.Future setIgnoreInputEvents(jpuppeteer.cdp.client.entity.input.SetIgnoreInputEventsRequest request) {
-        return session.send("Input.setIgnoreInputEvents", request);
+        return connection.send("Input.setIgnoreInputEvents", request);
     }
 
 
@@ -74,7 +74,7 @@ public class Input {
     * experimental
     */
     public io.netty.util.concurrent.Future setInterceptDrags(jpuppeteer.cdp.client.entity.input.SetInterceptDragsRequest request) {
-        return session.send("Input.setInterceptDrags", request);
+        return connection.send("Input.setInterceptDrags", request);
     }
 
 
@@ -83,7 +83,7 @@ public class Input {
     * experimental
     */
     public io.netty.util.concurrent.Future synthesizePinchGesture(jpuppeteer.cdp.client.entity.input.SynthesizePinchGestureRequest request) {
-        return session.send("Input.synthesizePinchGesture", request);
+        return connection.send("Input.synthesizePinchGesture", request);
     }
 
 
@@ -92,7 +92,7 @@ public class Input {
     * experimental
     */
     public io.netty.util.concurrent.Future synthesizeScrollGesture(jpuppeteer.cdp.client.entity.input.SynthesizeScrollGestureRequest request) {
-        return session.send("Input.synthesizeScrollGesture", request);
+        return connection.send("Input.synthesizeScrollGesture", request);
     }
 
 
@@ -101,7 +101,7 @@ public class Input {
     * experimental
     */
     public io.netty.util.concurrent.Future synthesizeTapGesture(jpuppeteer.cdp.client.entity.input.SynthesizeTapGestureRequest request) {
-        return session.send("Input.synthesizeTapGesture", request);
+        return connection.send("Input.synthesizeTapGesture", request);
     }
 
 }

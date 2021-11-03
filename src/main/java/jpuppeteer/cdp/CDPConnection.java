@@ -6,7 +6,6 @@ import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.ValueFilter;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
@@ -15,16 +14,12 @@ import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.concurrent.Promise;
-import jpuppeteer.api.event.AbstractEventEmitter;
-import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.cdp.client.CDPEventType;
+import jpuppeteer.cdp.client.domain.Runtime;
+import jpuppeteer.cdp.client.domain.*;
 import jpuppeteer.util.CDPEnumFilter;
 import jpuppeteer.util.CDPException;
 import jpuppeteer.util.CDPParserConfig;
@@ -32,10 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.SSLException;
-import java.net.ProtocolException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.channels.ClosedChannelException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 @SuppressWarnings("unchecked")
-public class CDPConnection extends AbstractEventEmitter<CDPEvent> {
+public abstract class CDPConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(CDPConnection.class);
 
@@ -52,8 +44,6 @@ public class CDPConnection extends AbstractEventEmitter<CDPEvent> {
     private static final ParserConfig CDP_PARSER_CONFIG = new CDPParserConfig();
 
     private static final String WS = "ws";
-
-    private static final String WSS = "wss";
 
     protected static final String ID = "id";
 
@@ -65,135 +55,107 @@ public class CDPConnection extends AbstractEventEmitter<CDPEvent> {
 
     protected static final String RESULT = "result";
 
+    private final EventLoop eventLoop;
+
     private final URI uri;
 
-    private final ChannelFuture channelFuture;
+    private final Channel channel;
 
-    private final AtomicInteger messageIdGen;
+    private final Promise connectFuture;
 
     private final Map<Integer, Promise<JSONObject>> promiseMap;
 
-    public CDPConnection(String url) throws URISyntaxException, ProtocolException, SSLException {
-        this.uri = new URI(url);
-        this.channelFuture = open(uri);
-        this.messageIdGen = new AtomicInteger(0);
+    //domains
+    public final Browser browser;
+
+    public final DOM dom;
+
+    public final Emulation emulation;
+
+    public final Fetch fetch;
+
+    public final Input input;
+
+    public final jpuppeteer.util.Input inputWrapper;
+
+    public final Network network;
+
+    public final Page page;
+
+    public final Runtime runtime;
+
+    public final Target target;
+
+    public final Storage storage;
+
+    public CDPConnection(EventLoop eventLoop, AtomicInteger messageIdGen, URI uri) {
+        this.eventLoop = eventLoop;
+        this.uri = uri;
         this.promiseMap = new ConcurrentHashMap<>();
+        this.browser = new Browser(this);
+        this.dom = new DOM(this);
+        this.emulation = new Emulation(this);
+        this.fetch = new Fetch(this);
+        this.input = new Input(this);
+        this.inputWrapper = new jpuppeteer.util.Input(this.input, eventLoop);
+        this.network = new Network(this);
+        this.page = new Page(this);
+        this.runtime = new Runtime(this);
+        this.target = new Target(this);
+        this.storage = new Storage(this);
+        this.connectFuture = eventLoop.newPromise();
+        this.channel = open().channel();
     }
 
-    @Override
-    protected void emitInternal(AbstractListener<CDPEvent> listener, CDPEvent event) {
-        EventLoop eventLoop = eventLoop();
-        if (eventLoop.inEventLoop()) {
-            listener.accept(event);
-        } else {
-            eventLoop().execute(() -> listener.accept(event));
-        }
+    public CDPConnection(EventLoop eventLoop, URI uri) {
+        this(eventLoop, new AtomicInteger(0), uri);
     }
 
-    private ChannelFuture open(URI uri) throws ProtocolException, SSLException {
+    abstract protected int genId();
+
+    abstract protected void onEvent(CDPEvent event);
+
+    private ChannelFuture open() {
         String scheme = uri.getScheme() == null ? WS : uri.getScheme();
-        if (!scheme.equals(WS) && !scheme.equals(WSS)) {
-            throw new ProtocolException("Unsupported protocol: " + scheme);
+        if (!scheme.equals(WS)) {
+            throw new RuntimeException("Unsupported protocol: " + scheme);
         }
-        String host = uri.getHost();
-        int port = uri.getPort() != -1 ? uri.getPort() : WSS.equals(scheme) ? 443 : 80;
-        boolean ssl = scheme.equals(WSS);
-        SslContext sslContext;
-        if (ssl) {
-            sslContext = SslContextBuilder.forClient()
-                    .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
-        } else {
-            sslContext = null;
-        }
-        EventLoopGroup group = new NioEventLoopGroup(1, r -> {
-            return new Thread(r, "Connection-" + host + ":" + port);
-        });
-        try {
-            Promise shakePromise = new DefaultPromise<>(group.next());
-            Bootstrap b = new Bootstrap();
-            b.group(group)
-                    .channel(NioSocketChannel.class)
-                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 30000)
-                    .option(ChannelOption.SO_KEEPALIVE, true)
-                    .option(ChannelOption.TCP_NODELAY, true)
-                    .option(ChannelOption.SO_LINGER, 3)
-                    .option(ChannelOption.SO_REUSEADDR, true)
-                    .option(ChannelOption.AUTO_CLOSE, true)
-                    .handler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel ch) {
-                            ChannelPipeline p = ch.pipeline();
-                            if (sslContext != null) {
-                                p.addLast(sslContext.newHandler(ch.alloc(), host, port));
-                            }
-                            p.addLast(
-                                    new HttpClientCodec(),
-                                    new HttpObjectAggregator(8192),
-                                    new Handshaker(
-                                            WebSocketClientHandshakerFactory.newHandshaker(
-                                                    uri, WebSocketVersion.V13, null,
-                                                    true, new DefaultHttpHeaders(), 8 * 1024 * 1024),
-                                            shakePromise
-                                    ));
-                        }
-                    });
-
-            ChannelFuture connectFuture = b.connect(uri.getHost(), port);
-            Channel channel = connectFuture.channel();
-            ChannelPromise promise = channel.newPromise();
-            connectFuture.addListener(f0 -> {
-                //连接完成
-                if (f0.cause() != null) {
-                    promise.tryFailure(f0.cause());
-                } else {
-                    shakePromise.addListener(f1 -> {
-                        //握手完成
-                        if (f1.cause() != null) {
-                            promise.tryFailure(f1.cause());
-                        } else {
-                            promise.trySuccess();
-                        }
-                    });
-                }
-            });
-            return promise;
-        } catch (Throwable cause){
-            group.shutdownGracefully();
-            throw cause;
-        }
-    }
-
-    public Channel channel() {
-        return channelFuture.channel();
-    }
-
-    public EventLoop eventLoop() {
-        return channelFuture.channel().eventLoop();
+        Bootstrap b = new Bootstrap();
+        ChannelFuture channelFuture = b.group(eventLoop)
+                .channel(NioSocketChannel.class)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 30000)
+                .option(ChannelOption.SO_KEEPALIVE, true)
+                .option(ChannelOption.TCP_NODELAY, true)
+                .option(ChannelOption.SO_LINGER, 3)
+                .option(ChannelOption.SO_REUSEADDR, true)
+                .option(ChannelOption.AUTO_CLOSE, true)
+                .handler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel ch) {
+                        ChannelPipeline p = ch.pipeline();
+                        p.addLast(
+                                new HttpClientCodec(),
+                                new HttpObjectAggregator(8192),
+                                new Handshake());
+                    }
+                })
+                .connect(uri.getHost(), uri.getPort())
+                .addListener(f -> {
+                    if (f.cause() != null) {
+                        connectFuture.tryFailure(f.cause());
+                    }
+                });
+        return channelFuture;
     }
 
     public Future close() {
-        Channel channel = channelFuture.channel();
-        Promise<CDPConnection> promise = new DefaultPromise<>(GlobalEventExecutor.INSTANCE);
-        channel.close().addListener(f0 -> {
-            eventLoop().shutdownGracefully().addListener(f1 -> {
-                Throwable cause = f0.cause() != null ? f0.cause() : f1.cause();
-                if (cause != null) {
-                    promise.tryFailure(cause);
-                } else {
-                    promise.trySuccess(this);
-                }
-            });
-        });
-        return promise;
+        connectFuture.cancel(true);
+        return channel.close();
     }
 
-    private Future<JSONObject> send0(String method, Object params, Map<String, Object> extra) {
+    private Future<JSONObject> send0(String method, Object params) {
         JSONObject json = new JSONObject();
-        int id = this.messageIdGen.getAndIncrement();
-        //避免extra中的内容会覆盖ID, METHOD, PARAMS, 所以在前面先put进去
-        if (extra != null && extra.size() > 0) {
-            json.putAll(extra);
-        }
+        int id = genId();
         json.put(ID, id);
         json.put(METHOD, method);
         json.put(PARAMS, params);
@@ -201,17 +163,19 @@ public class CDPConnection extends AbstractEventEmitter<CDPEvent> {
         String jsonStr = JSON.toJSONString(json, CDP_ENUM_SERIALIZE_FILTER);
 
         if (logger.isDebugEnabled()) {
-            logger.debug("==> send message={}", jsonStr);
+            logger.debug("[{}] ==> send message={}", uri.getPath(), jsonStr);
         }
 
-        Promise<JSONObject> promise = new DefaultPromise<>(eventLoop());
+        Promise<JSONObject> promise = new DefaultPromise<>(eventLoop);
         promiseMap.put(id, promise);
-        channelFuture.addListener(f0 -> {
-            if (f0.cause() != null) {
-                promise.tryFailure(f0.cause());
+        TextWebSocketFrame frame = new TextWebSocketFrame(jsonStr);
+        connectFuture.addListener(f -> {
+            if (f.isCancelled()) {
+                promise.tryFailure(new Exception("Connection canceled"));
+            } else if (f.cause() != null) {
+                promise.tryFailure(f.cause());
             } else {
-                TextWebSocketFrame frame = new TextWebSocketFrame(jsonStr);
-                channel().writeAndFlush(frame).addListener(f1 -> {
+                channel.writeAndFlush(frame).addListener(f1 -> {
                     if (f1.cause() != null) {
                         promise.tryFailure(f1.cause());
                     }
@@ -224,13 +188,12 @@ public class CDPConnection extends AbstractEventEmitter<CDPEvent> {
                 promiseMap.remove(id);
             }
         });
-
         return promise;
     }
 
-    public <T> Future<T> send(String method, Object params, Map<String, Object> extra, Function<String, T> function) {
-        Promise<T> promise = new DefaultPromise<>(eventLoop());
-        send0(method, params, extra).addListener(f -> {
+    public <T> Future<T> send(String method, Object params, Function<String, T> function) {
+        Promise<T> promise = new DefaultPromise<>(eventLoop);
+        send0(method, params).addListener(f -> {
             if (f.cause() != null) {
                 promise.tryFailure(f.cause());
             } else {
@@ -247,67 +210,56 @@ public class CDPConnection extends AbstractEventEmitter<CDPEvent> {
     }
 
     public final Future send(String method, Object params) {
-        return send(method, params, null, o -> null);
-    }
-
-    public final Future send(String method, Object params, Map<String, Object> extra) {
-        return send(method, params, extra, o -> null);
+        return send0(method, params);
     }
 
     public final <T> Future<T> send(String method, Object params, Class<T> clazz) {
-        return send(method, params, null, o -> JSON.parseObject(o, clazz, CDP_PARSER_CONFIG));
+        return send(method, params, o -> JSON.parseObject(o, clazz, CDP_PARSER_CONFIG));
     }
 
-    public final <T> Future<T> send(String method, Object params, Map<String, Object> extra, Class<T> clazz) {
-        return send(method, params, extra, o -> JSON.parseObject(o, clazz, CDP_PARSER_CONFIG));
-    }
+    private class Handshake extends SimpleChannelInboundHandler<FullHttpResponse> {
 
-    public CDPSession newSession(String targetId, String sessionId) {
-        return new CDPSession(this, targetId, sessionId);
-    }
+        private final WebSocketClientHandshaker handshake;
 
-    private class Handshaker extends SimpleChannelInboundHandler<FullHttpResponse> {
-
-        private final WebSocketClientHandshaker handshaker;
-
-        private final Promise promise;
-
-        public Handshaker(WebSocketClientHandshaker handshaker, Promise promise) {
-            this.handshaker = handshaker;
-            this.promise = promise;
+        public Handshake() {
+            this.handshake = WebSocketClientHandshakerFactory.newHandshaker(
+                    uri, WebSocketVersion.V13, null,
+                    true, new DefaultHttpHeaders(),
+                    8 * 1024 * 1024);
         }
 
         @Override
         public void channelActive(ChannelHandlerContext ctx) {
-            handshaker.handshake(ctx.channel()).addListener(f -> {
+            handshake.handshake(ctx.channel()).addListener(f -> {
                 if (f.cause() != null) {
-                    promise.tryFailure(f.cause());
+                    connectFuture.tryFailure(f.cause());
+                    ctx.close();
                 }
             });
-        }
-
-        @Override
-        public void channelInactive(ChannelHandlerContext ctx) {
-            promise.tryFailure(new ClosedChannelException());
         }
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse msg) throws Exception {
             Channel ch = ctx.channel();
             try {
-                handshaker.finishHandshake(ch, msg);
+                handshake.finishHandshake(ch, msg);
                 ctx.pipeline().remove(this);
                 ctx.pipeline().addLast(WebSocketClientCompressionHandler.INSTANCE);
                 ctx.pipeline().addLast(new ClientHandler());
-                promise.trySuccess(null);
+                connectFuture.trySuccess(null);
             } catch (WebSocketHandshakeException e) {
-                promise.tryFailure(e);
+                connectFuture.tryFailure(e);
+                ctx.close();
             }
         }
 
         @Override
+        public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+            connectFuture.tryFailure(new ClosedChannelException());
+        }
+
+        @Override
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-            promise.tryFailure(cause);
             ctx.close();
         }
     }
@@ -319,23 +271,22 @@ public class CDPConnection extends AbstractEventEmitter<CDPEvent> {
             if (frame instanceof TextWebSocketFrame) {
                 TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
                 String message = textFrame.text();
-                logger.debug("<== recv message={}", message);
+                logger.debug("[{}] <== recv message={}", uri.getPath(), message);
                 JSONObject json = JSON.parseObject(message);
                 String methodName = json.getString(METHOD);
                 if (StringUtils.isNotEmpty(methodName)) {
                     //这种格式的就是event notification
-                    CDPEventType method = CDPEventType.findByName(methodName);
-                    if (message == null) {
-                        logger.warn("Unknown event: {}", method);
+                    CDPEventType eventType = CDPEventType.findByName(methodName);
+                    if (eventType == null) {
+                        logger.warn("Unknown event: {}", message);
                         return;
                     }
-                    String params = json.getJSONObject(PARAMS).toJSONString();
+                    String paramsString = JSON.toJSONString(json.get(PARAMS));
                     CDPEvent event = new CDPEvent(
-                            json.getString(CDPSession.SESSION_ID),
-                            method,
-                            JSON.parseObject(params, method.getClazz())
+                            eventType,
+                            JSON.parseObject(paramsString, eventType.getClazz(), CDP_PARSER_CONFIG)
                     );
-                    emit(event);
+                    onEvent(event);
                     return;
                 }
                 if (!json.containsKey(ID)) {

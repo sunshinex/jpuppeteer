@@ -5,17 +5,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class Accessibility {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public Accessibility(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public Accessibility(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Disables the accessibility domain.
     */
     public io.netty.util.concurrent.Future disable() {
-        return session.send("Accessibility.disable", null);
+        return connection.send("Accessibility.disable", null);
     }
 
 
@@ -23,7 +23,7 @@ public class Accessibility {
     * Enables the accessibility domain which causes `AXNodeId`s to remain consistent between method calls. This turns on accessibility for the page, which can impact performance until accessibility is disabled.
     */
     public io.netty.util.concurrent.Future enable() {
-        return session.send("Accessibility.enable", null);
+        return connection.send("Accessibility.enable", null);
     }
 
 
@@ -32,7 +32,7 @@ public class Accessibility {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.accessibility.GetPartialAXTreeResponse> getPartialAXTree(jpuppeteer.cdp.client.entity.accessibility.GetPartialAXTreeRequest request) {
-        return session.send("Accessibility.getPartialAXTree", request, jpuppeteer.cdp.client.entity.accessibility.GetPartialAXTreeResponse.class);
+        return connection.send("Accessibility.getPartialAXTree", request, jpuppeteer.cdp.client.entity.accessibility.GetPartialAXTreeResponse.class);
     }
 
 
@@ -41,7 +41,7 @@ public class Accessibility {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.accessibility.GetFullAXTreeResponse> getFullAXTree(jpuppeteer.cdp.client.entity.accessibility.GetFullAXTreeRequest request) {
-        return session.send("Accessibility.getFullAXTree", request, jpuppeteer.cdp.client.entity.accessibility.GetFullAXTreeResponse.class);
+        return connection.send("Accessibility.getFullAXTree", request, jpuppeteer.cdp.client.entity.accessibility.GetFullAXTreeResponse.class);
     }
 
 
@@ -50,7 +50,7 @@ public class Accessibility {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.accessibility.GetChildAXNodesResponse> getChildAXNodes(jpuppeteer.cdp.client.entity.accessibility.GetChildAXNodesRequest request) {
-        return session.send("Accessibility.getChildAXNodes", request, jpuppeteer.cdp.client.entity.accessibility.GetChildAXNodesResponse.class);
+        return connection.send("Accessibility.getChildAXNodes", request, jpuppeteer.cdp.client.entity.accessibility.GetChildAXNodesResponse.class);
     }
 
 
@@ -59,7 +59,7 @@ public class Accessibility {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.accessibility.QueryAXTreeResponse> queryAXTree(jpuppeteer.cdp.client.entity.accessibility.QueryAXTreeRequest request) {
-        return session.send("Accessibility.queryAXTree", request, jpuppeteer.cdp.client.entity.accessibility.QueryAXTreeResponse.class);
+        return connection.send("Accessibility.queryAXTree", request, jpuppeteer.cdp.client.entity.accessibility.QueryAXTreeResponse.class);
     }
 
 }

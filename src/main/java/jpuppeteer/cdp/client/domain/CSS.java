@@ -5,17 +5,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class CSS {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public CSS(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public CSS(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Inserts a new rule with the given `ruleText` in a stylesheet with given `styleSheetId`, at the position specified by `location`.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.AddRuleResponse> addRule(jpuppeteer.cdp.client.entity.css.AddRuleRequest request) {
-        return session.send("CSS.addRule", request, jpuppeteer.cdp.client.entity.css.AddRuleResponse.class);
+        return connection.send("CSS.addRule", request, jpuppeteer.cdp.client.entity.css.AddRuleResponse.class);
     }
 
 
@@ -23,7 +23,7 @@ public class CSS {
     * Returns all class names from specified stylesheet.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.CollectClassNamesResponse> collectClassNames(jpuppeteer.cdp.client.entity.css.CollectClassNamesRequest request) {
-        return session.send("CSS.collectClassNames", request, jpuppeteer.cdp.client.entity.css.CollectClassNamesResponse.class);
+        return connection.send("CSS.collectClassNames", request, jpuppeteer.cdp.client.entity.css.CollectClassNamesResponse.class);
     }
 
 
@@ -31,7 +31,7 @@ public class CSS {
     * Creates a new special "via-inspector" stylesheet in the frame with given `frameId`.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.CreateStyleSheetResponse> createStyleSheet(jpuppeteer.cdp.client.entity.css.CreateStyleSheetRequest request) {
-        return session.send("CSS.createStyleSheet", request, jpuppeteer.cdp.client.entity.css.CreateStyleSheetResponse.class);
+        return connection.send("CSS.createStyleSheet", request, jpuppeteer.cdp.client.entity.css.CreateStyleSheetResponse.class);
     }
 
 
@@ -39,7 +39,7 @@ public class CSS {
     * Disables the CSS agent for the given page.
     */
     public io.netty.util.concurrent.Future disable() {
-        return session.send("CSS.disable", null);
+        return connection.send("CSS.disable", null);
     }
 
 
@@ -47,7 +47,7 @@ public class CSS {
     * Enables the CSS agent for the given page. Clients should not assume that the CSS agent has been enabled until the result of this command is received.
     */
     public io.netty.util.concurrent.Future enable() {
-        return session.send("CSS.enable", null);
+        return connection.send("CSS.enable", null);
     }
 
 
@@ -55,14 +55,14 @@ public class CSS {
     * Ensures that the given node will have specified pseudo-classes whenever its style is computed by the browser.
     */
     public io.netty.util.concurrent.Future forcePseudoState(jpuppeteer.cdp.client.entity.css.ForcePseudoStateRequest request) {
-        return session.send("CSS.forcePseudoState", request);
+        return connection.send("CSS.forcePseudoState", request);
     }
 
 
     /**
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.GetBackgroundColorsResponse> getBackgroundColors(jpuppeteer.cdp.client.entity.css.GetBackgroundColorsRequest request) {
-        return session.send("CSS.getBackgroundColors", request, jpuppeteer.cdp.client.entity.css.GetBackgroundColorsResponse.class);
+        return connection.send("CSS.getBackgroundColors", request, jpuppeteer.cdp.client.entity.css.GetBackgroundColorsResponse.class);
     }
 
 
@@ -70,7 +70,7 @@ public class CSS {
     * Returns the computed style for a DOM node identified by `nodeId`.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.GetComputedStyleForNodeResponse> getComputedStyleForNode(jpuppeteer.cdp.client.entity.css.GetComputedStyleForNodeRequest request) {
-        return session.send("CSS.getComputedStyleForNode", request, jpuppeteer.cdp.client.entity.css.GetComputedStyleForNodeResponse.class);
+        return connection.send("CSS.getComputedStyleForNode", request, jpuppeteer.cdp.client.entity.css.GetComputedStyleForNodeResponse.class);
     }
 
 
@@ -78,7 +78,7 @@ public class CSS {
     * Returns the styles defined inline (explicitly in the "style" attribute and implicitly, using DOM attributes) for a DOM node identified by `nodeId`.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.GetInlineStylesForNodeResponse> getInlineStylesForNode(jpuppeteer.cdp.client.entity.css.GetInlineStylesForNodeRequest request) {
-        return session.send("CSS.getInlineStylesForNode", request, jpuppeteer.cdp.client.entity.css.GetInlineStylesForNodeResponse.class);
+        return connection.send("CSS.getInlineStylesForNode", request, jpuppeteer.cdp.client.entity.css.GetInlineStylesForNodeResponse.class);
     }
 
 
@@ -86,7 +86,7 @@ public class CSS {
     * Returns requested styles for a DOM node identified by `nodeId`.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.GetMatchedStylesForNodeResponse> getMatchedStylesForNode(jpuppeteer.cdp.client.entity.css.GetMatchedStylesForNodeRequest request) {
-        return session.send("CSS.getMatchedStylesForNode", request, jpuppeteer.cdp.client.entity.css.GetMatchedStylesForNodeResponse.class);
+        return connection.send("CSS.getMatchedStylesForNode", request, jpuppeteer.cdp.client.entity.css.GetMatchedStylesForNodeResponse.class);
     }
 
 
@@ -94,7 +94,7 @@ public class CSS {
     * Returns all media queries parsed by the rendering engine.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.GetMediaQueriesResponse> getMediaQueries() {
-        return session.send("CSS.getMediaQueries", null, jpuppeteer.cdp.client.entity.css.GetMediaQueriesResponse.class);
+        return connection.send("CSS.getMediaQueries", null, jpuppeteer.cdp.client.entity.css.GetMediaQueriesResponse.class);
     }
 
 
@@ -102,7 +102,7 @@ public class CSS {
     * Requests information about platform fonts which we used to render child TextNodes in the given node.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.GetPlatformFontsForNodeResponse> getPlatformFontsForNode(jpuppeteer.cdp.client.entity.css.GetPlatformFontsForNodeRequest request) {
-        return session.send("CSS.getPlatformFontsForNode", request, jpuppeteer.cdp.client.entity.css.GetPlatformFontsForNodeResponse.class);
+        return connection.send("CSS.getPlatformFontsForNode", request, jpuppeteer.cdp.client.entity.css.GetPlatformFontsForNodeResponse.class);
     }
 
 
@@ -110,7 +110,7 @@ public class CSS {
     * Returns the current textual content for a stylesheet.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.GetStyleSheetTextResponse> getStyleSheetText(jpuppeteer.cdp.client.entity.css.GetStyleSheetTextRequest request) {
-        return session.send("CSS.getStyleSheetText", request, jpuppeteer.cdp.client.entity.css.GetStyleSheetTextResponse.class);
+        return connection.send("CSS.getStyleSheetText", request, jpuppeteer.cdp.client.entity.css.GetStyleSheetTextResponse.class);
     }
 
 
@@ -119,7 +119,7 @@ public class CSS {
     * experimental
     */
     public io.netty.util.concurrent.Future trackComputedStyleUpdates(jpuppeteer.cdp.client.entity.css.TrackComputedStyleUpdatesRequest request) {
-        return session.send("CSS.trackComputedStyleUpdates", request);
+        return connection.send("CSS.trackComputedStyleUpdates", request);
     }
 
 
@@ -128,7 +128,7 @@ public class CSS {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.TakeComputedStyleUpdatesResponse> takeComputedStyleUpdates() {
-        return session.send("CSS.takeComputedStyleUpdates", null, jpuppeteer.cdp.client.entity.css.TakeComputedStyleUpdatesResponse.class);
+        return connection.send("CSS.takeComputedStyleUpdates", null, jpuppeteer.cdp.client.entity.css.TakeComputedStyleUpdatesResponse.class);
     }
 
 
@@ -136,7 +136,7 @@ public class CSS {
     * Find a rule with the given active property for the given node and set the new value for this property
     */
     public io.netty.util.concurrent.Future setEffectivePropertyValueForNode(jpuppeteer.cdp.client.entity.css.SetEffectivePropertyValueForNodeRequest request) {
-        return session.send("CSS.setEffectivePropertyValueForNode", request);
+        return connection.send("CSS.setEffectivePropertyValueForNode", request);
     }
 
 
@@ -144,7 +144,7 @@ public class CSS {
     * Modifies the keyframe rule key text.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.SetKeyframeKeyResponse> setKeyframeKey(jpuppeteer.cdp.client.entity.css.SetKeyframeKeyRequest request) {
-        return session.send("CSS.setKeyframeKey", request, jpuppeteer.cdp.client.entity.css.SetKeyframeKeyResponse.class);
+        return connection.send("CSS.setKeyframeKey", request, jpuppeteer.cdp.client.entity.css.SetKeyframeKeyResponse.class);
     }
 
 
@@ -152,7 +152,7 @@ public class CSS {
     * Modifies the rule selector.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.SetMediaTextResponse> setMediaText(jpuppeteer.cdp.client.entity.css.SetMediaTextRequest request) {
-        return session.send("CSS.setMediaText", request, jpuppeteer.cdp.client.entity.css.SetMediaTextResponse.class);
+        return connection.send("CSS.setMediaText", request, jpuppeteer.cdp.client.entity.css.SetMediaTextResponse.class);
     }
 
 
@@ -160,7 +160,7 @@ public class CSS {
     * Modifies the rule selector.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.SetRuleSelectorResponse> setRuleSelector(jpuppeteer.cdp.client.entity.css.SetRuleSelectorRequest request) {
-        return session.send("CSS.setRuleSelector", request, jpuppeteer.cdp.client.entity.css.SetRuleSelectorResponse.class);
+        return connection.send("CSS.setRuleSelector", request, jpuppeteer.cdp.client.entity.css.SetRuleSelectorResponse.class);
     }
 
 
@@ -168,7 +168,7 @@ public class CSS {
     * Sets the new stylesheet text.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.SetStyleSheetTextResponse> setStyleSheetText(jpuppeteer.cdp.client.entity.css.SetStyleSheetTextRequest request) {
-        return session.send("CSS.setStyleSheetText", request, jpuppeteer.cdp.client.entity.css.SetStyleSheetTextResponse.class);
+        return connection.send("CSS.setStyleSheetText", request, jpuppeteer.cdp.client.entity.css.SetStyleSheetTextResponse.class);
     }
 
 
@@ -176,7 +176,7 @@ public class CSS {
     * Applies specified style edits one after another in the given order.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.SetStyleTextsResponse> setStyleTexts(jpuppeteer.cdp.client.entity.css.SetStyleTextsRequest request) {
-        return session.send("CSS.setStyleTexts", request, jpuppeteer.cdp.client.entity.css.SetStyleTextsResponse.class);
+        return connection.send("CSS.setStyleTexts", request, jpuppeteer.cdp.client.entity.css.SetStyleTextsResponse.class);
     }
 
 
@@ -184,7 +184,7 @@ public class CSS {
     * Enables the selector recording.
     */
     public io.netty.util.concurrent.Future startRuleUsageTracking() {
-        return session.send("CSS.startRuleUsageTracking", null);
+        return connection.send("CSS.startRuleUsageTracking", null);
     }
 
 
@@ -192,7 +192,7 @@ public class CSS {
     * Stop tracking rule usage and return the list of rules that were used since last call to `takeCoverageDelta` (or since start of coverage instrumentation)
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.StopRuleUsageTrackingResponse> stopRuleUsageTracking() {
-        return session.send("CSS.stopRuleUsageTracking", null, jpuppeteer.cdp.client.entity.css.StopRuleUsageTrackingResponse.class);
+        return connection.send("CSS.stopRuleUsageTracking", null, jpuppeteer.cdp.client.entity.css.StopRuleUsageTrackingResponse.class);
     }
 
 
@@ -200,7 +200,7 @@ public class CSS {
     * Obtain list of rules that became used since last call to this method (or since start of coverage instrumentation)
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.css.TakeCoverageDeltaResponse> takeCoverageDelta() {
-        return session.send("CSS.takeCoverageDelta", null, jpuppeteer.cdp.client.entity.css.TakeCoverageDeltaResponse.class);
+        return connection.send("CSS.takeCoverageDelta", null, jpuppeteer.cdp.client.entity.css.TakeCoverageDeltaResponse.class);
     }
 
 
@@ -209,7 +209,7 @@ public class CSS {
     * experimental
     */
     public io.netty.util.concurrent.Future setLocalFontsEnabled(jpuppeteer.cdp.client.entity.css.SetLocalFontsEnabledRequest request) {
-        return session.send("CSS.setLocalFontsEnabled", request);
+        return connection.send("CSS.setLocalFontsEnabled", request);
     }
 
 }

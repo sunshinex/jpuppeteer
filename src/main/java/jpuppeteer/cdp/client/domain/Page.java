@@ -4,10 +4,10 @@ package jpuppeteer.cdp.client.domain;
 */
 public class Page {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public Page(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public Page(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
@@ -16,7 +16,7 @@ public class Page {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.AddScriptToEvaluateOnLoadResponse> addScriptToEvaluateOnLoad(jpuppeteer.cdp.client.entity.page.AddScriptToEvaluateOnLoadRequest request) {
-        return session.send("Page.addScriptToEvaluateOnLoad", request, jpuppeteer.cdp.client.entity.page.AddScriptToEvaluateOnLoadResponse.class);
+        return connection.send("Page.addScriptToEvaluateOnLoad", request, jpuppeteer.cdp.client.entity.page.AddScriptToEvaluateOnLoadResponse.class);
     }
 
 
@@ -24,7 +24,7 @@ public class Page {
     * Evaluates given script in every frame upon creation (before loading frame's scripts).
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.AddScriptToEvaluateOnNewDocumentResponse> addScriptToEvaluateOnNewDocument(jpuppeteer.cdp.client.entity.page.AddScriptToEvaluateOnNewDocumentRequest request) {
-        return session.send("Page.addScriptToEvaluateOnNewDocument", request, jpuppeteer.cdp.client.entity.page.AddScriptToEvaluateOnNewDocumentResponse.class);
+        return connection.send("Page.addScriptToEvaluateOnNewDocument", request, jpuppeteer.cdp.client.entity.page.AddScriptToEvaluateOnNewDocumentResponse.class);
     }
 
 
@@ -32,7 +32,7 @@ public class Page {
     * Brings page to front (activates tab).
     */
     public io.netty.util.concurrent.Future bringToFront() {
-        return session.send("Page.bringToFront", null);
+        return connection.send("Page.bringToFront", null);
     }
 
 
@@ -40,7 +40,7 @@ public class Page {
     * Capture page screenshot.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.CaptureScreenshotResponse> captureScreenshot(jpuppeteer.cdp.client.entity.page.CaptureScreenshotRequest request) {
-        return session.send("Page.captureScreenshot", request, jpuppeteer.cdp.client.entity.page.CaptureScreenshotResponse.class);
+        return connection.send("Page.captureScreenshot", request, jpuppeteer.cdp.client.entity.page.CaptureScreenshotResponse.class);
     }
 
 
@@ -49,7 +49,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.CaptureSnapshotResponse> captureSnapshot(jpuppeteer.cdp.client.entity.page.CaptureSnapshotRequest request) {
-        return session.send("Page.captureSnapshot", request, jpuppeteer.cdp.client.entity.page.CaptureSnapshotResponse.class);
+        return connection.send("Page.captureSnapshot", request, jpuppeteer.cdp.client.entity.page.CaptureSnapshotResponse.class);
     }
 
 
@@ -59,7 +59,7 @@ public class Page {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future clearDeviceMetricsOverride() {
-        return session.send("Page.clearDeviceMetricsOverride", null);
+        return connection.send("Page.clearDeviceMetricsOverride", null);
     }
 
 
@@ -69,7 +69,7 @@ public class Page {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future clearDeviceOrientationOverride() {
-        return session.send("Page.clearDeviceOrientationOverride", null);
+        return connection.send("Page.clearDeviceOrientationOverride", null);
     }
 
 
@@ -78,7 +78,7 @@ public class Page {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future clearGeolocationOverride() {
-        return session.send("Page.clearGeolocationOverride", null);
+        return connection.send("Page.clearGeolocationOverride", null);
     }
 
 
@@ -86,7 +86,7 @@ public class Page {
     * Creates an isolated world for the given frame.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.CreateIsolatedWorldResponse> createIsolatedWorld(jpuppeteer.cdp.client.entity.page.CreateIsolatedWorldRequest request) {
-        return session.send("Page.createIsolatedWorld", request, jpuppeteer.cdp.client.entity.page.CreateIsolatedWorldResponse.class);
+        return connection.send("Page.createIsolatedWorld", request, jpuppeteer.cdp.client.entity.page.CreateIsolatedWorldResponse.class);
     }
 
 
@@ -96,7 +96,7 @@ public class Page {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future deleteCookie(jpuppeteer.cdp.client.entity.page.DeleteCookieRequest request) {
-        return session.send("Page.deleteCookie", request);
+        return connection.send("Page.deleteCookie", request);
     }
 
 
@@ -104,7 +104,7 @@ public class Page {
     * Disables page domain notifications.
     */
     public io.netty.util.concurrent.Future disable() {
-        return session.send("Page.disable", null);
+        return connection.send("Page.disable", null);
     }
 
 
@@ -112,14 +112,14 @@ public class Page {
     * Enables page domain notifications.
     */
     public io.netty.util.concurrent.Future enable() {
-        return session.send("Page.enable", null);
+        return connection.send("Page.enable", null);
     }
 
 
     /**
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.GetAppManifestResponse> getAppManifest() {
-        return session.send("Page.getAppManifest", null, jpuppeteer.cdp.client.entity.page.GetAppManifestResponse.class);
+        return connection.send("Page.getAppManifest", null, jpuppeteer.cdp.client.entity.page.GetAppManifestResponse.class);
     }
 
 
@@ -127,7 +127,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.GetInstallabilityErrorsResponse> getInstallabilityErrors() {
-        return session.send("Page.getInstallabilityErrors", null, jpuppeteer.cdp.client.entity.page.GetInstallabilityErrorsResponse.class);
+        return connection.send("Page.getInstallabilityErrors", null, jpuppeteer.cdp.client.entity.page.GetInstallabilityErrorsResponse.class);
     }
 
 
@@ -135,7 +135,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.GetManifestIconsResponse> getManifestIcons() {
-        return session.send("Page.getManifestIcons", null, jpuppeteer.cdp.client.entity.page.GetManifestIconsResponse.class);
+        return connection.send("Page.getManifestIcons", null, jpuppeteer.cdp.client.entity.page.GetManifestIconsResponse.class);
     }
 
 
@@ -145,7 +145,7 @@ public class Page {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.GetCookiesResponse> getCookies() {
-        return session.send("Page.getCookies", null, jpuppeteer.cdp.client.entity.page.GetCookiesResponse.class);
+        return connection.send("Page.getCookies", null, jpuppeteer.cdp.client.entity.page.GetCookiesResponse.class);
     }
 
 
@@ -153,7 +153,7 @@ public class Page {
     * Returns present frame tree structure.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.GetFrameTreeResponse> getFrameTree() {
-        return session.send("Page.getFrameTree", null, jpuppeteer.cdp.client.entity.page.GetFrameTreeResponse.class);
+        return connection.send("Page.getFrameTree", null, jpuppeteer.cdp.client.entity.page.GetFrameTreeResponse.class);
     }
 
 
@@ -161,7 +161,7 @@ public class Page {
     * Returns metrics relating to the layouting of the page, such as viewport bounds/scale.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.GetLayoutMetricsResponse> getLayoutMetrics() {
-        return session.send("Page.getLayoutMetrics", null, jpuppeteer.cdp.client.entity.page.GetLayoutMetricsResponse.class);
+        return connection.send("Page.getLayoutMetrics", null, jpuppeteer.cdp.client.entity.page.GetLayoutMetricsResponse.class);
     }
 
 
@@ -169,7 +169,7 @@ public class Page {
     * Returns navigation history for the current page.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.GetNavigationHistoryResponse> getNavigationHistory() {
-        return session.send("Page.getNavigationHistory", null, jpuppeteer.cdp.client.entity.page.GetNavigationHistoryResponse.class);
+        return connection.send("Page.getNavigationHistory", null, jpuppeteer.cdp.client.entity.page.GetNavigationHistoryResponse.class);
     }
 
 
@@ -177,7 +177,7 @@ public class Page {
     * Resets navigation history for the current page.
     */
     public io.netty.util.concurrent.Future resetNavigationHistory() {
-        return session.send("Page.resetNavigationHistory", null);
+        return connection.send("Page.resetNavigationHistory", null);
     }
 
 
@@ -186,7 +186,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.GetResourceContentResponse> getResourceContent(jpuppeteer.cdp.client.entity.page.GetResourceContentRequest request) {
-        return session.send("Page.getResourceContent", request, jpuppeteer.cdp.client.entity.page.GetResourceContentResponse.class);
+        return connection.send("Page.getResourceContent", request, jpuppeteer.cdp.client.entity.page.GetResourceContentResponse.class);
     }
 
 
@@ -195,7 +195,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.GetResourceTreeResponse> getResourceTree() {
-        return session.send("Page.getResourceTree", null, jpuppeteer.cdp.client.entity.page.GetResourceTreeResponse.class);
+        return connection.send("Page.getResourceTree", null, jpuppeteer.cdp.client.entity.page.GetResourceTreeResponse.class);
     }
 
 
@@ -203,7 +203,7 @@ public class Page {
     * Accepts or dismisses a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload).
     */
     public io.netty.util.concurrent.Future handleJavaScriptDialog(jpuppeteer.cdp.client.entity.page.HandleJavaScriptDialogRequest request) {
-        return session.send("Page.handleJavaScriptDialog", request);
+        return connection.send("Page.handleJavaScriptDialog", request);
     }
 
 
@@ -211,7 +211,7 @@ public class Page {
     * Navigates current page to the given URL.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.NavigateResponse> navigate(jpuppeteer.cdp.client.entity.page.NavigateRequest request) {
-        return session.send("Page.navigate", request, jpuppeteer.cdp.client.entity.page.NavigateResponse.class);
+        return connection.send("Page.navigate", request, jpuppeteer.cdp.client.entity.page.NavigateResponse.class);
     }
 
 
@@ -219,7 +219,7 @@ public class Page {
     * Navigates current page to the given history entry.
     */
     public io.netty.util.concurrent.Future navigateToHistoryEntry(jpuppeteer.cdp.client.entity.page.NavigateToHistoryEntryRequest request) {
-        return session.send("Page.navigateToHistoryEntry", request);
+        return connection.send("Page.navigateToHistoryEntry", request);
     }
 
 
@@ -227,7 +227,7 @@ public class Page {
     * Print page as PDF.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.PrintToPDFResponse> printToPDF(jpuppeteer.cdp.client.entity.page.PrintToPDFRequest request) {
-        return session.send("Page.printToPDF", request, jpuppeteer.cdp.client.entity.page.PrintToPDFResponse.class);
+        return connection.send("Page.printToPDF", request, jpuppeteer.cdp.client.entity.page.PrintToPDFResponse.class);
     }
 
 
@@ -235,7 +235,7 @@ public class Page {
     * Reloads given page optionally ignoring the cache.
     */
     public io.netty.util.concurrent.Future reload(jpuppeteer.cdp.client.entity.page.ReloadRequest request) {
-        return session.send("Page.reload", request);
+        return connection.send("Page.reload", request);
     }
 
 
@@ -245,7 +245,7 @@ public class Page {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future removeScriptToEvaluateOnLoad(jpuppeteer.cdp.client.entity.page.RemoveScriptToEvaluateOnLoadRequest request) {
-        return session.send("Page.removeScriptToEvaluateOnLoad", request);
+        return connection.send("Page.removeScriptToEvaluateOnLoad", request);
     }
 
 
@@ -253,7 +253,7 @@ public class Page {
     * Removes given script from the list.
     */
     public io.netty.util.concurrent.Future removeScriptToEvaluateOnNewDocument(jpuppeteer.cdp.client.entity.page.RemoveScriptToEvaluateOnNewDocumentRequest request) {
-        return session.send("Page.removeScriptToEvaluateOnNewDocument", request);
+        return connection.send("Page.removeScriptToEvaluateOnNewDocument", request);
     }
 
 
@@ -262,7 +262,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future screencastFrameAck(jpuppeteer.cdp.client.entity.page.ScreencastFrameAckRequest request) {
-        return session.send("Page.screencastFrameAck", request);
+        return connection.send("Page.screencastFrameAck", request);
     }
 
 
@@ -271,7 +271,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.SearchInResourceResponse> searchInResource(jpuppeteer.cdp.client.entity.page.SearchInResourceRequest request) {
-        return session.send("Page.searchInResource", request, jpuppeteer.cdp.client.entity.page.SearchInResourceResponse.class);
+        return connection.send("Page.searchInResource", request, jpuppeteer.cdp.client.entity.page.SearchInResourceResponse.class);
     }
 
 
@@ -280,7 +280,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future setAdBlockingEnabled(jpuppeteer.cdp.client.entity.page.SetAdBlockingEnabledRequest request) {
-        return session.send("Page.setAdBlockingEnabled", request);
+        return connection.send("Page.setAdBlockingEnabled", request);
     }
 
 
@@ -289,7 +289,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future setBypassCSP(jpuppeteer.cdp.client.entity.page.SetBypassCSPRequest request) {
-        return session.send("Page.setBypassCSP", request);
+        return connection.send("Page.setBypassCSP", request);
     }
 
 
@@ -298,7 +298,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.page.GetPermissionsPolicyStateResponse> getPermissionsPolicyState(jpuppeteer.cdp.client.entity.page.GetPermissionsPolicyStateRequest request) {
-        return session.send("Page.getPermissionsPolicyState", request, jpuppeteer.cdp.client.entity.page.GetPermissionsPolicyStateResponse.class);
+        return connection.send("Page.getPermissionsPolicyState", request, jpuppeteer.cdp.client.entity.page.GetPermissionsPolicyStateResponse.class);
     }
 
 
@@ -308,7 +308,7 @@ public class Page {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future setDeviceMetricsOverride(jpuppeteer.cdp.client.entity.page.SetDeviceMetricsOverrideRequest request) {
-        return session.send("Page.setDeviceMetricsOverride", request);
+        return connection.send("Page.setDeviceMetricsOverride", request);
     }
 
 
@@ -318,7 +318,7 @@ public class Page {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future setDeviceOrientationOverride(jpuppeteer.cdp.client.entity.page.SetDeviceOrientationOverrideRequest request) {
-        return session.send("Page.setDeviceOrientationOverride", request);
+        return connection.send("Page.setDeviceOrientationOverride", request);
     }
 
 
@@ -327,7 +327,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future setFontFamilies(jpuppeteer.cdp.client.entity.page.SetFontFamiliesRequest request) {
-        return session.send("Page.setFontFamilies", request);
+        return connection.send("Page.setFontFamilies", request);
     }
 
 
@@ -336,7 +336,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future setFontSizes(jpuppeteer.cdp.client.entity.page.SetFontSizesRequest request) {
-        return session.send("Page.setFontSizes", request);
+        return connection.send("Page.setFontSizes", request);
     }
 
 
@@ -344,7 +344,7 @@ public class Page {
     * Sets given markup as the document's HTML.
     */
     public io.netty.util.concurrent.Future setDocumentContent(jpuppeteer.cdp.client.entity.page.SetDocumentContentRequest request) {
-        return session.send("Page.setDocumentContent", request);
+        return connection.send("Page.setDocumentContent", request);
     }
 
 
@@ -354,7 +354,7 @@ public class Page {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future setDownloadBehavior(jpuppeteer.cdp.client.entity.page.SetDownloadBehaviorRequest request) {
-        return session.send("Page.setDownloadBehavior", request);
+        return connection.send("Page.setDownloadBehavior", request);
     }
 
 
@@ -363,7 +363,7 @@ public class Page {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future setGeolocationOverride(jpuppeteer.cdp.client.entity.page.SetGeolocationOverrideRequest request) {
-        return session.send("Page.setGeolocationOverride", request);
+        return connection.send("Page.setGeolocationOverride", request);
     }
 
 
@@ -372,7 +372,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future setLifecycleEventsEnabled(jpuppeteer.cdp.client.entity.page.SetLifecycleEventsEnabledRequest request) {
-        return session.send("Page.setLifecycleEventsEnabled", request);
+        return connection.send("Page.setLifecycleEventsEnabled", request);
     }
 
 
@@ -382,7 +382,7 @@ public class Page {
     */
     @java.lang.Deprecated
     public io.netty.util.concurrent.Future setTouchEmulationEnabled(jpuppeteer.cdp.client.entity.page.SetTouchEmulationEnabledRequest request) {
-        return session.send("Page.setTouchEmulationEnabled", request);
+        return connection.send("Page.setTouchEmulationEnabled", request);
     }
 
 
@@ -391,7 +391,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future startScreencast(jpuppeteer.cdp.client.entity.page.StartScreencastRequest request) {
-        return session.send("Page.startScreencast", request);
+        return connection.send("Page.startScreencast", request);
     }
 
 
@@ -399,7 +399,7 @@ public class Page {
     * Force the page stop all navigations and pending resource fetches.
     */
     public io.netty.util.concurrent.Future stopLoading() {
-        return session.send("Page.stopLoading", null);
+        return connection.send("Page.stopLoading", null);
     }
 
 
@@ -408,7 +408,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future crash() {
-        return session.send("Page.crash", null);
+        return connection.send("Page.crash", null);
     }
 
 
@@ -417,7 +417,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future close() {
-        return session.send("Page.close", null);
+        return connection.send("Page.close", null);
     }
 
 
@@ -426,7 +426,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future setWebLifecycleState(jpuppeteer.cdp.client.entity.page.SetWebLifecycleStateRequest request) {
-        return session.send("Page.setWebLifecycleState", request);
+        return connection.send("Page.setWebLifecycleState", request);
     }
 
 
@@ -435,7 +435,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future stopScreencast() {
-        return session.send("Page.stopScreencast", null);
+        return connection.send("Page.stopScreencast", null);
     }
 
 
@@ -444,7 +444,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future setProduceCompilationCache(jpuppeteer.cdp.client.entity.page.SetProduceCompilationCacheRequest request) {
-        return session.send("Page.setProduceCompilationCache", request);
+        return connection.send("Page.setProduceCompilationCache", request);
     }
 
 
@@ -453,7 +453,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future produceCompilationCache(jpuppeteer.cdp.client.entity.page.ProduceCompilationCacheRequest request) {
-        return session.send("Page.produceCompilationCache", request);
+        return connection.send("Page.produceCompilationCache", request);
     }
 
 
@@ -462,7 +462,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future addCompilationCache(jpuppeteer.cdp.client.entity.page.AddCompilationCacheRequest request) {
-        return session.send("Page.addCompilationCache", request);
+        return connection.send("Page.addCompilationCache", request);
     }
 
 
@@ -471,7 +471,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future clearCompilationCache() {
-        return session.send("Page.clearCompilationCache", null);
+        return connection.send("Page.clearCompilationCache", null);
     }
 
 
@@ -480,7 +480,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future generateTestReport(jpuppeteer.cdp.client.entity.page.GenerateTestReportRequest request) {
-        return session.send("Page.generateTestReport", request);
+        return connection.send("Page.generateTestReport", request);
     }
 
 
@@ -489,7 +489,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future waitForDebugger() {
-        return session.send("Page.waitForDebugger", null);
+        return connection.send("Page.waitForDebugger", null);
     }
 
 
@@ -498,7 +498,7 @@ public class Page {
     * experimental
     */
     public io.netty.util.concurrent.Future setInterceptFileChooserDialog(jpuppeteer.cdp.client.entity.page.SetInterceptFileChooserDialogRequest request) {
-        return session.send("Page.setInterceptFileChooserDialog", request);
+        return connection.send("Page.setInterceptFileChooserDialog", request);
     }
 
 }

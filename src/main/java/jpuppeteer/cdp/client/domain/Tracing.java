@@ -5,17 +5,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class Tracing {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public Tracing(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public Tracing(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Stop trace events collection.
     */
     public io.netty.util.concurrent.Future end() {
-        return session.send("Tracing.end", null);
+        return connection.send("Tracing.end", null);
     }
 
 
@@ -23,7 +23,7 @@ public class Tracing {
     * Gets supported tracing categories.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.tracing.GetCategoriesResponse> getCategories() {
-        return session.send("Tracing.getCategories", null, jpuppeteer.cdp.client.entity.tracing.GetCategoriesResponse.class);
+        return connection.send("Tracing.getCategories", null, jpuppeteer.cdp.client.entity.tracing.GetCategoriesResponse.class);
     }
 
 
@@ -31,7 +31,7 @@ public class Tracing {
     * Record a clock sync marker in the trace.
     */
     public io.netty.util.concurrent.Future recordClockSyncMarker(jpuppeteer.cdp.client.entity.tracing.RecordClockSyncMarkerRequest request) {
-        return session.send("Tracing.recordClockSyncMarker", request);
+        return connection.send("Tracing.recordClockSyncMarker", request);
     }
 
 
@@ -39,7 +39,7 @@ public class Tracing {
     * Request a global memory dump.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.tracing.RequestMemoryDumpResponse> requestMemoryDump(jpuppeteer.cdp.client.entity.tracing.RequestMemoryDumpRequest request) {
-        return session.send("Tracing.requestMemoryDump", request, jpuppeteer.cdp.client.entity.tracing.RequestMemoryDumpResponse.class);
+        return connection.send("Tracing.requestMemoryDump", request, jpuppeteer.cdp.client.entity.tracing.RequestMemoryDumpResponse.class);
     }
 
 
@@ -47,7 +47,7 @@ public class Tracing {
     * Start trace events collection.
     */
     public io.netty.util.concurrent.Future start(jpuppeteer.cdp.client.entity.tracing.StartRequest request) {
-        return session.send("Tracing.start", request);
+        return connection.send("Tracing.start", request);
     }
 
 }

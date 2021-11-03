@@ -1,19 +1,17 @@
 package jpuppeteer.api;
 
 import io.netty.util.concurrent.Future;
-import jpuppeteer.api.event.EventEmitter;
-import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.client.constant.storage.StorageType;
 import jpuppeteer.cdp.client.entity.browser.GetVersionResponse;
 import jpuppeteer.cdp.client.entity.target.CreateBrowserContextRequest;
 
-public interface Browser extends EventEmitter<CDPEvent> {
+import java.net.URI;
 
-    String name();
+public interface Browser {
+
+    URI uri();
 
     Future<GetVersionResponse> version();
-
-    BrowserContext[] browserContexts();
 
     Future<BrowserContext> createContext(CreateBrowserContextRequest request);
 
@@ -30,6 +28,8 @@ public interface Browser extends EventEmitter<CDPEvent> {
     }
 
     BrowserContext defaultContext();
+
+    BrowserContext[] browserContexts();
 
     Future clearData(String origin, StorageType... storageTypes);
 

@@ -6,6 +6,8 @@ import jpuppeteer.cdp.client.entity.runtime.EvaluateRequest;
 
 public interface Isolate {
 
+    String name();
+
     Frame frame();
 
     Future<BrowserObject> eval(EvaluateRequest request);
@@ -31,5 +33,9 @@ public interface Isolate {
     Future<BrowserObject> call(String declaration, Object... args);
 
     <R> Future<R> call(String declaration, Class<R> clazz, Object... args);
+
+    Future addBinding(String bindingName, BindingFunction function);
+
+    Future removeBinding(String bindingName);
 
 }

@@ -1,14 +1,21 @@
 package jpuppeteer.api;
 
 import io.netty.util.concurrent.Future;
+import jpuppeteer.api.event.EventEmitter;
+import jpuppeteer.api.event.PageEvent;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
-public interface Frame extends Isolate {
+public interface Frame extends EventEmitter<PageEvent>, Isolate {
 
     Page page();
 
-    Future<Element> owner();
+    Frame parent();
+
+    String frameId();
+
+    String url();
 
     Future<Element> querySelector(String selector);
 
@@ -16,13 +23,7 @@ public interface Frame extends Isolate {
 
     Future<Element> waitSelector(String selector, long timeout, TimeUnit unit);
 
-    String frameId();
-
-    Frame parent();
-
-    Future<String> title();
-
-    Future<String> url();
+    Future watch(String selector, Consumer<Element> watchFunction, boolean once);
 
     Future<String> navigate(String url, String referer);
 
@@ -31,6 +32,8 @@ public interface Frame extends Isolate {
     }
 
     Future<Isolate> createIsolate(String isolateName);
+
+    Future addBinding(String bindingName, BindingFunction function);
 
     Future<String> html();
 

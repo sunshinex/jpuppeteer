@@ -5,17 +5,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class WebAudio {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public WebAudio(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public WebAudio(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Enables the WebAudio domain and starts sending context lifetime events.
     */
     public io.netty.util.concurrent.Future enable() {
-        return session.send("WebAudio.enable", null);
+        return connection.send("WebAudio.enable", null);
     }
 
 
@@ -23,7 +23,7 @@ public class WebAudio {
     * Disables the WebAudio domain.
     */
     public io.netty.util.concurrent.Future disable() {
-        return session.send("WebAudio.disable", null);
+        return connection.send("WebAudio.disable", null);
     }
 
 
@@ -31,7 +31,7 @@ public class WebAudio {
     * Fetch the realtime data from the registered contexts.
     */
     public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.webaudio.GetRealtimeDataResponse> getRealtimeData(jpuppeteer.cdp.client.entity.webaudio.GetRealtimeDataRequest request) {
-        return session.send("WebAudio.getRealtimeData", request, jpuppeteer.cdp.client.entity.webaudio.GetRealtimeDataResponse.class);
+        return connection.send("WebAudio.getRealtimeData", request, jpuppeteer.cdp.client.entity.webaudio.GetRealtimeDataResponse.class);
     }
 
 }

@@ -5,17 +5,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class Inspector {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public Inspector(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public Inspector(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Disables inspector domain notifications.
     */
     public io.netty.util.concurrent.Future disable() {
-        return session.send("Inspector.disable", null);
+        return connection.send("Inspector.disable", null);
     }
 
 
@@ -23,7 +23,7 @@ public class Inspector {
     * Enables inspector domain notifications.
     */
     public io.netty.util.concurrent.Future enable() {
-        return session.send("Inspector.enable", null);
+        return connection.send("Inspector.enable", null);
     }
 
 }

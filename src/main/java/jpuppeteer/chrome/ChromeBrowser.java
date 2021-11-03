@@ -1,270 +1,159 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.MapMaker;
-import io.netty.util.concurrent.*;
+import io.netty.channel.DefaultEventLoop;
+import io.netty.channel.EventLoop;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.concurrent.FailedFuture;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.Promise;
 import jpuppeteer.api.Browser;
 import jpuppeteer.api.BrowserContext;
-import jpuppeteer.api.event.AbstractEventEmitter;
+import jpuppeteer.api.Page;
 import jpuppeteer.api.event.AbstractListener;
-import jpuppeteer.api.event.page.CreatedEvent;
+import jpuppeteer.api.event.PageEvent;
+import jpuppeteer.api.event.page.LoadedEvent;
+import jpuppeteer.api.event.page.NewPageEvent;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
-import jpuppeteer.cdp.CDPSession;
+import jpuppeteer.cdp.TargetType;
 import jpuppeteer.cdp.client.constant.browser.PermissionType;
 import jpuppeteer.cdp.client.constant.storage.StorageType;
-import jpuppeteer.cdp.client.domain.Storage;
-import jpuppeteer.cdp.client.domain.Target;
 import jpuppeteer.cdp.client.entity.browser.*;
 import jpuppeteer.cdp.client.entity.network.Cookie;
 import jpuppeteer.cdp.client.entity.network.CookieParam;
+import jpuppeteer.cdp.client.entity.network.LoadingFinishedEvent;
 import jpuppeteer.cdp.client.entity.storage.ClearCookiesRequest;
 import jpuppeteer.cdp.client.entity.storage.ClearDataForOriginRequest;
 import jpuppeteer.cdp.client.entity.storage.GetCookiesRequest;
 import jpuppeteer.cdp.client.entity.storage.SetCookiesRequest;
 import jpuppeteer.cdp.client.entity.target.*;
-import jpuppeteer.util.SeriesFuture;
+import jpuppeteer.entity.TargetBase;
+import jpuppeteer.util.SeriesPromise;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.stream.Collectors;
 
-import static jpuppeteer.cdp.client.CDPEventType.*;
-
-public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Browser {
+public class ChromeBrowser implements Browser {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeBrowser.class);
 
-    private final String name;
+    private final EventLoop eventLoop;
+
+    private final URI uri;
+
+    private final AtomicInteger cdpMessageIdGen;
 
     private final CDPConnection connection;
 
     private final Process process;
 
-    private final jpuppeteer.cdp.client.domain.Browser browser;
-
-    private final Target target;
-
-    private final Storage storage;
-
-    private final AtomicInteger contextIdGen;
-
     private final ChromeContext defaultContext;
 
-    private final Map<String/*BrowserContextId*/, ChromeContext> contextMap;
+    private final Map<String, ChromeContext> contextMap;
 
-    private final Map<String/*targetId*/, ChromeContext> targetContextMap;
+    private final Map<String, TargetBase> targetMap;
 
-    private final Map<String/*sessionId*/, ChromeContext> sessionContextMap;
-
-    private volatile Promise closeFuture;
-
-    public ChromeBrowser(CDPConnection connection, Process process) {
-        this.name = "browser";
-        this.connection = connection;
+    public ChromeBrowser(String uri, Process process) throws Exception {
+        this.eventLoop = new NioEventLoopGroup(r -> new Thread(r, "browser")).next();
+        this.uri = URI.create(uri);
+        this.cdpMessageIdGen = new AtomicInteger(0);
+        this.connection = new BrowserConnection();
         this.process = process;
-        this.browser = new jpuppeteer.cdp.client.domain.Browser(connection);
-        this.target = new Target(connection);
-        this.storage = new Storage(connection);
-        this.contextIdGen = new AtomicInteger(0);
-        this.defaultContext = new ChromeContext(name() + ":context:default", this, null);
+        this.defaultContext = new ChromeContext(this, null);
         this.contextMap = new ConcurrentHashMap<>();
-        this.targetContextMap = new MapMaker()
-                .concurrencyLevel(16)
-                .weakValues()
-                .makeMap();
-        this.sessionContextMap = new MapMaker()
-                .concurrencyLevel(16)
-                .weakValues()
-                .makeMap();
+        this.targetMap = new ConcurrentHashMap<>();
+        GetBrowserContextsResponse getBrowserContextsResponse = connection.target.getBrowserContexts()
+                .get(30, TimeUnit.SECONDS);
+        for(String browserContextId : getBrowserContextsResponse.browserContextIds) {
+            contextMap.put(browserContextId, new ChromeContext(this, browserContextId));
+        }
         this.discoverTargets(true);
-        this.connection.addListener(new AbstractListener<CDPEvent>() {
-            @Override
-            public void accept(CDPEvent event) {
-                emit(event);
-                if (StringUtils.isNotEmpty(event.sessionId)) {
-                    handleSessionEvent(event);
-                } else if (TARGET_TARGETCREATED.equals(event.method)) {
-                    handleTargetCreated(event.getObject());
-                } else if (TARGET_ATTACHEDTOTARGET.equals(event.method)) {
-                    AttachedToTargetEvent aEvt = event.getObject();
-                    CDPEvent evt = new CDPEvent(aEvt.sessionId, event.method, event.getObject());
-                    handleSessionEvent(evt);
-                } else if (TARGET_TARGETINFOCHANGED.equals(event.method)) {
-                    TargetInfoChangedEvent evt = event.getObject();
-                    handleTargetEvent(evt.targetInfo.targetId, event);
-                } else if (TARGET_DETACHEDFROMTARGET.equals(event.method)) {
-                    DetachedFromTargetEvent dEvt = event.getObject();
-                    CDPEvent evt = new CDPEvent(dEvt.sessionId, event.method, event.getObject());
-                    handleSessionEvent(evt);
-                }else if (TARGET_TARGETDESTROYED.equals(event.method)) {
-                    TargetDestroyedEvent evt = event.getObject();
-                    handleTargetEvent(evt.targetId, event);
-                } else if (TARGET_TARGETCRASHED.equals(event.method)) {
-                    TargetCrashedEvent evt = event.getObject();
-                    handleTargetEvent(evt.targetId, event);
-                } else if (TARGET_RECEIVEDMESSAGEFROMTARGET.equals(event.method)) {
-                    ReceivedMessageFromTargetEvent rEvt = event.getObject();
-                    CDPEvent evt = new CDPEvent(rEvt.sessionId, event.method, event.getObject());
-                    handleSessionEvent(evt);
-                } else {
-                    handleOtherEvent(event);
-                }
-            }
-        });
-    }
-
-    private void handleTargetCreated(TargetCreatedEvent event) {
-        //处理opener
-        String targetId = event.targetInfo.targetId;
-        String openerId = event.targetInfo.openerId;
-        if (StringUtils.isEmpty(openerId)) {
-            return;
-        }
-        ChromeContext ctx = targetContextMap.get(openerId);
-        if (ctx == null) {
-            logger.warn("[{}] opener not found, opener={}", targetId, openerId);
-            return;
-        }
-        targetContextMap.put(targetId, ctx);
-        attachTarget(targetId).addListener(f -> {
-            if (f.cause() != null) {
-                logger.error("[{}] attach failed", targetId);
-            } else {
-                CDPSession session = (CDPSession) f.getNow();
-                sessionContextMap.put(session.sessionId(), ctx);
-                ChromePage page = ctx.newPage(session, openerId);
-                page.opener().emit(new CreatedEvent(page));
-            }
-        });
-    }
-
-    private void handleTargetEvent(String targetId, CDPEvent event) {
-        ChromeContext ctx = targetContextMap.get(targetId);
-        if (ctx != null) {
-            ctx.handleTargetEvent(targetId, event);
-        }
-    }
-
-    private void handleSessionEvent(CDPEvent event) {
-        ChromeContext ctx = sessionContextMap.get(event.sessionId);
-        if (ctx != null) {
-            ctx.handleSessionEvent(event);
-        }
-    }
-
-    private void handleOtherEvent(CDPEvent event) {
-        logger.warn("can not handle event:{}", event);
     }
 
     private Future discoverTargets(boolean enable) {
         SetDiscoverTargetsRequest request = new SetDiscoverTargetsRequest(enable);
-        return target.setDiscoverTargets(request);
+        return connection.target.setDiscoverTargets(request);
     }
 
-    @Override
-    protected void emitInternal(AbstractListener<CDPEvent> listener, CDPEvent event) {
-        EventExecutor executor = executor();
-        if (executor.inEventLoop()) {
-            listener.accept(event);
-        } else {
-            executor.execute(() -> listener.accept(event));
+    protected int genMessageId() {
+        return cdpMessageIdGen.getAndIncrement();
+    }
+
+    protected EventLoop eventLoop() {
+        return eventLoop;
+    }
+
+    protected Future<String> createTarget(String browserContextId, String url, Integer width, Integer height) {
+        CreateTargetRequest request = new CreateTargetRequest(
+                url, width, height, browserContextId,
+                null, null, true);
+        return SeriesPromise
+                .wrap(connection.target.createTarget(request))
+                .sync(o -> o.targetId);
+    }
+
+    protected Future activateTarget(String targetId) {
+        return connection.target.activateTarget(new ActivateTargetRequest(targetId));
+    }
+
+    protected Future closeTarget(String targetId) {
+        CloseTargetRequest request = new CloseTargetRequest(targetId);
+        return connection.target.closeTarget(request);
+    }
+
+    protected TargetBase findTarget(String frameId) {
+        return targetMap.get(frameId);
+    }
+
+    protected Future closeContext(String browserContextId) {
+        if (browserContextId == null) {
+            return new FailedFuture<>(eventLoop, new Exception("can not close default context"));
         }
+        DisposeBrowserContextRequest request = new DisposeBrowserContextRequest(browserContextId);
+        return connection.target.disposeBrowserContext(request).addListener(f -> {
+            contextMap.remove(browserContextId);
+        });
     }
 
-    @Override
-    public String name() {
-        return name;
+    protected Future grantPermissions(String browserContextId, String origin, PermissionType... permissions) {
+        GrantPermissionsRequest request = new GrantPermissionsRequest(Lists.newArrayList(permissions), origin, browserContextId);
+        return connection.browser.grantPermissions(request);
     }
 
-    @Override
-    public Future<GetVersionResponse> version() {
-        return browser.getVersion();
+    protected Future resetPermissions(String browserContextId) {
+        ResetPermissionsRequest request = new ResetPermissionsRequest(browserContextId);
+        return connection.browser.resetPermissions(request);
     }
 
-    @Override
-    public BrowserContext[] browserContexts() {
-        Collection<ChromeContext> values = contextMap.values();
-        BrowserContext[] contexts = new BrowserContext[values.size()];
-        return values.toArray(contexts);
+    protected Future setWindowBounds(String targetId, Bounds bounds) {
+        return SeriesPromise
+                .wrap(connection.browser.getWindowForTarget(new GetWindowForTargetRequest(targetId)))
+                .async(o -> connection.browser.setWindowBounds(new SetWindowBoundsRequest(o.windowId, bounds)));
     }
 
-    @Override
-    public Future<BrowserContext> createContext(CreateBrowserContextRequest request) {
-        return SeriesFuture
-                .wrap(target.createBrowserContext(request))
-                .sync(o -> {
-                    String name = name() + ":context:" + contextIdGen.getAndIncrement();
-                    ChromeContext context = new ChromeContext(name, this, o.browserContextId);
-                    contextMap.put(o.browserContextId, context);
-                    return context;
-                });
-    }
-
-    @Override
-    public BrowserContext defaultContext() {
-        return defaultContext;
-    }
-
-    public EventExecutor executor() {
-        return connection.eventLoop();
-    }
-
-    public Future<List<TargetInfo>> getTargets() {
-        return SeriesFuture
-                .wrap(target.getTargets())
-                .sync(o -> o.targetInfos);
-    }
-
-    public Future<CDPSession> attachTarget(String targetId) {
-        return SeriesFuture
-                .wrap(target.attachToTarget(new AttachToTargetRequest(targetId, true)))
-                .sync(o -> connection.newSession(targetId, o.sessionId));
-    }
-
-    public Future<CDPSession> createTarget(String browserContextId, String url, Integer width, Integer height) {
-        return SeriesFuture
-                .wrap(target.createTarget(new CreateTargetRequest(url, width, height, browserContextId, null, null, true)))
-                .async(o -> {
-                    ChromeContext ctx = browserContextId != null ? contextMap.get(browserContextId) : defaultContext;
-                    if (ctx == null) {
-                        throw new RuntimeException("context `"+browserContextId+"` not found");
-                    }
-                    targetContextMap.put(o.targetId, ctx);
-                    return attachTarget(o.targetId).addListener(f -> {
-                        if (f.cause() != null) {
-                            logger.error("[{}] attach failed", o.targetId);
-                        } else {
-                            CDPSession session = (CDPSession) f.getNow();
-                            sessionContextMap.put(session.sessionId(), ctx);
-                        }
-                    });
-                });
-    }
-
-    public Future exposeTarget(String targetId, String bindingName) {
-        return target.exposeDevToolsProtocol(new ExposeDevToolsProtocolRequest(targetId, bindingName));
-    }
-
-    public Future setCookies(String browserContextId, CookieParam... cookies) {
+    protected Future setCookies(String browserContextId, CookieParam... cookies) {
         SetCookiesRequest request = new SetCookiesRequest(Lists.newArrayList(cookies), browserContextId);
-        return storage.setCookies(request);
+        return connection.storage.setCookies(request);
     }
 
-    public Future clearCookies(String browserContextId) {
+    protected Future clearCookies(String browserContextId) {
         ClearCookiesRequest request = new ClearCookiesRequest(browserContextId);
-        return storage.clearCookies(request);
+        return connection.storage.clearCookies(request);
     }
 
-    public Future<Cookie[]> getCookies(String browserContextId) {
-        return SeriesFuture
-                .wrap(storage.getCookies(new GetCookiesRequest(browserContextId)))
+    protected Future<Cookie[]> getCookies(String browserContextId) {
+        return SeriesPromise
+                .wrap(connection.storage.getCookies(new GetCookiesRequest(browserContextId)))
                 .sync(o -> {
                     Cookie[] cookies = new Cookie[o.cookies.size()];
                     o.cookies.toArray(cookies);
@@ -272,40 +161,40 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
                 });
     }
 
-    public Future closeContext(String browserContextId) {
-        if (browserContextId == null) {
-            //当关闭的是默认上下文，则直接关闭整个浏览器
-            return GlobalEventExecutor.INSTANCE.submit(this::close);
-        } else {
-            contextMap.remove(browserContextId);
-            DisposeBrowserContextRequest request = new DisposeBrowserContextRequest(browserContextId);
-            return target.disposeBrowserContext(request);
-        }
+    @Override
+    public URI uri() {
+        return uri;
     }
 
-    public Future grantPermissions(String browserContextId, String origin, PermissionType... permissions) {
-        GrantPermissionsRequest request = new GrantPermissionsRequest(Lists.newArrayList(permissions), origin, browserContextId);
-        return browser.grantPermissions(request);
+    @Override
+    public Future<GetVersionResponse> version() {
+        return connection.browser.getVersion();
     }
 
-    public Future resetPermissions(String browserContextId) {
-        ResetPermissionsRequest request = new ResetPermissionsRequest(browserContextId);
-        return browser.resetPermissions(request);
+    @Override
+    public Future<BrowserContext> createContext(CreateBrowserContextRequest request) {
+        Promise<BrowserContext> promise = eventLoop.newPromise();
+        connection.target.createBrowserContext(request).addListener(f -> {
+            if (f.cause() != null) {
+                promise.tryFailure(f.cause());
+            } else {
+                CreateBrowserContextResponse response = (CreateBrowserContextResponse) f.getNow();
+                ChromeContext context = new ChromeContext(ChromeBrowser.this, response.browserContextId);
+                contextMap.put(response.browserContextId, context);
+                promise.trySuccess(context);
+            }
+        });
+        return promise;
     }
 
-    public Future activateTarget(String targetId) {
-        return target.activateTarget(new ActivateTargetRequest(targetId));
+    @Override
+    public ChromeContext defaultContext() {
+        return defaultContext;
     }
 
-    public Future closeTarget(String targetId) {
-        CloseTargetRequest request = new CloseTargetRequest(targetId);
-        return target.closeTarget(request);
-    }
-
-    public Future setWindowBounds(String targetId, Bounds bounds) {
-        return SeriesFuture
-                .wrap(browser.getWindowForTarget(new GetWindowForTargetRequest(targetId)))
-                .async(o -> browser.setWindowBounds(new SetWindowBoundsRequest(o.windowId, bounds)));
+    @Override
+    public ChromeContext[] browserContexts() {
+        return contextMap.values().toArray(new ChromeContext[0]);
     }
 
     @Override
@@ -314,21 +203,145 @@ public class ChromeBrowser extends AbstractEventEmitter<CDPEvent> implements Bro
                 .map(t -> t.value())
                 .collect(Collectors.toList());
         ClearDataForOriginRequest request = new ClearDataForOriginRequest(origin, StringUtils.join(types, ","));
-        return storage.clearDataForOrigin(request);
+        return connection.storage.clearDataForOrigin(request);
     }
 
     @Override
     public void close() {
         try {
-            browser.close().get(5, TimeUnit.SECONDS);
+            connection.browser.close().get(5, TimeUnit.SECONDS);
         } catch (Exception e) {
-            //发生异常, 强行结束进程
-            process.destroy();
+            logger.error("close browser failed, error={}", e.getMessage(), e);
         } finally {
-            //关闭浏览器之后销毁这些映射
-            contextMap.clear();
-            sessionContextMap.clear();
-            targetContextMap.clear();
+            if (process != null) {
+                process.destroy();
+            }
         }
+    }
+
+    class BrowserConnection extends CDPConnection {
+
+        public BrowserConnection() throws Exception {
+            super(eventLoop, uri);
+        }
+
+        @Override
+        protected int genId() {
+            return genMessageId();
+        }
+
+        private void fill(TargetBase targetBase, TargetInfo targetInfo) {
+            ChromeContext browserContext = targetInfo.browserContextId == null ? defaultContext : contextMap.get(targetInfo.browserContextId);
+            if (browserContext == null) {
+                //某些情况下这个id是默认的上下文
+                browserContext = defaultContext;
+            }
+            TargetBase opener = targetInfo.openerId != null ? targetMap.get(targetInfo.openerId) : null;
+            targetBase.setTargetId(targetInfo.targetId);
+            targetBase.setType(TargetType.findByType(targetInfo.type));
+            targetBase.setTitle(targetInfo.title);
+            targetBase.setUrl(targetInfo.url);
+            targetBase.setAttached(targetInfo.attached);
+            targetBase.setOpener(opener);
+            targetBase.setCanAccessOpener(targetInfo.canAccessOpener);
+            targetBase.setOpenerFrameId(targetInfo.openerFrameId);
+            targetBase.setBrowserContext(browserContext);
+        }
+
+        private void onTargetCreated(TargetInfo targetInfo) {
+            TargetBase newTarget = new TargetBase();
+            fill(newTarget, targetInfo);
+            TargetBase oldTarget = targetMap.putIfAbsent(targetInfo.targetId, newTarget);
+            if (oldTarget != null) {
+                fill(oldTarget, targetInfo);
+                newTarget = oldTarget;
+            }
+            TargetBase opener = newTarget.getOpener();
+            if (opener != null) {
+                ChromeFrame frame = opener.getFrame();
+                if (frame != null) {
+                    frame.page().onNewPage(newTarget);
+                }
+            }
+        }
+
+        private void onTargetChanged(TargetInfo targetInfo) {
+            TargetBase targetBase = targetMap.get(targetInfo.targetId);
+            if (targetBase == null) {
+                logger.warn("target not found0, targetId={}", targetInfo.targetId);
+            } else {
+                fill(targetBase, targetInfo);
+            }
+        }
+
+        private void onTargetCrashed(String targetId, Integer errorCode, String status) {
+            TargetBase targetBase = targetMap.get(targetId);
+            if (targetBase == null) {
+                logger.warn("target not found1, targetId={}", targetId);
+            } else {
+                ChromeFrame frame = targetBase.getFrame();
+                if (frame != null) {
+                    frame.page().onCrashed(frame, errorCode, status);
+                }
+            }
+        }
+
+        private void onTargetDestroyed(String targetId) {
+            TargetBase targetBase = targetMap.remove(targetId);
+            if (targetBase == null) {
+                logger.warn("target not found, targetId={}", targetId);
+            } else {
+                ChromeFrame frame = targetBase.getFrame();
+                if (frame != null) {
+                    frame.page().onClosed(frame);
+                }
+            }
+        }
+
+        @Override
+        protected void onEvent(CDPEvent event) {
+            switch (event.method) {
+                case TARGET_TARGETCREATED:
+                    TargetCreatedEvent targetCreatedEvent = event.getObject();
+                    onTargetCreated(targetCreatedEvent.targetInfo);
+                    break;
+
+                case TARGET_TARGETINFOCHANGED:
+                    TargetInfoChangedEvent targetInfoChangedEvent = event.getObject();
+                    onTargetChanged(targetInfoChangedEvent.targetInfo);
+                    break;
+
+                case TARGET_TARGETCRASHED:
+                    TargetCrashedEvent targetCrashedEvent = event.getObject();
+                    onTargetCrashed(targetCrashedEvent.targetId, targetCrashedEvent.errorCode, targetCrashedEvent.status);
+                    break;
+
+                case TARGET_TARGETDESTROYED:
+                    TargetDestroyedEvent targetDestroyedEvent = event.getObject();
+                    onTargetDestroyed(targetDestroyedEvent.targetId);
+                    break;
+            }
+        }
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        ChromeBrowser browser = new ChromeBrowser("ws://127.0.0.1:9229/devtools/browser/f57c3b6e-5f7e-4464-baaf-532f23ba92f9", null);
+        BrowserContext context = browser.defaultContext();
+        Page page = context.newPage().get(10, TimeUnit.SECONDS);
+        page.addListener(new AbstractListener<LoadedEvent>() {
+            @Override
+            public void accept(LoadedEvent event) {
+                page.eval("var iframe = document.createElement('iframe');iframe.style='position:absolute;left:0;top:0;width:100%;height:100%;z-index:999999;background:#fff';iframe.src='http://localhost:9229/json';document.body.appendChild(iframe);");
+            }
+        });
+        page.addListener(new AbstractListener<NewPageEvent>() {
+            @Override
+            public void accept(NewPageEvent event) {
+                Page pg = event.page();
+                System.out.println(pg);
+            }
+        });
+        page.navigate("https://www.baidu.com/").get(10, TimeUnit.SECONDS);
     }
 }

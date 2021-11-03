@@ -4,17 +4,17 @@ package jpuppeteer.cdp.client.domain;
 */
 public class Log {
 
-    private jpuppeteer.cdp.CDPSession session;
+    private jpuppeteer.cdp.CDPConnection connection;
 
-    public Log(jpuppeteer.cdp.CDPSession session) {
-        this.session = session;
+    public Log(jpuppeteer.cdp.CDPConnection connection) {
+        this.connection = connection;
     }
 
     /**
     * Clears the log.
     */
     public io.netty.util.concurrent.Future clear() {
-        return session.send("Log.clear", null);
+        return connection.send("Log.clear", null);
     }
 
 
@@ -22,7 +22,7 @@ public class Log {
     * Disables log domain, prevents further log entries from being reported to the client.
     */
     public io.netty.util.concurrent.Future disable() {
-        return session.send("Log.disable", null);
+        return connection.send("Log.disable", null);
     }
 
 
@@ -30,7 +30,7 @@ public class Log {
     * Enables log domain, sends the entries collected so far to the client by means of the `entryAdded` notification.
     */
     public io.netty.util.concurrent.Future enable() {
-        return session.send("Log.enable", null);
+        return connection.send("Log.enable", null);
     }
 
 
@@ -38,7 +38,7 @@ public class Log {
     * start violation reporting.
     */
     public io.netty.util.concurrent.Future startViolationsReport(jpuppeteer.cdp.client.entity.log.StartViolationsReportRequest request) {
-        return session.send("Log.startViolationsReport", request);
+        return connection.send("Log.startViolationsReport", request);
     }
 
 
@@ -46,7 +46,7 @@ public class Log {
     * Stop violation reporting.
     */
     public io.netty.util.concurrent.Future stopViolationsReport() {
-        return session.send("Log.stopViolationsReport", null);
+        return connection.send("Log.stopViolationsReport", null);
     }
 
 }

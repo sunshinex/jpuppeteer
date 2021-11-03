@@ -1,21 +1,19 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
-import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.Future;
 import jpuppeteer.api.BrowserObject;
 import jpuppeteer.api.Element;
+import jpuppeteer.api.Frame;
 import jpuppeteer.api.Isolate;
-import jpuppeteer.api.Page;
 import jpuppeteer.cdp.client.domain.DOM;
-import jpuppeteer.cdp.client.domain.Runtime;
 import jpuppeteer.cdp.client.entity.dom.*;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
 import jpuppeteer.entity.Point;
 import jpuppeteer.util.Input;
 import jpuppeteer.util.ScriptUtil;
-import jpuppeteer.util.SeriesFuture;
+import jpuppeteer.util.SeriesPromise;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -41,57 +37,44 @@ public class ChromeElement implements Element {
 
     private static final String SCRIPT_WATCH = ScriptUtil.load("script/watch.js");
 
-    private final Page page;
-
-    private final DOM dom;
-
-    private final Isolate isolate;
-
-    private final Runtime runtime;
-
-    private final Input input;
+    private final ChromeFrame frame;
 
     private final BrowserObject object;
 
-    private final EventExecutor executor;
-
-    public ChromeElement(Page page, DOM dom, Isolate isolate, Runtime runtime, Input input, BrowserObject object, EventExecutor executor) {
-        this.page = page;
-        this.dom = dom;
-        this.isolate = isolate;
-        this.runtime = runtime;
-        this.input = input;
+    public ChromeElement(ChromeFrame frame, BrowserObject object) {
+        this.frame = frame;
         this.object = object;
-        this.executor = executor;
+    }
+
+    protected DOM dom() {
+        return this.frame.page().connection().dom;
+    }
+
+    protected Input input() {
+        return this.frame.page().connection().inputWrapper;
     }
 
     @Override
-    public Page page() {
-        return page;
+    public Frame frame() {
+        return frame;
     }
 
     @Override
     public Future<Element> querySelector(String selector) {
-        return SeriesFuture
-                .wrap(isolate.call("function (selector){return this.querySelector(selector);}", objectId(), selector))
-                .sync(o -> {
-                    if (o == null) {
-                        throw new NoSuchElementException(selector);
-                    } else {
-                        return new ChromeElement(page, dom, isolate, runtime, input, o, executor);
-                    }
-                });
+        return SeriesPromise
+                .wrap(frame.call("function (selector){return this.querySelector(selector);}", objectId(), selector))
+                .sync(o -> o != null ? new ChromeElement(frame, o) : null);
     }
 
     @Override
     public Future<Element[]> querySelectorAll(String selector) {
-        return SeriesFuture
-                .wrap(isolate.call("function (selector){return this.querySelectorAll(selector);}", objectId(), selector))
+        return SeriesPromise
+                .wrap(frame.call("function (selector){return this.querySelectorAll(selector);}", (Object) selector))
                 .async(BrowserObject::getProperties)
-                .sync(o -> {
-                    Element[] elements = new Element[o.length];
-                    for(int i=0; i<o.length; i++) {
-                        elements[i] = new ChromeElement(page, dom, isolate, runtime, input, o[i], executor);
+                .sync(browserObjects -> {
+                    Element[] elements = new Element[browserObjects.length];
+                    for(int i=0; i<browserObjects.length; i++) {
+                        elements[i] = new ChromeElement(frame, browserObjects[i]);
                     }
                     return elements;
                 });
@@ -100,50 +83,49 @@ public class ChromeElement implements Element {
     @Override
     public Future<Element> waitSelector(String selector, long timeout, TimeUnit unit) {
         timeout = unit.toMillis(timeout);
-        return SeriesFuture
-                .wrap(isolate.call(SCRIPT_WAIT_SELECTOR, objectId(), (Object) selector, timeout))
-                .sync(o -> new ChromeElement(page, dom, isolate, runtime, input, o, executor));
+        return SeriesPromise
+                .wrap(frame.call(SCRIPT_WAIT_SELECTOR, objectId(), selector, timeout))
+                .sync(o -> new ChromeElement(frame, o));
     }
 
     @Override
     public Future watch(String selector, Consumer<Element> watchFunction, boolean once) {
         String functionName = "watch_" + UUID.randomUUID().toString().replace("-", "");
-        return SeriesFuture.wrap(
-                page.addBinding(functionName, (i, hash) -> {
+        return SeriesPromise.wrap(
+                frame.addBinding(functionName, (i, hash) -> {
                     i.eval("window['" + hash + "']")
                             .addListener(f -> {
                                 if (f.cause() != null) {
                                     logger.error("query watch object failed, error={}", f.cause().getMessage(), f.cause());
                                 } else {
-                                    BrowserObject bo = (BrowserObject) f.getNow();
-                                    Element node = new ChromeElement(page, dom, i, runtime, input, bo, executor);
+                                    Element node = new ChromeElement(frame, (BrowserObject) f.getNow());
                                     watchFunction.accept(node);
                                 }
                             });
                 })
                 )
-                .async(o -> isolate.call(SCRIPT_WATCH, objectId(), (Object) selector, functionName, once));
+                .async(o -> frame.call(SCRIPT_WATCH, objectId(), selector, functionName, once));
     }
 
     @Override
     public Future<String> getAttribute(String name) {
-        return isolate.call("function (name){return this.getAttribute(name);}", objectId(), String.class, name);
+        return frame.call("function (name){return this.getAttribute(name);}", objectId(), String.class, name);
     }
 
     @Override
     public Future setAttribute(String name, String value) {
-        return isolate.call("function (name, value){this.setAttribute(name, value);}", objectId(), name, value);
+        return frame.call("function (name, value){this.setAttribute(name, value);}", objectId(), name, value);
     }
 
     @Override
     public Future removeAttribute(String name) {
-        return isolate.call("function (name){this.removeAttribute(name);}", objectId(), name);
+        return frame.call("function (name){this.removeAttribute(name);}", objectId(), name);
     }
 
     @Override
     public Future<BoxModel> boxModel() {
-        return SeriesFuture
-                .wrap(dom.getBoxModel(new GetBoxModelRequest(null, null, objectId())))
+        return SeriesPromise
+                .wrap(dom().getBoxModel(new GetBoxModelRequest(null, null, objectId())))
                 .sync(o -> o.model);
     }
 
@@ -153,44 +135,44 @@ public class ChromeElement implements Element {
                 .map(File::getAbsolutePath)
                 .collect(Collectors.toList());
         SetFileInputFilesRequest request = new SetFileInputFilesRequest(paths, null, null, objectId());
-        return dom.setFileInputFiles(request);
+        return dom().setFileInputFiles(request);
     }
 
     @Override
     public Future focus() {
-        return dom.focus(new FocusRequest(null, null, objectId()));
+        return dom().focus(new FocusRequest(null, null, objectId()));
     }
 
     @Override
     public Future remove() {
-        return isolate.call("function (){this.parentNode.removeChild(this);}", objectId());
+        return frame.call("function (){this.parentNode.removeChild(this);}", objectId());
     }
 
     @Override
     public Future<String> value() {
-        return isolate.call("function (){return this.value;}", objectId(), String.class);
+        return frame.call("function (){return this.value;}", objectId(), String.class);
     }
 
     @Override
     public Future value(String value) {
-        return isolate.call("function (value){this.value=value;}", objectId(), value);
+        return frame.call("function (value){this.value=value;}", objectId(), value);
     }
 
     @Override
     public Future<String> html() {
-        return SeriesFuture
-                .wrap(dom.getOuterHTML(new GetOuterHTMLRequest(null, null, objectId())))
+        return SeriesPromise
+                .wrap(dom().getOuterHTML(new GetOuterHTMLRequest(null, null, objectId())))
                 .sync(o -> o.outerHTML);
     }
 
     @Override
     public Future html(String html) {
-        return isolate.call("function (html){this.outerHTML=html;}", objectId(), html);
+        return frame.call("function (html){this.outerHTML=html;}", objectId(), html);
     }
 
     @Override
     public Future scrollIntoView() {
-        return isolate.call("function (){this.scrollIntoViewIfNeeded();}", objectId());
+        return frame.call("function (){this.scrollIntoViewIfNeeded();}", objectId());
     }
 
     @Override
@@ -200,14 +182,14 @@ public class ChromeElement implements Element {
 
     @Override
     public Future input(String text, int delay) {
-        SeriesFuture next = SeriesFuture.wrap(focus());
+        SeriesPromise next = SeriesPromise.wrap(focus());
         for(char chr : text.toCharArray()) {
             String chrStr = String.valueOf(chr);
             USKeyboardDefinition def = USKeyboardDefinition.find(chrStr);
             if (def != null) {
-                next = next.async(o -> input.press(def, delay));
+                next = next.async(o -> input().press(def, delay));
             } else {
-                next = next.async(o -> input.input(chrStr));
+                next = next.async(o -> input().input(chrStr));
             }
         }
         return next;
@@ -215,11 +197,11 @@ public class ChromeElement implements Element {
 
     @Override
     public Future select(String... values) {
-        return isolate.call(SCRIPT_SELECT, objectId(), Lists.newArrayList(values));
+        return frame.call(SCRIPT_SELECT, objectId(), Lists.newArrayList(values));
     }
 
     private Future<Point> center() {
-        return SeriesFuture
+        return SeriesPromise
                 .wrap(scrollIntoView())//滚动到可见区域
                 .async(o -> boxModel())
                 .sync(o -> {
@@ -234,23 +216,23 @@ public class ChromeElement implements Element {
 
     @Override
     public Future click(MouseDefinition buttonType, int delay) {
-        return SeriesFuture
+        return SeriesPromise
                 .wrap(center())
-                .async(o -> input.mouseMove(o.x, o.y))
-                .async(o -> input.mouseDown(buttonType))
+                .async(o -> input().mouseMove(o.x, o.y))
+                .async(o -> input().mouseDown(buttonType))
                 //此处单纯为了延迟，没啥鸟用
-                .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
-                .async(o -> input.mouseUp(buttonType));
+                .async(o -> frame.eventLoop().schedule(() -> o, delay, TimeUnit.MILLISECONDS))
+                .async(o -> input().mouseUp(buttonType));
     }
 
     @Override
     public Future tap(int delay) {
-        return SeriesFuture
+        return SeriesPromise
                 .wrap(center())
-                .async(o -> input.touchStart(Double.valueOf(o.x).intValue(), Double.valueOf(o.y).intValue()))
+                .async(o -> input().touchStart(Double.valueOf(o.x).intValue(), Double.valueOf(o.y).intValue()))
                 //此处单纯为了延迟，没啥鸟用
-                .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
-                .async(o -> input.touchEnd());
+                .async(o -> frame.eventLoop().schedule(() -> o, delay, TimeUnit.MILLISECONDS))
+                .async(o -> input().touchEnd());
     }
 
     @Override
@@ -260,7 +242,7 @@ public class ChromeElement implements Element {
 
     @Override
     public Isolate isolate() {
-        return isolate;
+        return frame;
     }
 
     @Override

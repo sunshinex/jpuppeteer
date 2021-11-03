@@ -1,7 +1,7 @@
 package jpuppeteer.chrome;
 
-import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.Future;
+import jpuppeteer.api.BindingFunction;
 import jpuppeteer.api.BrowserObject;
 import jpuppeteer.api.Frame;
 import jpuppeteer.api.Isolate;
@@ -11,7 +11,7 @@ import jpuppeteer.cdp.client.domain.Runtime;
 import jpuppeteer.cdp.client.entity.runtime.CallFunctionOnRequest;
 import jpuppeteer.cdp.client.entity.runtime.EvaluateRequest;
 import jpuppeteer.util.IsolateUtil;
-import jpuppeteer.util.SeriesFuture;
+import jpuppeteer.util.SeriesPromise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,22 +19,16 @@ public class ChromeIsolate implements Isolate {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeIsolate.class);
 
-    private final Runtime runtime;
+    private final ChromeFrame frame;
 
     private final Integer isolateId;
 
     private final String name;
 
-    private final Frame frame;
-
-    private final EventExecutor executor;
-
-    public ChromeIsolate(Runtime runtime, Integer isolateId, String name, Frame frame, EventExecutor executor) {
-        this.runtime = runtime;
+    public ChromeIsolate(ChromeFrame frame, Integer isolateId, String name) {
+        this.frame = frame;
         this.isolateId = isolateId;
         this.name = name;
-        this.frame = frame;
-        this.executor = executor;
     }
 
     private static boolean checkNull(RemoteObjectType type, RemoteObjectSubtype subType) {
@@ -50,6 +44,15 @@ public class ChromeIsolate implements Isolate {
         }
     }
 
+    protected Runtime runtime() {
+        return frame.page().connection().runtime;
+    }
+
+    @Override
+    public String name() {
+        return this.name;
+    }
+
     @Override
     public Frame frame() {
         return this.frame;
@@ -57,21 +60,21 @@ public class ChromeIsolate implements Isolate {
 
     @Override
     public Future<BrowserObject> eval(EvaluateRequest request) {
-        return SeriesFuture
-                .wrap(runtime.evaluate(request))
+        return SeriesPromise
+                .wrap(runtime().evaluate(request))
                 .sync(o -> {
                     IsolateUtil.checkException(o.exceptionDetails);
                     if (checkNull(o.result.type, o.result.subtype)) {
                         return null;
                     }
-                    return new ChromeObject(ChromeIsolate.this, runtime, o.result.objectId, executor);
+                    return new ChromeObject(ChromeIsolate.this, o.result.objectId);
                 });
     }
 
     @Override
     public <R> Future<R> eval(EvaluateRequest request, Class<R> clazz) {
-        return SeriesFuture
-                .wrap(runtime.evaluate(request))
+        return SeriesPromise
+                .wrap(runtime().evaluate(request))
                 .sync(o -> {
                     IsolateUtil.checkException(o.exceptionDetails);
                     if (checkNull(o.result.type, o.result.subtype)) {
@@ -93,21 +96,21 @@ public class ChromeIsolate implements Isolate {
 
     @Override
     public Future<BrowserObject> call(CallFunctionOnRequest request) {
-        return SeriesFuture
-                .wrap(runtime.callFunctionOn(request))
+        return SeriesPromise
+                .wrap(runtime().callFunctionOn(request))
                 .sync(o -> {
                     IsolateUtil.checkException(o.exceptionDetails);
                     if (checkNull(o.result.type, o.result.subtype)) {
                         return null;
                     }
-                    return new ChromeObject(this, runtime, o.result.objectId, executor);
+                    return new ChromeObject(this, o.result.objectId);
                 });
     }
 
     @Override
     public <R> Future<R> call(CallFunctionOnRequest request, Class<R> clazz) {
-        return SeriesFuture
-                .wrap(runtime.callFunctionOn(request))
+        return SeriesPromise
+                .wrap(runtime().callFunctionOn(request))
                 .sync(o -> {
                     IsolateUtil.checkException(o.exceptionDetails);
                     if (checkNull(o.result.type, o.result.subtype)) {
@@ -144,7 +147,17 @@ public class ChromeIsolate implements Isolate {
     }
 
     @Override
+    public Future addBinding(String bindingName, BindingFunction function) {
+        return frame.page().addBinding0(name, bindingName, function);
+    }
+
+    @Override
+    public Future removeBinding(String bindingName) {
+        return frame.page().removeBinding0(bindingName);
+    }
+
+    @Override
     public String toString() {
-        return name;
+        return "ChromeIsolate:" + name;
     }
 }

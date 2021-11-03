@@ -1,7 +1,6 @@
 package jpuppeteer.util;
 
 import com.google.common.collect.Lists;
-import io.netty.util.concurrent.DefaultEventExecutor;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.Future;
 import jpuppeteer.cdp.client.constant.input.DispatchKeyEventRequestType;
@@ -38,8 +37,6 @@ public class Input {
      */
     private final Set<MouseDefinition> pressedButtons;
 
-    private final EventExecutor inputExecutor;
-
     private final AtomicInteger mouseX;
 
     private final AtomicInteger mouseY;
@@ -49,9 +46,6 @@ public class Input {
         this.executor = executor;
         this.pressedKeys = ConcurrentHashMap.newKeySet();
         this.pressedButtons = ConcurrentHashMap.newKeySet();
-        this.inputExecutor = new DefaultEventExecutor(r -> {
-            return new Thread(r, "INPUT-THREAD");
-        });
         this.mouseX = new AtomicInteger(0);
         this.mouseY = new AtomicInteger(0);
     }
@@ -153,7 +147,7 @@ public class Input {
 
     
     public Future press(USKeyboardDefinition key, int delay) {
-        return SeriesFuture
+        return SeriesPromise
                 .wrap(keyDown(key))
                 //此处单纯为了延迟，没啥鸟用
                 .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
@@ -188,7 +182,7 @@ public class Input {
         DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, mousePosition.x, mousePosition.y);
         builder.type(DispatchMouseEventRequestType.MOUSEPRESSED);
         builder.clickCount(count);
-        return SeriesFuture
+        return SeriesPromise
                 .wrap(input.dispatchMouseEvent(builder.build()))
                 .sync(o -> mousePosition);
     }
@@ -204,14 +198,14 @@ public class Input {
         builder.type(DispatchMouseEventRequestType.MOUSERELEASED);
         builder.clickCount(count);
         pressedButtons.remove(mouseDefinition);
-        return SeriesFuture
+        return SeriesPromise
                 .wrap(input.dispatchMouseEvent(builder.build()))
                 .sync(o -> mousePosition);
     }
 
     public Future<Point> click(MouseDefinition mouseDefinition, int delay) {
         Point mousePosition = new Point(mouseX.get(), mouseY.get());
-        return SeriesFuture
+        return SeriesPromise
                 .wrap(mouseMove(mousePosition.x, mousePosition.y))
                 .async(o -> mouseDown(mouseDefinition))
                 //此处单纯为了延迟，没啥鸟用
@@ -226,7 +220,7 @@ public class Input {
         builder.y(BigDecimal.valueOf(y));
         mouseX.set(x);
         mouseY.set(y);
-        return SeriesFuture
+        return SeriesPromise
                 .wrap(input.dispatchMouseEvent(builder.build()))
                 .sync(o -> new Point(x, y));
     }
@@ -259,7 +253,7 @@ public class Input {
     public Future<TouchPoint[]> touchStart(TouchPoint[] touchPoints) {
         DispatchTouchEventRequestBuilder builder = touchEventBuilder(touchPoints);
         builder.type(DispatchTouchEventRequestType.TOUCHSTART);
-        return SeriesFuture
+        return SeriesPromise
                 .wrap(input.dispatchTouchEvent(builder.build()))
                 .sync(o -> touchPoints);
     }
@@ -282,7 +276,7 @@ public class Input {
     public Future<TouchPoint[]> touchMove(TouchPoint[] touchPoints) {
         DispatchTouchEventRequestBuilder builder = touchEventBuilder(touchPoints);
         builder.type(DispatchTouchEventRequestType.TOUCHMOVE);
-        return SeriesFuture
+        return SeriesPromise
                 .wrap(input.dispatchTouchEvent(builder.build()))
                 .sync(o -> touchPoints);
     }
