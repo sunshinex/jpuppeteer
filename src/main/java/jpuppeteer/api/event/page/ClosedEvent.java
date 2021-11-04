@@ -1,11 +1,7 @@
 package jpuppeteer.api.event.page;
 
-import jpuppeteer.api.Frame;
-import jpuppeteer.api.event.FrameEvent;
+import jpuppeteer.api.event.PageEvent;
 
-public class ClosedEvent extends FrameEvent {
+public class ClosedEvent extends PageEvent {
 
-    public ClosedEvent(Frame frame) {
-        super(frame);
-    }
 }

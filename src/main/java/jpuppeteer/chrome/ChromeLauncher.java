@@ -71,8 +71,6 @@ public class ChromeLauncher implements Launcher {
         errThread.start();
 
         try {
-            //Runtime.getRuntime().addShutdownHook(new Thread(process::destroy));
-            //等待5s, 等chrome启动成功, 如果5s没有启动成功, 则强制关闭chrome进程
             String uri = future.get(5, TimeUnit.SECONDS);
             return new ChromeBrowser(uri, process);
         } catch (Throwable cause) {

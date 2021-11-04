@@ -1,7 +1,6 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
-import io.netty.channel.DefaultEventLoop;
 import io.netty.channel.EventLoop;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.FailedFuture;
@@ -9,11 +8,6 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.Promise;
 import jpuppeteer.api.Browser;
 import jpuppeteer.api.BrowserContext;
-import jpuppeteer.api.Page;
-import jpuppeteer.api.event.AbstractListener;
-import jpuppeteer.api.event.PageEvent;
-import jpuppeteer.api.event.page.LoadedEvent;
-import jpuppeteer.api.event.page.NewPageEvent;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.TargetType;
@@ -22,13 +16,12 @@ import jpuppeteer.cdp.client.constant.storage.StorageType;
 import jpuppeteer.cdp.client.entity.browser.*;
 import jpuppeteer.cdp.client.entity.network.Cookie;
 import jpuppeteer.cdp.client.entity.network.CookieParam;
-import jpuppeteer.cdp.client.entity.network.LoadingFinishedEvent;
+import jpuppeteer.cdp.client.entity.page.GetFrameTreeResponse;
 import jpuppeteer.cdp.client.entity.storage.ClearCookiesRequest;
 import jpuppeteer.cdp.client.entity.storage.ClearDataForOriginRequest;
 import jpuppeteer.cdp.client.entity.storage.GetCookiesRequest;
 import jpuppeteer.cdp.client.entity.storage.SetCookiesRequest;
 import jpuppeteer.cdp.client.entity.target.*;
-import jpuppeteer.entity.TargetBase;
 import jpuppeteer.util.SeriesPromise;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -61,7 +54,9 @@ public class ChromeBrowser implements Browser {
 
     private final Map<String, ChromeContext> contextMap;
 
-    private final Map<String, TargetBase> targetMap;
+    private final Map<String/*targetId*/, ChromePage> pageMap;
+
+    private final Map<String/*frameId*/, String/*targetId*/> framePageMap;
 
     public ChromeBrowser(String uri, Process process) throws Exception {
         this.eventLoop = new NioEventLoopGroup(r -> new Thread(r, "browser")).next();
@@ -71,11 +66,31 @@ public class ChromeBrowser implements Browser {
         this.process = process;
         this.defaultContext = new ChromeContext(this, null);
         this.contextMap = new ConcurrentHashMap<>();
-        this.targetMap = new ConcurrentHashMap<>();
-        GetBrowserContextsResponse getBrowserContextsResponse = connection.target.getBrowserContexts()
-                .get(30, TimeUnit.SECONDS);
-        for(String browserContextId : getBrowserContextsResponse.browserContextIds) {
-            contextMap.put(browserContextId, new ChromeContext(this, browserContextId));
+        this.pageMap = new ConcurrentHashMap<>();
+        this.framePageMap = new ConcurrentHashMap<>();
+        try {
+            GetBrowserContextsResponse getBrowserContextsResponse = connection.target.getBrowserContexts()
+                    .get(30, TimeUnit.SECONDS);
+            for (String browserContextId : getBrowserContextsResponse.browserContextIds) {
+                contextMap.put(browserContextId, new ChromeContext(this, browserContextId));
+            }
+            //创建一个页面去获取默认上下文的browserContextId
+            String targetId = createTarget(null, "about:blank", null, null).get(30, TimeUnit.SECONDS);
+            GetTargetsResponse getTargetsResponse = connection.target.getTargets().get(30, TimeUnit.SECONDS);
+            String defaultContextId = null;
+            for (TargetInfo targetInfo : getTargetsResponse.targetInfos) {
+                if (targetId.equals(targetInfo.targetId)) {
+                    defaultContextId = targetInfo.browserContextId;
+                }
+            }
+            if (defaultContextId == null) {
+                throw new Exception("detect default context failed");
+            }
+            contextMap.put(defaultContextId, defaultContext);
+            closeTarget(targetId).get(30, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            this.connection.close();
+            throw e;
         }
         this.discoverTargets(true);
     }
@@ -91,6 +106,26 @@ public class ChromeBrowser implements Browser {
 
     protected EventLoop eventLoop() {
         return eventLoop;
+    }
+
+    protected ChromePage getPage(String targetIdOrFrameId) {
+        ChromePage page = pageMap.get(targetIdOrFrameId);
+        if (page == null) {
+            String targetId = framePageMap.get(targetIdOrFrameId);
+            if (targetId != null) {
+                page = pageMap.get(targetId);
+            }
+        }
+        return page;
+    }
+
+    /**
+     * @TODO 此处因为协议比较奇葩，有时候的id是frameId，有时候又是targetId，所以做个适配
+     * @param frameId
+     * @param targetId
+     */
+    protected void bindFrameTarget(String frameId, String targetId) {
+        framePageMap.put(frameId, targetId);
     }
 
     protected Future<String> createTarget(String browserContextId, String url, Integer width, Integer height) {
@@ -109,10 +144,6 @@ public class ChromeBrowser implements Browser {
     protected Future closeTarget(String targetId) {
         CloseTargetRequest request = new CloseTargetRequest(targetId);
         return connection.target.closeTarget(request);
-    }
-
-    protected TargetBase findTarget(String frameId) {
-        return targetMap.get(frameId);
     }
 
     protected Future closeContext(String browserContextId) {
@@ -230,71 +261,45 @@ public class ChromeBrowser implements Browser {
             return genMessageId();
         }
 
-        private void fill(TargetBase targetBase, TargetInfo targetInfo) {
-            ChromeContext browserContext = targetInfo.browserContextId == null ? defaultContext : contextMap.get(targetInfo.browserContextId);
-            if (browserContext == null) {
-                //某些情况下这个id是默认的上下文
-                browserContext = defaultContext;
-            }
-            TargetBase opener = targetInfo.openerId != null ? targetMap.get(targetInfo.openerId) : null;
-            targetBase.setTargetId(targetInfo.targetId);
-            targetBase.setType(TargetType.findByType(targetInfo.type));
-            targetBase.setTitle(targetInfo.title);
-            targetBase.setUrl(targetInfo.url);
-            targetBase.setAttached(targetInfo.attached);
-            targetBase.setOpener(opener);
-            targetBase.setCanAccessOpener(targetInfo.canAccessOpener);
-            targetBase.setOpenerFrameId(targetInfo.openerFrameId);
-            targetBase.setBrowserContext(browserContext);
-        }
-
         private void onTargetCreated(TargetInfo targetInfo) {
-            TargetBase newTarget = new TargetBase();
-            fill(newTarget, targetInfo);
-            TargetBase oldTarget = targetMap.putIfAbsent(targetInfo.targetId, newTarget);
-            if (oldTarget != null) {
-                fill(oldTarget, targetInfo);
-                newTarget = oldTarget;
+            TargetType targetType = TargetType.findByType(targetInfo.type);
+            if (targetType != TargetType.PAGE) {
+                return;
             }
-            TargetBase opener = newTarget.getOpener();
+            ChromeContext browserContext = targetInfo.browserContextId == null ? defaultContext : contextMap.get(targetInfo.browserContextId);
+             if (browserContext == null) {
+                return;
+            }
+            ChromePage page = new ChromePage(browserContext, targetInfo);
+            pageMap.put(targetInfo.targetId, page);
+            ChromePage opener = page.opener();
             if (opener != null) {
-                ChromeFrame frame = opener.getFrame();
-                if (frame != null) {
-                    frame.page().onNewPage(newTarget);
-                }
+                opener.onNewPage(page);
             }
         }
 
         private void onTargetChanged(TargetInfo targetInfo) {
-            TargetBase targetBase = targetMap.get(targetInfo.targetId);
-            if (targetBase == null) {
-                logger.warn("target not found0, targetId={}", targetInfo.targetId);
-            } else {
-                fill(targetBase, targetInfo);
+            ChromePage page = pageMap.get(targetInfo.targetId);
+            if (page != null) {
+                page.setTargetInfo(targetInfo);
             }
         }
 
         private void onTargetCrashed(String targetId, Integer errorCode, String status) {
-            TargetBase targetBase = targetMap.get(targetId);
-            if (targetBase == null) {
-                logger.warn("target not found1, targetId={}", targetId);
-            } else {
-                ChromeFrame frame = targetBase.getFrame();
-                if (frame != null) {
-                    frame.page().onCrashed(frame, errorCode, status);
-                }
+            ChromePage page = pageMap.get(targetId);
+            if (page != null) {
+                page.onCrashed(errorCode, status);
             }
         }
 
         private void onTargetDestroyed(String targetId) {
-            TargetBase targetBase = targetMap.remove(targetId);
-            if (targetBase == null) {
-                logger.warn("target not found, targetId={}", targetId);
-            } else {
-                ChromeFrame frame = targetBase.getFrame();
-                if (frame != null) {
-                    frame.page().onClosed(frame);
+            ChromePage page = pageMap.remove(targetId);
+            if (page != null) {
+                String frameId = page.frameId();
+                if (frameId != null) {
+                    framePageMap.remove(frameId);
                 }
+                page.onClosed();
             }
         }
 
@@ -322,26 +327,5 @@ public class ChromeBrowser implements Browser {
                     break;
             }
         }
-
-    }
-
-    public static void main(String[] args) throws Exception {
-        ChromeBrowser browser = new ChromeBrowser("ws://127.0.0.1:9229/devtools/browser/f57c3b6e-5f7e-4464-baaf-532f23ba92f9", null);
-        BrowserContext context = browser.defaultContext();
-        Page page = context.newPage().get(10, TimeUnit.SECONDS);
-        page.addListener(new AbstractListener<LoadedEvent>() {
-            @Override
-            public void accept(LoadedEvent event) {
-                page.eval("var iframe = document.createElement('iframe');iframe.style='position:absolute;left:0;top:0;width:100%;height:100%;z-index:999999;background:#fff';iframe.src='http://localhost:9229/json';document.body.appendChild(iframe);");
-            }
-        });
-        page.addListener(new AbstractListener<NewPageEvent>() {
-            @Override
-            public void accept(NewPageEvent event) {
-                Page pg = event.page();
-                System.out.println(pg);
-            }
-        });
-        page.navigate("https://www.baidu.com/").get(10, TimeUnit.SECONDS);
     }
 }

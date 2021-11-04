@@ -2,12 +2,11 @@ package jpuppeteer.chrome;
 
 import io.netty.channel.EventLoop;
 import io.netty.util.concurrent.Future;
-import jpuppeteer.api.Frame;
-import jpuppeteer.api.*;
 import jpuppeteer.api.Request;
 import jpuppeteer.api.Response;
-import jpuppeteer.api.event.page.*;
+import jpuppeteer.api.*;
 import jpuppeteer.api.event.page.RequestInterceptedEvent;
+import jpuppeteer.api.event.page.*;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration;
@@ -15,23 +14,22 @@ import jpuppeteer.cdp.client.entity.browser.Bounds;
 import jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetGeolocationOverrideRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetTouchEmulationEnabledRequest;
-import jpuppeteer.cdp.client.entity.emulation.*;
 import jpuppeteer.cdp.client.entity.emulation.SetUserAgentOverrideRequest;
+import jpuppeteer.cdp.client.entity.emulation.*;
 import jpuppeteer.cdp.client.entity.fetch.AuthRequiredEvent;
 import jpuppeteer.cdp.client.entity.fetch.HeaderEntry;
 import jpuppeteer.cdp.client.entity.fetch.RequestPausedEvent;
 import jpuppeteer.cdp.client.entity.input.TouchPoint;
 import jpuppeteer.cdp.client.entity.network.*;
-import jpuppeteer.cdp.client.entity.page.*;
 import jpuppeteer.cdp.client.entity.page.LifecycleEvent;
+import jpuppeteer.cdp.client.entity.page.*;
 import jpuppeteer.cdp.client.entity.runtime.*;
+import jpuppeteer.cdp.client.entity.target.TargetInfo;
 import jpuppeteer.constant.LifecyclePhase;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
 import jpuppeteer.entity.BasicHttpHeader;
 import jpuppeteer.entity.Point;
-import jpuppeteer.entity.TargetBase;
-import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesPromise;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -51,9 +49,11 @@ public class ChromePage extends ChromeFrame implements Page {
 
     private final ChromeContext browserContext;
 
+    private volatile TargetInfo targetInfo;
+
     private final URI uri;
 
-    private final CDPConnection connection;
+    private volatile CDPConnection connection;
 
     private volatile Interceptor<? extends InterceptedResponse> interceptor;
 
@@ -67,34 +67,60 @@ public class ChromePage extends ChromeFrame implements Page {
 
     private final Map<String, Response> responseMap;
 
-    public ChromePage(ChromeContext browserContext, TargetBase targetBase) {
-        super(null, null, targetBase);
+    public ChromePage(ChromeContext browserContext, TargetInfo targetInfo) {
+        super(null, null);
         this.browserContext = browserContext;
+        this.targetInfo = targetInfo;
         try {
             this.uri = new URI(
                     browserContext.browser().uri().getScheme(),
                     browserContext.browser().uri().getUserInfo(),
                     browserContext.browser().uri().getHost(),
                     browserContext.browser().uri().getPort(),
-                    "/devtools/page/" + frameId(),
+                    "/devtools/page/" + targetId(),
                     null, null
             );
         } catch (URISyntaxException e) {
             throw new RuntimeException("build uri failed", e);
         }
-        this.connection = new PageConnection();
         this.bindingMap = new ConcurrentHashMap<>();
-        this.frameMap = new ConcurrentHashMap<>();
-        //将自己丢到frameMap里面
-        this.frameMap.put(frameId(), this);
         this.isolateMap = new ConcurrentHashMap<>();
-        //保存request跟response,后面会用到
         this.requestMap = new ConcurrentHashMap<>();
         this.responseMap = new ConcurrentHashMap<>();
-        //enable features
-        connection.page.enable();
-        connection.page.setLifecycleEventsEnabled(new SetLifecycleEventsEnabledRequest(true));
-        connection.runtime.enable();
+        this.frameMap = new ConcurrentHashMap<>();
+    }
+
+    private void initFrame(ChromeFrame parent, FrameTree node) {
+        ChromeFrame frame = parent.appendChild(node.frame);
+        frameMap.put(node.frame.id, frame);
+        while (node.childFrames != null) {
+            for(FrameTree child : node.childFrames) {
+                initFrame(frame, child);
+            }
+        }
+    }
+
+    public void attach() {
+        this.connection = new PageConnection();
+        this.connection.page.enable();
+        this.connection.page.getFrameTree().addListener(f -> {
+            if (f.cause() != null) {
+                logger.error("init page frame tree failed, targetId={}, error={}", targetId(), f.cause().getMessage(), f.cause());
+            } else {
+                GetFrameTreeResponse response = (GetFrameTreeResponse) f.getNow();
+                FrameTree root = response.frameTree;
+                setFrameInfo(root.frame);
+                browserContext.browser().bindFrameTarget(root.frame.id, targetId());
+                frameMap.put(root.frame.id, this);
+                while (root.childFrames != null) {
+                    for(FrameTree node : root.childFrames) {
+                        initFrame(this, node);
+                    }
+                }
+                this.connection.page.setLifecycleEventsEnabled(new SetLifecycleEventsEnabledRequest(true));
+                this.connection.runtime.enable();
+            }
+        });
     }
 
     protected EventLoop eventLoop() {
@@ -103,6 +129,14 @@ public class ChromePage extends ChromeFrame implements Page {
 
     protected CDPConnection connection() {
         return connection;
+    }
+
+    protected ChromeFrame getFrame(String frameId) {
+        return frameMap.get(frameId);
+    }
+
+    protected void setTargetInfo(TargetInfo targetInfo) {
+        this.targetInfo = targetInfo;
     }
 
     protected Future addBinding0(String isolateName, String name, BindingFunction function) {
@@ -117,27 +151,27 @@ public class ChromePage extends ChromeFrame implements Page {
         return connection.runtime.removeBinding(request);
     }
 
-    protected void onCrashed(Frame frame, Integer errorCode, String status) {
-        emit(new CrashedEvent(frame, errorCode, status));
+    protected void onCrashed(Integer errorCode, String status) {
+        emit(new CrashedEvent(errorCode, status));
     }
 
-    protected void onClosed(Frame frame) {
-        emit(new ClosedEvent(frame));
+    protected void onClosed() {
+        emit(new ClosedEvent());
     }
 
-    protected void onNewPage(TargetBase targetBase) {
-        emit(new NewPageEvent(targetBase));
+    protected void onNewPage(ChromePage page) {
+        emit(new NewPageEvent(page));
     }
 
     protected void onBindingCall(BindingCalledEvent event) {
         BindingFunction function = bindingMap.get(event.name);
         if (function == null) {
-            logger.warn("[{}] binding function not found, name={}", frameId(), event.name);
+            logger.warn("binding function not found, targetId={}, name={}", targetId(), event.name);
             return;
         }
         Isolate isolate = this.isolateMap.get(event.executionContextId);
         if (isolate == null) {
-            logger.warn("[{}] isolate not found, isolateId={}", frameId(), event.executionContextId);
+            logger.warn("isolate not found, targetId={}, isolateId={}", targetId(), event.executionContextId);
             return;
         }
         function.call(isolate, event.payload);
@@ -146,12 +180,12 @@ public class ChromePage extends ChromeFrame implements Page {
     protected void onLifecycle(LifecycleEvent event) {
         ChromeFrame frame = this.frameMap.get(event.frameId);
         if (frame == null) {
-            logger.warn("[{}] handle lifecycle failed, frameId={}", frameId(), event.frameId);
+            logger.warn("handle lifecycle event failed, targetId={}, frameId={}", targetId(), event.frameId);
             return;
         }
         LifecyclePhase phase = LifecyclePhase.findByValue(event.name);
         if (phase == null) {
-            logger.warn("[{}] unsupported lifecycle event: {}", frameId(), event.name);
+            logger.warn("unsupported lifecycle, targetId={}, event={}", targetId(), event.name);
             return;
         }
         emit(new jpuppeteer.api.event.page.LifecycleEvent(frame, phase));
@@ -212,7 +246,7 @@ public class ChromePage extends ChromeFrame implements Page {
         }
         ChromeFrame frame = this.frameMap.get(event.frameId);
         if (frame == null) {
-            logger.error("[{}] handle request failed, frameId={}", frameId(), event.frameId);
+            logger.error("handle request failed, targetId={}, frameId={}", targetId(), event.frameId);
             return;
         }
         String location = event.redirectResponse != null ? event.redirectResponse.url : null;
@@ -233,7 +267,7 @@ public class ChromePage extends ChromeFrame implements Page {
         }
         ChromeFrame frame = this.frameMap.get(event.frameId);
         if (frame == null) {
-            logger.error("[{}] handle response failed, frameId={}", frameId(), event.frameId);
+            logger.error("handle response failed, targetId={}, frameId={}", targetId(), event.frameId);
             return;
         }
         HttpHeader[] headers = parseHeaders(event.response.headers);
@@ -287,7 +321,7 @@ public class ChromePage extends ChromeFrame implements Page {
         }
         ChromeFrame frame = this.frameMap.get(event.frameId);
         if (frame == null) {
-            logger.error("[{}] handle request intercept failed, frameId={}", frameId(), event.frameId);
+            logger.error("handle request intercept failed, targetId={}, frameId={}", targetId(), event.frameId);
             return;
         }
         Request request = requestBuilder(event.request)
@@ -325,7 +359,7 @@ public class ChromePage extends ChromeFrame implements Page {
         @SuppressWarnings("unchecked")
         Interceptor<InterceptedResponse> interceptor = (Interceptor<InterceptedResponse>) this.interceptor;
         if (interceptor == null) {
-            logger.error("[{}] interceptor not found", frameId());
+            logger.error("interceptor not found, targetId={}", targetId());
             //找不到interceptor的时候直接继续
             interceptedRequest.continues();
             return;
@@ -337,7 +371,7 @@ public class ChromePage extends ChromeFrame implements Page {
     protected void onAuthRequired(AuthRequiredEvent event) {
         ChromeFrame frame = this.frameMap.get(event.frameId);
         if (frame == null) {
-            logger.error("[{}] handle auth failed, frameId={}", frameId(), event.frameId);
+            logger.error("handle auth failed, targetId={}, frameId={}", targetId(), event.frameId);
             return;
         }
         Request request = requestBuilder(event.request)
@@ -353,8 +387,18 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
+    public String targetId() {
+        return targetInfo.targetId;
+    }
+
+    @Override
     public String title() {
-        return targetBase().getTitle();
+        return targetInfo.title;
+    }
+
+    @Override
+    public String url() {
+        return targetInfo.url;
     }
 
     @Override
@@ -369,20 +413,23 @@ public class ChromePage extends ChromeFrame implements Page {
 
     @Override
     public ChromePage opener() {
-        TargetBase opener = targetBase().getOpener();
-        if (opener == null) {
+        if (targetInfo.openerId == null) {
             return null;
+        } else {
+            return browserContext.browser().getPage(targetInfo.openerId);
         }
-        return opener.getFrame().page();
     }
 
     @Override
     public ChromeFrame openerFrame() {
+        if (targetInfo.openerFrameId == null) {
+            return null;
+        }
         ChromePage opener = opener();
         if (opener == null) {
             return null;
         }
-        return opener.frameMap.get(targetBase().getOpenerFrameId());
+        return opener.frameMap.get(targetInfo.openerFrameId);
     }
 
     @Override
@@ -397,6 +444,13 @@ public class ChromePage extends ChromeFrame implements Page {
 
     @Override
     public Future close() {
+        if (!connection.isClosed()) {
+            connection.close().addListener(f -> {
+                if (f.cause() != null) {
+                    logger.warn("close connection failed, targetId={}, error={}", targetId(), f.cause().getMessage(), f.cause());
+                }
+            });
+        }
         return browserContext.browser().closeTarget(frameId());
     }
 
@@ -616,9 +670,7 @@ public class ChromePage extends ChromeFrame implements Page {
                 logger.warn("parent frame not found, parentId={}", parentId);
                 return;
             }
-            TargetBase targetBase = new TargetBase();
-            targetBase.setTargetId(frameId);
-            ChromeFrame frame = parent.appendChild(targetBase);
+            ChromeFrame frame = parent.appendChild(frameId);
             frameMap.put(frameId, frame);
         }
 
@@ -628,7 +680,6 @@ public class ChromePage extends ChromeFrame implements Page {
                 logger.warn("frame not found, frameId={}", event.frameId);
                 return;
             }
-            frame.targetBase().setUrl(event.url);
             if (frame == ChromePage.this) {
                 requestMap.clear();
                 responseMap.clear();
@@ -641,11 +692,7 @@ public class ChromePage extends ChromeFrame implements Page {
                 logger.warn("frame not found, frameId={}", event.frame.id);
                 return;
             }
-            String url = event.frame.url;
-            if (event.frame.urlFragment != null) {
-                url += event.frame.urlFragment;
-            }
-            frame.targetBase().setUrl(url);
+            frame.setFrameInfo(event.frame);
         }
 
         private void onFrameDetached(String frameId) {

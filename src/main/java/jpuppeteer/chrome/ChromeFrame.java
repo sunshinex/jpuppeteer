@@ -10,7 +10,6 @@ import jpuppeteer.cdp.client.entity.page.CreateIsolatedWorldRequest;
 import jpuppeteer.cdp.client.entity.page.NavigateRequest;
 import jpuppeteer.cdp.client.entity.runtime.CallFunctionOnRequest;
 import jpuppeteer.cdp.client.entity.runtime.EvaluateRequest;
-import jpuppeteer.entity.TargetBase;
 import jpuppeteer.util.ScriptUtil;
 import jpuppeteer.util.SeriesPromise;
 import org.apache.commons.lang3.StringUtils;
@@ -31,33 +30,41 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
 
     private final ChromePage page;
 
-    private final ChromeFrame parent;
-
-    private final TargetBase targetBase;
+    private volatile jpuppeteer.cdp.client.entity.page.Frame frameInfo;
 
     private volatile ChromeIsolate isolate;
 
-    public ChromeFrame(ChromePage page, ChromeFrame parent, TargetBase targetBase) {
+    public ChromeFrame(ChromePage page, jpuppeteer.cdp.client.entity.page.Frame frameInfo) {
         this.page = page;
-        this.parent = parent;
-        this.targetBase = targetBase;
-        this.targetBase.setFrame(this);
+        this.frameInfo = frameInfo;
     }
 
     protected EventLoop eventLoop() {
         return page.eventLoop();
     }
 
-    protected ChromeFrame appendChild(TargetBase targetBase) {
-        return new ChromeFrame(page(), this, targetBase);
+    protected ChromeFrame appendChild(jpuppeteer.cdp.client.entity.page.Frame frameInfo) {
+        return new ChromeFrame(page(), frameInfo);
+    }
+
+    protected ChromeFrame appendChild(String frameId) {
+        jpuppeteer.cdp.client.entity.page.Frame frameInfo = new jpuppeteer.cdp.client.entity.page.Frame(
+                frameId, frameId(), null, null,
+                null, null, null,
+                null, null);
+        return appendChild(frameInfo);
     }
 
     protected void setIsolate(ChromeIsolate isolate) {
         this.isolate = isolate;
     }
 
-    protected TargetBase targetBase() {
-        return targetBase;
+    protected jpuppeteer.cdp.client.entity.page.Frame frameInfo() {
+        return frameInfo;
+    }
+
+    protected void setFrameInfo(jpuppeteer.cdp.client.entity.page.Frame frameInfo) {
+        this.frameInfo = frameInfo;
     }
 
     private ChromeIsolate assertIsolateNotNull() {
@@ -82,18 +89,30 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
     }
 
     @Override
-    public String frameId() {
-        return targetBase.getTargetId();
+    public Frame parent() {
+        return frameInfo != null && frameInfo.parentId != null ? page.getFrame(frameInfo.parentId) : null;
     }
 
     @Override
-    public ChromeFrame parent() {
-        return parent;
+    public String frameId() {
+        return frameInfo != null ? frameInfo.id : null;
+    }
+
+    @Override
+    public String loaderId() {
+        return frameInfo != null ? frameInfo.loaderId : null;
     }
 
     @Override
     public String url() {
-        return targetBase.getUrl();
+        if (frameInfo == null) {
+            return null;
+        }
+        String url = frameInfo.url;
+        if (frameInfo.urlFragment != null) {
+            url += frameInfo.urlFragment;
+        }
+        return url;
     }
 
     @Override

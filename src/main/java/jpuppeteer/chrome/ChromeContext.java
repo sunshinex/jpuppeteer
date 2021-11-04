@@ -6,7 +6,6 @@ import jpuppeteer.api.Page;
 import jpuppeteer.cdp.client.constant.browser.PermissionType;
 import jpuppeteer.cdp.client.entity.network.Cookie;
 import jpuppeteer.cdp.client.entity.network.CookieParam;
-import jpuppeteer.entity.TargetBase;
 import jpuppeteer.util.SeriesPromise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +44,9 @@ public class ChromeContext implements BrowserContext {
         return SeriesPromise
                 .wrap(browser.createTarget(browserContextId, url, width, height))
                 .sync(targetId -> {
-                    TargetBase targetBase = browser.findTarget(targetId);
-                    return new ChromePage(this, targetBase);
+                    ChromePage page = browser.getPage(targetId);
+                    page.attach();
+                    return page;
                 });
     }
 

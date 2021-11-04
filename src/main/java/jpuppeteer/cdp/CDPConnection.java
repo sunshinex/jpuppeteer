@@ -148,6 +148,10 @@ public abstract class CDPConnection {
         return channelFuture;
     }
 
+    public boolean isClosed() {
+        return !(channel.isOpen() && channel.isActive());
+    }
+
     public Future close() {
         connectFuture.cancel(true);
         return channel.close();

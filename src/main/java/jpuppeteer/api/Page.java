@@ -30,6 +30,8 @@ public interface Page extends Frame {
 
     String title();
 
+    String targetId();
+
     Future reload(Boolean ignoreCache, String scriptToEvaluateOnLoad);
 
     default Future reload() {

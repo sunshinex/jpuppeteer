@@ -15,6 +15,10 @@ public interface Frame extends EventEmitter<PageEvent>, Isolate {
 
     String frameId();
 
+    String name();
+
+    String loaderId();
+
     String url();
 
     Future<Element> querySelector(String selector);
