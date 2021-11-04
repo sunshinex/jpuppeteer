@@ -6,7 +6,7 @@
 
   <groupId>jpuppeteer</groupId>
   <artifactId>jpuppeteer</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>2.0-SNAPSHOT</version>
 
   <name>jpuppeteer</name>
   <url>https://github.com/sunshinex/jpuppeteer</url>
