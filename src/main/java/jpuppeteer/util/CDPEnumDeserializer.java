@@ -11,9 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class CDPEnumDeserializer implements ObjectDeserializer {
 
-    private static Map<Type, Map<String, CDPEnum>> enumCache = new ConcurrentHashMap<>();
+    private static final Map<Type, Map<String, CDPEnum>> enumCache = new ConcurrentHashMap<>();
 
     private final ObjectDeserializer enumDeserializer;
 

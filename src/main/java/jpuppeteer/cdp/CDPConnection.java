@@ -31,10 +31,9 @@ import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class CDPConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(CDPConnection.class);
@@ -88,7 +87,7 @@ public abstract class CDPConnection {
 
     public final Storage storage;
 
-    public CDPConnection(EventLoop eventLoop, AtomicInteger messageIdGen, URI uri) {
+    public CDPConnection(EventLoop eventLoop, URI uri) {
         this.eventLoop = eventLoop;
         this.uri = uri;
         this.promiseMap = new ConcurrentHashMap<>();
@@ -107,10 +106,6 @@ public abstract class CDPConnection {
         this.channel = open().channel();
     }
 
-    public CDPConnection(EventLoop eventLoop, URI uri) {
-        this(eventLoop, new AtomicInteger(0), uri);
-    }
-
     abstract protected int genId();
 
     abstract protected void onEvent(CDPEvent event);
@@ -121,7 +116,7 @@ public abstract class CDPConnection {
             throw new RuntimeException("Unsupported protocol: " + scheme);
         }
         Bootstrap b = new Bootstrap();
-        ChannelFuture channelFuture = b.group(eventLoop)
+        return b.group(eventLoop)
                 .channel(NioSocketChannel.class)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 30000)
                 .option(ChannelOption.SO_KEEPALIVE, true)
@@ -145,7 +140,6 @@ public abstract class CDPConnection {
                         connectFuture.tryFailure(f.cause());
                     }
                 });
-        return channelFuture;
     }
 
     public boolean isClosed() {
@@ -243,7 +237,7 @@ public abstract class CDPConnection {
         }
 
         @Override
-        protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse msg) throws Exception {
+        protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse msg) {
             Channel ch = ctx.channel();
             try {
                 handshake.finishHandshake(ch, msg);
@@ -263,7 +257,7 @@ public abstract class CDPConnection {
         }
 
         @Override
-        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
             ctx.close();
         }
     }
@@ -271,7 +265,7 @@ public abstract class CDPConnection {
     private class ClientHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
 
         @Override
-        public void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
+        public void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) {
             if (frame instanceof TextWebSocketFrame) {
                 TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
                 String message = textFrame.text();

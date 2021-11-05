@@ -43,7 +43,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ChromePage extends ChromeFrame implements Page {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromePage.class);
@@ -94,7 +94,7 @@ public class ChromePage extends ChromeFrame implements Page {
     private void initFrame(ChromeFrame parent, FrameTree node) {
         ChromeFrame frame = parent.appendChild(node.frame);
         frameMap.put(node.frame.id, frame);
-        while (node.childFrames != null) {
+        if (node.childFrames != null) {
             for(FrameTree child : node.childFrames) {
                 initFrame(frame, child);
             }
@@ -112,7 +112,7 @@ public class ChromePage extends ChromeFrame implements Page {
                 FrameTree root = response.frameTree;
                 setFrameInfo(root.frame);
                 frameMap.put(root.frame.id, this);
-                while (root.childFrames != null) {
+                if (root.childFrames != null) {
                     for(FrameTree node : root.childFrames) {
                         initFrame(this, node);
                     }
@@ -357,7 +357,6 @@ public class ChromePage extends ChromeFrame implements Page {
                 .responseHeaders(responseHeaders)
                 .build();
 
-        @SuppressWarnings("unchecked")
         Interceptor<InterceptedResponse> interceptor = (Interceptor<InterceptedResponse>) this.interceptor;
         if (interceptor == null) {
             logger.error("interceptor not found, targetId={}", targetId());
@@ -681,18 +680,6 @@ public class ChromePage extends ChromeFrame implements Page {
             frameMap.put(frameId, frame);
         }
 
-        private void onFrameRequestedNavigation(FrameRequestedNavigationEvent event) {
-            ChromeFrame frame = frameMap.get(event.frameId);
-            if (frame == null) {
-                logger.warn("frame not found, frameId={}", event.frameId);
-                return;
-            }
-            if (frame == ChromePage.this) {
-                requestMap.clear();
-                responseMap.clear();
-            }
-        }
-
         private void onFrameNavigated(FrameNavigatedEvent event) {
             ChromeFrame frame = frameMap.get(event.frame.id);
             if (frame == null) {
@@ -700,6 +687,19 @@ public class ChromePage extends ChromeFrame implements Page {
                 return;
             }
             frame.setFrameInfo(event.frame);
+            if (frame == ChromePage.this) {
+                //如果是页面的跳转，则清空所有的请求跟响应map
+                Request request = requestMap.remove(loaderId());
+                Response response = responseMap.remove(loaderId());
+                requestMap.clear();
+                responseMap.clear();
+                if (request != null) {
+                    requestMap.put(request.requestId(), request);
+                }
+                if (response != null) {
+                    responseMap.put(response.requestId(), response);
+                }
+            }
         }
 
         private void onFrameDetached(String frameId) {
@@ -752,11 +752,6 @@ public class ChromePage extends ChromeFrame implements Page {
                 case PAGE_FRAMEATTACHED:
                     FrameAttachedEvent frameAttachedEvent = event.getObject();
                     onFrameAttached(frameAttachedEvent.parentFrameId, frameAttachedEvent.frameId);
-                    break;
-
-                case PAGE_FRAMEREQUESTEDNAVIGATION:
-                    FrameRequestedNavigationEvent frameRequestedNavigationEvent = event.getObject();
-                    onFrameRequestedNavigation(frameRequestedNavigationEvent);
                     break;
 
                 case PAGE_FRAMENAVIGATED:
@@ -816,6 +811,11 @@ public class ChromePage extends ChromeFrame implements Page {
                 case NETWORK_REQUESTWILLBESENT:
                     RequestWillBeSentEvent requestWillBeSentEvent = event.getObject();
                     onRequest(requestWillBeSentEvent);
+                    break;
+
+                case NETWORK_RESPONSERECEIVED:
+                    ResponseReceivedEvent responseReceivedEvent = event.getObject();
+                    onResponse(responseReceivedEvent);
                     break;
 
                 case NETWORK_LOADINGFAILED:

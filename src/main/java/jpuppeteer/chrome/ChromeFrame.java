@@ -20,6 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Frame {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeFrame.class);

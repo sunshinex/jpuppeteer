@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@SuppressWarnings({"unchecked"})
 public class Input {
     
     private final jpuppeteer.cdp.client.domain.Input input;

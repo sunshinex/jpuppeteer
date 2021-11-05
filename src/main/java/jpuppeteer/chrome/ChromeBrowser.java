@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ChromeBrowser implements Browser {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeBrowser.class);
@@ -303,7 +304,10 @@ public class ChromeBrowser implements Browser {
         private void onTargetDestroyed(String targetId) {
             ChromePage page = pageMap.remove(targetId);
             if (page != null) {
-                pageMap.remove(page.frameId());
+                String frameId = page.frameId();
+                if (frameId != null) {
+                    pageMap.remove(page.frameId());
+                }
                 page.onClosed();
             }
         }
