@@ -3,6 +3,9 @@ package jpuppeteer.chrome;
 import com.google.common.util.concurrent.SettableFuture;
 import jpuppeteer.api.Browser;
 import jpuppeteer.api.Launcher;
+import jpuppeteer.api.Page;
+import jpuppeteer.api.event.AbstractListener;
+import jpuppeteer.api.event.page.LoadedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,12 +74,16 @@ public class ChromeLauncher implements Launcher {
         errThread.start();
 
         try {
-            String uri = future.get(5, TimeUnit.SECONDS);
+            String uri = future.get(30, TimeUnit.SECONDS);
             return new ChromeBrowser(uri, process);
         } catch (Throwable cause) {
             errThread.interrupt();
             process.destroy();
             throw cause;
         }
+    }
+
+    public static ChromeBrowser launch(String uri) throws Exception {
+        return new ChromeBrowser(uri, null);
     }
 }

@@ -16,7 +16,6 @@ import jpuppeteer.cdp.client.constant.storage.StorageType;
 import jpuppeteer.cdp.client.entity.browser.*;
 import jpuppeteer.cdp.client.entity.network.Cookie;
 import jpuppeteer.cdp.client.entity.network.CookieParam;
-import jpuppeteer.cdp.client.entity.page.GetFrameTreeResponse;
 import jpuppeteer.cdp.client.entity.storage.ClearCookiesRequest;
 import jpuppeteer.cdp.client.entity.storage.ClearDataForOriginRequest;
 import jpuppeteer.cdp.client.entity.storage.GetCookiesRequest;
@@ -31,6 +30,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -54,12 +54,12 @@ public class ChromeBrowser implements Browser {
 
     private final Map<String, ChromeContext> contextMap;
 
-    private final Map<String/*targetId*/, ChromePage> pageMap;
+    private final Map<String/*targetId|frameId*/, ChromePage> pageMap;
 
-    private final Map<String/*frameId*/, String/*targetId*/> framePageMap;
-
-    public ChromeBrowser(String uri, Process process) throws Exception {
-        this.eventLoop = new NioEventLoopGroup(r -> new Thread(r, "browser")).next();
+    protected ChromeBrowser(String uri, Process process) throws Exception {
+        this.eventLoop = new NioEventLoopGroup(1, r -> {
+            return new Thread(r, "browser");
+        }).next();
         this.uri = URI.create(uri);
         this.cdpMessageIdGen = new AtomicInteger(0);
         this.connection = new BrowserConnection();
@@ -67,7 +67,6 @@ public class ChromeBrowser implements Browser {
         this.defaultContext = new ChromeContext(this, null);
         this.contextMap = new ConcurrentHashMap<>();
         this.pageMap = new ConcurrentHashMap<>();
-        this.framePageMap = new ConcurrentHashMap<>();
         try {
             GetBrowserContextsResponse getBrowserContextsResponse = connection.target.getBrowserContexts()
                     .get(30, TimeUnit.SECONDS);
@@ -75,11 +74,12 @@ public class ChromeBrowser implements Browser {
                 contextMap.put(browserContextId, new ChromeContext(this, browserContextId));
             }
             //创建一个页面去获取默认上下文的browserContextId
-            String targetId = createTarget(null, "about:blank", null, null).get(30, TimeUnit.SECONDS);
+            String uuid = UUID.randomUUID().toString().replace("-", "");
+            String targetId = createTarget(null, "about:blank?" + uuid, null, null).get(30, TimeUnit.SECONDS);
             GetTargetsResponse getTargetsResponse = connection.target.getTargets().get(30, TimeUnit.SECONDS);
             String defaultContextId = null;
             for (TargetInfo targetInfo : getTargetsResponse.targetInfos) {
-                if (targetId.equals(targetInfo.targetId)) {
+                if (targetInfo.url.contains(uuid)) {
                     defaultContextId = targetInfo.browserContextId;
                 }
             }
@@ -89,7 +89,7 @@ public class ChromeBrowser implements Browser {
             contextMap.put(defaultContextId, defaultContext);
             closeTarget(targetId).get(30, TimeUnit.SECONDS);
         } catch (Exception e) {
-            this.connection.close();
+            disconnect();
             throw e;
         }
         this.discoverTargets(true);
@@ -111,21 +111,13 @@ public class ChromeBrowser implements Browser {
     protected ChromePage getPage(String targetIdOrFrameId) {
         ChromePage page = pageMap.get(targetIdOrFrameId);
         if (page == null) {
-            String targetId = framePageMap.get(targetIdOrFrameId);
-            if (targetId != null) {
-                page = pageMap.get(targetId);
-            }
+            return null;
         }
         return page;
     }
 
-    /**
-     * @TODO 此处因为协议比较奇葩，有时候的id是frameId，有时候又是targetId，所以做个适配
-     * @param frameId
-     * @param targetId
-     */
-    protected void bindFrameTarget(String frameId, String targetId) {
-        framePageMap.put(frameId, targetId);
+    protected void onPageInit(ChromePage page) {
+        pageMap.put(page.frameId(), page);
     }
 
     protected Future<String> createTarget(String browserContextId, String url, Integer width, Integer height) {
@@ -238,12 +230,28 @@ public class ChromeBrowser implements Browser {
     }
 
     @Override
+    public void disconnect() {
+        try {
+            connection.close().get(30, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            logger.error("disconnect browser connection failed, error={}", e.getMessage(), e);
+        } finally {
+            try {
+                eventLoop.shutdownGracefully().get(30, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                logger.error("shutdown event loop failed, error={}", e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
     public void close() {
         try {
-            connection.browser.close().get(5, TimeUnit.SECONDS);
+            connection.browser.close().get(30, TimeUnit.SECONDS);
         } catch (Exception e) {
             logger.error("close browser failed, error={}", e.getMessage(), e);
         } finally {
+            disconnect();
             if (process != null) {
                 process.destroy();
             }
@@ -295,10 +303,7 @@ public class ChromeBrowser implements Browser {
         private void onTargetDestroyed(String targetId) {
             ChromePage page = pageMap.remove(targetId);
             if (page != null) {
-                String frameId = page.frameId();
-                if (frameId != null) {
-                    framePageMap.remove(frameId);
-                }
+                pageMap.remove(page.frameId());
                 page.onClosed();
             }
         }

@@ -37,6 +37,8 @@ public interface Browser {
         return clearData(origin, StorageType.ALL);
     }
 
+    void disconnect();
+
     void close();
 
 }

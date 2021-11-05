@@ -227,9 +227,8 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
     @Override
     public Future watch(String selector, Consumer<Element> watchFunction, boolean once) {
         String functionName = "watch_" + UUID.randomUUID().toString().replace("-", "");
-        return SeriesPromise
-                .wrap(call(SCRIPT_WATCH, (Object) selector, functionName, once))
-                .async(o -> addBinding(functionName, (isolate, hash) -> {
+        return SeriesPromise.wrap(
+                addBinding(functionName, (isolate, hash) -> {
                     isolate.eval("window['" + hash + "']")
                             .addListener(f -> {
                                 if (f.cause() != null) {
@@ -239,7 +238,8 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
                                     watchFunction.accept(node);
                                 }
                             });
-                }));
+                }))
+                .async(o -> call(SCRIPT_WATCH, (Object) selector, functionName, once));
     }
 
     @Override

@@ -2,6 +2,7 @@ package jpuppeteer.chrome;
 
 import io.netty.channel.EventLoop;
 import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.Promise;
 import jpuppeteer.api.Request;
 import jpuppeteer.api.Response;
 import jpuppeteer.api.*;
@@ -110,13 +111,13 @@ public class ChromePage extends ChromeFrame implements Page {
                 GetFrameTreeResponse response = (GetFrameTreeResponse) f.getNow();
                 FrameTree root = response.frameTree;
                 setFrameInfo(root.frame);
-                browserContext.browser().bindFrameTarget(root.frame.id, targetId());
                 frameMap.put(root.frame.id, this);
                 while (root.childFrames != null) {
                     for(FrameTree node : root.childFrames) {
                         initFrame(this, node);
                     }
                 }
+                browserContext.browser().onPageInit(this);
                 this.connection.page.setLifecycleEventsEnabled(new SetLifecycleEventsEnabledRequest(true));
                 this.connection.runtime.enable();
             }
@@ -444,14 +445,20 @@ public class ChromePage extends ChromeFrame implements Page {
 
     @Override
     public Future close() {
-        if (!connection.isClosed()) {
-            connection.close().addListener(f -> {
-                if (f.cause() != null) {
-                    logger.warn("close connection failed, targetId={}, error={}", targetId(), f.cause().getMessage(), f.cause());
+        Promise promise = eventLoop().newPromise();
+        connection.close().addListener(f0 -> {
+            if (f0.cause() != null) {
+                logger.error("disconnect connection failed, targetId={}, error={}", targetId(), f0.cause().getMessage(), f0.cause());
+            }
+            browserContext.browser().closeTarget(targetId()).addListener(f1 -> {
+                if (f1.cause() != null) {
+                    promise.tryFailure(f1.cause());
+                } else {
+                    promise.trySuccess(null);
                 }
             });
-        }
-        return browserContext.browser().closeTarget(frameId());
+        });
+        return promise;
     }
 
     @Override

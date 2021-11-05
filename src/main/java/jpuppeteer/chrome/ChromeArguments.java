@@ -134,7 +134,7 @@ public class ChromeArguments {
                 throw new IOException("创建临时文件夹[" + userDataDir.getAbsolutePath() + "]失败");
             }
             arguments.userDataDir = userDataDir.getAbsolutePath();
-            arguments.args.add("--user-data-dir=" + userDataDir.getAbsolutePath());
+            arguments.args.add("--user-data-dir=" + userDataDir.getAbsolutePath().replace("\\", "/"));
         }
         if (!arguments.pipe) {
             if (!hasDebugPort) {

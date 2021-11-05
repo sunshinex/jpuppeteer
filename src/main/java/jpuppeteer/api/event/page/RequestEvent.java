@@ -1,6 +1,8 @@
 package jpuppeteer.api.event.page;
 
-import io.netty.util.concurrent.*;
+import io.netty.util.concurrent.EventExecutor;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.SucceededFuture;
 import jpuppeteer.api.Frame;
 import jpuppeteer.api.HttpHeader;
 import jpuppeteer.api.Request;
