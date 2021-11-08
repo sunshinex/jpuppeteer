@@ -13,6 +13,7 @@ public enum LifecyclePhase {
     FIRSTMEANINGFULPAINT("firstMeaningfulPaint"),
     NETWORKIDLE("networkIdle"),
     COMMIT("commit"),
+    INTERACTIVETIME("InteractiveTime"),
     ;
 
     private String value;
