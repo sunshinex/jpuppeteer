@@ -1,14 +1,28 @@
 package jpuppeteer.chrome;
 
+import com.google.common.collect.Lists;
 import io.netty.util.concurrent.Future;
 import jpuppeteer.api.BrowserContext;
 import jpuppeteer.api.Page;
 import jpuppeteer.cdp.client.constant.browser.PermissionType;
+import jpuppeteer.cdp.client.entity.browser.GrantPermissionsRequest;
+import jpuppeteer.cdp.client.entity.browser.ResetPermissionsRequest;
 import jpuppeteer.cdp.client.entity.network.Cookie;
 import jpuppeteer.cdp.client.entity.network.CookieParam;
+import jpuppeteer.cdp.client.entity.storage.ClearCookiesRequest;
+import jpuppeteer.cdp.client.entity.storage.GetCookiesRequest;
+import jpuppeteer.cdp.client.entity.storage.SetCookiesRequest;
+import jpuppeteer.cdp.client.entity.target.CreateTargetRequest;
+import jpuppeteer.cdp.client.entity.target.DisposeBrowserContextRequest;
+import jpuppeteer.cdp.client.entity.target.GetTargetInfoRequest;
+import jpuppeteer.cdp.client.entity.target.TargetInfo;
 import jpuppeteer.util.SeriesPromise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ChromeContext implements BrowserContext {
@@ -25,26 +39,40 @@ public class ChromeContext implements BrowserContext {
     }
 
     @Override
+    public String browserContextId() {
+        return browserContextId;
+    }
+
+    @Override
     public ChromeBrowser browser() {
         return browser;
     }
 
     @Override
     public Future grantPermissions(String origin, PermissionType... permissions) {
-        return browser.grantPermissions(browserContextId, origin, permissions);
+        GrantPermissionsRequest request = new GrantPermissionsRequest(Lists.newArrayList(permissions), origin, browserContextId());
+        return browser().connection().browser.grantPermissions(request);
     }
 
     @Override
     public Future resetPermissions() {
-        return browser.resetPermissions(browserContextId);
+        ResetPermissionsRequest request = new ResetPermissionsRequest(browserContextId());
+        return browser().connection().browser.resetPermissions(request);
     }
 
     @Override
     public Future<Page> newPage(String url, Integer width, Integer height) {
+        CreateTargetRequest request = new CreateTargetRequest(
+                url, width, height, browserContextId(),
+                null, null, true);
         return SeriesPromise
-                .wrap(browser.createTarget(browserContextId, url, width, height))
-                .sync(targetId -> {
-                    ChromePage page = browser.getPage(targetId);
+                .wrap(browser().connection().target.createTarget(request))
+                .sync(o -> {
+                    TargetInfo targetInfo = new TargetInfo(
+                            o.targetId, "page", "", url,
+                            false, false
+                    );
+                    ChromePage page = new ChromePage(this, targetInfo);
                     page.attach();
                     return page;
                 });
@@ -52,26 +80,35 @@ public class ChromeContext implements BrowserContext {
 
     @Override
     public Future setCookies(CookieParam... cookies) {
-        return browser.setCookies(browserContextId, cookies);
+        SetCookiesRequest request = new SetCookiesRequest(Lists.newArrayList(cookies), browserContextId());
+        return browser().connection().storage.setCookies(request);
     }
 
     @Override
     public Future clearCookies() {
-        return browser.clearCookies(browserContextId);
+        ClearCookiesRequest request = new ClearCookiesRequest(browserContextId());
+        return browser().connection().storage.clearCookies(request);
     }
 
     @Override
     public Future<Cookie[]> getCookies() {
-        return browser.getCookies(browserContextId);
+        return SeriesPromise
+                .wrap(browser().connection().storage.getCookies(new GetCookiesRequest(browserContextId())))
+                .sync(o -> {
+                    Cookie[] cookies = new Cookie[o.cookies.size()];
+                    o.cookies.toArray(cookies);
+                    return cookies;
+                });
     }
 
     @Override
-    public Future close() {
-        return browser.closeContext(browserContextId);
-    }
-
-    public String browserContextId() {
-        return browserContextId;
+    public void close() {
+        try {
+            DisposeBrowserContextRequest request = new DisposeBrowserContextRequest(browserContextId());
+            browser().connection().target.disposeBrowserContext(request).get(30, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            throw new RuntimeException("close context failed", e);
+        }
     }
 
 }

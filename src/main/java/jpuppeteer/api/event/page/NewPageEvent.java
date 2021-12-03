@@ -1,7 +1,6 @@
 package jpuppeteer.api.event.page;
 
 import jpuppeteer.api.Page;
-import jpuppeteer.api.event.PageEvent;
 import jpuppeteer.chrome.ChromePage;
 
 /**

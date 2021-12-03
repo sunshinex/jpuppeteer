@@ -5,7 +5,6 @@ import io.netty.util.concurrent.Future;
 import jpuppeteer.api.Frame;
 import jpuppeteer.api.HttpHeader;
 import jpuppeteer.api.Response;
-import jpuppeteer.api.event.FrameEvent;
 import jpuppeteer.cdp.client.constant.network.ResourceType;
 import jpuppeteer.cdp.client.domain.Network;
 import jpuppeteer.cdp.client.entity.network.GetResponseBodyRequest;

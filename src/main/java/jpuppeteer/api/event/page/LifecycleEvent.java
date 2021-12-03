@@ -1,7 +1,6 @@
 package jpuppeteer.api.event.page;
 
 import jpuppeteer.api.Frame;
-import jpuppeteer.api.event.FrameEvent;
 import jpuppeteer.constant.LifecyclePhase;
 
 public class LifecycleEvent extends FrameEvent {

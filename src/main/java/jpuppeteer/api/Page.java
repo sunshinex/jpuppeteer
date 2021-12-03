@@ -14,6 +14,8 @@ import jpuppeteer.cdp.client.entity.emulation.SetUserAgentOverrideRequest;
 import jpuppeteer.cdp.client.entity.fetch.EnableRequest;
 import jpuppeteer.cdp.client.entity.fetch.RequestPattern;
 import jpuppeteer.cdp.client.entity.input.TouchPoint;
+import jpuppeteer.cdp.client.entity.network.Cookie;
+import jpuppeteer.cdp.client.entity.network.CookieParam;
 import jpuppeteer.cdp.client.entity.page.CaptureScreenshotRequest;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
@@ -43,6 +45,12 @@ public interface Page extends Frame {
     Frame openerFrame();
 
     BrowserContext browserContext();
+
+    Future setCookies(CookieParam... cookies);
+
+    Future clearCookies();
+
+    Future<Cookie[]> getCookies(String... urls);
 
     Future bringToFront();
 

@@ -7,7 +7,7 @@ import jpuppeteer.cdp.client.entity.target.CreateBrowserContextRequest;
 
 import java.net.URI;
 
-public interface Browser {
+public interface Browser extends BrowserContext {
 
     URI uri();
 
@@ -26,10 +26,6 @@ public interface Browser {
     default Future<BrowserContext> createContext() {
         return createContext(null, null);
     }
-
-    BrowserContext defaultContext();
-
-    BrowserContext[] browserContexts();
 
     Future clearData(String origin, StorageType... storageTypes);
 

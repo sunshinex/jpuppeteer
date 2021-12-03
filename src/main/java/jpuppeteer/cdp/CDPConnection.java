@@ -29,12 +29,14 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.nio.channels.ClosedChannelException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class CDPConnection {
+public class CDPConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(CDPConnection.class);
 
@@ -57,6 +59,8 @@ public abstract class CDPConnection {
     private final EventLoop eventLoop;
 
     private final URI uri;
+
+    private final AtomicInteger messageIdGen;
 
     private final Channel channel;
 
@@ -90,6 +94,7 @@ public abstract class CDPConnection {
     public CDPConnection(EventLoop eventLoop, URI uri) {
         this.eventLoop = eventLoop;
         this.uri = uri;
+        this.messageIdGen = new AtomicInteger(0);
         this.promiseMap = new ConcurrentHashMap<>();
         this.browser = new Browser(this);
         this.dom = new DOM(this);
@@ -106,9 +111,9 @@ public abstract class CDPConnection {
         this.channel = open().channel();
     }
 
-    abstract protected int genId();
+    protected void onEvent(CDPEvent event) {
 
-    abstract protected void onEvent(CDPEvent event);
+    }
 
     private ChannelFuture open() {
         String scheme = uri.getScheme() == null ? WS : uri.getScheme();
@@ -153,7 +158,7 @@ public abstract class CDPConnection {
 
     private Future<JSONObject> send0(String method, Object params) {
         JSONObject json = new JSONObject();
-        int id = genId();
+        int id = messageIdGen.getAndIncrement();
         json.put(ID, id);
         json.put(METHOD, method);
         json.put(PARAMS, params);
@@ -313,6 +318,17 @@ public abstract class CDPConnection {
             }
         }
 
+        @Override
+        public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+            //如果连接关闭，则将所有的promise都失败掉
+            Iterator<Map.Entry<Integer, Promise<JSONObject>>> iterator = promiseMap.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<Integer, Promise<JSONObject>> entry = iterator.next();
+                entry.getValue().tryFailure(new ClosedChannelException());
+                iterator.remove();
+            }
+            super.channelInactive(ctx);
+        }
     }
 
 }

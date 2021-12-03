@@ -1,7 +1,5 @@
 package jpuppeteer.api.event.page;
 
-import jpuppeteer.api.event.PageEvent;
-
 public class CrashedEvent extends PageEvent {
 
     private final int errorCode;

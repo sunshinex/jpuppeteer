@@ -1,7 +1,5 @@
 package jpuppeteer.api.event.page;
 
-import jpuppeteer.api.event.PageEvent;
-
 import java.math.BigDecimal;
 
 public class DomReadyEvent extends PageEvent {

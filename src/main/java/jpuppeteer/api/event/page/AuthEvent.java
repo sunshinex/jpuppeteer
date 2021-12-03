@@ -5,7 +5,6 @@ import jpuppeteer.api.Authenticator;
 import jpuppeteer.api.Frame;
 import jpuppeteer.api.HttpHeader;
 import jpuppeteer.api.Request;
-import jpuppeteer.api.event.FrameEvent;
 import jpuppeteer.cdp.client.constant.fetch.AuthChallengeResponseResponse;
 import jpuppeteer.cdp.client.constant.fetch.AuthChallengeSource;
 import jpuppeteer.cdp.client.constant.network.ResourceType;

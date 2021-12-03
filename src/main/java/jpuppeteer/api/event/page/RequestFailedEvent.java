@@ -2,7 +2,6 @@ package jpuppeteer.api.event.page;
 
 import jpuppeteer.api.Request;
 import jpuppeteer.api.Response;
-import jpuppeteer.api.event.PageEvent;
 
 public class RequestFailedEvent extends PageEvent {
 

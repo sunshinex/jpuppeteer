@@ -1,7 +1,6 @@
 package jpuppeteer.api.event.page;
 
 import io.netty.util.concurrent.Future;
-import jpuppeteer.api.event.PageEvent;
 import jpuppeteer.cdp.client.constant.page.DialogType;
 import jpuppeteer.cdp.client.domain.Page;
 import jpuppeteer.cdp.client.entity.page.HandleJavaScriptDialogRequest;

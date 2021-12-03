@@ -5,7 +5,7 @@ import io.netty.util.concurrent.Future;
 import jpuppeteer.api.*;
 import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.api.event.AbstractListener;
-import jpuppeteer.api.event.PageEvent;
+import jpuppeteer.api.event.page.PageEvent;
 import jpuppeteer.cdp.client.entity.page.CreateIsolatedWorldRequest;
 import jpuppeteer.cdp.client.entity.page.NavigateRequest;
 import jpuppeteer.cdp.client.entity.runtime.CallFunctionOnRequest;
@@ -41,7 +41,7 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
     }
 
     protected EventLoop eventLoop() {
-        return page.eventLoop();
+        return page().eventLoop();
     }
 
     protected ChromeFrame appendChild(jpuppeteer.cdp.client.entity.page.Frame frameInfo) {
@@ -91,7 +91,7 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
 
     @Override
     public Frame parent() {
-        return frameInfo != null && frameInfo.parentId != null ? page.getFrame(frameInfo.parentId) : null;
+        return frameInfo != null && frameInfo.parentId != null ? page().getFrame(frameInfo.parentId) : null;
     }
 
     @Override

@@ -7,7 +7,6 @@ import jpuppeteer.api.Frame;
 import jpuppeteer.api.HttpHeader;
 import jpuppeteer.api.InterceptedRequest;
 import jpuppeteer.api.Request;
-import jpuppeteer.api.event.FrameEvent;
 import jpuppeteer.cdp.client.constant.network.ErrorReason;
 import jpuppeteer.cdp.client.constant.network.ResourceType;
 import jpuppeteer.cdp.client.domain.Fetch;

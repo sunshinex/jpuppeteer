@@ -7,6 +7,8 @@ import jpuppeteer.cdp.client.entity.network.CookieParam;
 
 public interface BrowserContext {
 
+    String browserContextId();
+
     Browser browser();
 
     Future grantPermissions(String origin, PermissionType... permissions);
@@ -29,6 +31,6 @@ public interface BrowserContext {
 
     Future<Cookie[]> getCookies();
 
-    Future close();
+    void close();
 
 }

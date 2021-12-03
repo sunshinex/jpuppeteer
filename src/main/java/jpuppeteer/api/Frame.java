@@ -2,7 +2,7 @@ package jpuppeteer.api;
 
 import io.netty.util.concurrent.Future;
 import jpuppeteer.api.event.EventEmitter;
-import jpuppeteer.api.event.PageEvent;
+import jpuppeteer.api.event.page.PageEvent;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;

@@ -1,4 +1,4 @@
-package jpuppeteer.api.event;
+package jpuppeteer.api.event.page;
 
 import jpuppeteer.api.Frame;
 
