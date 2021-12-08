@@ -3,23 +3,17 @@ package jpuppeteer.chrome;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import com.google.common.util.concurrent.SettableFuture;
-import com.sun.xml.internal.bind.v2.util.StackRecorder;
 import io.netty.channel.EventLoop;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import jpuppeteer.api.Browser;
-import jpuppeteer.api.BrowserContext;
 import jpuppeteer.api.Launcher;
 import jpuppeteer.api.Page;
 import jpuppeteer.api.event.AbstractListener;
-import jpuppeteer.api.event.page.DialogEvent;
-import jpuppeteer.api.event.page.LoadedEvent;
-import jpuppeteer.api.event.page.NewPageEvent;
-import jpuppeteer.api.event.page.PageEvent;
+import jpuppeteer.api.event.page.ClosedEvent;
+import jpuppeteer.api.event.page.CrashedEvent;
 import jpuppeteer.cdp.client.entity.target.TargetInfo;
-import jpuppeteer.util.CookieParamBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -132,6 +125,35 @@ public class ChromeLauncher implements Launcher {
         return page;
     }
 
+    public static void main(String[] args) throws Exception {
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        loggerContext.getLogger("root").setLevel(Level.DEBUG);
+//        Browser browser = new ChromeLauncher("D:\\chrome87\\chrome.exe").launch();
+        Browser browser = ChromeLauncher.launch("ws://127.0.0.1:9299/devtools/browser");
+        Page page = browser.newPage().get(10, TimeUnit.SECONDS);
+        page.navigate("https://www.taobao.com/").get(10, TimeUnit.SECONDS);
+        page.addListener(new AbstractListener<CrashedEvent>() {
+            @Override
+            public void accept(CrashedEvent event) {
+                System.out.println(event);
+            }
+        });
+        page.addListener(new AbstractListener<ClosedEvent>() {
+            @Override
+            public void accept(ClosedEvent event) {
+                System.out.println(event);
+            }
+        });
+//        Page page = attach("ws://127.0.0.1:9299/devtools/page/227");
+//        page.addListener(new AbstractListener<LoadedEvent>() {
+//            @Override
+//            public void accept(LoadedEvent event) {
+//                page.eval("alert('ooo')");
+//            }
+//        });
+//        page.navigate("https://www.taobao.com/").get(10, TimeUnit.SECONDS);
+    }
+
     private static class WebViewPage extends ChromePage {
 
         private final EventLoop eventLoop;
@@ -154,6 +176,11 @@ public class ChromeLauncher implements Launcher {
         @Override
         protected ChromePage newOpener(TargetInfo info) {
             return new WebViewPage(info, null, eventLoop);
+        }
+
+        @Override
+        protected void initEventListeners() {
+            //webview页面无法监听事件
         }
     }
 }

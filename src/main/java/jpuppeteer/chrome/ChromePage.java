@@ -6,6 +6,11 @@ import io.netty.util.concurrent.Future;
 import jpuppeteer.api.Request;
 import jpuppeteer.api.Response;
 import jpuppeteer.api.*;
+import jpuppeteer.api.event.AbstractListener;
+import jpuppeteer.api.event.browser.TargetClosed;
+import jpuppeteer.api.event.browser.TargetCrashed;
+import jpuppeteer.api.event.browser.TargetCreated;
+import jpuppeteer.api.event.browser.TargetInfoChanged;
 import jpuppeteer.api.event.page.RequestInterceptedEvent;
 import jpuppeteer.api.event.page.*;
 import jpuppeteer.cdp.CDPConnection;
@@ -27,7 +32,9 @@ import jpuppeteer.cdp.client.entity.network.*;
 import jpuppeteer.cdp.client.entity.page.LifecycleEvent;
 import jpuppeteer.cdp.client.entity.page.*;
 import jpuppeteer.cdp.client.entity.runtime.*;
-import jpuppeteer.cdp.client.entity.target.*;
+import jpuppeteer.cdp.client.entity.target.ActivateTargetRequest;
+import jpuppeteer.cdp.client.entity.target.CloseTargetRequest;
+import jpuppeteer.cdp.client.entity.target.TargetInfo;
 import jpuppeteer.constant.LifecyclePhase;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
@@ -44,7 +51,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ChromePage extends ChromeFrame implements Page {
@@ -84,6 +90,7 @@ public class ChromePage extends ChromeFrame implements Page {
         this.requestMap = new ConcurrentHashMap<>();
         this.responseMap = new ConcurrentHashMap<>();
         this.frameMap = new ConcurrentHashMap<>();
+        this.initEventListeners();
     }
 
     public ChromePage(ChromeContext browserContext, TargetInfo targetInfo, ChromePage opener) {
@@ -141,7 +148,6 @@ public class ChromePage extends ChromeFrame implements Page {
                 }
                 this.connection.page.setLifecycleEventsEnabled(new SetLifecycleEventsEnabledRequest(true));
                 this.connection.runtime.enable();
-                this.connection.target.setDiscoverTargets(new SetDiscoverTargetsRequest(true));
             }
         });
     }
@@ -160,6 +166,47 @@ public class ChromePage extends ChromeFrame implements Page {
 
     protected ChromePage newOpener(TargetInfo info) {
         return new ChromePage(browserContext, info, this);
+    }
+
+    protected void initEventListeners() {
+        AbstractListener<TargetCreated> createdListener = new AbstractListener<TargetCreated>() {
+            @Override
+            public void accept(TargetCreated event) {
+                onTargetCreated(event.targetInfo);
+            }
+        };
+        AbstractListener<TargetInfoChanged> changedListener = new AbstractListener<TargetInfoChanged>() {
+            @Override
+            public void accept(TargetInfoChanged event) {
+                onTargetInfoChanged(event.targetInfo);
+            }
+        };
+        AbstractListener<TargetCrashed> crashedListener = new AbstractListener<TargetCrashed>() {
+            @Override
+            public void accept(TargetCrashed event) {
+                onTargetCrashed(event.targetId, event.status, event.errorCode);
+            }
+        };
+        AbstractListener<TargetClosed> closedListener = new AbstractListener<TargetClosed>() {
+            @Override
+            public void accept(TargetClosed event) {
+                //移除在浏览器对象上绑定的事件
+                try {
+                    onTargetDestroyed(event.targetId);
+                } finally {
+                    if (targetInfo.targetId.equals(event.targetId)) {
+                        browserContext().browser().removeListener(createdListener);
+                        browserContext().browser().removeListener(changedListener);
+                        browserContext().browser().removeListener(crashedListener);
+                        browserContext().browser().removeListener(this);
+                    }
+                }
+            }
+        };
+        this.browserContext().browser().addListener(createdListener);
+        this.browserContext().browser().addListener(changedListener);
+        this.browserContext().browser().addListener(crashedListener);
+        this.browserContext().browser().addListener(closedListener);
     }
 
     private void onTargetCreated(TargetInfo info) {
@@ -792,25 +839,6 @@ public class ChromePage extends ChromeFrame implements Page {
         @Override
         protected void onEvent(CDPEvent event) {
             switch (event.method) {
-                case TARGET_TARGETCREATED:
-                    TargetCreatedEvent targetCreatedEvent = event.getObject();
-                    onTargetCreated(targetCreatedEvent.targetInfo);
-                    break;
-
-                case TARGET_TARGETINFOCHANGED:
-                    TargetInfoChangedEvent targetInfoChangedEvent = event.getObject();
-                    onTargetInfoChanged(targetInfoChangedEvent.targetInfo);
-                    break;
-
-                case TARGET_TARGETCRASHED:
-                    TargetCrashedEvent targetCrashedEvent = event.getObject();
-                    onTargetCrashed(targetCrashedEvent.targetId, targetCrashedEvent.status, targetCrashedEvent.errorCode);
-                    break;
-
-                case TARGET_TARGETDESTROYED:
-                    TargetDestroyedEvent targetDestroyedEvent = event.getObject();
-                    onTargetDestroyed(targetDestroyedEvent.targetId);
-                    break;
 
                 case PAGE_FRAMEATTACHED:
                     FrameAttachedEvent frameAttachedEvent = event.getObject();

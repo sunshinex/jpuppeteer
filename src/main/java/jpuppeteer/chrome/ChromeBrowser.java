@@ -6,14 +6,17 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.Promise;
 import jpuppeteer.api.Browser;
 import jpuppeteer.api.BrowserContext;
+import jpuppeteer.api.event.AbstractEventEmitter;
+import jpuppeteer.api.event.AbstractListener;
+import jpuppeteer.api.event.browser.*;
 import jpuppeteer.cdp.CDPConnection;
+import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.client.constant.storage.StorageType;
 import jpuppeteer.cdp.client.entity.browser.GetVersionResponse;
 import jpuppeteer.cdp.client.entity.network.Cookie;
 import jpuppeteer.cdp.client.entity.network.CookieParam;
 import jpuppeteer.cdp.client.entity.storage.ClearDataForOriginRequest;
-import jpuppeteer.cdp.client.entity.target.CreateBrowserContextRequest;
-import jpuppeteer.cdp.client.entity.target.CreateBrowserContextResponse;
+import jpuppeteer.cdp.client.entity.target.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +25,6 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -34,11 +36,11 @@ public class ChromeBrowser extends ChromeContext implements Browser {
 
     private final URI uri;
 
-    private final AtomicInteger cdpMessageIdGen;
-
     private final Process process;
 
     private final CDPConnection connection;
+
+    private final BrowserEventEmitter eventEmitter;
 
     protected ChromeBrowser(String uri, Process process) throws Exception {
         super(null, null);
@@ -46,9 +48,15 @@ public class ChromeBrowser extends ChromeContext implements Browser {
             return new Thread(r, "browser");
         }).next();
         this.uri = URI.create(uri);
-        this.cdpMessageIdGen = new AtomicInteger(0);
         this.process = process;
-        this.connection = new CDPConnection(this.eventLoop, this.uri);
+        this.connection = new BrowserConnection(this.eventLoop, this.uri);
+        try {
+            this.connection.target.setDiscoverTargets(new SetDiscoverTargetsRequest(true)).get(30, TimeUnit.SECONDS);
+            this.eventEmitter = new BrowserEventEmitter();
+        } catch (Exception e) {
+            disconnect();
+            throw e;
+        }
     }
 
     protected EventLoop eventLoop() {
@@ -140,5 +148,66 @@ public class ChromeBrowser extends ChromeContext implements Browser {
     @Override
     public Future<Cookie[]> getCookies() {
         return super.getCookies();
+    }
+
+    @Override
+    public void addListener(AbstractListener<? extends BrowserEvent> listener) {
+        this.eventEmitter.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(AbstractListener<? extends BrowserEvent> listener) {
+        this.eventEmitter.removeListener(listener);
+    }
+
+    private class BrowserEventEmitter extends AbstractEventEmitter<BrowserEvent> {
+
+        @Override
+        protected void emitInternal(AbstractListener<BrowserEvent> listener, BrowserEvent event) {
+            if (eventLoop.inEventLoop()) {
+                listener.accept(event);
+            } else {
+                eventLoop.execute(() -> listener.accept(event));
+            }
+        }
+
+        public void emit(BrowserEvent event) {
+            super.emit(event);
+        }
+    }
+
+    private class BrowserConnection extends CDPConnection {
+
+        public BrowserConnection(EventLoop eventLoop, URI uri) {
+            super(eventLoop, uri);
+        }
+
+        @Override
+        protected void onEvent(CDPEvent event) {
+            switch (event.method) {
+                case TARGET_TARGETCREATED:
+                    TargetCreatedEvent targetCreatedEvent = event.getObject();
+                    eventEmitter.emit(new TargetCreated(targetCreatedEvent.targetInfo));
+                    break;
+
+                case TARGET_TARGETINFOCHANGED:
+                    TargetInfoChangedEvent targetInfoChangedEvent = event.getObject();
+                    eventEmitter.emit(new TargetInfoChanged(targetInfoChangedEvent.targetInfo));
+                    break;
+
+                case TARGET_TARGETCRASHED:
+                    TargetCrashedEvent targetCrashedEvent = event.getObject();
+                    eventEmitter.emit(new TargetCrashed(
+                                    targetCrashedEvent.targetId,
+                                    targetCrashedEvent.status,
+                                    targetCrashedEvent.errorCode));
+                    break;
+
+                case TARGET_TARGETDESTROYED:
+                    TargetDestroyedEvent targetDestroyedEvent = event.getObject();
+                    eventEmitter.emit(new TargetClosed(targetDestroyedEvent.targetId));
+                    break;
+            }
+        }
     }
 }

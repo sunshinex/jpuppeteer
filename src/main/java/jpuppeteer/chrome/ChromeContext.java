@@ -14,15 +14,12 @@ import jpuppeteer.cdp.client.entity.storage.GetCookiesRequest;
 import jpuppeteer.cdp.client.entity.storage.SetCookiesRequest;
 import jpuppeteer.cdp.client.entity.target.CreateTargetRequest;
 import jpuppeteer.cdp.client.entity.target.DisposeBrowserContextRequest;
-import jpuppeteer.cdp.client.entity.target.GetTargetInfoRequest;
 import jpuppeteer.cdp.client.entity.target.TargetInfo;
 import jpuppeteer.util.SeriesPromise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ChromeContext implements BrowserContext {
