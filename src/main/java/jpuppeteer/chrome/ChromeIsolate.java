@@ -23,12 +23,15 @@ public class ChromeIsolate implements Isolate {
 
     private final Integer isolateId;
 
+    private final String uniqueId;
+
     private final String name;
 
-    public ChromeIsolate(ChromeFrame frame, Integer isolateId, String name) {
+    public ChromeIsolate(ChromeFrame frame, Integer isolateId, String name, String uniqueId) {
         this.frame = frame;
         this.isolateId = isolateId;
         this.name = name;
+        this.uniqueId = uniqueId;
     }
 
     private static boolean checkNull(RemoteObjectType type, RemoteObjectSubtype subType) {
@@ -86,12 +89,12 @@ public class ChromeIsolate implements Isolate {
 
     @Override
     public Future<BrowserObject> eval(String expression, Integer timeout) {
-        return eval(IsolateUtil.buildEvaluateRequest(expression, isolateId, false, timeout));
+        return eval(IsolateUtil.buildEvaluateRequest(expression, isolateId, false, timeout, uniqueId));
     }
 
     @Override
     public <R> Future<R> eval(String expression, Integer timeout, Class<R> clazz) {
-        return eval(IsolateUtil.buildEvaluateRequest(expression, isolateId, true, timeout), clazz);
+        return eval(IsolateUtil.buildEvaluateRequest(expression, isolateId, true, timeout, uniqueId), clazz);
     }
 
     @Override

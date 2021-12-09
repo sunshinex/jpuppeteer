@@ -43,12 +43,16 @@ public class IsolateUtil {
         }
     }
 
-    public static EvaluateRequest buildEvaluateRequest(String expression, Integer isolateId, boolean returnValue, Integer timeout) {
+    public static EvaluateRequest buildEvaluateRequest(String expression, Integer isolateId, boolean returnValue, Integer timeout, String uniqueId) {
         BigDecimal tmOut = timeout != null ? BigDecimal.valueOf(timeout) : null;
-        return EvaluateRequestBuilder.newBuilder()
-                .expression(expression)
-                .contextId(isolateId)
-                .returnByValue(returnValue)
+        EvaluateRequestBuilder builder = EvaluateRequestBuilder.newBuilder()
+                .expression(expression);
+        if (uniqueId != null) {
+            builder.uniqueContextId(uniqueId);
+        } else {
+            builder.contextId(isolateId);
+        }
+        return builder.returnByValue(returnValue)
                 .timeout(tmOut)
                 .includeCommandLineAPI(true)
                 .silent(true)
@@ -103,15 +107,6 @@ public class IsolateUtil {
             value = new BigInteger(StringUtils.removeEnd(object.unserializableValue, "n"));
         }
         return TypeUtils.cast(value, clazz, ParserConfig.getGlobalInstance());
-    }
-
-    public static Element[] browserObjectToElement(BrowserObject[] objects, EventExecutor executor, DOM dom) {
-//        Element[] elements = new Element[objects.length];
-//        for(int i=0; i<objects.length; i++) {
-//            elements[i] = new ChromeElement(objects[i], executor, dom);
-//        }
-//        return elements;
-        return null;
     }
 
 }

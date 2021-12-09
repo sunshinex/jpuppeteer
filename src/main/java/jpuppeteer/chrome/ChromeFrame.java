@@ -133,7 +133,7 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
     public Future<Isolate> createIsolate(String isolateName) {
         return SeriesPromise
                 .wrap(page().connection().page.createIsolatedWorld(new CreateIsolatedWorldRequest(frameId(), isolateName, true)))
-                .sync(o -> new ChromeIsolate(this, o.executionContextId, isolateName));
+                .sync(o -> new ChromeIsolate(this, o.executionContextId, isolateName, null));
     }
 
     @Override

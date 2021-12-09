@@ -284,7 +284,7 @@ public class ChromePage extends ChromeFrame implements Page {
         }
         boolean isDefault = (boolean) auxData.get("isDefault");
         String type = (String) auxData.get("type");
-        ChromeIsolate isolate = new ChromeIsolate(frame, description.id, description.name);
+        ChromeIsolate isolate = new ChromeIsolate(frame, description.id, description.name, description.uniqueId);
         if (isDefault && "default".equals(type)) {
             frame.setIsolate(isolate);
             isolateMap.put(description.id, frame);
