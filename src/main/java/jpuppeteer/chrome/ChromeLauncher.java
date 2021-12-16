@@ -7,7 +7,9 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import jpuppeteer.api.Browser;
 import jpuppeteer.api.Launcher;
+import jpuppeteer.api.Page;
 import jpuppeteer.cdp.client.entity.target.TargetInfo;
+import jpuppeteer.entity.HttpResource;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,6 +119,14 @@ public class ChromeLauncher implements Launcher {
         };
         page.attach();
         return page;
+    }
+
+    public static void main(String[] args) throws Exception {
+        Browser browser = new ChromeLauncher("D:\\chrome87\\chrome.exe").launch();
+        Page page = browser.newPage("https://www.baidu.com/").get();
+        TimeUnit.SECONDS.sleep(3);
+        HttpResource resource = page.loadResource("https://www.taobao.com/").get();
+        System.out.println(resource);
     }
 
     private static class WebViewPage extends ChromePage {

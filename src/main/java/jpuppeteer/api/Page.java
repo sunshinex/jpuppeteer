@@ -19,6 +19,7 @@ import jpuppeteer.cdp.client.entity.network.CookieParam;
 import jpuppeteer.cdp.client.entity.page.CaptureScreenshotRequest;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
+import jpuppeteer.entity.HttpResource;
 import jpuppeteer.entity.Point;
 import jpuppeteer.util.SetDeviceMetricsOverrideRequestBuilder;
 
@@ -75,6 +76,12 @@ public interface Page extends Frame {
     Future enableCache();
 
     Future disableCache();
+
+    Future<HttpResource> loadResource(String url, boolean disableCache);
+
+    default Future<HttpResource> loadResource(String url) {
+        return loadResource(url, false);
+    }
 
     Future removeBinding(String name);
 

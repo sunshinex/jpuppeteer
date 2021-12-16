@@ -50,9 +50,9 @@ public class ChromeBrowser extends ChromeContext implements Browser {
         this.uri = URI.create(uri);
         this.process = process;
         this.connection = new BrowserConnection(this.eventLoop, this.uri);
+        this.eventEmitter = new BrowserEventEmitter();
         try {
             this.connection.target.setDiscoverTargets(new SetDiscoverTargetsRequest(true)).get(30, TimeUnit.SECONDS);
-            this.eventEmitter = new BrowserEventEmitter();
         } catch (Exception e) {
             disconnect();
             throw e;

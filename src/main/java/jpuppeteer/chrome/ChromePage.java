@@ -39,6 +39,7 @@ import jpuppeteer.constant.LifecyclePhase;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
 import jpuppeteer.entity.BasicHttpHeader;
+import jpuppeteer.entity.HttpResource;
 import jpuppeteer.entity.Point;
 import jpuppeteer.util.SeriesPromise;
 import org.apache.commons.lang3.StringUtils;
@@ -662,6 +663,24 @@ public class ChromePage extends ChromeFrame implements Page {
     public Future disableCache() {
         SetCacheDisabledRequest request = new SetCacheDisabledRequest(true);
         return connection.network.setCacheDisabled(request);
+    }
+
+    @Override
+    public Future<HttpResource> loadResource(String url, boolean disableCache) {
+        LoadNetworkResourceRequest request = new LoadNetworkResourceRequest(frameId(), url, new LoadNetworkResourceOptions(disableCache, true));
+        return SeriesPromise.wrap(connection.network.loadNetworkResource(request))
+                        .sync(o -> {
+                            if (!o.resource.success) {
+                                throw new RuntimeException("load resource failed:" + o.resource.netErrorName + "("+o.resource.netError+")");
+                            } else {
+                                return new HttpResource(
+                                        connection,
+                                        o.resource.httpStatusCode.intValue(),
+                                        parseHeaders(o.resource.headers),
+                                        o.resource.stream
+                                );
+                            }
+                        });
     }
 
     @Override

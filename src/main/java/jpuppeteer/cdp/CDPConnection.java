@@ -91,6 +91,8 @@ public class CDPConnection {
 
     public final Storage storage;
 
+    public final IO io;
+
     public CDPConnection(EventLoop eventLoop, URI uri) {
         this.eventLoop = eventLoop;
         this.uri = uri;
@@ -107,6 +109,7 @@ public class CDPConnection {
         this.runtime = new Runtime(this);
         this.target = new Target(this);
         this.storage = new Storage(this);
+        this.io = new IO(this);
         this.connectFuture = eventLoop.newPromise();
         this.channel = open().channel();
     }
