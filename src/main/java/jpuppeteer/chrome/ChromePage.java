@@ -214,7 +214,7 @@ public class ChromePage extends ChromeFrame implements Page {
         if (targetInfo.targetId.equals(info.targetId)) {
             targetInfo = info;
         }
-        if (targetInfo.targetId.equals(info.openerId) || frameId().equals(info.openerId)) {
+        if (targetInfo.targetId.equals(info.openerId) || (frameId() != null && frameId().equals(info.openerId))) {
             //如果targetId或者frameId有一个是相同的，则就是这个页面打开的
             ChromePage newPage = newOpener(info);
             emit(new NewPageEvent(newPage));
