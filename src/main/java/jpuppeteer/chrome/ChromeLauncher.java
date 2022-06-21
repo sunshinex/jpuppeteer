@@ -121,14 +121,6 @@ public class ChromeLauncher implements Launcher {
         return page;
     }
 
-    public static void main(String[] args) throws Exception {
-        Browser browser = new ChromeLauncher("D:\\chrome87\\chrome.exe").launch();
-        Page page = browser.newPage("https://www.baidu.com/").get();
-        TimeUnit.SECONDS.sleep(3);
-        HttpResource resource = page.loadResource("https://www.taobao.com/").get();
-        System.out.println(resource);
-    }
-
     private static class WebViewPage extends ChromePage {
 
         private final EventLoop eventLoop;

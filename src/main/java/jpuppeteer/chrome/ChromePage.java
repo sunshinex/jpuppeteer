@@ -19,6 +19,7 @@ import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseReques
 import jpuppeteer.cdp.client.entity.browser.Bounds;
 import jpuppeteer.cdp.client.entity.browser.GetWindowForTargetRequest;
 import jpuppeteer.cdp.client.entity.browser.SetWindowBoundsRequest;
+import jpuppeteer.cdp.client.entity.deviceorientation.SetDeviceOrientationOverrideRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetGeolocationOverrideRequest;
 import jpuppeteer.cdp.client.entity.emulation.SetTouchEmulationEnabledRequest;
@@ -732,6 +733,16 @@ public class ChromePage extends ChromeFrame implements Page {
     @Override
     public Future setDevice(SetDeviceMetricsOverrideRequest device) {
         return connection.emulation.setDeviceMetricsOverride(device);
+    }
+
+    @Override
+    public Future setOrientation(double alpha, double beta, double gamma) {
+        SetDeviceOrientationOverrideRequest request = new SetDeviceOrientationOverrideRequest(
+                BigDecimal.valueOf(alpha),
+                BigDecimal.valueOf(beta),
+                BigDecimal.valueOf(gamma)
+        );
+        return connection.deviceOrientation.setDeviceOrientationOverride(request);
     }
 
     @Override

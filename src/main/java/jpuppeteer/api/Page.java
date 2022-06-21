@@ -181,6 +181,8 @@ public interface Page extends Frame {
         return setDevice(request);
     }
 
+    Future setOrientation(double alpha, double beta, double gamma);
+
     Future setWindow(Bounds bounds);
 
     default Future setWindow(int width, int height) {

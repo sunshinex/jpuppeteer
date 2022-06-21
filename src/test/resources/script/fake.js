@@ -91,16 +91,16 @@
   Object.defineProperty(BatteryManager.prototype, "chargingTime", {
     get: () => Infinity
   });
-  //伪造history
-  Object.defineProperty(History.prototype, "length", {
-    get: () => Math.round(20 * window.fakeRandom)
-  });
-  //伪造屏幕高度
-  Object.defineProperty(Screen.prototype, "availHeight", {
-    get: function(){
-      return this.height - 40;
-    }
-  });
+  // //伪造history
+  // Object.defineProperty(History.prototype, "length", {
+  //   get: () => Math.round(20 * window.fakeRandom)
+  // });
+  // //伪造屏幕高度
+  // Object.defineProperty(Screen.prototype, "availHeight", {
+  //   get: function(){
+  //     return this.height - 40;
+  //   }
+  // });
   //伪造硬件信息
   const allCpus = [2, 4, 8, 16];
   const cpuIndex = Math.ceil(100 * window.fakeRandom) % allCpus.length;
@@ -111,6 +111,23 @@
   Object.defineProperty(Navigator.prototype, "deviceMemory", {
     get: () => cpu * 2
   });
+  //伪造键盘
+  Object.defineProperty(KeyboardLayoutMap.prototype, "size", {
+    get: () => 0
+  });
+  //伪造鼠标
+  Object.defineProperty(Navigator.prototype, "hid", {
+    get: () => undefined
+  });
+  const sTimeout = window.setTimeout;
+  window.setTimeout = function(){
+    let fn = arguments[0].toString();
+    if (fn.indexOf('location') !== -1) {
+      console.log(fn);
+    } else {
+      sTimeout(arguments[0], arguments[1]);
+    }
+  }
   //伪造webgl信息
   try {
     const config = {
@@ -150,6 +167,17 @@
         }
       }
     };
+    try {
+      Object.defineProperty(window, "devicePixelRatio", {
+        get: function(){
+          return config.random.item([
+            2, 2.25, 2.75, 2.85, 2.95, 3, 3.1, 3.2, 3.25, 3.5, 3.75
+          ]);
+        }
+      });
+    } catch (e) {
+      xconsole.error(e);
+    }
     function fakeBufferData(target) {
       const proto = target.prototype ? target.prototype : target.__proto__;
       const bufferData = proto.bufferData;
@@ -199,16 +227,98 @@
             case WebGLRenderingContext.STENCIL_WRITEMASK:
               val = 2147483647;
               break;
+            case 37445:
+              val = "Qualcomm";
+              break;
             case 37446:
               val = config.random.item([
-                "ANGLE (Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0)",
-                "ANGLE (AMD Radeon HD 7300 Series Direct3D11 vs_5_0 ps_5_0)",
-                "ANGLE (AMD Radeon RX 6000 Series Direct3D11 vs_5_0 ps_5_0)",
-                "ANGLE (AMD Radeon RX 6800 Series Direct3D11 vs_5_0 ps_5_0)",
-                "ANGLE (AMD Radeon RX 5000 Series Direct3D11 vs_5_0 ps_5_0)",
-                "ANGLE (AMD Radeon RX 500 Series Direct3D11 vs_5_0 ps_5_0)",
-                "ANGLE (AMD Radeon RX 6900 Series Direct3D11 vs_5_0 ps_5_0)",
-                "ANGLE (NVIDIA GEFORCE RTX 30 Series Direct3D11 vs_5_0 ps_5_0)"
+                "A14 Bionic’s GPU",
+                "Adreno 660",
+                "A13 Bionic’s GPU",
+                "Mali-G78 MP24",
+                "Mali-G78 MP22",
+                "Adreno 650",
+                "Mali-G78 MP14",
+                "A12 Bionic’s GPU",
+                "Mali G78 MP10",
+                "Adreno 640",
+                "Adreno 630",
+                "Mali G77 MP11",
+                "Mali-G77 MC9",
+                "Mali-G76 MP16",
+                "Mali-G77 MP8",
+                "Mali-G77 MC7",
+                "Mali-G76 MP14",
+                "Mali-G76 MP12",
+                "Mali-G76 MP10",
+                "Mali G77 MP5",
+                "Mali-G57 MC5",
+                "Mali-G72 MP18",
+                "Adreno 620",
+                "Mali-G57 MC4",
+                "A11 Bionic’s GPU",
+                "Mali-G52 MP6",
+                "Adreno 540",
+                "Adreno 619",
+                "Adreno 619L*",
+                "Mali-G76 MP5",
+                "Mali-G72 MP12",
+                "Mali-G76 3EEMC4",
+                "Mali-G57 MC3",
+                "Adreno 618",
+                "Mali-G71 MP20",
+                "PowerVR 7XT GT7600 Plus",
+                "Adreno 530",
+                "Adreno 616",
+                "PowerVR 7XT GT7600",
+                "PowerVR 7XTP-MT4",
+                "Adreno 615",
+                "Mali-G71 MP8",
+                "IMG PowerVR GM 9446",
+                "Adreno 612",
+                "Mali-T880 MP12",
+                "Mali-G52 MC2",
+                "Adreno 610",
+                "Adreno 512",
+                "Mali-G72 MP3",
+                "Adreno 430",
+                "Mali-T760 MP8",
+                "Mali-T860 MP4",
+                "Mali-G52 MP1",
+                "Adreno 510",
+                "Adreno 509",
+                "Adreno 508",
+                "Adreno 420",
+                "Adreno 418",
+                "Mali-G51 MP4",
+                "PowerVR GX6450",
+                "Mali-T830 MP3",
+                "Mali-T880 MP4",
+                "Mali-G71 MP2",
+                "Mali-G71 MP1",
+                "Mali-T880 MP2",
+                "Adreno 506",
+                "Mali-T760 MP6",
+                "Mali-T628 MP6",
+                "PowerVR G6430",
+                "Mali-T830 MP2",
+                "Adreno 505",
+                "Mali-T860 MP2",
+                "Mali-T760 MP4",
+                "PowerVR G6200",
+                "PowerVR GE8320",
+                "Adreno 405",
+                "Adreno 504",
+                "Mali-T628 MP4",
+                "Mali-T830 MP1",
+                "Mali-T720 MP2",
+                "Mali-T604 MP4",
+                "Mali-T760 MP2",
+                "Mali-T720 MP1",
+                "Adreno 308",
+                "PowerVR GE8100",
+                "Adreno 306",
+                "Mali-450 MP4"
               ]);
               break;
             default:

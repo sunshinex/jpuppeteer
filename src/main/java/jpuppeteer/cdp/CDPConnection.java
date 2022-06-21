@@ -93,6 +93,8 @@ public class CDPConnection {
 
     public final IO io;
 
+    public final DeviceOrientation deviceOrientation;
+
     public CDPConnection(EventLoop eventLoop, URI uri) {
         this.eventLoop = eventLoop;
         this.uri = uri;
@@ -110,6 +112,7 @@ public class CDPConnection {
         this.target = new Target(this);
         this.storage = new Storage(this);
         this.io = new IO(this);
+        this.deviceOrientation = new DeviceOrientation(this);
         this.connectFuture = eventLoop.newPromise();
         this.channel = open().channel();
     }
