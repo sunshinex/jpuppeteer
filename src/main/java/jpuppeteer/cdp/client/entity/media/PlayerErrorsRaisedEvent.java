@@ -8,15 +8,34 @@ public class PlayerErrorsRaisedEvent {
 
     /**
     */
-    public final String playerId;
+    private String playerId;
 
     /**
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.media.PlayerError> errors;
+    private java.util.List<jpuppeteer.cdp.client.entity.media.PlayerError> errors;
+
+    public void setPlayerId (String playerId) {
+        this.playerId = playerId;
+    }
+
+    public String getPlayerId() {
+        return this.playerId;
+    }
+
+    public void setErrors (java.util.List<jpuppeteer.cdp.client.entity.media.PlayerError> errors) {
+        this.errors = errors;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.media.PlayerError> getErrors() {
+        return this.errors;
+    }
 
     public PlayerErrorsRaisedEvent(String playerId, java.util.List<jpuppeteer.cdp.client.entity.media.PlayerError> errors) {
         this.playerId = playerId;
         this.errors = errors;
+    }
+
+    public PlayerErrorsRaisedEvent() {
     }
 
 }

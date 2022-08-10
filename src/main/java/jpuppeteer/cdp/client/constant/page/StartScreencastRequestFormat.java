@@ -19,6 +19,11 @@ public enum StartScreencastRequestFormat implements jpuppeteer.cdp.client.CDPEnu
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static StartScreencastRequestFormat findByValue(String value) {
         for(StartScreencastRequestFormat val : values()) {
             if (val.value.equals(value)) return val;

@@ -6,10 +6,21 @@ public class GetStackTraceRequest {
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.runtime.StackTraceId stackTraceId;
+    private jpuppeteer.cdp.client.entity.runtime.StackTraceId stackTraceId;
+
+    public void setStackTraceId (jpuppeteer.cdp.client.entity.runtime.StackTraceId stackTraceId) {
+        this.stackTraceId = stackTraceId;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.StackTraceId getStackTraceId() {
+        return this.stackTraceId;
+    }
 
     public GetStackTraceRequest(jpuppeteer.cdp.client.entity.runtime.StackTraceId stackTraceId) {
         this.stackTraceId = stackTraceId;
+    }
+
+    public GetStackTraceRequest() {
     }
 
 }

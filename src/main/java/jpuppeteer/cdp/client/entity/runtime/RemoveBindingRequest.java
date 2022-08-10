@@ -6,10 +6,21 @@ public class RemoveBindingRequest {
 
     /**
     */
-    public final String name;
+    private String name;
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 
     public RemoveBindingRequest(String name) {
         this.name = name;
+    }
+
+    public RemoveBindingRequest() {
     }
 
 }

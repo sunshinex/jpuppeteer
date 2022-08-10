@@ -1,6 +1,6 @@
 package jpuppeteer.api;
 
-import io.netty.util.concurrent.Future;
+import jpuppeteer.util.XFuture;
 
 public interface BrowserObject {
 
@@ -8,18 +8,18 @@ public interface BrowserObject {
 
     Isolate isolate();
 
-    default Future<BrowserObject> call(String declaration, Object... args) {
+    default XFuture<BrowserObject> call(String declaration, Object... args) {
         return isolate().call(declaration, objectId(), args);
     }
 
-    default <R> Future<R> call(String declaration, Class<R> clazz, Object... args) {
+    default <R> XFuture<R> call(String declaration, Class<R> clazz, Object... args) {
         return isolate().call(declaration, objectId(), clazz, args);
     }
 
-    Future<BrowserObject[]> getProperties();
+    XFuture<BrowserObject[]> getProperties();
 
-    Future<BrowserObject> getProperty(String name);
+    XFuture<BrowserObject> getProperty(String name);
 
-    Future release();
+    XFuture<?> release();
 
 }

@@ -7,22 +7,54 @@ public class SetUserAgentOverrideRequest {
     /**
     * User agent to use.
     */
-    public final String userAgent;
+    private String userAgent;
 
     /**
     * Browser langugage to emulate.
     */
-    public final String acceptLanguage;
+    private String acceptLanguage;
 
     /**
     * The platform navigator.platform should return.
     */
-    public final String platform;
+    private String platform;
 
     /**
     * To be sent in Sec-CH-UA-* headers and returned in navigator.userAgentData
     */
-    public final jpuppeteer.cdp.client.entity.emulation.UserAgentMetadata userAgentMetadata;
+    private jpuppeteer.cdp.client.entity.emulation.UserAgentMetadata userAgentMetadata;
+
+    public void setUserAgent (String userAgent) {
+        this.userAgent = userAgent;
+    }
+
+    public String getUserAgent() {
+        return this.userAgent;
+    }
+
+    public void setAcceptLanguage (String acceptLanguage) {
+        this.acceptLanguage = acceptLanguage;
+    }
+
+    public String getAcceptLanguage() {
+        return this.acceptLanguage;
+    }
+
+    public void setPlatform (String platform) {
+        this.platform = platform;
+    }
+
+    public String getPlatform() {
+        return this.platform;
+    }
+
+    public void setUserAgentMetadata (jpuppeteer.cdp.client.entity.emulation.UserAgentMetadata userAgentMetadata) {
+        this.userAgentMetadata = userAgentMetadata;
+    }
+
+    public jpuppeteer.cdp.client.entity.emulation.UserAgentMetadata getUserAgentMetadata() {
+        return this.userAgentMetadata;
+    }
 
     public SetUserAgentOverrideRequest(String userAgent, String acceptLanguage, String platform, jpuppeteer.cdp.client.entity.emulation.UserAgentMetadata userAgentMetadata) {
         this.userAgent = userAgent;
@@ -36,6 +68,9 @@ public class SetUserAgentOverrideRequest {
         this.acceptLanguage = null;
         this.platform = null;
         this.userAgentMetadata = null;
+    }
+
+    public SetUserAgentOverrideRequest() {
     }
 
 }

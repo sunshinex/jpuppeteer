@@ -7,27 +7,67 @@ public class NavigateRequest {
     /**
     * URL to navigate the page to.
     */
-    public final String url;
+    private String url;
 
     /**
     * Referrer URL.
     */
-    public final String referrer;
+    private String referrer;
 
     /**
     * Intended transition type.
     */
-    public final jpuppeteer.cdp.client.constant.page.TransitionType transitionType;
+    private jpuppeteer.cdp.client.constant.page.TransitionType transitionType;
 
     /**
     * Frame id to navigate, if not specified navigates the top frame.
     */
-    public final String frameId;
+    private String frameId;
 
     /**
     * Referrer-policy used for the navigation.
     */
-    public final jpuppeteer.cdp.client.constant.page.ReferrerPolicy referrerPolicy;
+    private jpuppeteer.cdp.client.constant.page.ReferrerPolicy referrerPolicy;
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setReferrer (String referrer) {
+        this.referrer = referrer;
+    }
+
+    public String getReferrer() {
+        return this.referrer;
+    }
+
+    public void setTransitionType (jpuppeteer.cdp.client.constant.page.TransitionType transitionType) {
+        this.transitionType = transitionType;
+    }
+
+    public jpuppeteer.cdp.client.constant.page.TransitionType getTransitionType() {
+        return this.transitionType;
+    }
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
+
+    public void setReferrerPolicy (jpuppeteer.cdp.client.constant.page.ReferrerPolicy referrerPolicy) {
+        this.referrerPolicy = referrerPolicy;
+    }
+
+    public jpuppeteer.cdp.client.constant.page.ReferrerPolicy getReferrerPolicy() {
+        return this.referrerPolicy;
+    }
 
     public NavigateRequest(String url, String referrer, jpuppeteer.cdp.client.constant.page.TransitionType transitionType, String frameId, jpuppeteer.cdp.client.constant.page.ReferrerPolicy referrerPolicy) {
         this.url = url;
@@ -43,6 +83,9 @@ public class NavigateRequest {
         this.transitionType = null;
         this.frameId = null;
         this.referrerPolicy = null;
+    }
+
+    public NavigateRequest() {
     }
 
 }

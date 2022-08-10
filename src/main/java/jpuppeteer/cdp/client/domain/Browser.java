@@ -14,7 +14,7 @@ public class Browser {
     * Set permission settings for given origin.
     * experimental
     */
-    public io.netty.util.concurrent.Future setPermission(jpuppeteer.cdp.client.entity.browser.SetPermissionRequest request) {
+    public jpuppeteer.util.XFuture<?> setPermission(jpuppeteer.cdp.client.entity.browser.SetPermissionRequest request) {
         return connection.send("Browser.setPermission", request);
     }
 
@@ -23,7 +23,7 @@ public class Browser {
     * Grant specific permissions to the given origin and reject all others.
     * experimental
     */
-    public io.netty.util.concurrent.Future grantPermissions(jpuppeteer.cdp.client.entity.browser.GrantPermissionsRequest request) {
+    public jpuppeteer.util.XFuture<?> grantPermissions(jpuppeteer.cdp.client.entity.browser.GrantPermissionsRequest request) {
         return connection.send("Browser.grantPermissions", request);
     }
 
@@ -32,7 +32,7 @@ public class Browser {
     * Reset all permission management for all origins.
     * experimental
     */
-    public io.netty.util.concurrent.Future resetPermissions(jpuppeteer.cdp.client.entity.browser.ResetPermissionsRequest request) {
+    public jpuppeteer.util.XFuture<?> resetPermissions(jpuppeteer.cdp.client.entity.browser.ResetPermissionsRequest request) {
         return connection.send("Browser.resetPermissions", request);
     }
 
@@ -41,7 +41,7 @@ public class Browser {
     * Set the behavior when downloading a file.
     * experimental
     */
-    public io.netty.util.concurrent.Future setDownloadBehavior(jpuppeteer.cdp.client.entity.browser.SetDownloadBehaviorRequest request) {
+    public jpuppeteer.util.XFuture<?> setDownloadBehavior(jpuppeteer.cdp.client.entity.browser.SetDownloadBehaviorRequest request) {
         return connection.send("Browser.setDownloadBehavior", request);
     }
 
@@ -50,7 +50,7 @@ public class Browser {
     * Cancel a download if in progress
     * experimental
     */
-    public io.netty.util.concurrent.Future cancelDownload(jpuppeteer.cdp.client.entity.browser.CancelDownloadRequest request) {
+    public jpuppeteer.util.XFuture<?> cancelDownload(jpuppeteer.cdp.client.entity.browser.CancelDownloadRequest request) {
         return connection.send("Browser.cancelDownload", request);
     }
 
@@ -58,7 +58,7 @@ public class Browser {
     /**
     * Close browser gracefully.
     */
-    public io.netty.util.concurrent.Future close() {
+    public jpuppeteer.util.XFuture<?> close() {
         return connection.send("Browser.close", null);
     }
 
@@ -67,7 +67,7 @@ public class Browser {
     * Crashes browser on the main thread.
     * experimental
     */
-    public io.netty.util.concurrent.Future crash() {
+    public jpuppeteer.util.XFuture<?> crash() {
         return connection.send("Browser.crash", null);
     }
 
@@ -76,7 +76,7 @@ public class Browser {
     * Crashes GPU process.
     * experimental
     */
-    public io.netty.util.concurrent.Future crashGpuProcess() {
+    public jpuppeteer.util.XFuture<?> crashGpuProcess() {
         return connection.send("Browser.crashGpuProcess", null);
     }
 
@@ -84,7 +84,7 @@ public class Browser {
     /**
     * Returns version information.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.browser.GetVersionResponse> getVersion() {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.browser.GetVersionResponse> getVersion() {
         return connection.send("Browser.getVersion", null, jpuppeteer.cdp.client.entity.browser.GetVersionResponse.class);
     }
 
@@ -93,7 +93,7 @@ public class Browser {
     * Returns the command line switches for the browser process if, and only if --enable-automation is on the commandline.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.browser.GetBrowserCommandLineResponse> getBrowserCommandLine() {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.browser.GetBrowserCommandLineResponse> getBrowserCommandLine() {
         return connection.send("Browser.getBrowserCommandLine", null, jpuppeteer.cdp.client.entity.browser.GetBrowserCommandLineResponse.class);
     }
 
@@ -102,7 +102,7 @@ public class Browser {
     * Get Chrome histograms.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.browser.GetHistogramsResponse> getHistograms(jpuppeteer.cdp.client.entity.browser.GetHistogramsRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.browser.GetHistogramsResponse> getHistograms(jpuppeteer.cdp.client.entity.browser.GetHistogramsRequest request) {
         return connection.send("Browser.getHistograms", request, jpuppeteer.cdp.client.entity.browser.GetHistogramsResponse.class);
     }
 
@@ -111,7 +111,7 @@ public class Browser {
     * Get a Chrome histogram by name.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.browser.GetHistogramResponse> getHistogram(jpuppeteer.cdp.client.entity.browser.GetHistogramRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.browser.GetHistogramResponse> getHistogram(jpuppeteer.cdp.client.entity.browser.GetHistogramRequest request) {
         return connection.send("Browser.getHistogram", request, jpuppeteer.cdp.client.entity.browser.GetHistogramResponse.class);
     }
 
@@ -120,7 +120,7 @@ public class Browser {
     * Get position and size of the browser window.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.browser.GetWindowBoundsResponse> getWindowBounds(jpuppeteer.cdp.client.entity.browser.GetWindowBoundsRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.browser.GetWindowBoundsResponse> getWindowBounds(jpuppeteer.cdp.client.entity.browser.GetWindowBoundsRequest request) {
         return connection.send("Browser.getWindowBounds", request, jpuppeteer.cdp.client.entity.browser.GetWindowBoundsResponse.class);
     }
 
@@ -129,7 +129,7 @@ public class Browser {
     * Get the browser window that contains the devtools target.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.browser.GetWindowForTargetResponse> getWindowForTarget(jpuppeteer.cdp.client.entity.browser.GetWindowForTargetRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.browser.GetWindowForTargetResponse> getWindowForTarget(jpuppeteer.cdp.client.entity.browser.GetWindowForTargetRequest request) {
         return connection.send("Browser.getWindowForTarget", request, jpuppeteer.cdp.client.entity.browser.GetWindowForTargetResponse.class);
     }
 
@@ -138,7 +138,7 @@ public class Browser {
     * Set position and/or size of the browser window.
     * experimental
     */
-    public io.netty.util.concurrent.Future setWindowBounds(jpuppeteer.cdp.client.entity.browser.SetWindowBoundsRequest request) {
+    public jpuppeteer.util.XFuture<?> setWindowBounds(jpuppeteer.cdp.client.entity.browser.SetWindowBoundsRequest request) {
         return connection.send("Browser.setWindowBounds", request);
     }
 
@@ -147,7 +147,7 @@ public class Browser {
     * Set dock tile details, platform-specific.
     * experimental
     */
-    public io.netty.util.concurrent.Future setDockTile(jpuppeteer.cdp.client.entity.browser.SetDockTileRequest request) {
+    public jpuppeteer.util.XFuture<?> setDockTile(jpuppeteer.cdp.client.entity.browser.SetDockTileRequest request) {
         return connection.send("Browser.setDockTile", request);
     }
 
@@ -156,7 +156,7 @@ public class Browser {
     * Invoke custom browser commands used by telemetry.
     * experimental
     */
-    public io.netty.util.concurrent.Future executeBrowserCommand(jpuppeteer.cdp.client.entity.browser.ExecuteBrowserCommandRequest request) {
+    public jpuppeteer.util.XFuture<?> executeBrowserCommand(jpuppeteer.cdp.client.entity.browser.ExecuteBrowserCommandRequest request) {
         return connection.send("Browser.executeBrowserCommand", request);
     }
 

@@ -7,10 +7,21 @@ public class EnableResponse {
     /**
     * Unique identifier of the debugger.
     */
-    public final String debuggerId;
+    private String debuggerId;
+
+    public void setDebuggerId (String debuggerId) {
+        this.debuggerId = debuggerId;
+    }
+
+    public String getDebuggerId() {
+        return this.debuggerId;
+    }
 
     public EnableResponse(String debuggerId) {
         this.debuggerId = debuggerId;
+    }
+
+    public EnableResponse() {
     }
 
 }

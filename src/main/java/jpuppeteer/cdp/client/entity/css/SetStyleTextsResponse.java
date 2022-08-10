@@ -8,10 +8,21 @@ public class SetStyleTextsResponse {
     /**
     * The resulting styles after modification.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.css.CSSStyle> styles;
+    private java.util.List<jpuppeteer.cdp.client.entity.css.CSSStyle> styles;
+
+    public void setStyles (java.util.List<jpuppeteer.cdp.client.entity.css.CSSStyle> styles) {
+        this.styles = styles;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.css.CSSStyle> getStyles() {
+        return this.styles;
+    }
 
     public SetStyleTextsResponse(java.util.List<jpuppeteer.cdp.client.entity.css.CSSStyle> styles) {
         this.styles = styles;
+    }
+
+    public SetStyleTextsResponse() {
     }
 
 }

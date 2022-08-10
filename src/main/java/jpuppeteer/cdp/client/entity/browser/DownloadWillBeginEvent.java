@@ -8,28 +8,63 @@ public class DownloadWillBeginEvent {
     /**
     * Id of the frame that caused the download to begin.
     */
-    public final String frameId;
+    private String frameId;
 
     /**
     * Global unique identifier of the download.
     */
-    public final String guid;
+    private String guid;
 
     /**
     * URL of the resource being downloaded.
     */
-    public final String url;
+    private String url;
 
     /**
     * Suggested file name of the resource (the actual name of the file saved on disk may differ).
     */
-    public final String suggestedFilename;
+    private String suggestedFilename;
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
+
+    public void setGuid (String guid) {
+        this.guid = guid;
+    }
+
+    public String getGuid() {
+        return this.guid;
+    }
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setSuggestedFilename (String suggestedFilename) {
+        this.suggestedFilename = suggestedFilename;
+    }
+
+    public String getSuggestedFilename() {
+        return this.suggestedFilename;
+    }
 
     public DownloadWillBeginEvent(String frameId, String guid, String url, String suggestedFilename) {
         this.frameId = frameId;
         this.guid = guid;
         this.url = url;
         this.suggestedFilename = suggestedFilename;
+    }
+
+    public DownloadWillBeginEvent() {
     }
 
 }

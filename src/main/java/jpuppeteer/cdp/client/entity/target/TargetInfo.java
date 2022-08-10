@@ -6,43 +6,115 @@ public class TargetInfo {
 
     /**
     */
-    public final String targetId;
+    private String targetId;
 
     /**
     */
-    public final String type;
+    private String type;
 
     /**
     */
-    public final String title;
+    private String title;
 
     /**
     */
-    public final String url;
+    private String url;
 
     /**
     * Whether the target has an attached client.
     */
-    public final Boolean attached;
+    private Boolean attached;
 
     /**
     * Opener target Id
     */
-    public final String openerId;
+    private String openerId;
 
     /**
     * Whether the target has access to the originating window.
     */
-    public final Boolean canAccessOpener;
+    private Boolean canAccessOpener;
 
     /**
     * Frame id of originating window (is only set if target has an opener).
     */
-    public final String openerFrameId;
+    private String openerFrameId;
 
     /**
     */
-    public final String browserContextId;
+    private String browserContextId;
+
+    public void setTargetId (String targetId) {
+        this.targetId = targetId;
+    }
+
+    public String getTargetId() {
+        return this.targetId;
+    }
+
+    public void setType (String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public void setTitle (String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setAttached (Boolean attached) {
+        this.attached = attached;
+    }
+
+    public Boolean getAttached() {
+        return this.attached;
+    }
+
+    public void setOpenerId (String openerId) {
+        this.openerId = openerId;
+    }
+
+    public String getOpenerId() {
+        return this.openerId;
+    }
+
+    public void setCanAccessOpener (Boolean canAccessOpener) {
+        this.canAccessOpener = canAccessOpener;
+    }
+
+    public Boolean getCanAccessOpener() {
+        return this.canAccessOpener;
+    }
+
+    public void setOpenerFrameId (String openerFrameId) {
+        this.openerFrameId = openerFrameId;
+    }
+
+    public String getOpenerFrameId() {
+        return this.openerFrameId;
+    }
+
+    public void setBrowserContextId (String browserContextId) {
+        this.browserContextId = browserContextId;
+    }
+
+    public String getBrowserContextId() {
+        return this.browserContextId;
+    }
 
     public TargetInfo(String targetId, String type, String title, String url, Boolean attached, String openerId, Boolean canAccessOpener, String openerFrameId, String browserContextId) {
         this.targetId = targetId;
@@ -66,6 +138,9 @@ public class TargetInfo {
         this.canAccessOpener = canAccessOpener;
         this.openerFrameId = null;
         this.browserContextId = null;
+    }
+
+    public TargetInfo() {
     }
 
 }

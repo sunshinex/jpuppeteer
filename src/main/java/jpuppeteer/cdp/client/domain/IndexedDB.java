@@ -14,7 +14,7 @@ public class IndexedDB {
     /**
     * Clears all entries from an object store.
     */
-    public io.netty.util.concurrent.Future clearObjectStore(jpuppeteer.cdp.client.entity.indexeddb.ClearObjectStoreRequest request) {
+    public jpuppeteer.util.XFuture<?> clearObjectStore(jpuppeteer.cdp.client.entity.indexeddb.ClearObjectStoreRequest request) {
         return connection.send("IndexedDB.clearObjectStore", request);
     }
 
@@ -22,7 +22,7 @@ public class IndexedDB {
     /**
     * Deletes a database.
     */
-    public io.netty.util.concurrent.Future deleteDatabase(jpuppeteer.cdp.client.entity.indexeddb.DeleteDatabaseRequest request) {
+    public jpuppeteer.util.XFuture<?> deleteDatabase(jpuppeteer.cdp.client.entity.indexeddb.DeleteDatabaseRequest request) {
         return connection.send("IndexedDB.deleteDatabase", request);
     }
 
@@ -30,7 +30,7 @@ public class IndexedDB {
     /**
     * Delete a range of entries from an object store
     */
-    public io.netty.util.concurrent.Future deleteObjectStoreEntries(jpuppeteer.cdp.client.entity.indexeddb.DeleteObjectStoreEntriesRequest request) {
+    public jpuppeteer.util.XFuture<?> deleteObjectStoreEntries(jpuppeteer.cdp.client.entity.indexeddb.DeleteObjectStoreEntriesRequest request) {
         return connection.send("IndexedDB.deleteObjectStoreEntries", request);
     }
 
@@ -38,7 +38,7 @@ public class IndexedDB {
     /**
     * Disables events from backend.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("IndexedDB.disable", null);
     }
 
@@ -46,7 +46,7 @@ public class IndexedDB {
     /**
     * Enables events from backend.
     */
-    public io.netty.util.concurrent.Future enable() {
+    public jpuppeteer.util.XFuture<?> enable() {
         return connection.send("IndexedDB.enable", null);
     }
 
@@ -54,7 +54,7 @@ public class IndexedDB {
     /**
     * Requests data from object store or index.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.indexeddb.RequestDataResponse> requestData(jpuppeteer.cdp.client.entity.indexeddb.RequestDataRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.indexeddb.RequestDataResponse> requestData(jpuppeteer.cdp.client.entity.indexeddb.RequestDataRequest request) {
         return connection.send("IndexedDB.requestData", request, jpuppeteer.cdp.client.entity.indexeddb.RequestDataResponse.class);
     }
 
@@ -62,7 +62,7 @@ public class IndexedDB {
     /**
     * Gets metadata of an object store
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.indexeddb.GetMetadataResponse> getMetadata(jpuppeteer.cdp.client.entity.indexeddb.GetMetadataRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.indexeddb.GetMetadataResponse> getMetadata(jpuppeteer.cdp.client.entity.indexeddb.GetMetadataRequest request) {
         return connection.send("IndexedDB.getMetadata", request, jpuppeteer.cdp.client.entity.indexeddb.GetMetadataResponse.class);
     }
 
@@ -70,7 +70,7 @@ public class IndexedDB {
     /**
     * Requests database with given name in given frame.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.indexeddb.RequestDatabaseResponse> requestDatabase(jpuppeteer.cdp.client.entity.indexeddb.RequestDatabaseRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.indexeddb.RequestDatabaseResponse> requestDatabase(jpuppeteer.cdp.client.entity.indexeddb.RequestDatabaseRequest request) {
         return connection.send("IndexedDB.requestDatabase", request, jpuppeteer.cdp.client.entity.indexeddb.RequestDatabaseResponse.class);
     }
 
@@ -78,7 +78,7 @@ public class IndexedDB {
     /**
     * Requests database names for given security origin.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.indexeddb.RequestDatabaseNamesResponse> requestDatabaseNames(jpuppeteer.cdp.client.entity.indexeddb.RequestDatabaseNamesRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.indexeddb.RequestDatabaseNamesResponse> requestDatabaseNames(jpuppeteer.cdp.client.entity.indexeddb.RequestDatabaseNamesRequest request) {
         return connection.send("IndexedDB.requestDatabaseNames", request, jpuppeteer.cdp.client.entity.indexeddb.RequestDatabaseNamesResponse.class);
     }
 

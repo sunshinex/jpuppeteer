@@ -8,42 +8,106 @@ public class TraceConfig {
     /**
     * Controls how the trace buffer stores data.
     */
-    public final jpuppeteer.cdp.client.constant.tracing.TraceConfigRecordMode recordMode;
+    private jpuppeteer.cdp.client.constant.tracing.TraceConfigRecordMode recordMode;
 
     /**
     * Turns on JavaScript stack sampling.
     */
-    public final Boolean enableSampling;
+    private Boolean enableSampling;
 
     /**
     * Turns on system tracing.
     */
-    public final Boolean enableSystrace;
+    private Boolean enableSystrace;
 
     /**
     * Turns on argument filter.
     */
-    public final Boolean enableArgumentFilter;
+    private Boolean enableArgumentFilter;
 
     /**
     * Included category filters.
     */
-    public final java.util.List<String> includedCategories;
+    private java.util.List<String> includedCategories;
 
     /**
     * Excluded category filters.
     */
-    public final java.util.List<String> excludedCategories;
+    private java.util.List<String> excludedCategories;
 
     /**
     * Configuration to synthesize the delays in tracing.
     */
-    public final java.util.List<String> syntheticDelays;
+    private java.util.List<String> syntheticDelays;
 
     /**
     * Configuration for memory dump triggers. Used only when "memory-infra" category is enabled.
     */
-    public final java.util.Map<String, Object> memoryDumpConfig;
+    private java.util.Map<String, Object> memoryDumpConfig;
+
+    public void setRecordMode (jpuppeteer.cdp.client.constant.tracing.TraceConfigRecordMode recordMode) {
+        this.recordMode = recordMode;
+    }
+
+    public jpuppeteer.cdp.client.constant.tracing.TraceConfigRecordMode getRecordMode() {
+        return this.recordMode;
+    }
+
+    public void setEnableSampling (Boolean enableSampling) {
+        this.enableSampling = enableSampling;
+    }
+
+    public Boolean getEnableSampling() {
+        return this.enableSampling;
+    }
+
+    public void setEnableSystrace (Boolean enableSystrace) {
+        this.enableSystrace = enableSystrace;
+    }
+
+    public Boolean getEnableSystrace() {
+        return this.enableSystrace;
+    }
+
+    public void setEnableArgumentFilter (Boolean enableArgumentFilter) {
+        this.enableArgumentFilter = enableArgumentFilter;
+    }
+
+    public Boolean getEnableArgumentFilter() {
+        return this.enableArgumentFilter;
+    }
+
+    public void setIncludedCategories (java.util.List<String> includedCategories) {
+        this.includedCategories = includedCategories;
+    }
+
+    public java.util.List<String> getIncludedCategories() {
+        return this.includedCategories;
+    }
+
+    public void setExcludedCategories (java.util.List<String> excludedCategories) {
+        this.excludedCategories = excludedCategories;
+    }
+
+    public java.util.List<String> getExcludedCategories() {
+        return this.excludedCategories;
+    }
+
+    public void setSyntheticDelays (java.util.List<String> syntheticDelays) {
+        this.syntheticDelays = syntheticDelays;
+    }
+
+    public java.util.List<String> getSyntheticDelays() {
+        return this.syntheticDelays;
+    }
+
+    public void setMemoryDumpConfig (java.util.Map<String, Object> memoryDumpConfig) {
+        this.memoryDumpConfig = memoryDumpConfig;
+    }
+
+    public java.util.Map<String, Object> getMemoryDumpConfig() {
+        return this.memoryDumpConfig;
+    }
 
     public TraceConfig(jpuppeteer.cdp.client.constant.tracing.TraceConfigRecordMode recordMode, Boolean enableSampling, Boolean enableSystrace, Boolean enableArgumentFilter, java.util.List<String> includedCategories, java.util.List<String> excludedCategories, java.util.List<String> syntheticDelays, java.util.Map<String, Object> memoryDumpConfig) {
         this.recordMode = recordMode;

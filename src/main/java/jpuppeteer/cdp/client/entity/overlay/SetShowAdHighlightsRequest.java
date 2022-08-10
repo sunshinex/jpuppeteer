@@ -8,10 +8,21 @@ public class SetShowAdHighlightsRequest {
     /**
     * True for showing ad highlights
     */
-    public final Boolean show;
+    private Boolean show;
+
+    public void setShow (Boolean show) {
+        this.show = show;
+    }
+
+    public Boolean getShow() {
+        return this.show;
+    }
 
     public SetShowAdHighlightsRequest(Boolean show) {
         this.show = show;
+    }
+
+    public SetShowAdHighlightsRequest() {
     }
 
 }

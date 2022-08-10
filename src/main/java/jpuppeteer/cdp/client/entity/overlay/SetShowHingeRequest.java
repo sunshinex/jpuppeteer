@@ -8,7 +8,15 @@ public class SetShowHingeRequest {
     /**
     * hinge data, null means hideHinge
     */
-    public final jpuppeteer.cdp.client.entity.overlay.HingeConfig hingeConfig;
+    private jpuppeteer.cdp.client.entity.overlay.HingeConfig hingeConfig;
+
+    public void setHingeConfig (jpuppeteer.cdp.client.entity.overlay.HingeConfig hingeConfig) {
+        this.hingeConfig = hingeConfig;
+    }
+
+    public jpuppeteer.cdp.client.entity.overlay.HingeConfig getHingeConfig() {
+        return this.hingeConfig;
+    }
 
     public SetShowHingeRequest(jpuppeteer.cdp.client.entity.overlay.HingeConfig hingeConfig) {
         this.hingeConfig = hingeConfig;

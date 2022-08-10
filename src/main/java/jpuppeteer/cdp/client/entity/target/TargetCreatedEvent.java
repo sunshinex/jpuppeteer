@@ -7,10 +7,21 @@ public class TargetCreatedEvent {
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo;
+    private jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo;
+
+    public void setTargetInfo (jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo) {
+        this.targetInfo = targetInfo;
+    }
+
+    public jpuppeteer.cdp.client.entity.target.TargetInfo getTargetInfo() {
+        return this.targetInfo;
+    }
 
     public TargetCreatedEvent(jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo) {
         this.targetInfo = targetInfo;
+    }
+
+    public TargetCreatedEvent() {
     }
 
 }

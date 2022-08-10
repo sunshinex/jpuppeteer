@@ -9,10 +9,21 @@ public class AnimationCanceledEvent {
     /**
     * Id of the animation that was cancelled.
     */
-    public final String id;
+    private String id;
+
+    public void setId (String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return this.id;
+    }
 
     public AnimationCanceledEvent(String id) {
         this.id = id;
+    }
+
+    public AnimationCanceledEvent() {
     }
 
 }

@@ -7,21 +7,53 @@ public class BreakLocation {
     /**
     * Script identifier as reported in the `Debugger.scriptParsed`.
     */
-    public final String scriptId;
+    private String scriptId;
 
     /**
     * Line number in the script (0-based).
     */
-    public final Integer lineNumber;
+    private Integer lineNumber;
 
     /**
     * Column number in the script (0-based).
     */
-    public final Integer columnNumber;
+    private Integer columnNumber;
 
     /**
     */
-    public final jpuppeteer.cdp.client.constant.debugger.BreakLocationType type;
+    private jpuppeteer.cdp.client.constant.debugger.BreakLocationType type;
+
+    public void setScriptId (String scriptId) {
+        this.scriptId = scriptId;
+    }
+
+    public String getScriptId() {
+        return this.scriptId;
+    }
+
+    public void setLineNumber (Integer lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    public Integer getLineNumber() {
+        return this.lineNumber;
+    }
+
+    public void setColumnNumber (Integer columnNumber) {
+        this.columnNumber = columnNumber;
+    }
+
+    public Integer getColumnNumber() {
+        return this.columnNumber;
+    }
+
+    public void setType (jpuppeteer.cdp.client.constant.debugger.BreakLocationType type) {
+        this.type = type;
+    }
+
+    public jpuppeteer.cdp.client.constant.debugger.BreakLocationType getType() {
+        return this.type;
+    }
 
     public BreakLocation(String scriptId, Integer lineNumber, Integer columnNumber, jpuppeteer.cdp.client.constant.debugger.BreakLocationType type) {
         this.scriptId = scriptId;
@@ -35,6 +67,9 @@ public class BreakLocation {
         this.lineNumber = lineNumber;
         this.columnNumber = null;
         this.type = null;
+    }
+
+    public BreakLocation() {
     }
 
 }

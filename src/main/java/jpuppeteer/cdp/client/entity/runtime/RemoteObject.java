@@ -8,46 +8,118 @@ public class RemoteObject {
     /**
     * Object type.
     */
-    public final jpuppeteer.cdp.client.constant.runtime.RemoteObjectType type;
+    private jpuppeteer.cdp.client.constant.runtime.RemoteObjectType type;
 
     /**
     * Object subtype hint. Specified for `object` type values only. NOTE: If you change anything here, make sure to also update `subtype` in `ObjectPreview` and `PropertyPreview` below.
     */
-    public final jpuppeteer.cdp.client.constant.runtime.RemoteObjectSubtype subtype;
+    private jpuppeteer.cdp.client.constant.runtime.RemoteObjectSubtype subtype;
 
     /**
     * Object class (constructor) name. Specified for `object` type values only.
     */
-    public final String className;
+    private String className;
 
     /**
     * Remote object value in case of primitive values or JSON values (if it was requested).
     */
-    public final Object value;
+    private Object value;
 
     /**
     * Primitive value which can not be JSON-stringified does not have `value`, but gets this property.
     */
-    public final String unserializableValue;
+    private String unserializableValue;
 
     /**
     * String representation of the object.
     */
-    public final String description;
+    private String description;
 
     /**
     * Unique object identifier (for non-primitive values).
     */
-    public final String objectId;
+    private String objectId;
 
     /**
     * Preview containing abbreviated property values. Specified for `object` type values only.
     */
-    public final jpuppeteer.cdp.client.entity.runtime.ObjectPreview preview;
+    private jpuppeteer.cdp.client.entity.runtime.ObjectPreview preview;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.runtime.CustomPreview customPreview;
+    private jpuppeteer.cdp.client.entity.runtime.CustomPreview customPreview;
+
+    public void setType (jpuppeteer.cdp.client.constant.runtime.RemoteObjectType type) {
+        this.type = type;
+    }
+
+    public jpuppeteer.cdp.client.constant.runtime.RemoteObjectType getType() {
+        return this.type;
+    }
+
+    public void setSubtype (jpuppeteer.cdp.client.constant.runtime.RemoteObjectSubtype subtype) {
+        this.subtype = subtype;
+    }
+
+    public jpuppeteer.cdp.client.constant.runtime.RemoteObjectSubtype getSubtype() {
+        return this.subtype;
+    }
+
+    public void setClassName (String className) {
+        this.className = className;
+    }
+
+    public String getClassName() {
+        return this.className;
+    }
+
+    public void setValue (Object value) {
+        this.value = value;
+    }
+
+    public Object getValue() {
+        return this.value;
+    }
+
+    public void setUnserializableValue (String unserializableValue) {
+        this.unserializableValue = unserializableValue;
+    }
+
+    public String getUnserializableValue() {
+        return this.unserializableValue;
+    }
+
+    public void setDescription (String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setObjectId (String objectId) {
+        this.objectId = objectId;
+    }
+
+    public String getObjectId() {
+        return this.objectId;
+    }
+
+    public void setPreview (jpuppeteer.cdp.client.entity.runtime.ObjectPreview preview) {
+        this.preview = preview;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.ObjectPreview getPreview() {
+        return this.preview;
+    }
+
+    public void setCustomPreview (jpuppeteer.cdp.client.entity.runtime.CustomPreview customPreview) {
+        this.customPreview = customPreview;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.CustomPreview getCustomPreview() {
+        return this.customPreview;
+    }
 
     public RemoteObject(jpuppeteer.cdp.client.constant.runtime.RemoteObjectType type, jpuppeteer.cdp.client.constant.runtime.RemoteObjectSubtype subtype, String className, Object value, String unserializableValue, String description, String objectId, jpuppeteer.cdp.client.entity.runtime.ObjectPreview preview, jpuppeteer.cdp.client.entity.runtime.CustomPreview customPreview) {
         this.type = type;
@@ -71,6 +143,9 @@ public class RemoteObject {
         this.objectId = null;
         this.preview = null;
         this.customPreview = null;
+    }
+
+    public RemoteObject() {
     }
 
 }

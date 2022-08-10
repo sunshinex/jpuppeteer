@@ -23,6 +23,11 @@ public enum ContentSecurityPolicyViolationType implements jpuppeteer.cdp.client.
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ContentSecurityPolicyViolationType findByValue(String value) {
         for(ContentSecurityPolicyViolationType val : values()) {
             if (val.value.equals(value)) return val;

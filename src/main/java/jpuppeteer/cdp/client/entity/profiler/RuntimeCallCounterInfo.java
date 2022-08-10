@@ -8,22 +8,49 @@ public class RuntimeCallCounterInfo {
     /**
     * Counter name.
     */
-    public final String name;
+    private String name;
 
     /**
     * Counter value.
     */
-    public final java.math.BigDecimal value;
+    private java.math.BigDecimal value;
 
     /**
     * Counter time in seconds.
     */
-    public final java.math.BigDecimal time;
+    private java.math.BigDecimal time;
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setValue (java.math.BigDecimal value) {
+        this.value = value;
+    }
+
+    public java.math.BigDecimal getValue() {
+        return this.value;
+    }
+
+    public void setTime (java.math.BigDecimal time) {
+        this.time = time;
+    }
+
+    public java.math.BigDecimal getTime() {
+        return this.time;
+    }
 
     public RuntimeCallCounterInfo(String name, java.math.BigDecimal value, java.math.BigDecimal time) {
         this.name = name;
         this.value = value;
         this.time = time;
+    }
+
+    public RuntimeCallCounterInfo() {
     }
 
 }

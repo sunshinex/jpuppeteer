@@ -7,12 +7,28 @@ public class GetObjectByHeapObjectIdRequest {
 
     /**
     */
-    public final String objectId;
+    private String objectId;
 
     /**
     * Symbolic group name that can be used to release multiple objects.
     */
-    public final String objectGroup;
+    private String objectGroup;
+
+    public void setObjectId (String objectId) {
+        this.objectId = objectId;
+    }
+
+    public String getObjectId() {
+        return this.objectId;
+    }
+
+    public void setObjectGroup (String objectGroup) {
+        this.objectGroup = objectGroup;
+    }
+
+    public String getObjectGroup() {
+        return this.objectGroup;
+    }
 
     public GetObjectByHeapObjectIdRequest(String objectId, String objectGroup) {
         this.objectId = objectId;
@@ -22,6 +38,9 @@ public class GetObjectByHeapObjectIdRequest {
     public GetObjectByHeapObjectIdRequest(String objectId) {
         this.objectId = objectId;
         this.objectGroup = null;
+    }
+
+    public GetObjectByHeapObjectIdRequest() {
     }
 
 }

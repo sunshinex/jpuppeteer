@@ -9,52 +9,132 @@ public class AnimationEffect {
     /**
     * `AnimationEffect`'s delay.
     */
-    public final java.math.BigDecimal delay;
+    private java.math.BigDecimal delay;
 
     /**
     * `AnimationEffect`'s end delay.
     */
-    public final java.math.BigDecimal endDelay;
+    private java.math.BigDecimal endDelay;
 
     /**
     * `AnimationEffect`'s iteration start.
     */
-    public final java.math.BigDecimal iterationStart;
+    private java.math.BigDecimal iterationStart;
 
     /**
     * `AnimationEffect`'s iterations.
     */
-    public final java.math.BigDecimal iterations;
+    private java.math.BigDecimal iterations;
 
     /**
     * `AnimationEffect`'s iteration duration.
     */
-    public final java.math.BigDecimal duration;
+    private java.math.BigDecimal duration;
 
     /**
     * `AnimationEffect`'s playback direction.
     */
-    public final String direction;
+    private String direction;
 
     /**
     * `AnimationEffect`'s fill mode.
     */
-    public final String fill;
+    private String fill;
 
     /**
     * `AnimationEffect`'s target node.
     */
-    public final Integer backendNodeId;
+    private Integer backendNodeId;
 
     /**
     * `AnimationEffect`'s keyframes.
     */
-    public final jpuppeteer.cdp.client.entity.animation.KeyframesRule keyframesRule;
+    private jpuppeteer.cdp.client.entity.animation.KeyframesRule keyframesRule;
 
     /**
     * `AnimationEffect`'s timing function.
     */
-    public final String easing;
+    private String easing;
+
+    public void setDelay (java.math.BigDecimal delay) {
+        this.delay = delay;
+    }
+
+    public java.math.BigDecimal getDelay() {
+        return this.delay;
+    }
+
+    public void setEndDelay (java.math.BigDecimal endDelay) {
+        this.endDelay = endDelay;
+    }
+
+    public java.math.BigDecimal getEndDelay() {
+        return this.endDelay;
+    }
+
+    public void setIterationStart (java.math.BigDecimal iterationStart) {
+        this.iterationStart = iterationStart;
+    }
+
+    public java.math.BigDecimal getIterationStart() {
+        return this.iterationStart;
+    }
+
+    public void setIterations (java.math.BigDecimal iterations) {
+        this.iterations = iterations;
+    }
+
+    public java.math.BigDecimal getIterations() {
+        return this.iterations;
+    }
+
+    public void setDuration (java.math.BigDecimal duration) {
+        this.duration = duration;
+    }
+
+    public java.math.BigDecimal getDuration() {
+        return this.duration;
+    }
+
+    public void setDirection (String direction) {
+        this.direction = direction;
+    }
+
+    public String getDirection() {
+        return this.direction;
+    }
+
+    public void setFill (String fill) {
+        this.fill = fill;
+    }
+
+    public String getFill() {
+        return this.fill;
+    }
+
+    public void setBackendNodeId (Integer backendNodeId) {
+        this.backendNodeId = backendNodeId;
+    }
+
+    public Integer getBackendNodeId() {
+        return this.backendNodeId;
+    }
+
+    public void setKeyframesRule (jpuppeteer.cdp.client.entity.animation.KeyframesRule keyframesRule) {
+        this.keyframesRule = keyframesRule;
+    }
+
+    public jpuppeteer.cdp.client.entity.animation.KeyframesRule getKeyframesRule() {
+        return this.keyframesRule;
+    }
+
+    public void setEasing (String easing) {
+        this.easing = easing;
+    }
+
+    public String getEasing() {
+        return this.easing;
+    }
 
     public AnimationEffect(java.math.BigDecimal delay, java.math.BigDecimal endDelay, java.math.BigDecimal iterationStart, java.math.BigDecimal iterations, java.math.BigDecimal duration, String direction, String fill, Integer backendNodeId, jpuppeteer.cdp.client.entity.animation.KeyframesRule keyframesRule, String easing) {
         this.delay = delay;
@@ -80,6 +160,9 @@ public class AnimationEffect {
         this.backendNodeId = null;
         this.keyframesRule = null;
         this.easing = easing;
+    }
+
+    public AnimationEffect() {
     }
 
 }

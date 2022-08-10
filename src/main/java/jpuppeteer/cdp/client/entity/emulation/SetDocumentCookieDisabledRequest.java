@@ -7,10 +7,21 @@ public class SetDocumentCookieDisabledRequest {
     /**
     * Whether document.coookie API should be disabled.
     */
-    public final Boolean disabled;
+    private Boolean disabled;
+
+    public void setDisabled (Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public Boolean getDisabled() {
+        return this.disabled;
+    }
 
     public SetDocumentCookieDisabledRequest(Boolean disabled) {
         this.disabled = disabled;
+    }
+
+    public SetDocumentCookieDisabledRequest() {
     }
 
 }

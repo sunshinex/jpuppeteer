@@ -8,51 +8,147 @@ public class InspectorIssueDetails {
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.SameSiteCookieIssueDetails sameSiteCookieIssueDetails;
+    private jpuppeteer.cdp.client.entity.audits.SameSiteCookieIssueDetails sameSiteCookieIssueDetails;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.MixedContentIssueDetails mixedContentIssueDetails;
+    private jpuppeteer.cdp.client.entity.audits.MixedContentIssueDetails mixedContentIssueDetails;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.BlockedByResponseIssueDetails blockedByResponseIssueDetails;
+    private jpuppeteer.cdp.client.entity.audits.BlockedByResponseIssueDetails blockedByResponseIssueDetails;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.HeavyAdIssueDetails heavyAdIssueDetails;
+    private jpuppeteer.cdp.client.entity.audits.HeavyAdIssueDetails heavyAdIssueDetails;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.ContentSecurityPolicyIssueDetails contentSecurityPolicyIssueDetails;
+    private jpuppeteer.cdp.client.entity.audits.ContentSecurityPolicyIssueDetails contentSecurityPolicyIssueDetails;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.SharedArrayBufferIssueDetails sharedArrayBufferIssueDetails;
+    private jpuppeteer.cdp.client.entity.audits.SharedArrayBufferIssueDetails sharedArrayBufferIssueDetails;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.TrustedWebActivityIssueDetails twaQualityEnforcementDetails;
+    private jpuppeteer.cdp.client.entity.audits.TrustedWebActivityIssueDetails twaQualityEnforcementDetails;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.LowTextContrastIssueDetails lowTextContrastIssueDetails;
+    private jpuppeteer.cdp.client.entity.audits.LowTextContrastIssueDetails lowTextContrastIssueDetails;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.CorsIssueDetails corsIssueDetails;
+    private jpuppeteer.cdp.client.entity.audits.CorsIssueDetails corsIssueDetails;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.AttributionReportingIssueDetails attributionReportingIssueDetails;
+    private jpuppeteer.cdp.client.entity.audits.AttributionReportingIssueDetails attributionReportingIssueDetails;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.QuirksModeIssueDetails quirksModeIssueDetails;
+    private jpuppeteer.cdp.client.entity.audits.QuirksModeIssueDetails quirksModeIssueDetails;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.NavigatorUserAgentIssueDetails navigatorUserAgentIssueDetails;
+    private jpuppeteer.cdp.client.entity.audits.NavigatorUserAgentIssueDetails navigatorUserAgentIssueDetails;
+
+    public void setSameSiteCookieIssueDetails (jpuppeteer.cdp.client.entity.audits.SameSiteCookieIssueDetails sameSiteCookieIssueDetails) {
+        this.sameSiteCookieIssueDetails = sameSiteCookieIssueDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.SameSiteCookieIssueDetails getSameSiteCookieIssueDetails() {
+        return this.sameSiteCookieIssueDetails;
+    }
+
+    public void setMixedContentIssueDetails (jpuppeteer.cdp.client.entity.audits.MixedContentIssueDetails mixedContentIssueDetails) {
+        this.mixedContentIssueDetails = mixedContentIssueDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.MixedContentIssueDetails getMixedContentIssueDetails() {
+        return this.mixedContentIssueDetails;
+    }
+
+    public void setBlockedByResponseIssueDetails (jpuppeteer.cdp.client.entity.audits.BlockedByResponseIssueDetails blockedByResponseIssueDetails) {
+        this.blockedByResponseIssueDetails = blockedByResponseIssueDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.BlockedByResponseIssueDetails getBlockedByResponseIssueDetails() {
+        return this.blockedByResponseIssueDetails;
+    }
+
+    public void setHeavyAdIssueDetails (jpuppeteer.cdp.client.entity.audits.HeavyAdIssueDetails heavyAdIssueDetails) {
+        this.heavyAdIssueDetails = heavyAdIssueDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.HeavyAdIssueDetails getHeavyAdIssueDetails() {
+        return this.heavyAdIssueDetails;
+    }
+
+    public void setContentSecurityPolicyIssueDetails (jpuppeteer.cdp.client.entity.audits.ContentSecurityPolicyIssueDetails contentSecurityPolicyIssueDetails) {
+        this.contentSecurityPolicyIssueDetails = contentSecurityPolicyIssueDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.ContentSecurityPolicyIssueDetails getContentSecurityPolicyIssueDetails() {
+        return this.contentSecurityPolicyIssueDetails;
+    }
+
+    public void setSharedArrayBufferIssueDetails (jpuppeteer.cdp.client.entity.audits.SharedArrayBufferIssueDetails sharedArrayBufferIssueDetails) {
+        this.sharedArrayBufferIssueDetails = sharedArrayBufferIssueDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.SharedArrayBufferIssueDetails getSharedArrayBufferIssueDetails() {
+        return this.sharedArrayBufferIssueDetails;
+    }
+
+    public void setTwaQualityEnforcementDetails (jpuppeteer.cdp.client.entity.audits.TrustedWebActivityIssueDetails twaQualityEnforcementDetails) {
+        this.twaQualityEnforcementDetails = twaQualityEnforcementDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.TrustedWebActivityIssueDetails getTwaQualityEnforcementDetails() {
+        return this.twaQualityEnforcementDetails;
+    }
+
+    public void setLowTextContrastIssueDetails (jpuppeteer.cdp.client.entity.audits.LowTextContrastIssueDetails lowTextContrastIssueDetails) {
+        this.lowTextContrastIssueDetails = lowTextContrastIssueDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.LowTextContrastIssueDetails getLowTextContrastIssueDetails() {
+        return this.lowTextContrastIssueDetails;
+    }
+
+    public void setCorsIssueDetails (jpuppeteer.cdp.client.entity.audits.CorsIssueDetails corsIssueDetails) {
+        this.corsIssueDetails = corsIssueDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.CorsIssueDetails getCorsIssueDetails() {
+        return this.corsIssueDetails;
+    }
+
+    public void setAttributionReportingIssueDetails (jpuppeteer.cdp.client.entity.audits.AttributionReportingIssueDetails attributionReportingIssueDetails) {
+        this.attributionReportingIssueDetails = attributionReportingIssueDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.AttributionReportingIssueDetails getAttributionReportingIssueDetails() {
+        return this.attributionReportingIssueDetails;
+    }
+
+    public void setQuirksModeIssueDetails (jpuppeteer.cdp.client.entity.audits.QuirksModeIssueDetails quirksModeIssueDetails) {
+        this.quirksModeIssueDetails = quirksModeIssueDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.QuirksModeIssueDetails getQuirksModeIssueDetails() {
+        return this.quirksModeIssueDetails;
+    }
+
+    public void setNavigatorUserAgentIssueDetails (jpuppeteer.cdp.client.entity.audits.NavigatorUserAgentIssueDetails navigatorUserAgentIssueDetails) {
+        this.navigatorUserAgentIssueDetails = navigatorUserAgentIssueDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.NavigatorUserAgentIssueDetails getNavigatorUserAgentIssueDetails() {
+        return this.navigatorUserAgentIssueDetails;
+    }
 
     public InspectorIssueDetails(jpuppeteer.cdp.client.entity.audits.SameSiteCookieIssueDetails sameSiteCookieIssueDetails, jpuppeteer.cdp.client.entity.audits.MixedContentIssueDetails mixedContentIssueDetails, jpuppeteer.cdp.client.entity.audits.BlockedByResponseIssueDetails blockedByResponseIssueDetails, jpuppeteer.cdp.client.entity.audits.HeavyAdIssueDetails heavyAdIssueDetails, jpuppeteer.cdp.client.entity.audits.ContentSecurityPolicyIssueDetails contentSecurityPolicyIssueDetails, jpuppeteer.cdp.client.entity.audits.SharedArrayBufferIssueDetails sharedArrayBufferIssueDetails, jpuppeteer.cdp.client.entity.audits.TrustedWebActivityIssueDetails twaQualityEnforcementDetails, jpuppeteer.cdp.client.entity.audits.LowTextContrastIssueDetails lowTextContrastIssueDetails, jpuppeteer.cdp.client.entity.audits.CorsIssueDetails corsIssueDetails, jpuppeteer.cdp.client.entity.audits.AttributionReportingIssueDetails attributionReportingIssueDetails, jpuppeteer.cdp.client.entity.audits.QuirksModeIssueDetails quirksModeIssueDetails, jpuppeteer.cdp.client.entity.audits.NavigatorUserAgentIssueDetails navigatorUserAgentIssueDetails) {
         this.sameSiteCookieIssueDetails = sameSiteCookieIssueDetails;

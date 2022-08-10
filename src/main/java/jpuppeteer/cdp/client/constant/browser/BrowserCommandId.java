@@ -20,6 +20,11 @@ public enum BrowserCommandId implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static BrowserCommandId findByValue(String value) {
         for(BrowserCommandId val : values()) {
             if (val.value.equals(value)) return val;

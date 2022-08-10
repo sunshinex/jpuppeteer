@@ -20,6 +20,11 @@ public enum CrossOriginEmbedderPolicyValue implements jpuppeteer.cdp.client.CDPE
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static CrossOriginEmbedderPolicyValue findByValue(String value) {
         for(CrossOriginEmbedderPolicyValue val : values()) {
             if (val.value.equals(value)) return val;

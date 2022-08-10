@@ -8,10 +8,21 @@ public class BackgroundServiceEventReceivedEvent {
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.backgroundservice.BackgroundServiceEvent backgroundServiceEvent;
+    private jpuppeteer.cdp.client.entity.backgroundservice.BackgroundServiceEvent backgroundServiceEvent;
+
+    public void setBackgroundServiceEvent (jpuppeteer.cdp.client.entity.backgroundservice.BackgroundServiceEvent backgroundServiceEvent) {
+        this.backgroundServiceEvent = backgroundServiceEvent;
+    }
+
+    public jpuppeteer.cdp.client.entity.backgroundservice.BackgroundServiceEvent getBackgroundServiceEvent() {
+        return this.backgroundServiceEvent;
+    }
 
     public BackgroundServiceEventReceivedEvent(jpuppeteer.cdp.client.entity.backgroundservice.BackgroundServiceEvent backgroundServiceEvent) {
         this.backgroundServiceEvent = backgroundServiceEvent;
+    }
+
+    public BackgroundServiceEventReceivedEvent() {
     }
 
 }

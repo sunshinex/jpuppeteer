@@ -8,19 +8,51 @@ public class NodeParamDisconnectedEvent {
 
     /**
     */
-    public final String contextId;
+    private String contextId;
 
     /**
     */
-    public final String sourceId;
+    private String sourceId;
 
     /**
     */
-    public final String destinationId;
+    private String destinationId;
 
     /**
     */
-    public final java.math.BigDecimal sourceOutputIndex;
+    private java.math.BigDecimal sourceOutputIndex;
+
+    public void setContextId (String contextId) {
+        this.contextId = contextId;
+    }
+
+    public String getContextId() {
+        return this.contextId;
+    }
+
+    public void setSourceId (String sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public String getSourceId() {
+        return this.sourceId;
+    }
+
+    public void setDestinationId (String destinationId) {
+        this.destinationId = destinationId;
+    }
+
+    public String getDestinationId() {
+        return this.destinationId;
+    }
+
+    public void setSourceOutputIndex (java.math.BigDecimal sourceOutputIndex) {
+        this.sourceOutputIndex = sourceOutputIndex;
+    }
+
+    public java.math.BigDecimal getSourceOutputIndex() {
+        return this.sourceOutputIndex;
+    }
 
     public NodeParamDisconnectedEvent(String contextId, String sourceId, String destinationId, java.math.BigDecimal sourceOutputIndex) {
         this.contextId = contextId;
@@ -34,6 +66,9 @@ public class NodeParamDisconnectedEvent {
         this.sourceId = sourceId;
         this.destinationId = destinationId;
         this.sourceOutputIndex = null;
+    }
+
+    public NodeParamDisconnectedEvent() {
     }
 
 }

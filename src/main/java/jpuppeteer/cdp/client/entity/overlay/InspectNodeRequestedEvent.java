@@ -9,10 +9,21 @@ public class InspectNodeRequestedEvent {
     /**
     * Id of the node to inspect.
     */
-    public final Integer backendNodeId;
+    private Integer backendNodeId;
+
+    public void setBackendNodeId (Integer backendNodeId) {
+        this.backendNodeId = backendNodeId;
+    }
+
+    public Integer getBackendNodeId() {
+        return this.backendNodeId;
+    }
 
     public InspectNodeRequestedEvent(Integer backendNodeId) {
         this.backendNodeId = backendNodeId;
+    }
+
+    public InspectNodeRequestedEvent() {
     }
 
 }

@@ -7,10 +7,21 @@ public class PauseOnAsyncCallRequest {
     /**
     * Debugger will pause when async call with given stack trace is started.
     */
-    public final jpuppeteer.cdp.client.entity.runtime.StackTraceId parentStackTraceId;
+    private jpuppeteer.cdp.client.entity.runtime.StackTraceId parentStackTraceId;
+
+    public void setParentStackTraceId (jpuppeteer.cdp.client.entity.runtime.StackTraceId parentStackTraceId) {
+        this.parentStackTraceId = parentStackTraceId;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.StackTraceId getParentStackTraceId() {
+        return this.parentStackTraceId;
+    }
 
     public PauseOnAsyncCallRequest(jpuppeteer.cdp.client.entity.runtime.StackTraceId parentStackTraceId) {
         this.parentStackTraceId = parentStackTraceId;
+    }
+
+    public PauseOnAsyncCallRequest() {
     }
 
 }

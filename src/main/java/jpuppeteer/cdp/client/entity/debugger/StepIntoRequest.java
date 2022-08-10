@@ -7,12 +7,28 @@ public class StepIntoRequest {
     /**
     * Debugger will pause on the execution of the first async task which was scheduled before next pause.
     */
-    public final Boolean breakOnAsyncCall;
+    private Boolean breakOnAsyncCall;
 
     /**
     * The skipList specifies location ranges that should be skipped on step into.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.debugger.LocationRange> skipList;
+    private java.util.List<jpuppeteer.cdp.client.entity.debugger.LocationRange> skipList;
+
+    public void setBreakOnAsyncCall (Boolean breakOnAsyncCall) {
+        this.breakOnAsyncCall = breakOnAsyncCall;
+    }
+
+    public Boolean getBreakOnAsyncCall() {
+        return this.breakOnAsyncCall;
+    }
+
+    public void setSkipList (java.util.List<jpuppeteer.cdp.client.entity.debugger.LocationRange> skipList) {
+        this.skipList = skipList;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.debugger.LocationRange> getSkipList() {
+        return this.skipList;
+    }
 
     public StepIntoRequest(Boolean breakOnAsyncCall, java.util.List<jpuppeteer.cdp.client.entity.debugger.LocationRange> skipList) {
         this.breakOnAsyncCall = breakOnAsyncCall;

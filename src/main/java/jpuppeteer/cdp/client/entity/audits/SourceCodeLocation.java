@@ -7,19 +7,51 @@ public class SourceCodeLocation {
 
     /**
     */
-    public final String scriptId;
+    private String scriptId;
 
     /**
     */
-    public final String url;
+    private String url;
 
     /**
     */
-    public final Integer lineNumber;
+    private Integer lineNumber;
 
     /**
     */
-    public final Integer columnNumber;
+    private Integer columnNumber;
+
+    public void setScriptId (String scriptId) {
+        this.scriptId = scriptId;
+    }
+
+    public String getScriptId() {
+        return this.scriptId;
+    }
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setLineNumber (Integer lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    public Integer getLineNumber() {
+        return this.lineNumber;
+    }
+
+    public void setColumnNumber (Integer columnNumber) {
+        this.columnNumber = columnNumber;
+    }
+
+    public Integer getColumnNumber() {
+        return this.columnNumber;
+    }
 
     public SourceCodeLocation(String scriptId, String url, Integer lineNumber, Integer columnNumber) {
         this.scriptId = scriptId;
@@ -33,6 +65,9 @@ public class SourceCodeLocation {
         this.url = url;
         this.lineNumber = lineNumber;
         this.columnNumber = columnNumber;
+    }
+
+    public SourceCodeLocation() {
     }
 
 }

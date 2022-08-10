@@ -8,22 +8,54 @@ public class RequestWillBeSentExtraInfoEvent {
     /**
     * Request identifier. Used to match this information to an existing requestWillBeSent event.
     */
-    public final String requestId;
+    private String requestId;
 
     /**
     * A list of cookies potentially associated to the requested URL. This includes both cookies sent with the request and the ones not sent; the latter are distinguished by having blockedReason field set.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.network.BlockedCookieWithReason> associatedCookies;
+    private java.util.List<jpuppeteer.cdp.client.entity.network.BlockedCookieWithReason> associatedCookies;
 
     /**
     * Raw request headers as they will be sent over the wire.
     */
-    public final java.util.Map<String, Object> headers;
+    private java.util.Map<String, Object> headers;
 
     /**
     * The client security state set for the request.
     */
-    public final jpuppeteer.cdp.client.entity.network.ClientSecurityState clientSecurityState;
+    private jpuppeteer.cdp.client.entity.network.ClientSecurityState clientSecurityState;
+
+    public void setRequestId (String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestId() {
+        return this.requestId;
+    }
+
+    public void setAssociatedCookies (java.util.List<jpuppeteer.cdp.client.entity.network.BlockedCookieWithReason> associatedCookies) {
+        this.associatedCookies = associatedCookies;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.network.BlockedCookieWithReason> getAssociatedCookies() {
+        return this.associatedCookies;
+    }
+
+    public void setHeaders (java.util.Map<String, Object> headers) {
+        this.headers = headers;
+    }
+
+    public java.util.Map<String, Object> getHeaders() {
+        return this.headers;
+    }
+
+    public void setClientSecurityState (jpuppeteer.cdp.client.entity.network.ClientSecurityState clientSecurityState) {
+        this.clientSecurityState = clientSecurityState;
+    }
+
+    public jpuppeteer.cdp.client.entity.network.ClientSecurityState getClientSecurityState() {
+        return this.clientSecurityState;
+    }
 
     public RequestWillBeSentExtraInfoEvent(String requestId, java.util.List<jpuppeteer.cdp.client.entity.network.BlockedCookieWithReason> associatedCookies, java.util.Map<String, Object> headers, jpuppeteer.cdp.client.entity.network.ClientSecurityState clientSecurityState) {
         this.requestId = requestId;
@@ -37,6 +69,9 @@ public class RequestWillBeSentExtraInfoEvent {
         this.associatedCookies = associatedCookies;
         this.headers = headers;
         this.clientSecurityState = null;
+    }
+
+    public RequestWillBeSentExtraInfoEvent() {
     }
 
 }

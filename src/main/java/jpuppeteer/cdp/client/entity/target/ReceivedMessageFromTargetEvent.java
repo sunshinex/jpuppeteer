@@ -8,16 +8,40 @@ public class ReceivedMessageFromTargetEvent {
     /**
     * Identifier of a session which sends a message.
     */
-    public final String sessionId;
+    private String sessionId;
 
     /**
     */
-    public final String message;
+    private String message;
 
     /**
     * Deprecated.
     */
-    public final String targetId;
+    private String targetId;
+
+    public void setSessionId (String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getSessionId() {
+        return this.sessionId;
+    }
+
+    public void setMessage (String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return this.message;
+    }
+
+    public void setTargetId (String targetId) {
+        this.targetId = targetId;
+    }
+
+    public String getTargetId() {
+        return this.targetId;
+    }
 
     public ReceivedMessageFromTargetEvent(String sessionId, String message, String targetId) {
         this.sessionId = sessionId;
@@ -29,6 +53,9 @@ public class ReceivedMessageFromTargetEvent {
         this.sessionId = sessionId;
         this.message = message;
         this.targetId = null;
+    }
+
+    public ReceivedMessageFromTargetEvent() {
     }
 
 }

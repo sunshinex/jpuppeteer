@@ -8,10 +8,21 @@ public class FrameStartedLoadingEvent {
     /**
     * Id of the frame that has started loading.
     */
-    public final String frameId;
+    private String frameId;
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
 
     public FrameStartedLoadingEvent(String frameId) {
         this.frameId = frameId;
+    }
+
+    public FrameStartedLoadingEvent() {
     }
 
 }

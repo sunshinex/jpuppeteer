@@ -22,6 +22,11 @@ public enum ContextState implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ContextState findByValue(String value) {
         for(ContextState val : values()) {
             if (val.value.equals(value)) return val;

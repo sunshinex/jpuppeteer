@@ -7,17 +7,41 @@ public class AwaitPromiseRequest {
     /**
     * Identifier of the promise.
     */
-    public final String promiseObjectId;
+    private String promiseObjectId;
 
     /**
     * Whether the result is expected to be a JSON object that should be sent by value.
     */
-    public final Boolean returnByValue;
+    private Boolean returnByValue;
 
     /**
     * Whether preview should be generated for the result.
     */
-    public final Boolean generatePreview;
+    private Boolean generatePreview;
+
+    public void setPromiseObjectId (String promiseObjectId) {
+        this.promiseObjectId = promiseObjectId;
+    }
+
+    public String getPromiseObjectId() {
+        return this.promiseObjectId;
+    }
+
+    public void setReturnByValue (Boolean returnByValue) {
+        this.returnByValue = returnByValue;
+    }
+
+    public Boolean getReturnByValue() {
+        return this.returnByValue;
+    }
+
+    public void setGeneratePreview (Boolean generatePreview) {
+        this.generatePreview = generatePreview;
+    }
+
+    public Boolean getGeneratePreview() {
+        return this.generatePreview;
+    }
 
     public AwaitPromiseRequest(String promiseObjectId, Boolean returnByValue, Boolean generatePreview) {
         this.promiseObjectId = promiseObjectId;
@@ -29,6 +53,9 @@ public class AwaitPromiseRequest {
         this.promiseObjectId = promiseObjectId;
         this.returnByValue = null;
         this.generatePreview = null;
+    }
+
+    public AwaitPromiseRequest() {
     }
 
 }

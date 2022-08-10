@@ -13,7 +13,7 @@ public class Fetch {
     /**
     * Disables the fetch domain.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("Fetch.disable", null);
     }
 
@@ -21,7 +21,7 @@ public class Fetch {
     /**
     * Enables issuing of requestPaused events. A request will be paused until client calls one of failRequest, fulfillRequest or continueRequest/continueWithAuth.
     */
-    public io.netty.util.concurrent.Future enable(jpuppeteer.cdp.client.entity.fetch.EnableRequest request) {
+    public jpuppeteer.util.XFuture<?> enable(jpuppeteer.cdp.client.entity.fetch.EnableRequest request) {
         return connection.send("Fetch.enable", request);
     }
 
@@ -29,7 +29,7 @@ public class Fetch {
     /**
     * Causes the request to fail with specified reason.
     */
-    public io.netty.util.concurrent.Future failRequest(jpuppeteer.cdp.client.entity.fetch.FailRequestRequest request) {
+    public jpuppeteer.util.XFuture<?> failRequest(jpuppeteer.cdp.client.entity.fetch.FailRequestRequest request) {
         return connection.send("Fetch.failRequest", request);
     }
 
@@ -37,7 +37,7 @@ public class Fetch {
     /**
     * Provides response to the request.
     */
-    public io.netty.util.concurrent.Future fulfillRequest(jpuppeteer.cdp.client.entity.fetch.FulfillRequestRequest request) {
+    public jpuppeteer.util.XFuture<?> fulfillRequest(jpuppeteer.cdp.client.entity.fetch.FulfillRequestRequest request) {
         return connection.send("Fetch.fulfillRequest", request);
     }
 
@@ -45,7 +45,7 @@ public class Fetch {
     /**
     * Continues the request, optionally modifying some of its parameters.
     */
-    public io.netty.util.concurrent.Future continueRequest(jpuppeteer.cdp.client.entity.fetch.ContinueRequestRequest request) {
+    public jpuppeteer.util.XFuture<?> continueRequest(jpuppeteer.cdp.client.entity.fetch.ContinueRequestRequest request) {
         return connection.send("Fetch.continueRequest", request);
     }
 
@@ -53,7 +53,7 @@ public class Fetch {
     /**
     * Continues a request supplying authChallengeResponse following authRequired event.
     */
-    public io.netty.util.concurrent.Future continueWithAuth(jpuppeteer.cdp.client.entity.fetch.ContinueWithAuthRequest request) {
+    public jpuppeteer.util.XFuture<?> continueWithAuth(jpuppeteer.cdp.client.entity.fetch.ContinueWithAuthRequest request) {
         return connection.send("Fetch.continueWithAuth", request);
     }
 
@@ -61,7 +61,7 @@ public class Fetch {
     /**
     * Causes the body of the response to be received from the server and returned as a single string. May only be issued for a request that is paused in the Response stage and is mutually exclusive with takeResponseBodyForInterceptionAsStream. Calling other methods that affect the request or disabling fetch domain before body is received results in an undefined behavior.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.fetch.GetResponseBodyResponse> getResponseBody(jpuppeteer.cdp.client.entity.fetch.GetResponseBodyRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.fetch.GetResponseBodyResponse> getResponseBody(jpuppeteer.cdp.client.entity.fetch.GetResponseBodyRequest request) {
         return connection.send("Fetch.getResponseBody", request, jpuppeteer.cdp.client.entity.fetch.GetResponseBodyResponse.class);
     }
 
@@ -69,7 +69,7 @@ public class Fetch {
     /**
     * Returns a handle to the stream representing the response body. The request must be paused in the HeadersReceived stage. Note that after this command the request can't be continued as is -- client either needs to cancel it or to provide the response body. The stream only supports sequential read, IO.read will fail if the position is specified. This method is mutually exclusive with getResponseBody. Calling other methods that affect the request or disabling fetch domain before body is received results in an undefined behavior.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.fetch.TakeResponseBodyAsStreamResponse> takeResponseBodyAsStream(jpuppeteer.cdp.client.entity.fetch.TakeResponseBodyAsStreamRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.fetch.TakeResponseBodyAsStreamResponse> takeResponseBodyAsStream(jpuppeteer.cdp.client.entity.fetch.TakeResponseBodyAsStreamRequest request) {
         return connection.send("Fetch.takeResponseBodyAsStream", request, jpuppeteer.cdp.client.entity.fetch.TakeResponseBodyAsStreamResponse.class);
     }
 

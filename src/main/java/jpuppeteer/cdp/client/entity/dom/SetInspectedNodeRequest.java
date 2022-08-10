@@ -7,10 +7,21 @@ public class SetInspectedNodeRequest {
     /**
     * DOM node id to be accessible by means of $x command line API.
     */
-    public final Integer nodeId;
+    private Integer nodeId;
+
+    public void setNodeId (Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public Integer getNodeId() {
+        return this.nodeId;
+    }
 
     public SetInspectedNodeRequest(Integer nodeId) {
         this.nodeId = nodeId;
+    }
+
+    public SetInspectedNodeRequest() {
     }
 
 }

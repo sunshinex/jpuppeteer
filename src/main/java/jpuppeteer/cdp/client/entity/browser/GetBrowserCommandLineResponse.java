@@ -7,10 +7,21 @@ public class GetBrowserCommandLineResponse {
     /**
     * Commandline parameters
     */
-    public final java.util.List<String> arguments;
+    private java.util.List<String> arguments;
+
+    public void setArguments (java.util.List<String> arguments) {
+        this.arguments = arguments;
+    }
+
+    public java.util.List<String> getArguments() {
+        return this.arguments;
+    }
 
     public GetBrowserCommandLineResponse(java.util.List<String> arguments) {
         this.arguments = arguments;
+    }
+
+    public GetBrowserCommandLineResponse() {
     }
 
 }

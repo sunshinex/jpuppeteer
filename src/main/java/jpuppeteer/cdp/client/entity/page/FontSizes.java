@@ -8,12 +8,28 @@ public class FontSizes {
     /**
     * Default standard font size.
     */
-    public final Integer standard;
+    private Integer standard;
 
     /**
     * Default fixed font size.
     */
-    public final Integer fixed;
+    private Integer fixed;
+
+    public void setStandard (Integer standard) {
+        this.standard = standard;
+    }
+
+    public Integer getStandard() {
+        return this.standard;
+    }
+
+    public void setFixed (Integer fixed) {
+        this.fixed = fixed;
+    }
+
+    public Integer getFixed() {
+        return this.fixed;
+    }
 
     public FontSizes(Integer standard, Integer fixed) {
         this.standard = standard;

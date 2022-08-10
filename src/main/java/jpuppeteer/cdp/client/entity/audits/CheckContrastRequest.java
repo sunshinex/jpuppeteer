@@ -8,7 +8,15 @@ public class CheckContrastRequest {
     /**
     * Whether to report WCAG AAA level issues. Default is false.
     */
-    public final Boolean reportAAA;
+    private Boolean reportAAA;
+
+    public void setReportAAA (Boolean reportAAA) {
+        this.reportAAA = reportAAA;
+    }
+
+    public Boolean getReportAAA() {
+        return this.reportAAA;
+    }
 
     public CheckContrastRequest(Boolean reportAAA) {
         this.reportAAA = reportAAA;

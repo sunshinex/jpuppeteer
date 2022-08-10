@@ -7,10 +7,21 @@ public class SetNodeStackTracesEnabledRequest {
     /**
     * Enable or disable.
     */
-    public final Boolean enable;
+    private Boolean enable;
+
+    public void setEnable (Boolean enable) {
+        this.enable = enable;
+    }
+
+    public Boolean getEnable() {
+        return this.enable;
+    }
 
     public SetNodeStackTracesEnabledRequest(Boolean enable) {
         this.enable = enable;
+    }
+
+    public SetNodeStackTracesEnabledRequest() {
     }
 
 }

@@ -7,10 +7,21 @@ public class CreateTargetResponse {
     /**
     * The id of the page opened.
     */
-    public final String targetId;
+    private String targetId;
+
+    public void setTargetId (String targetId) {
+        this.targetId = targetId;
+    }
+
+    public String getTargetId() {
+        return this.targetId;
+    }
 
     public CreateTargetResponse(String targetId) {
         this.targetId = targetId;
+    }
+
+    public CreateTargetResponse() {
     }
 
 }

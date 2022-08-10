@@ -8,10 +8,21 @@ public class SetShowScrollBottleneckRectsRequest {
     /**
     * True for showing scroll bottleneck rects
     */
-    public final Boolean show;
+    private Boolean show;
+
+    public void setShow (Boolean show) {
+        this.show = show;
+    }
+
+    public Boolean getShow() {
+        return this.show;
+    }
 
     public SetShowScrollBottleneckRectsRequest(Boolean show) {
         this.show = show;
+    }
+
+    public SetShowScrollBottleneckRectsRequest() {
     }
 
 }

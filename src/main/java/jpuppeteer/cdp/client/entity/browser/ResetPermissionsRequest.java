@@ -7,7 +7,15 @@ public class ResetPermissionsRequest {
     /**
     * BrowserContext to reset permissions. When omitted, default browser context is used.
     */
-    public final String browserContextId;
+    private String browserContextId;
+
+    public void setBrowserContextId (String browserContextId) {
+        this.browserContextId = browserContextId;
+    }
+
+    public String getBrowserContextId() {
+        return this.browserContextId;
+    }
 
     public ResetPermissionsRequest(String browserContextId) {
         this.browserContextId = browserContextId;

@@ -20,6 +20,11 @@ public enum ScreenshotParamsFormat implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ScreenshotParamsFormat findByValue(String value) {
         for(ScreenshotParamsFormat val : values()) {
             if (val.value.equals(value)) return val;

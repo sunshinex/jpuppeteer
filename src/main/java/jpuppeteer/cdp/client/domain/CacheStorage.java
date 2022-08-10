@@ -14,7 +14,7 @@ public class CacheStorage {
     /**
     * Deletes a cache.
     */
-    public io.netty.util.concurrent.Future deleteCache(jpuppeteer.cdp.client.entity.cachestorage.DeleteCacheRequest request) {
+    public jpuppeteer.util.XFuture<?> deleteCache(jpuppeteer.cdp.client.entity.cachestorage.DeleteCacheRequest request) {
         return connection.send("CacheStorage.deleteCache", request);
     }
 
@@ -22,7 +22,7 @@ public class CacheStorage {
     /**
     * Deletes a cache entry.
     */
-    public io.netty.util.concurrent.Future deleteEntry(jpuppeteer.cdp.client.entity.cachestorage.DeleteEntryRequest request) {
+    public jpuppeteer.util.XFuture<?> deleteEntry(jpuppeteer.cdp.client.entity.cachestorage.DeleteEntryRequest request) {
         return connection.send("CacheStorage.deleteEntry", request);
     }
 
@@ -30,7 +30,7 @@ public class CacheStorage {
     /**
     * Requests cache names.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.cachestorage.RequestCacheNamesResponse> requestCacheNames(jpuppeteer.cdp.client.entity.cachestorage.RequestCacheNamesRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.cachestorage.RequestCacheNamesResponse> requestCacheNames(jpuppeteer.cdp.client.entity.cachestorage.RequestCacheNamesRequest request) {
         return connection.send("CacheStorage.requestCacheNames", request, jpuppeteer.cdp.client.entity.cachestorage.RequestCacheNamesResponse.class);
     }
 
@@ -38,7 +38,7 @@ public class CacheStorage {
     /**
     * Fetches cache entry.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.cachestorage.RequestCachedResponseResponse> requestCachedResponse(jpuppeteer.cdp.client.entity.cachestorage.RequestCachedResponseRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.cachestorage.RequestCachedResponseResponse> requestCachedResponse(jpuppeteer.cdp.client.entity.cachestorage.RequestCachedResponseRequest request) {
         return connection.send("CacheStorage.requestCachedResponse", request, jpuppeteer.cdp.client.entity.cachestorage.RequestCachedResponseResponse.class);
     }
 
@@ -46,7 +46,7 @@ public class CacheStorage {
     /**
     * Requests data from cache.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.cachestorage.RequestEntriesResponse> requestEntries(jpuppeteer.cdp.client.entity.cachestorage.RequestEntriesRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.cachestorage.RequestEntriesResponse> requestEntries(jpuppeteer.cdp.client.entity.cachestorage.RequestEntriesRequest request) {
         return connection.send("CacheStorage.requestEntries", request, jpuppeteer.cdp.client.entity.cachestorage.RequestEntriesResponse.class);
     }
 

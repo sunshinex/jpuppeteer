@@ -8,32 +8,80 @@ public class ObjectPreview {
     /**
     * Object type.
     */
-    public final jpuppeteer.cdp.client.constant.runtime.ObjectPreviewType type;
+    private jpuppeteer.cdp.client.constant.runtime.ObjectPreviewType type;
 
     /**
     * Object subtype hint. Specified for `object` type values only.
     */
-    public final jpuppeteer.cdp.client.constant.runtime.ObjectPreviewSubtype subtype;
+    private jpuppeteer.cdp.client.constant.runtime.ObjectPreviewSubtype subtype;
 
     /**
     * String representation of the object.
     */
-    public final String description;
+    private String description;
 
     /**
     * True iff some of the properties or entries of the original object did not fit.
     */
-    public final Boolean overflow;
+    private Boolean overflow;
 
     /**
     * List of the properties.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyPreview> properties;
+    private java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyPreview> properties;
 
     /**
     * List of the entries. Specified for `map` and `set` subtype values only.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.runtime.EntryPreview> entries;
+    private java.util.List<jpuppeteer.cdp.client.entity.runtime.EntryPreview> entries;
+
+    public void setType (jpuppeteer.cdp.client.constant.runtime.ObjectPreviewType type) {
+        this.type = type;
+    }
+
+    public jpuppeteer.cdp.client.constant.runtime.ObjectPreviewType getType() {
+        return this.type;
+    }
+
+    public void setSubtype (jpuppeteer.cdp.client.constant.runtime.ObjectPreviewSubtype subtype) {
+        this.subtype = subtype;
+    }
+
+    public jpuppeteer.cdp.client.constant.runtime.ObjectPreviewSubtype getSubtype() {
+        return this.subtype;
+    }
+
+    public void setDescription (String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setOverflow (Boolean overflow) {
+        this.overflow = overflow;
+    }
+
+    public Boolean getOverflow() {
+        return this.overflow;
+    }
+
+    public void setProperties (java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyPreview> properties) {
+        this.properties = properties;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyPreview> getProperties() {
+        return this.properties;
+    }
+
+    public void setEntries (java.util.List<jpuppeteer.cdp.client.entity.runtime.EntryPreview> entries) {
+        this.entries = entries;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.runtime.EntryPreview> getEntries() {
+        return this.entries;
+    }
 
     public ObjectPreview(jpuppeteer.cdp.client.constant.runtime.ObjectPreviewType type, jpuppeteer.cdp.client.constant.runtime.ObjectPreviewSubtype subtype, String description, Boolean overflow, java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyPreview> properties, java.util.List<jpuppeteer.cdp.client.entity.runtime.EntryPreview> entries) {
         this.type = type;
@@ -51,6 +99,9 @@ public class ObjectPreview {
         this.overflow = overflow;
         this.properties = properties;
         this.entries = null;
+    }
+
+    public ObjectPreview() {
     }
 
 }

@@ -9,12 +9,28 @@ public class KeyframesRule {
     /**
     * CSS keyframed animation's name.
     */
-    public final String name;
+    private String name;
 
     /**
     * List of animation keyframes.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.animation.KeyframeStyle> keyframes;
+    private java.util.List<jpuppeteer.cdp.client.entity.animation.KeyframeStyle> keyframes;
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setKeyframes (java.util.List<jpuppeteer.cdp.client.entity.animation.KeyframeStyle> keyframes) {
+        this.keyframes = keyframes;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.animation.KeyframeStyle> getKeyframes() {
+        return this.keyframes;
+    }
 
     public KeyframesRule(String name, java.util.List<jpuppeteer.cdp.client.entity.animation.KeyframeStyle> keyframes) {
         this.name = name;
@@ -24,6 +40,9 @@ public class KeyframesRule {
     public KeyframesRule(java.util.List<jpuppeteer.cdp.client.entity.animation.KeyframeStyle> keyframes) {
         this.name = null;
         this.keyframes = keyframes;
+    }
+
+    public KeyframesRule() {
     }
 
 }

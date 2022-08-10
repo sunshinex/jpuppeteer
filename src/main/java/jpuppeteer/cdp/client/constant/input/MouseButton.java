@@ -23,6 +23,11 @@ public enum MouseButton implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static MouseButton findByValue(String value) {
         for(MouseButton val : values()) {
             if (val.value.equals(value)) return val;

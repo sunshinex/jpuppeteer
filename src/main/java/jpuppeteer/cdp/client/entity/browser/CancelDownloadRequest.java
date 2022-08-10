@@ -7,12 +7,28 @@ public class CancelDownloadRequest {
     /**
     * Global unique identifier of the download.
     */
-    public final String guid;
+    private String guid;
 
     /**
     * BrowserContext to perform the action in. When omitted, default browser context is used.
     */
-    public final String browserContextId;
+    private String browserContextId;
+
+    public void setGuid (String guid) {
+        this.guid = guid;
+    }
+
+    public String getGuid() {
+        return this.guid;
+    }
+
+    public void setBrowserContextId (String browserContextId) {
+        this.browserContextId = browserContextId;
+    }
+
+    public String getBrowserContextId() {
+        return this.browserContextId;
+    }
 
     public CancelDownloadRequest(String guid, String browserContextId) {
         this.guid = guid;
@@ -22,6 +38,9 @@ public class CancelDownloadRequest {
     public CancelDownloadRequest(String guid) {
         this.guid = guid;
         this.browserContextId = null;
+    }
+
+    public CancelDownloadRequest() {
     }
 
 }

@@ -8,10 +8,21 @@ public class CompositingReasonsRequest {
     /**
     * The id of the layer for which we want to get the reasons it was composited.
     */
-    public final String layerId;
+    private String layerId;
+
+    public void setLayerId (String layerId) {
+        this.layerId = layerId;
+    }
+
+    public String getLayerId() {
+        return this.layerId;
+    }
 
     public CompositingReasonsRequest(String layerId) {
         this.layerId = layerId;
+    }
+
+    public CompositingReasonsRequest() {
     }
 
 }

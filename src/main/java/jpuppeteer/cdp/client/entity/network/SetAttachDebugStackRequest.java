@@ -7,10 +7,21 @@ public class SetAttachDebugStackRequest {
     /**
     * Whether to attach a page script stack for debugging purpose.
     */
-    public final Boolean enabled;
+    private Boolean enabled;
+
+    public void setEnabled (Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Boolean getEnabled() {
+        return this.enabled;
+    }
 
     public SetAttachDebugStackRequest(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public SetAttachDebugStackRequest() {
     }
 
 }

@@ -1,9 +1,9 @@
 package jpuppeteer.api.event.page;
 
-import io.netty.util.concurrent.Future;
 import jpuppeteer.cdp.client.constant.page.DialogType;
 import jpuppeteer.cdp.client.domain.Page;
 import jpuppeteer.cdp.client.entity.page.HandleJavaScriptDialogRequest;
+import jpuppeteer.util.XFuture;
 
 public class DialogEvent extends PageEvent {
 
@@ -48,20 +48,20 @@ public class DialogEvent extends PageEvent {
         return hasBrowserHandler;
     }
 
-    private Future handle(boolean accept, String value) {
+    private XFuture<?> handle(boolean accept, String value) {
         HandleJavaScriptDialogRequest request = new HandleJavaScriptDialogRequest(accept, value);
         return page.handleJavaScriptDialog(request);
     }
 
-    public Future accept(String value) {
+    public XFuture<?> accept(String value) {
         return handle(true, value);
     }
 
-    public Future accept() {
+    public XFuture<?> accept() {
         return handle(true, null);
     }
 
-    public Future cancel() {
+    public XFuture<?> cancel() {
         return handle(false, null);
     }
 }

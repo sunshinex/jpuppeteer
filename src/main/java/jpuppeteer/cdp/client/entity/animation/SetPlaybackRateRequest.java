@@ -8,10 +8,21 @@ public class SetPlaybackRateRequest {
     /**
     * Playback rate for animations on page
     */
-    public final java.math.BigDecimal playbackRate;
+    private java.math.BigDecimal playbackRate;
+
+    public void setPlaybackRate (java.math.BigDecimal playbackRate) {
+        this.playbackRate = playbackRate;
+    }
+
+    public java.math.BigDecimal getPlaybackRate() {
+        return this.playbackRate;
+    }
 
     public SetPlaybackRateRequest(java.math.BigDecimal playbackRate) {
         this.playbackRate = playbackRate;
+    }
+
+    public SetPlaybackRateRequest() {
     }
 
 }

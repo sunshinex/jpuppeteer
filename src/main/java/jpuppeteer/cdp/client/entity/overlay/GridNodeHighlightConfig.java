@@ -9,16 +9,35 @@ public class GridNodeHighlightConfig {
     /**
     * A descriptor for the highlight appearance.
     */
-    public final jpuppeteer.cdp.client.entity.overlay.GridHighlightConfig gridHighlightConfig;
+    private jpuppeteer.cdp.client.entity.overlay.GridHighlightConfig gridHighlightConfig;
 
     /**
     * Identifier of the node to highlight.
     */
-    public final Integer nodeId;
+    private Integer nodeId;
+
+    public void setGridHighlightConfig (jpuppeteer.cdp.client.entity.overlay.GridHighlightConfig gridHighlightConfig) {
+        this.gridHighlightConfig = gridHighlightConfig;
+    }
+
+    public jpuppeteer.cdp.client.entity.overlay.GridHighlightConfig getGridHighlightConfig() {
+        return this.gridHighlightConfig;
+    }
+
+    public void setNodeId (Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public Integer getNodeId() {
+        return this.nodeId;
+    }
 
     public GridNodeHighlightConfig(jpuppeteer.cdp.client.entity.overlay.GridHighlightConfig gridHighlightConfig, Integer nodeId) {
         this.gridHighlightConfig = gridHighlightConfig;
         this.nodeId = nodeId;
+    }
+
+    public GridNodeHighlightConfig() {
     }
 
 }

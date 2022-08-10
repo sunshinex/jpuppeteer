@@ -8,32 +8,80 @@ public class ResponseReceivedEvent {
     /**
     * Request identifier.
     */
-    public final String requestId;
+    private String requestId;
 
     /**
     * Loader identifier. Empty string if the request is fetched from worker.
     */
-    public final String loaderId;
+    private String loaderId;
 
     /**
     * Timestamp.
     */
-    public final java.math.BigDecimal timestamp;
+    private java.math.BigDecimal timestamp;
 
     /**
     * Resource type.
     */
-    public final jpuppeteer.cdp.client.constant.network.ResourceType type;
+    private jpuppeteer.cdp.client.constant.network.ResourceType type;
 
     /**
     * Response data.
     */
-    public final jpuppeteer.cdp.client.entity.network.Response response;
+    private jpuppeteer.cdp.client.entity.network.Response response;
 
     /**
     * Frame identifier.
     */
-    public final String frameId;
+    private String frameId;
+
+    public void setRequestId (String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestId() {
+        return this.requestId;
+    }
+
+    public void setLoaderId (String loaderId) {
+        this.loaderId = loaderId;
+    }
+
+    public String getLoaderId() {
+        return this.loaderId;
+    }
+
+    public void setTimestamp (java.math.BigDecimal timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public java.math.BigDecimal getTimestamp() {
+        return this.timestamp;
+    }
+
+    public void setType (jpuppeteer.cdp.client.constant.network.ResourceType type) {
+        this.type = type;
+    }
+
+    public jpuppeteer.cdp.client.constant.network.ResourceType getType() {
+        return this.type;
+    }
+
+    public void setResponse (jpuppeteer.cdp.client.entity.network.Response response) {
+        this.response = response;
+    }
+
+    public jpuppeteer.cdp.client.entity.network.Response getResponse() {
+        return this.response;
+    }
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
 
     public ResponseReceivedEvent(String requestId, String loaderId, java.math.BigDecimal timestamp, jpuppeteer.cdp.client.constant.network.ResourceType type, jpuppeteer.cdp.client.entity.network.Response response, String frameId) {
         this.requestId = requestId;
@@ -51,6 +99,9 @@ public class ResponseReceivedEvent {
         this.type = type;
         this.response = response;
         this.frameId = null;
+    }
+
+    public ResponseReceivedEvent() {
     }
 
 }

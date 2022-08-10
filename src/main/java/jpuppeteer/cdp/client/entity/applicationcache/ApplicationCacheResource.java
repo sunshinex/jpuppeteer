@@ -9,22 +9,49 @@ public class ApplicationCacheResource {
     /**
     * Resource url.
     */
-    public final String url;
+    private String url;
 
     /**
     * Resource size.
     */
-    public final Integer size;
+    private Integer size;
 
     /**
     * Resource type.
     */
-    public final String type;
+    private String type;
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setSize (Integer size) {
+        this.size = size;
+    }
+
+    public Integer getSize() {
+        return this.size;
+    }
+
+    public void setType (String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return this.type;
+    }
 
     public ApplicationCacheResource(String url, Integer size, String type) {
         this.url = url;
         this.size = size;
         this.type = type;
+    }
+
+    public ApplicationCacheResource() {
     }
 
 }

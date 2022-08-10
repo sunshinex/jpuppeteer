@@ -7,12 +7,28 @@ public class GetHistogramRequest {
     /**
     * Requested histogram name.
     */
-    public final String name;
+    private String name;
 
     /**
     * If true, retrieve delta since last call.
     */
-    public final Boolean delta;
+    private Boolean delta;
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setDelta (Boolean delta) {
+        this.delta = delta;
+    }
+
+    public Boolean getDelta() {
+        return this.delta;
+    }
 
     public GetHistogramRequest(String name, Boolean delta) {
         this.name = name;
@@ -22,6 +38,9 @@ public class GetHistogramRequest {
     public GetHistogramRequest(String name) {
         this.name = name;
         this.delta = null;
+    }
+
+    public GetHistogramRequest() {
     }
 
 }

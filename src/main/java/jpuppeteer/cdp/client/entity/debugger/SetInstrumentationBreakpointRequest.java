@@ -7,10 +7,21 @@ public class SetInstrumentationBreakpointRequest {
     /**
     * Instrumentation name.
     */
-    public final jpuppeteer.cdp.client.constant.debugger.SetInstrumentationBreakpointRequestInstrumentation instrumentation;
+    private jpuppeteer.cdp.client.constant.debugger.SetInstrumentationBreakpointRequestInstrumentation instrumentation;
+
+    public void setInstrumentation (jpuppeteer.cdp.client.constant.debugger.SetInstrumentationBreakpointRequestInstrumentation instrumentation) {
+        this.instrumentation = instrumentation;
+    }
+
+    public jpuppeteer.cdp.client.constant.debugger.SetInstrumentationBreakpointRequestInstrumentation getInstrumentation() {
+        return this.instrumentation;
+    }
 
     public SetInstrumentationBreakpointRequest(jpuppeteer.cdp.client.constant.debugger.SetInstrumentationBreakpointRequestInstrumentation instrumentation) {
         this.instrumentation = instrumentation;
+    }
+
+    public SetInstrumentationBreakpointRequest() {
     }
 
 }

@@ -14,7 +14,7 @@ public class WebAudio {
     /**
     * Enables the WebAudio domain and starts sending context lifetime events.
     */
-    public io.netty.util.concurrent.Future enable() {
+    public jpuppeteer.util.XFuture<?> enable() {
         return connection.send("WebAudio.enable", null);
     }
 
@@ -22,7 +22,7 @@ public class WebAudio {
     /**
     * Disables the WebAudio domain.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("WebAudio.disable", null);
     }
 
@@ -30,7 +30,7 @@ public class WebAudio {
     /**
     * Fetch the realtime data from the registered contexts.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.webaudio.GetRealtimeDataResponse> getRealtimeData(jpuppeteer.cdp.client.entity.webaudio.GetRealtimeDataRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.webaudio.GetRealtimeDataResponse> getRealtimeData(jpuppeteer.cdp.client.entity.webaudio.GetRealtimeDataRequest request) {
         return connection.send("WebAudio.getRealtimeData", request, jpuppeteer.cdp.client.entity.webaudio.GetRealtimeDataResponse.class);
     }
 

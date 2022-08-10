@@ -8,16 +8,35 @@ public class NavigatedWithinDocumentEvent {
     /**
     * Id of the frame.
     */
-    public final String frameId;
+    private String frameId;
 
     /**
     * Frame's new url.
     */
-    public final String url;
+    private String url;
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
 
     public NavigatedWithinDocumentEvent(String frameId, String url) {
         this.frameId = frameId;
         this.url = url;
+    }
+
+    public NavigatedWithinDocumentEvent() {
     }
 
 }

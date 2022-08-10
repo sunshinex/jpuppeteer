@@ -8,10 +8,21 @@ public class GetCurrentTimeRequest {
     /**
     * Id of animation.
     */
-    public final String id;
+    private String id;
+
+    public void setId (String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return this.id;
+    }
 
     public GetCurrentTimeRequest(String id) {
         this.id = id;
+    }
+
+    public GetCurrentTimeRequest() {
     }
 
 }

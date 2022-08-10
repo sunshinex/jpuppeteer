@@ -8,15 +8,34 @@ public class LastSeenObjectIdEvent {
 
     /**
     */
-    public final Integer lastSeenObjectId;
+    private Integer lastSeenObjectId;
 
     /**
     */
-    public final java.math.BigDecimal timestamp;
+    private java.math.BigDecimal timestamp;
+
+    public void setLastSeenObjectId (Integer lastSeenObjectId) {
+        this.lastSeenObjectId = lastSeenObjectId;
+    }
+
+    public Integer getLastSeenObjectId() {
+        return this.lastSeenObjectId;
+    }
+
+    public void setTimestamp (java.math.BigDecimal timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public java.math.BigDecimal getTimestamp() {
+        return this.timestamp;
+    }
 
     public LastSeenObjectIdEvent(Integer lastSeenObjectId, java.math.BigDecimal timestamp) {
         this.lastSeenObjectId = lastSeenObjectId;
         this.timestamp = timestamp;
+    }
+
+    public LastSeenObjectIdEvent() {
     }
 
 }

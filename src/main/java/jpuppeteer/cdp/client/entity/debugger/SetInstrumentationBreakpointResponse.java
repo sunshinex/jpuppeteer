@@ -7,10 +7,21 @@ public class SetInstrumentationBreakpointResponse {
     /**
     * Id of the created breakpoint for further reference.
     */
-    public final String breakpointId;
+    private String breakpointId;
+
+    public void setBreakpointId (String breakpointId) {
+        this.breakpointId = breakpointId;
+    }
+
+    public String getBreakpointId() {
+        return this.breakpointId;
+    }
 
     public SetInstrumentationBreakpointResponse(String breakpointId) {
         this.breakpointId = breakpointId;
+    }
+
+    public SetInstrumentationBreakpointResponse() {
     }
 
 }

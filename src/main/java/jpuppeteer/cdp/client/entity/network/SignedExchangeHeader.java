@@ -8,27 +8,67 @@ public class SignedExchangeHeader {
     /**
     * Signed exchange request URL.
     */
-    public final String requestUrl;
+    private String requestUrl;
 
     /**
     * Signed exchange response code.
     */
-    public final Integer responseCode;
+    private Integer responseCode;
 
     /**
     * Signed exchange response headers.
     */
-    public final java.util.Map<String, Object> responseHeaders;
+    private java.util.Map<String, Object> responseHeaders;
 
     /**
     * Signed exchange response signature.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.network.SignedExchangeSignature> signatures;
+    private java.util.List<jpuppeteer.cdp.client.entity.network.SignedExchangeSignature> signatures;
 
     /**
     * Signed exchange header integrity hash in the form of "sha256-<base64-hash-value>".
     */
-    public final String headerIntegrity;
+    private String headerIntegrity;
+
+    public void setRequestUrl (String requestUrl) {
+        this.requestUrl = requestUrl;
+    }
+
+    public String getRequestUrl() {
+        return this.requestUrl;
+    }
+
+    public void setResponseCode (Integer responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public Integer getResponseCode() {
+        return this.responseCode;
+    }
+
+    public void setResponseHeaders (java.util.Map<String, Object> responseHeaders) {
+        this.responseHeaders = responseHeaders;
+    }
+
+    public java.util.Map<String, Object> getResponseHeaders() {
+        return this.responseHeaders;
+    }
+
+    public void setSignatures (java.util.List<jpuppeteer.cdp.client.entity.network.SignedExchangeSignature> signatures) {
+        this.signatures = signatures;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.network.SignedExchangeSignature> getSignatures() {
+        return this.signatures;
+    }
+
+    public void setHeaderIntegrity (String headerIntegrity) {
+        this.headerIntegrity = headerIntegrity;
+    }
+
+    public String getHeaderIntegrity() {
+        return this.headerIntegrity;
+    }
 
     public SignedExchangeHeader(String requestUrl, Integer responseCode, java.util.Map<String, Object> responseHeaders, java.util.List<jpuppeteer.cdp.client.entity.network.SignedExchangeSignature> signatures, String headerIntegrity) {
         this.requestUrl = requestUrl;
@@ -36,6 +76,9 @@ public class SignedExchangeHeader {
         this.responseHeaders = responseHeaders;
         this.signatures = signatures;
         this.headerIntegrity = headerIntegrity;
+    }
+
+    public SignedExchangeHeader() {
     }
 
 }

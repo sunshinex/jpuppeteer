@@ -7,15 +7,34 @@ public class LoadNetworkResourceOptions {
 
     /**
     */
-    public final Boolean disableCache;
+    private Boolean disableCache;
 
     /**
     */
-    public final Boolean includeCredentials;
+    private Boolean includeCredentials;
+
+    public void setDisableCache (Boolean disableCache) {
+        this.disableCache = disableCache;
+    }
+
+    public Boolean getDisableCache() {
+        return this.disableCache;
+    }
+
+    public void setIncludeCredentials (Boolean includeCredentials) {
+        this.includeCredentials = includeCredentials;
+    }
+
+    public Boolean getIncludeCredentials() {
+        return this.includeCredentials;
+    }
 
     public LoadNetworkResourceOptions(Boolean disableCache, Boolean includeCredentials) {
         this.disableCache = disableCache;
         this.includeCredentials = includeCredentials;
+    }
+
+    public LoadNetworkResourceOptions() {
     }
 
 }

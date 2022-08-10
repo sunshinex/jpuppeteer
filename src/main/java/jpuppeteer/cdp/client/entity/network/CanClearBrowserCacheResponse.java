@@ -7,10 +7,21 @@ public class CanClearBrowserCacheResponse {
     /**
     * True if browser cache can be cleared.
     */
-    public final Boolean result;
+    private Boolean result;
+
+    public void setResult (Boolean result) {
+        this.result = result;
+    }
+
+    public Boolean getResult() {
+        return this.result;
+    }
 
     public CanClearBrowserCacheResponse(Boolean result) {
         this.result = result;
+    }
+
+    public CanClearBrowserCacheResponse() {
     }
 
 }

@@ -14,7 +14,7 @@ public class Schema {
     /**
     * Returns supported domains.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.schema.GetDomainsResponse> getDomains() {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.schema.GetDomainsResponse> getDomains() {
         return connection.send("Schema.getDomains", null, jpuppeteer.cdp.client.entity.schema.GetDomainsResponse.class);
     }
 

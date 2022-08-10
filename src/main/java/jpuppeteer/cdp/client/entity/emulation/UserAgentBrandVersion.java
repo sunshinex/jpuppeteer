@@ -7,15 +7,34 @@ public class UserAgentBrandVersion {
 
     /**
     */
-    public final String brand;
+    private String brand;
 
     /**
     */
-    public final String version;
+    private String version;
+
+    public void setBrand (String brand) {
+        this.brand = brand;
+    }
+
+    public String getBrand() {
+        return this.brand;
+    }
+
+    public void setVersion (String version) {
+        this.version = version;
+    }
+
+    public String getVersion() {
+        return this.version;
+    }
 
     public UserAgentBrandVersion(String brand, String version) {
         this.brand = brand;
         this.version = version;
+    }
+
+    public UserAgentBrandVersion() {
     }
 
 }

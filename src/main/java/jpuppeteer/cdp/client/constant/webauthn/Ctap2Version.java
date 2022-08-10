@@ -20,6 +20,11 @@ public enum Ctap2Version implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static Ctap2Version findByValue(String value) {
         for(Ctap2Version val : values()) {
             if (val.value.equals(value)) return val;

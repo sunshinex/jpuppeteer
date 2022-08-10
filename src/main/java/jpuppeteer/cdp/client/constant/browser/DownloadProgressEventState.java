@@ -20,6 +20,11 @@ public enum DownloadProgressEventState implements jpuppeteer.cdp.client.CDPEnum 
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static DownloadProgressEventState findByValue(String value) {
         for(DownloadProgressEventState val : values()) {
             if (val.value.equals(value)) return val;

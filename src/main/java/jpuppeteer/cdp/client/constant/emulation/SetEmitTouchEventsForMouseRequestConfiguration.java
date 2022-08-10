@@ -19,6 +19,11 @@ public enum SetEmitTouchEventsForMouseRequestConfiguration implements jpuppeteer
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SetEmitTouchEventsForMouseRequestConfiguration findByValue(String value) {
         for(SetEmitTouchEventsForMouseRequestConfiguration val : values()) {
             if (val.value.equals(value)) return val;

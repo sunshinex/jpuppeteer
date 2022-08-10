@@ -7,10 +7,21 @@ public class SetCacheDisabledRequest {
     /**
     * Cache disabled state.
     */
-    public final Boolean cacheDisabled;
+    private Boolean cacheDisabled;
+
+    public void setCacheDisabled (Boolean cacheDisabled) {
+        this.cacheDisabled = cacheDisabled;
+    }
+
+    public Boolean getCacheDisabled() {
+        return this.cacheDisabled;
+    }
 
     public SetCacheDisabledRequest(Boolean cacheDisabled) {
         this.cacheDisabled = cacheDisabled;
+    }
+
+    public SetCacheDisabledRequest() {
     }
 
 }

@@ -18,6 +18,11 @@ public enum CaptureSnapshotRequestFormat implements jpuppeteer.cdp.client.CDPEnu
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static CaptureSnapshotRequestFormat findByValue(String value) {
         for(CaptureSnapshotRequestFormat val : values()) {
             if (val.value.equals(value)) return val;

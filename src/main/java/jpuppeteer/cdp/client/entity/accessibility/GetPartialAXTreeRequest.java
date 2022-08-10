@@ -8,22 +8,54 @@ public class GetPartialAXTreeRequest {
     /**
     * Identifier of the node to get the partial accessibility tree for.
     */
-    public final Integer nodeId;
+    private Integer nodeId;
 
     /**
     * Identifier of the backend node to get the partial accessibility tree for.
     */
-    public final Integer backendNodeId;
+    private Integer backendNodeId;
 
     /**
     * JavaScript object id of the node wrapper to get the partial accessibility tree for.
     */
-    public final String objectId;
+    private String objectId;
 
     /**
     * Whether to fetch this nodes ancestors, siblings and children. Defaults to true.
     */
-    public final Boolean fetchRelatives;
+    private Boolean fetchRelatives;
+
+    public void setNodeId (Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public Integer getNodeId() {
+        return this.nodeId;
+    }
+
+    public void setBackendNodeId (Integer backendNodeId) {
+        this.backendNodeId = backendNodeId;
+    }
+
+    public Integer getBackendNodeId() {
+        return this.backendNodeId;
+    }
+
+    public void setObjectId (String objectId) {
+        this.objectId = objectId;
+    }
+
+    public String getObjectId() {
+        return this.objectId;
+    }
+
+    public void setFetchRelatives (Boolean fetchRelatives) {
+        this.fetchRelatives = fetchRelatives;
+    }
+
+    public Boolean getFetchRelatives() {
+        return this.fetchRelatives;
+    }
 
     public GetPartialAXTreeRequest(Integer nodeId, Integer backendNodeId, String objectId, Boolean fetchRelatives) {
         this.nodeId = nodeId;

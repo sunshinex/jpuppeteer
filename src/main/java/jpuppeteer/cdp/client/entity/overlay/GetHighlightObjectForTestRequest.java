@@ -8,27 +8,67 @@ public class GetHighlightObjectForTestRequest {
     /**
     * Id of the node to get highlight object for.
     */
-    public final Integer nodeId;
+    private Integer nodeId;
 
     /**
     * Whether to include distance info.
     */
-    public final Boolean includeDistance;
+    private Boolean includeDistance;
 
     /**
     * Whether to include style info.
     */
-    public final Boolean includeStyle;
+    private Boolean includeStyle;
 
     /**
     * The color format to get config with (default: hex).
     */
-    public final jpuppeteer.cdp.client.constant.overlay.ColorFormat colorFormat;
+    private jpuppeteer.cdp.client.constant.overlay.ColorFormat colorFormat;
 
     /**
     * Whether to show accessibility info (default: true).
     */
-    public final Boolean showAccessibilityInfo;
+    private Boolean showAccessibilityInfo;
+
+    public void setNodeId (Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public Integer getNodeId() {
+        return this.nodeId;
+    }
+
+    public void setIncludeDistance (Boolean includeDistance) {
+        this.includeDistance = includeDistance;
+    }
+
+    public Boolean getIncludeDistance() {
+        return this.includeDistance;
+    }
+
+    public void setIncludeStyle (Boolean includeStyle) {
+        this.includeStyle = includeStyle;
+    }
+
+    public Boolean getIncludeStyle() {
+        return this.includeStyle;
+    }
+
+    public void setColorFormat (jpuppeteer.cdp.client.constant.overlay.ColorFormat colorFormat) {
+        this.colorFormat = colorFormat;
+    }
+
+    public jpuppeteer.cdp.client.constant.overlay.ColorFormat getColorFormat() {
+        return this.colorFormat;
+    }
+
+    public void setShowAccessibilityInfo (Boolean showAccessibilityInfo) {
+        this.showAccessibilityInfo = showAccessibilityInfo;
+    }
+
+    public Boolean getShowAccessibilityInfo() {
+        return this.showAccessibilityInfo;
+    }
 
     public GetHighlightObjectForTestRequest(Integer nodeId, Boolean includeDistance, Boolean includeStyle, jpuppeteer.cdp.client.constant.overlay.ColorFormat colorFormat, Boolean showAccessibilityInfo) {
         this.nodeId = nodeId;
@@ -44,6 +84,9 @@ public class GetHighlightObjectForTestRequest {
         this.includeStyle = null;
         this.colorFormat = null;
         this.showAccessibilityInfo = null;
+    }
+
+    public GetHighlightObjectForTestRequest() {
     }
 
 }

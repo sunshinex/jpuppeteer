@@ -8,32 +8,80 @@ public class ConsoleMessage {
     /**
     * Message source.
     */
-    public final jpuppeteer.cdp.client.constant.console.ConsoleMessageSource source;
+    private jpuppeteer.cdp.client.constant.console.ConsoleMessageSource source;
 
     /**
     * Message severity.
     */
-    public final jpuppeteer.cdp.client.constant.console.ConsoleMessageLevel level;
+    private jpuppeteer.cdp.client.constant.console.ConsoleMessageLevel level;
 
     /**
     * Message text.
     */
-    public final String text;
+    private String text;
 
     /**
     * URL of the message origin.
     */
-    public final String url;
+    private String url;
 
     /**
     * Line number in the resource that generated this message (1-based).
     */
-    public final Integer line;
+    private Integer line;
 
     /**
     * Column number in the resource that generated this message (1-based).
     */
-    public final Integer column;
+    private Integer column;
+
+    public void setSource (jpuppeteer.cdp.client.constant.console.ConsoleMessageSource source) {
+        this.source = source;
+    }
+
+    public jpuppeteer.cdp.client.constant.console.ConsoleMessageSource getSource() {
+        return this.source;
+    }
+
+    public void setLevel (jpuppeteer.cdp.client.constant.console.ConsoleMessageLevel level) {
+        this.level = level;
+    }
+
+    public jpuppeteer.cdp.client.constant.console.ConsoleMessageLevel getLevel() {
+        return this.level;
+    }
+
+    public void setText (String text) {
+        this.text = text;
+    }
+
+    public String getText() {
+        return this.text;
+    }
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setLine (Integer line) {
+        this.line = line;
+    }
+
+    public Integer getLine() {
+        return this.line;
+    }
+
+    public void setColumn (Integer column) {
+        this.column = column;
+    }
+
+    public Integer getColumn() {
+        return this.column;
+    }
 
     public ConsoleMessage(jpuppeteer.cdp.client.constant.console.ConsoleMessageSource source, jpuppeteer.cdp.client.constant.console.ConsoleMessageLevel level, String text, String url, Integer line, Integer column) {
         this.source = source;
@@ -51,6 +99,9 @@ public class ConsoleMessage {
         this.url = null;
         this.line = null;
         this.column = null;
+    }
+
+    public ConsoleMessage() {
     }
 
 }

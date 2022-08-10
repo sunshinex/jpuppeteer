@@ -8,17 +8,41 @@ public class AuthChallengeResponse {
     /**
     * The decision on what to do in response to the authorization challenge.  Default means deferring to the default behavior of the net stack, which will likely either the Cancel authentication or display a popup dialog box.
     */
-    public final jpuppeteer.cdp.client.constant.fetch.AuthChallengeResponseResponse response;
+    private jpuppeteer.cdp.client.constant.fetch.AuthChallengeResponseResponse response;
 
     /**
     * The username to provide, possibly empty. Should only be set if response is ProvideCredentials.
     */
-    public final String username;
+    private String username;
 
     /**
     * The password to provide, possibly empty. Should only be set if response is ProvideCredentials.
     */
-    public final String password;
+    private String password;
+
+    public void setResponse (jpuppeteer.cdp.client.constant.fetch.AuthChallengeResponseResponse response) {
+        this.response = response;
+    }
+
+    public jpuppeteer.cdp.client.constant.fetch.AuthChallengeResponseResponse getResponse() {
+        return this.response;
+    }
+
+    public void setUsername (String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public void setPassword (String password) {
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
 
     public AuthChallengeResponse(jpuppeteer.cdp.client.constant.fetch.AuthChallengeResponseResponse response, String username, String password) {
         this.response = response;
@@ -30,6 +54,9 @@ public class AuthChallengeResponse {
         this.response = response;
         this.username = null;
         this.password = null;
+    }
+
+    public AuthChallengeResponse() {
     }
 
 }

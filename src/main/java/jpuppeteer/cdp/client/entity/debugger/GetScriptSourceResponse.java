@@ -7,12 +7,28 @@ public class GetScriptSourceResponse {
     /**
     * Script source (empty in case of Wasm bytecode).
     */
-    public final String scriptSource;
+    private String scriptSource;
 
     /**
     * Wasm bytecode. (Encoded as a base64 string when passed over JSON)
     */
-    public final String bytecode;
+    private String bytecode;
+
+    public void setScriptSource (String scriptSource) {
+        this.scriptSource = scriptSource;
+    }
+
+    public String getScriptSource() {
+        return this.scriptSource;
+    }
+
+    public void setBytecode (String bytecode) {
+        this.bytecode = bytecode;
+    }
+
+    public String getBytecode() {
+        return this.bytecode;
+    }
 
     public GetScriptSourceResponse(String scriptSource, String bytecode) {
         this.scriptSource = scriptSource;
@@ -22,6 +38,9 @@ public class GetScriptSourceResponse {
     public GetScriptSourceResponse(String scriptSource) {
         this.scriptSource = scriptSource;
         this.bytecode = null;
+    }
+
+    public GetScriptSourceResponse() {
     }
 
 }

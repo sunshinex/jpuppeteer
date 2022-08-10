@@ -2,14 +2,11 @@ package jpuppeteer.util;
 
 import com.google.common.collect.Lists;
 import io.netty.util.concurrent.EventExecutor;
-import io.netty.util.concurrent.Future;
 import jpuppeteer.cdp.client.constant.input.DispatchKeyEventRequestType;
 import jpuppeteer.cdp.client.constant.input.DispatchMouseEventRequestPointerType;
 import jpuppeteer.cdp.client.constant.input.DispatchMouseEventRequestType;
 import jpuppeteer.cdp.client.constant.input.DispatchTouchEventRequestType;
-import jpuppeteer.cdp.client.entity.input.InsertTextRequest;
-import jpuppeteer.cdp.client.entity.input.SetIgnoreInputEventsRequest;
-import jpuppeteer.cdp.client.entity.input.TouchPoint;
+import jpuppeteer.cdp.client.entity.input.*;
 import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
 import jpuppeteer.entity.Point;
@@ -92,137 +89,130 @@ public class Input {
         return mod;
     }
 
-    public Future enable() {
+    public XFuture<?> enable() {
         return input.setIgnoreInputEvents(new SetIgnoreInputEventsRequest(false));
     }
 
-    public Future disable() {
+    public XFuture<?> disable() {
         return input.setIgnoreInputEvents(new SetIgnoreInputEventsRequest(true));
     }
     
-    public Future keyDown(USKeyboardDefinition key) {
+    public XFuture<?> keyDown(USKeyboardDefinition key) {
         pressedKeys.add(key);
         int keyModifiers = getModifier(pressedKeys);
         boolean shift = (keyModifiers & 8) == 8;
         String keyStr = shift && key.getShiftKey() != null ? key.getShiftKey() : key.getKey();
 
-        DispatchKeyEventRequestBuilder builder = DispatchKeyEventRequestBuilder.newBuilder();
-        builder.modifiers(keyModifiers);
-        builder.windowsVirtualKeyCode(shift && key.getShiftKeyCode() != null ? key.getShiftKeyCode() : key.getKeyCode());
-        builder.code(key.getCode());
-        builder.key(keyStr);
-        builder.location(key.getLocation() != null ? key.getLocation() : 0);
-        builder.isKeypad(key.getLocation() != null && key.getLocation() == 3);
-        builder.autoRepeat(pressedKeys.contains(key));
+        DispatchKeyEventRequest request = new DispatchKeyEventRequest();
+        request.setModifiers(keyModifiers);
+        request.setWindowsVirtualKeyCode(shift && key.getShiftKeyCode() != null ? key.getShiftKeyCode() : key.getKeyCode());
+        request.setCode(key.getCode());
+        request.setKey(keyStr);
+        request.setLocation(key.getLocation() != null ? key.getLocation() : 0);
+        request.setIsKeypad(key.getLocation() != null && key.getLocation() == 3);
+        request.setAutoRepeat(pressedKeys.contains(key));
 
-        builder.type(DispatchKeyEventRequestType.RAWKEYDOWN);
+        request.setType(DispatchKeyEventRequestType.RAWKEYDOWN);
         if (keyStr.length() == 1) {
-            builder.text(keyStr);
-            builder.unmodifiedText(keyStr);
+            request.setText(keyStr);
+            request.setUnmodifiedText(keyStr);
         }
         if ((keyModifiers & ~8) != 0) {
-            builder.text(null);
-            builder.unmodifiedText(null);
+            request.setText(null);
+            request.setUnmodifiedText(null);
         }
-        if (keyStr != null) {
-            builder.type(DispatchKeyEventRequestType.KEYDOWN);
-        }
-        return input.dispatchKeyEvent(builder.build());
+        request.setType(DispatchKeyEventRequestType.KEYDOWN);
+        return input.dispatchKeyEvent(request);
     }
 
     
-    public Future keyUp(USKeyboardDefinition key) {
+    public XFuture<?> keyUp(USKeyboardDefinition key) {
         int keyModifiers = getModifier(pressedKeys);
         boolean shift = (keyModifiers & 8) == 8;
-        DispatchKeyEventRequestBuilder builder = DispatchKeyEventRequestBuilder.newBuilder();
-        builder.modifiers(keyModifiers);
-        builder.windowsVirtualKeyCode(shift && key.getShiftKeyCode() != null ? key.getShiftKeyCode() : key.getKeyCode());
-        builder.code(key.getCode());
-        builder.key(shift && key.getShiftKey() != null ? key.getShiftKey() : key.getKey());
-        builder.location(key.getLocation() != null ? key.getLocation() : 0);
-        builder.isKeypad(key.getLocation() != null && key.getLocation() == 3);
-        builder.type(DispatchKeyEventRequestType.KEYUP);
+        DispatchKeyEventRequest request = new DispatchKeyEventRequest();
+        request.setModifiers(keyModifiers);
+        request.setWindowsVirtualKeyCode(shift && key.getShiftKeyCode() != null ? key.getShiftKeyCode() : key.getKeyCode());
+        request.setCode(key.getCode());
+        request.setKey(shift && key.getShiftKey() != null ? key.getShiftKey() : key.getKey());
+        request.setLocation(key.getLocation() != null ? key.getLocation() : 0);
+        request.setIsKeypad(key.getLocation() != null && key.getLocation() == 3);
+        request.setType(DispatchKeyEventRequestType.KEYUP);
         pressedKeys.remove(key);
-        return input.dispatchKeyEvent(builder.build());
+        return input.dispatchKeyEvent(request);
     }
 
     
-    public Future press(USKeyboardDefinition key, int delay) {
-        return SeriesPromise
-                .wrap(keyDown(key))
+    public XFuture<?> press(USKeyboardDefinition key, int delay) {
+        return keyDown(key)
                 //此处单纯为了延迟，没啥鸟用
                 .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
                 .async(o -> keyUp(key));
     }
 
-    public Future input(String text) {
+    public XFuture<?> input(String text) {
         InsertTextRequest request = new InsertTextRequest(text);
         return input.insertText(request);
     }
 
-    private DispatchMouseEventRequestBuilder mouseEventBuilder(MouseDefinition mouseDefinition, int x, int y) {
+    private DispatchMouseEventRequest mouseEventBuilder(MouseDefinition mouseDefinition, int x, int y) {
         int keyModifiers = getModifier(pressedKeys);
-        DispatchMouseEventRequestBuilder builder = DispatchMouseEventRequestBuilder.newBuilder();
-        builder.button(mouseDefinition.getButton());
-        builder.buttons(getButtons(pressedButtons));
-        builder.modifiers(keyModifiers);
-        builder.pointerType(DispatchMouseEventRequestPointerType.MOUSE);
-        builder.x(BigDecimal.valueOf(x));
-        builder.y(BigDecimal.valueOf(y));
-        return builder;
+        DispatchMouseEventRequest request = new DispatchMouseEventRequest();
+        request.setButton(mouseDefinition.getButton());
+        request.setButtons(getButtons(pressedButtons));
+        request.setModifiers(keyModifiers);
+        request.setPointerType(DispatchMouseEventRequestPointerType.MOUSE);
+        request.setX(BigDecimal.valueOf(x));
+        request.setY(BigDecimal.valueOf(y));
+        return request;
     }
 
     
-    public Future<Point> mouseDown(MouseDefinition mouseDefinition) {
+    public XFuture<Point> mouseDown(MouseDefinition mouseDefinition) {
         return mouseDown(mouseDefinition, 1);
     }
 
-    public Future<Point> mouseDown(MouseDefinition mouseDefinition, int count) {
+    public XFuture<Point> mouseDown(MouseDefinition mouseDefinition, int count) {
         Point mousePosition = new Point(mouseX.get(), mouseY.get());
         pressedButtons.add(mouseDefinition);
-        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, mousePosition.x, mousePosition.y);
-        builder.type(DispatchMouseEventRequestType.MOUSEPRESSED);
-        builder.clickCount(count);
-        return SeriesPromise
-                .wrap(input.dispatchMouseEvent(builder.build()))
+        DispatchMouseEventRequest request = mouseEventBuilder(mouseDefinition, mousePosition.x, mousePosition.y);
+        request.setType(DispatchMouseEventRequestType.MOUSEPRESSED);
+        request.setClickCount(count);
+        return input.dispatchMouseEvent(request)
                 .sync(o -> mousePosition);
     }
 
     
-    public Future<Point> mouseUp(MouseDefinition mouseDefinition) {
+    public XFuture<Point> mouseUp(MouseDefinition mouseDefinition) {
         return mouseUp(mouseDefinition, 1);
     }
 
-    public Future<Point> mouseUp(MouseDefinition mouseDefinition, int count) {
+    public XFuture<Point> mouseUp(MouseDefinition mouseDefinition, int count) {
         Point mousePosition = new Point(mouseX.get(), mouseY.get());
-        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(mouseDefinition, mousePosition.x, mousePosition.y);
-        builder.type(DispatchMouseEventRequestType.MOUSERELEASED);
-        builder.clickCount(count);
+        DispatchMouseEventRequest request = mouseEventBuilder(mouseDefinition, mousePosition.x, mousePosition.y);
+        request.setType(DispatchMouseEventRequestType.MOUSERELEASED);
+        request.setClickCount(count);
         pressedButtons.remove(mouseDefinition);
-        return SeriesPromise
-                .wrap(input.dispatchMouseEvent(builder.build()))
+        return input.dispatchMouseEvent(request)
                 .sync(o -> mousePosition);
     }
 
-    public Future<Point> click(MouseDefinition mouseDefinition, int delay) {
+    public XFuture<Point> click(MouseDefinition mouseDefinition, int delay) {
         Point mousePosition = new Point(mouseX.get(), mouseY.get());
-        return SeriesPromise
-                .wrap(mouseMove(mousePosition.x, mousePosition.y))
+        return mouseMove(mousePosition.x, mousePosition.y)
                 .async(o -> mouseDown(mouseDefinition))
                 //此处单纯为了延迟，没啥鸟用
                 .async(o -> executor.schedule(() -> o, delay, TimeUnit.MILLISECONDS))
                 .async(o -> mouseUp(mouseDefinition));
     }
 
-    public Future<Point> mouseMove(int x, int y) {
-        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(MouseDefinition.NONE, x, y);
-        builder.type(DispatchMouseEventRequestType.MOUSEMOVED);
-        builder.x(BigDecimal.valueOf(x));
-        builder.y(BigDecimal.valueOf(y));
+    public XFuture<Point> mouseMove(int x, int y) {
+        DispatchMouseEventRequest request = mouseEventBuilder(MouseDefinition.NONE, x, y);
+        request.setType(DispatchMouseEventRequestType.MOUSEMOVED);
+        request.setX(BigDecimal.valueOf(x));
+        request.setY(BigDecimal.valueOf(y));
         mouseX.set(x);
         mouseY.set(y);
-        return SeriesPromise
-                .wrap(input.dispatchMouseEvent(builder.build()))
+        return input.dispatchMouseEvent(request)
                 .sync(o -> new Point(x, y));
     }
 
@@ -230,32 +220,31 @@ public class Input {
         return new Point(mouseX.get(), mouseY.get());
     }
 
-    public Future mouseWheel(int deltaX, int deltaY) {
+    public XFuture<?> mouseWheel(int deltaX, int deltaY) {
         Point mousePosition = new Point(mouseX.get(), mouseY.get());
-        DispatchMouseEventRequestBuilder builder = mouseEventBuilder(MouseDefinition.NONE, mousePosition.x, mousePosition.y);
-        builder.type(DispatchMouseEventRequestType.MOUSEWHEEL)
-                .deltaX(BigDecimal.valueOf(deltaX))
-                .deltaY(BigDecimal.valueOf(deltaY));
-        return input.dispatchMouseEvent(builder.build());
+        DispatchMouseEventRequest request = mouseEventBuilder(MouseDefinition.NONE, mousePosition.x, mousePosition.y);
+        request.setType(DispatchMouseEventRequestType.MOUSEWHEEL);
+        request.setDeltaX(BigDecimal.valueOf(deltaX));
+        request.setDeltaY(BigDecimal.valueOf(deltaY));
+        return input.dispatchMouseEvent(request);
     }
 
-    private DispatchTouchEventRequestBuilder touchEventBuilder(TouchPoint[] touchPoints) {
-        DispatchTouchEventRequestBuilder builder = new DispatchTouchEventRequestBuilder();
-        builder.modifiers(getModifier(pressedKeys));
+    private DispatchTouchEventRequest touchEventBuilder(TouchPoint[] touchPoints) {
+        DispatchTouchEventRequest builder = new DispatchTouchEventRequest();
+        builder.setModifiers(getModifier(pressedKeys));
         if (touchPoints != null && touchPoints.length > 0) {
-            builder.touchPoints(Lists.newArrayList(touchPoints));
+            builder.setTouchPoints(Lists.newArrayList(touchPoints));
         } else {
-            builder.touchPoints(Collections.EMPTY_LIST);
+            builder.setTouchPoints(Collections.EMPTY_LIST);
         }
         return builder;
     }
 
     
-    public Future<TouchPoint[]> touchStart(TouchPoint[] touchPoints) {
-        DispatchTouchEventRequestBuilder builder = touchEventBuilder(touchPoints);
-        builder.type(DispatchTouchEventRequestType.TOUCHSTART);
-        return SeriesPromise
-                .wrap(input.dispatchTouchEvent(builder.build()))
+    public XFuture<TouchPoint[]> touchStart(TouchPoint[] touchPoints) {
+        DispatchTouchEventRequest request = touchEventBuilder(touchPoints);
+        request.setType(DispatchTouchEventRequestType.TOUCHSTART);
+        return input.dispatchTouchEvent(request)
                 .sync(o -> touchPoints);
     }
 
@@ -263,33 +252,32 @@ public class Input {
         return new TouchPoint(BigDecimal.valueOf(x), BigDecimal.valueOf(y));
     }
 
-    public Future<TouchPoint[]> touchStart(int x, int y) {
+    public XFuture<TouchPoint[]> touchStart(int x, int y) {
         return touchStart(new TouchPoint[]{createTouchPoint(x, y)});
     }
 
-    public Future touchEnd() {
-        DispatchTouchEventRequestBuilder builder = touchEventBuilder(null);
-        builder.type(DispatchTouchEventRequestType.TOUCHEND);
-        return input.dispatchTouchEvent(builder.build());
+    public XFuture<?> touchEnd() {
+        DispatchTouchEventRequest request = touchEventBuilder(null);
+        request.setType(DispatchTouchEventRequestType.TOUCHEND);
+        return input.dispatchTouchEvent(request);
     }
 
     
-    public Future<TouchPoint[]> touchMove(TouchPoint[] touchPoints) {
-        DispatchTouchEventRequestBuilder builder = touchEventBuilder(touchPoints);
-        builder.type(DispatchTouchEventRequestType.TOUCHMOVE);
-        return SeriesPromise
-                .wrap(input.dispatchTouchEvent(builder.build()))
+    public XFuture<TouchPoint[]> touchMove(TouchPoint[] touchPoints) {
+        DispatchTouchEventRequest request = touchEventBuilder(touchPoints);
+        request.setType(DispatchTouchEventRequestType.TOUCHMOVE);
+        return input.dispatchTouchEvent(request)
                 .sync(o -> touchPoints);
     }
 
-    public Future<TouchPoint[]> touchMove(int x, int y) {
+    public XFuture<TouchPoint[]> touchMove(int x, int y) {
         return touchMove(new TouchPoint[]{createTouchPoint(x, y)});
     }
 
-    public Future touchCancel() {
-        DispatchTouchEventRequestBuilder builder = touchEventBuilder(null);
-        builder.type(DispatchTouchEventRequestType.TOUCHCANCEL);
-        return input.dispatchTouchEvent(builder.build());
+    public XFuture<?> touchCancel() {
+        DispatchTouchEventRequest request = touchEventBuilder(null);
+        request.setType(DispatchTouchEventRequestType.TOUCHCANCEL);
+        return input.dispatchTouchEvent(request);
     }
     
 }

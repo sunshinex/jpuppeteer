@@ -21,6 +21,11 @@ public enum ClientNavigationDisposition implements jpuppeteer.cdp.client.CDPEnum
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ClientNavigationDisposition findByValue(String value) {
         for(ClientNavigationDisposition val : values()) {
             if (val.value.equals(value)) return val;

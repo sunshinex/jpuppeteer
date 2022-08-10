@@ -8,16 +8,35 @@ public class RequestDatabaseRequest {
     /**
     * Security origin.
     */
-    public final String securityOrigin;
+    private String securityOrigin;
 
     /**
     * Database name.
     */
-    public final String databaseName;
+    private String databaseName;
+
+    public void setSecurityOrigin (String securityOrigin) {
+        this.securityOrigin = securityOrigin;
+    }
+
+    public String getSecurityOrigin() {
+        return this.securityOrigin;
+    }
+
+    public void setDatabaseName (String databaseName) {
+        this.databaseName = databaseName;
+    }
+
+    public String getDatabaseName() {
+        return this.databaseName;
+    }
 
     public RequestDatabaseRequest(String securityOrigin, String databaseName) {
         this.securityOrigin = securityOrigin;
         this.databaseName = databaseName;
+    }
+
+    public RequestDatabaseRequest() {
     }
 
 }

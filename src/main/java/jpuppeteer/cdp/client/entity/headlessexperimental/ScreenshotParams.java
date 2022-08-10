@@ -9,12 +9,28 @@ public class ScreenshotParams {
     /**
     * Image compression format (defaults to png).
     */
-    public final jpuppeteer.cdp.client.constant.headlessexperimental.ScreenshotParamsFormat format;
+    private jpuppeteer.cdp.client.constant.headlessexperimental.ScreenshotParamsFormat format;
 
     /**
     * Compression quality from range [0..100] (jpeg only).
     */
-    public final Integer quality;
+    private Integer quality;
+
+    public void setFormat (jpuppeteer.cdp.client.constant.headlessexperimental.ScreenshotParamsFormat format) {
+        this.format = format;
+    }
+
+    public jpuppeteer.cdp.client.constant.headlessexperimental.ScreenshotParamsFormat getFormat() {
+        return this.format;
+    }
+
+    public void setQuality (Integer quality) {
+        this.quality = quality;
+    }
+
+    public Integer getQuality() {
+        return this.quality;
+    }
 
     public ScreenshotParams(jpuppeteer.cdp.client.constant.headlessexperimental.ScreenshotParamsFormat format, Integer quality) {
         this.format = format;

@@ -7,10 +7,21 @@ public class AddHeapSnapshotChunkEvent {
 
     /**
     */
-    public final String chunk;
+    private String chunk;
+
+    public void setChunk (String chunk) {
+        this.chunk = chunk;
+    }
+
+    public String getChunk() {
+        return this.chunk;
+    }
 
     public AddHeapSnapshotChunkEvent(String chunk) {
         this.chunk = chunk;
+    }
+
+    public AddHeapSnapshotChunkEvent() {
     }
 
 }

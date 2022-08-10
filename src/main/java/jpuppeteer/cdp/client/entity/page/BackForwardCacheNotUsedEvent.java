@@ -8,16 +8,35 @@ public class BackForwardCacheNotUsedEvent {
     /**
     * The loader id for the associated navgation.
     */
-    public final String loaderId;
+    private String loaderId;
 
     /**
     * The frame id of the associated frame.
     */
-    public final String frameId;
+    private String frameId;
+
+    public void setLoaderId (String loaderId) {
+        this.loaderId = loaderId;
+    }
+
+    public String getLoaderId() {
+        return this.loaderId;
+    }
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
 
     public BackForwardCacheNotUsedEvent(String loaderId, String frameId) {
         this.loaderId = loaderId;
         this.frameId = frameId;
+    }
+
+    public BackForwardCacheNotUsedEvent() {
     }
 
 }

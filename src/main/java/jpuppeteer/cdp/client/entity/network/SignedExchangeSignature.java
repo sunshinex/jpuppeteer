@@ -8,47 +8,119 @@ public class SignedExchangeSignature {
     /**
     * Signed exchange signature label.
     */
-    public final String label;
+    private String label;
 
     /**
     * The hex string of signed exchange signature.
     */
-    public final String signature;
+    private String signature;
 
     /**
     * Signed exchange signature integrity.
     */
-    public final String integrity;
+    private String integrity;
 
     /**
     * Signed exchange signature cert Url.
     */
-    public final String certUrl;
+    private String certUrl;
 
     /**
     * The hex string of signed exchange signature cert sha256.
     */
-    public final String certSha256;
+    private String certSha256;
 
     /**
     * Signed exchange signature validity Url.
     */
-    public final String validityUrl;
+    private String validityUrl;
 
     /**
     * Signed exchange signature date.
     */
-    public final Integer date;
+    private Integer date;
 
     /**
     * Signed exchange signature expires.
     */
-    public final Integer expires;
+    private Integer expires;
 
     /**
     * The encoded certificates.
     */
-    public final java.util.List<String> certificates;
+    private java.util.List<String> certificates;
+
+    public void setLabel (String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return this.label;
+    }
+
+    public void setSignature (String signature) {
+        this.signature = signature;
+    }
+
+    public String getSignature() {
+        return this.signature;
+    }
+
+    public void setIntegrity (String integrity) {
+        this.integrity = integrity;
+    }
+
+    public String getIntegrity() {
+        return this.integrity;
+    }
+
+    public void setCertUrl (String certUrl) {
+        this.certUrl = certUrl;
+    }
+
+    public String getCertUrl() {
+        return this.certUrl;
+    }
+
+    public void setCertSha256 (String certSha256) {
+        this.certSha256 = certSha256;
+    }
+
+    public String getCertSha256() {
+        return this.certSha256;
+    }
+
+    public void setValidityUrl (String validityUrl) {
+        this.validityUrl = validityUrl;
+    }
+
+    public String getValidityUrl() {
+        return this.validityUrl;
+    }
+
+    public void setDate (Integer date) {
+        this.date = date;
+    }
+
+    public Integer getDate() {
+        return this.date;
+    }
+
+    public void setExpires (Integer expires) {
+        this.expires = expires;
+    }
+
+    public Integer getExpires() {
+        return this.expires;
+    }
+
+    public void setCertificates (java.util.List<String> certificates) {
+        this.certificates = certificates;
+    }
+
+    public java.util.List<String> getCertificates() {
+        return this.certificates;
+    }
 
     public SignedExchangeSignature(String label, String signature, String integrity, String certUrl, String certSha256, String validityUrl, Integer date, Integer expires, java.util.List<String> certificates) {
         this.label = label;
@@ -72,6 +144,9 @@ public class SignedExchangeSignature {
         this.date = date;
         this.expires = expires;
         this.certificates = null;
+    }
+
+    public SignedExchangeSignature() {
     }
 
 }

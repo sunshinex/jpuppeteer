@@ -6,10 +6,21 @@ public class SetCustomObjectFormatterEnabledRequest {
 
     /**
     */
-    public final Boolean enabled;
+    private Boolean enabled;
+
+    public void setEnabled (Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Boolean getEnabled() {
+        return this.enabled;
+    }
 
     public SetCustomObjectFormatterEnabledRequest(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public SetCustomObjectFormatterEnabledRequest() {
     }
 
 }

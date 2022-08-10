@@ -7,10 +7,21 @@ public class CloseRequest {
     /**
     * Handle of the stream to close.
     */
-    public final String handle;
+    private String handle;
+
+    public void setHandle (String handle) {
+        this.handle = handle;
+    }
+
+    public String getHandle() {
+        return this.handle;
+    }
 
     public CloseRequest(String handle) {
         this.handle = handle;
+    }
+
+    public CloseRequest() {
     }
 
 }

@@ -8,22 +8,49 @@ public class ResourceChangedPriorityEvent {
     /**
     * Request identifier.
     */
-    public final String requestId;
+    private String requestId;
 
     /**
     * New priority
     */
-    public final jpuppeteer.cdp.client.constant.network.ResourcePriority newPriority;
+    private jpuppeteer.cdp.client.constant.network.ResourcePriority newPriority;
 
     /**
     * Timestamp.
     */
-    public final java.math.BigDecimal timestamp;
+    private java.math.BigDecimal timestamp;
+
+    public void setRequestId (String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestId() {
+        return this.requestId;
+    }
+
+    public void setNewPriority (jpuppeteer.cdp.client.constant.network.ResourcePriority newPriority) {
+        this.newPriority = newPriority;
+    }
+
+    public jpuppeteer.cdp.client.constant.network.ResourcePriority getNewPriority() {
+        return this.newPriority;
+    }
+
+    public void setTimestamp (java.math.BigDecimal timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public java.math.BigDecimal getTimestamp() {
+        return this.timestamp;
+    }
 
     public ResourceChangedPriorityEvent(String requestId, jpuppeteer.cdp.client.constant.network.ResourcePriority newPriority, java.math.BigDecimal timestamp) {
         this.requestId = requestId;
         this.newPriority = newPriority;
         this.timestamp = timestamp;
+    }
+
+    public ResourceChangedPriorityEvent() {
     }
 
 }

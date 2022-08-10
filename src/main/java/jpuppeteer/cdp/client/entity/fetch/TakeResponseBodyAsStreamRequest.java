@@ -6,10 +6,21 @@ public class TakeResponseBodyAsStreamRequest {
 
     /**
     */
-    public final String requestId;
+    private String requestId;
+
+    public void setRequestId (String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestId() {
+        return this.requestId;
+    }
 
     public TakeResponseBodyAsStreamRequest(String requestId) {
         this.requestId = requestId;
+    }
+
+    public TakeResponseBodyAsStreamRequest() {
     }
 
 }

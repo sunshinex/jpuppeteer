@@ -21,6 +21,11 @@ public enum DispatchMouseEventRequestType implements jpuppeteer.cdp.client.CDPEn
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static DispatchMouseEventRequestType findByValue(String value) {
         for(DispatchMouseEventRequestType val : values()) {
             if (val.value.equals(value)) return val;

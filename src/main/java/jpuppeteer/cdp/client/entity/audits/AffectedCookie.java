@@ -9,20 +9,47 @@ public class AffectedCookie {
     /**
     * The following three properties uniquely identify a cookie
     */
-    public final String name;
+    private String name;
 
     /**
     */
-    public final String path;
+    private String path;
 
     /**
     */
-    public final String domain;
+    private String domain;
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setPath (String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return this.path;
+    }
+
+    public void setDomain (String domain) {
+        this.domain = domain;
+    }
+
+    public String getDomain() {
+        return this.domain;
+    }
 
     public AffectedCookie(String name, String path, String domain) {
         this.name = name;
         this.path = path;
         this.domain = domain;
+    }
+
+    public AffectedCookie() {
     }
 
 }

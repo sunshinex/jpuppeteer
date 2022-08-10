@@ -8,10 +8,21 @@ public class DeleteCacheRequest {
     /**
     * Id of cache for deletion.
     */
-    public final String cacheId;
+    private String cacheId;
+
+    public void setCacheId (String cacheId) {
+        this.cacheId = cacheId;
+    }
+
+    public String getCacheId() {
+        return this.cacheId;
+    }
 
     public DeleteCacheRequest(String cacheId) {
         this.cacheId = cacheId;
+    }
+
+    public DeleteCacheRequest() {
     }
 
 }

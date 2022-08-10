@@ -21,6 +21,11 @@ public enum DispatchKeyEventRequestType implements jpuppeteer.cdp.client.CDPEnum
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static DispatchKeyEventRequestType findByValue(String value) {
         for(DispatchKeyEventRequestType val : values()) {
             if (val.value.equals(value)) return val;

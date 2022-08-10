@@ -7,7 +7,15 @@ public class EnableRequest {
     /**
     * Time domain to use for collecting and reporting duration metrics.
     */
-    public final jpuppeteer.cdp.client.constant.performance.EnableRequestTimeDomain timeDomain;
+    private jpuppeteer.cdp.client.constant.performance.EnableRequestTimeDomain timeDomain;
+
+    public void setTimeDomain (jpuppeteer.cdp.client.constant.performance.EnableRequestTimeDomain timeDomain) {
+        this.timeDomain = timeDomain;
+    }
+
+    public jpuppeteer.cdp.client.constant.performance.EnableRequestTimeDomain getTimeDomain() {
+        return this.timeDomain;
+    }
 
     public EnableRequest(jpuppeteer.cdp.client.constant.performance.EnableRequestTimeDomain timeDomain) {
         this.timeDomain = timeDomain;

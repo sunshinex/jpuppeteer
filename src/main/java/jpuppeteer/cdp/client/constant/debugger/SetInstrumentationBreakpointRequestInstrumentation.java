@@ -19,6 +19,11 @@ public enum SetInstrumentationBreakpointRequestInstrumentation implements jpuppe
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SetInstrumentationBreakpointRequestInstrumentation findByValue(String value) {
         for(SetInstrumentationBreakpointRequestInstrumentation val : values()) {
             if (val.value.equals(value)) return val;

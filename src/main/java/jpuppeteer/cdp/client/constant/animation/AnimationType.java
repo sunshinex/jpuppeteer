@@ -21,6 +21,11 @@ public enum AnimationType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static AnimationType findByValue(String value) {
         for(AnimationType val : values()) {
             if (val.value.equals(value)) return val;

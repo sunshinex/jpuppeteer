@@ -7,7 +7,15 @@ public class GetSecurityIsolationStatusRequest {
     /**
     * If no frameId is provided, the status of the target is provided.
     */
-    public final String frameId;
+    private String frameId;
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
 
     public GetSecurityIsolationStatusRequest(String frameId) {
         this.frameId = frameId;

@@ -28,6 +28,11 @@ public enum ConsoleMessageSource implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ConsoleMessageSource findByValue(String value) {
         for(ConsoleMessageSource val : values()) {
             if (val.value.equals(value)) return val;

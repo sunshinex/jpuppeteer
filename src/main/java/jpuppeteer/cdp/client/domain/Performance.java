@@ -13,7 +13,7 @@ public class Performance {
     /**
     * Disable collecting and reporting metrics.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("Performance.disable", null);
     }
 
@@ -21,7 +21,7 @@ public class Performance {
     /**
     * Enable collecting and reporting metrics.
     */
-    public io.netty.util.concurrent.Future enable(jpuppeteer.cdp.client.entity.performance.EnableRequest request) {
+    public jpuppeteer.util.XFuture<?> enable(jpuppeteer.cdp.client.entity.performance.EnableRequest request) {
         return connection.send("Performance.enable", request);
     }
 
@@ -31,7 +31,7 @@ public class Performance {
     * experimental
     */
     @java.lang.Deprecated
-    public io.netty.util.concurrent.Future setTimeDomain(jpuppeteer.cdp.client.entity.performance.SetTimeDomainRequest request) {
+    public jpuppeteer.util.XFuture<?> setTimeDomain(jpuppeteer.cdp.client.entity.performance.SetTimeDomainRequest request) {
         return connection.send("Performance.setTimeDomain", request);
     }
 
@@ -39,7 +39,7 @@ public class Performance {
     /**
     * Retrieve current values of run-time metrics.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.performance.GetMetricsResponse> getMetrics() {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.performance.GetMetricsResponse> getMetrics() {
         return connection.send("Performance.getMetrics", null, jpuppeteer.cdp.client.entity.performance.GetMetricsResponse.class);
     }
 

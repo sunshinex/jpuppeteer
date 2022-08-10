@@ -13,7 +13,7 @@ public class DOMStorage {
 
     /**
     */
-    public io.netty.util.concurrent.Future clear(jpuppeteer.cdp.client.entity.domstorage.ClearRequest request) {
+    public jpuppeteer.util.XFuture<?> clear(jpuppeteer.cdp.client.entity.domstorage.ClearRequest request) {
         return connection.send("DOMStorage.clear", request);
     }
 
@@ -21,7 +21,7 @@ public class DOMStorage {
     /**
     * Disables storage tracking, prevents storage events from being sent to the client.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("DOMStorage.disable", null);
     }
 
@@ -29,28 +29,28 @@ public class DOMStorage {
     /**
     * Enables storage tracking, storage events will now be delivered to the client.
     */
-    public io.netty.util.concurrent.Future enable() {
+    public jpuppeteer.util.XFuture<?> enable() {
         return connection.send("DOMStorage.enable", null);
     }
 
 
     /**
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.domstorage.GetDOMStorageItemsResponse> getDOMStorageItems(jpuppeteer.cdp.client.entity.domstorage.GetDOMStorageItemsRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.domstorage.GetDOMStorageItemsResponse> getDOMStorageItems(jpuppeteer.cdp.client.entity.domstorage.GetDOMStorageItemsRequest request) {
         return connection.send("DOMStorage.getDOMStorageItems", request, jpuppeteer.cdp.client.entity.domstorage.GetDOMStorageItemsResponse.class);
     }
 
 
     /**
     */
-    public io.netty.util.concurrent.Future removeDOMStorageItem(jpuppeteer.cdp.client.entity.domstorage.RemoveDOMStorageItemRequest request) {
+    public jpuppeteer.util.XFuture<?> removeDOMStorageItem(jpuppeteer.cdp.client.entity.domstorage.RemoveDOMStorageItemRequest request) {
         return connection.send("DOMStorage.removeDOMStorageItem", request);
     }
 
 
     /**
     */
-    public io.netty.util.concurrent.Future setDOMStorageItem(jpuppeteer.cdp.client.entity.domstorage.SetDOMStorageItemRequest request) {
+    public jpuppeteer.util.XFuture<?> setDOMStorageItem(jpuppeteer.cdp.client.entity.domstorage.SetDOMStorageItemRequest request) {
         return connection.send("DOMStorage.setDOMStorageItem", request);
     }
 

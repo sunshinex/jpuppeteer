@@ -8,10 +8,21 @@ public class RecordClockSyncMarkerRequest {
     /**
     * The ID of this clock sync marker
     */
-    public final String syncId;
+    private String syncId;
+
+    public void setSyncId (String syncId) {
+        this.syncId = syncId;
+    }
+
+    public String getSyncId() {
+        return this.syncId;
+    }
 
     public RecordClockSyncMarkerRequest(String syncId) {
         this.syncId = syncId;
+    }
+
+    public RecordClockSyncMarkerRequest() {
     }
 
 }

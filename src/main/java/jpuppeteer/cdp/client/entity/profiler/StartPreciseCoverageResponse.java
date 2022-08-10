@@ -7,10 +7,21 @@ public class StartPreciseCoverageResponse {
     /**
     * Monotonically increasing time (in seconds) when the coverage update was taken in the backend.
     */
-    public final java.math.BigDecimal timestamp;
+    private java.math.BigDecimal timestamp;
+
+    public void setTimestamp (java.math.BigDecimal timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public java.math.BigDecimal getTimestamp() {
+        return this.timestamp;
+    }
 
     public StartPreciseCoverageResponse(java.math.BigDecimal timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public StartPreciseCoverageResponse() {
     }
 
 }

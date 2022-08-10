@@ -8,10 +8,21 @@ public class FrameClearedScheduledNavigationEvent {
     /**
     * Id of the frame that has cleared its scheduled navigation.
     */
-    public final String frameId;
+    private String frameId;
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
 
     public FrameClearedScheduledNavigationEvent(String frameId) {
         this.frameId = frameId;
+    }
+
+    public FrameClearedScheduledNavigationEvent() {
     }
 
 }

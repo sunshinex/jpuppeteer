@@ -40,6 +40,11 @@ public enum PermissionType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static PermissionType findByValue(String value) {
         for(PermissionType val : values()) {
             if (val.value.equals(value)) return val;

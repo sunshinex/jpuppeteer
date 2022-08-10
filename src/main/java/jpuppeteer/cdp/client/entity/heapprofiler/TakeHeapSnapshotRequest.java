@@ -8,12 +8,28 @@ public class TakeHeapSnapshotRequest {
     /**
     * If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.
     */
-    public final Boolean reportProgress;
+    private Boolean reportProgress;
 
     /**
     * If true, a raw snapshot without artifical roots will be generated
     */
-    public final Boolean treatGlobalObjectsAsRoots;
+    private Boolean treatGlobalObjectsAsRoots;
+
+    public void setReportProgress (Boolean reportProgress) {
+        this.reportProgress = reportProgress;
+    }
+
+    public Boolean getReportProgress() {
+        return this.reportProgress;
+    }
+
+    public void setTreatGlobalObjectsAsRoots (Boolean treatGlobalObjectsAsRoots) {
+        this.treatGlobalObjectsAsRoots = treatGlobalObjectsAsRoots;
+    }
+
+    public Boolean getTreatGlobalObjectsAsRoots() {
+        return this.treatGlobalObjectsAsRoots;
+    }
 
     public TakeHeapSnapshotRequest(Boolean reportProgress, Boolean treatGlobalObjectsAsRoots) {
         this.reportProgress = reportProgress;

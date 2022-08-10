@@ -7,10 +7,21 @@ public class RemoveXHRBreakpointRequest {
     /**
     * Resource URL substring.
     */
-    public final String url;
+    private String url;
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
 
     public RemoveXHRBreakpointRequest(String url) {
         this.url = url;
+    }
+
+    public RemoveXHRBreakpointRequest() {
     }
 
 }

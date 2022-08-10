@@ -75,6 +75,11 @@ public enum PermissionsPolicyFeature implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static PermissionsPolicyFeature findByValue(String value) {
         for(PermissionsPolicyFeature val : values()) {
             if (val.value.equals(value)) return val;

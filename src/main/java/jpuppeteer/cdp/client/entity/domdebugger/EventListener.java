@@ -8,52 +8,132 @@ public class EventListener {
     /**
     * `EventListener`'s type.
     */
-    public final String type;
+    private String type;
 
     /**
     * `EventListener`'s useCapture.
     */
-    public final Boolean useCapture;
+    private Boolean useCapture;
 
     /**
     * `EventListener`'s passive flag.
     */
-    public final Boolean passive;
+    private Boolean passive;
 
     /**
     * `EventListener`'s once flag.
     */
-    public final Boolean once;
+    private Boolean once;
 
     /**
     * Script id of the handler code.
     */
-    public final String scriptId;
+    private String scriptId;
 
     /**
     * Line number in the script (0-based).
     */
-    public final Integer lineNumber;
+    private Integer lineNumber;
 
     /**
     * Column number in the script (0-based).
     */
-    public final Integer columnNumber;
+    private Integer columnNumber;
 
     /**
     * Event handler function value.
     */
-    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject handler;
+    private jpuppeteer.cdp.client.entity.runtime.RemoteObject handler;
 
     /**
     * Event original handler function value.
     */
-    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject originalHandler;
+    private jpuppeteer.cdp.client.entity.runtime.RemoteObject originalHandler;
 
     /**
     * Node the listener is added to (if any).
     */
-    public final Integer backendNodeId;
+    private Integer backendNodeId;
+
+    public void setType (String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public void setUseCapture (Boolean useCapture) {
+        this.useCapture = useCapture;
+    }
+
+    public Boolean getUseCapture() {
+        return this.useCapture;
+    }
+
+    public void setPassive (Boolean passive) {
+        this.passive = passive;
+    }
+
+    public Boolean getPassive() {
+        return this.passive;
+    }
+
+    public void setOnce (Boolean once) {
+        this.once = once;
+    }
+
+    public Boolean getOnce() {
+        return this.once;
+    }
+
+    public void setScriptId (String scriptId) {
+        this.scriptId = scriptId;
+    }
+
+    public String getScriptId() {
+        return this.scriptId;
+    }
+
+    public void setLineNumber (Integer lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    public Integer getLineNumber() {
+        return this.lineNumber;
+    }
+
+    public void setColumnNumber (Integer columnNumber) {
+        this.columnNumber = columnNumber;
+    }
+
+    public Integer getColumnNumber() {
+        return this.columnNumber;
+    }
+
+    public void setHandler (jpuppeteer.cdp.client.entity.runtime.RemoteObject handler) {
+        this.handler = handler;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.RemoteObject getHandler() {
+        return this.handler;
+    }
+
+    public void setOriginalHandler (jpuppeteer.cdp.client.entity.runtime.RemoteObject originalHandler) {
+        this.originalHandler = originalHandler;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.RemoteObject getOriginalHandler() {
+        return this.originalHandler;
+    }
+
+    public void setBackendNodeId (Integer backendNodeId) {
+        this.backendNodeId = backendNodeId;
+    }
+
+    public Integer getBackendNodeId() {
+        return this.backendNodeId;
+    }
 
     public EventListener(String type, Boolean useCapture, Boolean passive, Boolean once, String scriptId, Integer lineNumber, Integer columnNumber, jpuppeteer.cdp.client.entity.runtime.RemoteObject handler, jpuppeteer.cdp.client.entity.runtime.RemoteObject originalHandler, Integer backendNodeId) {
         this.type = type;
@@ -79,6 +159,9 @@ public class EventListener {
         this.handler = null;
         this.originalHandler = null;
         this.backendNodeId = null;
+    }
+
+    public EventListener() {
     }
 
 }

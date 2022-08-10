@@ -1,7 +1,7 @@
 package jpuppeteer.api;
 
-import io.netty.util.concurrent.Future;
 import jpuppeteer.cdp.client.constant.fetch.AuthChallengeSource;
+import jpuppeteer.util.XFuture;
 
 public interface Authenticator extends Request {
 
@@ -15,8 +15,8 @@ public interface Authenticator extends Request {
 
     String realm();
 
-    Future accept(String username, String password);
+    XFuture<?> accept(String username, String password);
 
-    Future cancel();
+    XFuture<?> cancel();
 
 }

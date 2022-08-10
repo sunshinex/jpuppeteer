@@ -8,22 +8,49 @@ public class CertificateErrorEvent {
     /**
     * The ID of the event.
     */
-    public final Integer eventId;
+    private Integer eventId;
 
     /**
     * The type of the error.
     */
-    public final String errorType;
+    private String errorType;
 
     /**
     * The url that was requested.
     */
-    public final String requestURL;
+    private String requestURL;
+
+    public void setEventId (Integer eventId) {
+        this.eventId = eventId;
+    }
+
+    public Integer getEventId() {
+        return this.eventId;
+    }
+
+    public void setErrorType (String errorType) {
+        this.errorType = errorType;
+    }
+
+    public String getErrorType() {
+        return this.errorType;
+    }
+
+    public void setRequestURL (String requestURL) {
+        this.requestURL = requestURL;
+    }
+
+    public String getRequestURL() {
+        return this.requestURL;
+    }
 
     public CertificateErrorEvent(Integer eventId, String errorType, String requestURL) {
         this.eventId = eventId;
         this.errorType = errorType;
         this.requestURL = requestURL;
+    }
+
+    public CertificateErrorEvent() {
     }
 
 }

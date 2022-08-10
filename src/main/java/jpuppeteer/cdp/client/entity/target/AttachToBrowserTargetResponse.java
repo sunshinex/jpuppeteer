@@ -7,10 +7,21 @@ public class AttachToBrowserTargetResponse {
     /**
     * Id assigned to the session.
     */
-    public final String sessionId;
+    private String sessionId;
+
+    public void setSessionId (String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getSessionId() {
+        return this.sessionId;
+    }
 
     public AttachToBrowserTargetResponse(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public AttachToBrowserTargetResponse() {
     }
 
 }

@@ -14,7 +14,7 @@ public class DOM {
     * Collects class names for the node with given id and all of it's child nodes.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.CollectClassNamesFromSubtreeResponse> collectClassNamesFromSubtree(jpuppeteer.cdp.client.entity.dom.CollectClassNamesFromSubtreeRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.CollectClassNamesFromSubtreeResponse> collectClassNamesFromSubtree(jpuppeteer.cdp.client.entity.dom.CollectClassNamesFromSubtreeRequest request) {
         return connection.send("DOM.collectClassNamesFromSubtree", request, jpuppeteer.cdp.client.entity.dom.CollectClassNamesFromSubtreeResponse.class);
     }
 
@@ -23,7 +23,7 @@ public class DOM {
     * Creates a deep copy of the specified node and places it into the target container before the given anchor.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.CopyToResponse> copyTo(jpuppeteer.cdp.client.entity.dom.CopyToRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.CopyToResponse> copyTo(jpuppeteer.cdp.client.entity.dom.CopyToRequest request) {
         return connection.send("DOM.copyTo", request, jpuppeteer.cdp.client.entity.dom.CopyToResponse.class);
     }
 
@@ -31,7 +31,7 @@ public class DOM {
     /**
     * Describes node given its id, does not require domain to be enabled. Does not start tracking any objects, can be used for automation.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.DescribeNodeResponse> describeNode(jpuppeteer.cdp.client.entity.dom.DescribeNodeRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.DescribeNodeResponse> describeNode(jpuppeteer.cdp.client.entity.dom.DescribeNodeRequest request) {
         return connection.send("DOM.describeNode", request, jpuppeteer.cdp.client.entity.dom.DescribeNodeResponse.class);
     }
 
@@ -40,7 +40,7 @@ public class DOM {
     * Scrolls the specified rect of the given node into view if not already visible. Note: exactly one between nodeId, backendNodeId and objectId should be passed to identify the node.
     * experimental
     */
-    public io.netty.util.concurrent.Future scrollIntoViewIfNeeded(jpuppeteer.cdp.client.entity.dom.ScrollIntoViewIfNeededRequest request) {
+    public jpuppeteer.util.XFuture<?> scrollIntoViewIfNeeded(jpuppeteer.cdp.client.entity.dom.ScrollIntoViewIfNeededRequest request) {
         return connection.send("DOM.scrollIntoViewIfNeeded", request);
     }
 
@@ -48,7 +48,7 @@ public class DOM {
     /**
     * Disables DOM agent for the given page.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("DOM.disable", null);
     }
 
@@ -57,7 +57,7 @@ public class DOM {
     * Discards search results from the session with the given id. `getSearchResults` should no longer be called for that search.
     * experimental
     */
-    public io.netty.util.concurrent.Future discardSearchResults(jpuppeteer.cdp.client.entity.dom.DiscardSearchResultsRequest request) {
+    public jpuppeteer.util.XFuture<?> discardSearchResults(jpuppeteer.cdp.client.entity.dom.DiscardSearchResultsRequest request) {
         return connection.send("DOM.discardSearchResults", request);
     }
 
@@ -65,7 +65,7 @@ public class DOM {
     /**
     * Enables DOM agent for the given page.
     */
-    public io.netty.util.concurrent.Future enable() {
+    public jpuppeteer.util.XFuture<?> enable() {
         return connection.send("DOM.enable", null);
     }
 
@@ -73,7 +73,7 @@ public class DOM {
     /**
     * Focuses the given element.
     */
-    public io.netty.util.concurrent.Future focus(jpuppeteer.cdp.client.entity.dom.FocusRequest request) {
+    public jpuppeteer.util.XFuture<?> focus(jpuppeteer.cdp.client.entity.dom.FocusRequest request) {
         return connection.send("DOM.focus", request);
     }
 
@@ -81,7 +81,7 @@ public class DOM {
     /**
     * Returns attributes for the specified node.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetAttributesResponse> getAttributes(jpuppeteer.cdp.client.entity.dom.GetAttributesRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.GetAttributesResponse> getAttributes(jpuppeteer.cdp.client.entity.dom.GetAttributesRequest request) {
         return connection.send("DOM.getAttributes", request, jpuppeteer.cdp.client.entity.dom.GetAttributesResponse.class);
     }
 
@@ -89,7 +89,7 @@ public class DOM {
     /**
     * Returns boxes for the given node.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetBoxModelResponse> getBoxModel(jpuppeteer.cdp.client.entity.dom.GetBoxModelRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.GetBoxModelResponse> getBoxModel(jpuppeteer.cdp.client.entity.dom.GetBoxModelRequest request) {
         return connection.send("DOM.getBoxModel", request, jpuppeteer.cdp.client.entity.dom.GetBoxModelResponse.class);
     }
 
@@ -98,7 +98,7 @@ public class DOM {
     * Returns quads that describe node position on the page. This method might return multiple quads for inline nodes.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetContentQuadsResponse> getContentQuads(jpuppeteer.cdp.client.entity.dom.GetContentQuadsRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.GetContentQuadsResponse> getContentQuads(jpuppeteer.cdp.client.entity.dom.GetContentQuadsRequest request) {
         return connection.send("DOM.getContentQuads", request, jpuppeteer.cdp.client.entity.dom.GetContentQuadsResponse.class);
     }
 
@@ -106,7 +106,7 @@ public class DOM {
     /**
     * Returns the root DOM node (and optionally the subtree) to the caller.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetDocumentResponse> getDocument(jpuppeteer.cdp.client.entity.dom.GetDocumentRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.GetDocumentResponse> getDocument(jpuppeteer.cdp.client.entity.dom.GetDocumentRequest request) {
         return connection.send("DOM.getDocument", request, jpuppeteer.cdp.client.entity.dom.GetDocumentResponse.class);
     }
 
@@ -115,7 +115,7 @@ public class DOM {
     * Returns the root DOM node (and optionally the subtree) to the caller. Deprecated, as it is not designed to work well with the rest of the DOM agent. Use DOMSnapshot.captureSnapshot instead.
     */
     @java.lang.Deprecated
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetFlattenedDocumentResponse> getFlattenedDocument(jpuppeteer.cdp.client.entity.dom.GetFlattenedDocumentRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.GetFlattenedDocumentResponse> getFlattenedDocument(jpuppeteer.cdp.client.entity.dom.GetFlattenedDocumentRequest request) {
         return connection.send("DOM.getFlattenedDocument", request, jpuppeteer.cdp.client.entity.dom.GetFlattenedDocumentResponse.class);
     }
 
@@ -124,7 +124,7 @@ public class DOM {
     * Finds nodes with a given computed style in a subtree.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetNodesForSubtreeByStyleResponse> getNodesForSubtreeByStyle(jpuppeteer.cdp.client.entity.dom.GetNodesForSubtreeByStyleRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.GetNodesForSubtreeByStyleResponse> getNodesForSubtreeByStyle(jpuppeteer.cdp.client.entity.dom.GetNodesForSubtreeByStyleRequest request) {
         return connection.send("DOM.getNodesForSubtreeByStyle", request, jpuppeteer.cdp.client.entity.dom.GetNodesForSubtreeByStyleResponse.class);
     }
 
@@ -132,7 +132,7 @@ public class DOM {
     /**
     * Returns node id at given location. Depending on whether DOM domain is enabled, nodeId is either returned or not.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetNodeForLocationResponse> getNodeForLocation(jpuppeteer.cdp.client.entity.dom.GetNodeForLocationRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.GetNodeForLocationResponse> getNodeForLocation(jpuppeteer.cdp.client.entity.dom.GetNodeForLocationRequest request) {
         return connection.send("DOM.getNodeForLocation", request, jpuppeteer.cdp.client.entity.dom.GetNodeForLocationResponse.class);
     }
 
@@ -140,7 +140,7 @@ public class DOM {
     /**
     * Returns node's HTML markup.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetOuterHTMLResponse> getOuterHTML(jpuppeteer.cdp.client.entity.dom.GetOuterHTMLRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.GetOuterHTMLResponse> getOuterHTML(jpuppeteer.cdp.client.entity.dom.GetOuterHTMLRequest request) {
         return connection.send("DOM.getOuterHTML", request, jpuppeteer.cdp.client.entity.dom.GetOuterHTMLResponse.class);
     }
 
@@ -149,7 +149,7 @@ public class DOM {
     * Returns the id of the nearest ancestor that is a relayout boundary.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetRelayoutBoundaryResponse> getRelayoutBoundary(jpuppeteer.cdp.client.entity.dom.GetRelayoutBoundaryRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.GetRelayoutBoundaryResponse> getRelayoutBoundary(jpuppeteer.cdp.client.entity.dom.GetRelayoutBoundaryRequest request) {
         return connection.send("DOM.getRelayoutBoundary", request, jpuppeteer.cdp.client.entity.dom.GetRelayoutBoundaryResponse.class);
     }
 
@@ -158,7 +158,7 @@ public class DOM {
     * Returns search results from given `fromIndex` to given `toIndex` from the search with the given identifier.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetSearchResultsResponse> getSearchResults(jpuppeteer.cdp.client.entity.dom.GetSearchResultsRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.GetSearchResultsResponse> getSearchResults(jpuppeteer.cdp.client.entity.dom.GetSearchResultsRequest request) {
         return connection.send("DOM.getSearchResults", request, jpuppeteer.cdp.client.entity.dom.GetSearchResultsResponse.class);
     }
 
@@ -166,7 +166,7 @@ public class DOM {
     /**
     * Hides any highlight.
     */
-    public io.netty.util.concurrent.Future hideHighlight() {
+    public jpuppeteer.util.XFuture<?> hideHighlight() {
         return connection.send("DOM.hideHighlight", null);
     }
 
@@ -174,7 +174,7 @@ public class DOM {
     /**
     * Highlights DOM node.
     */
-    public io.netty.util.concurrent.Future highlightNode() {
+    public jpuppeteer.util.XFuture<?> highlightNode() {
         return connection.send("DOM.highlightNode", null);
     }
 
@@ -182,7 +182,7 @@ public class DOM {
     /**
     * Highlights given rectangle.
     */
-    public io.netty.util.concurrent.Future highlightRect() {
+    public jpuppeteer.util.XFuture<?> highlightRect() {
         return connection.send("DOM.highlightRect", null);
     }
 
@@ -191,7 +191,7 @@ public class DOM {
     * Marks last undoable state.
     * experimental
     */
-    public io.netty.util.concurrent.Future markUndoableState() {
+    public jpuppeteer.util.XFuture<?> markUndoableState() {
         return connection.send("DOM.markUndoableState", null);
     }
 
@@ -199,7 +199,7 @@ public class DOM {
     /**
     * Moves node into the new container, places it before the given anchor.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.MoveToResponse> moveTo(jpuppeteer.cdp.client.entity.dom.MoveToRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.MoveToResponse> moveTo(jpuppeteer.cdp.client.entity.dom.MoveToRequest request) {
         return connection.send("DOM.moveTo", request, jpuppeteer.cdp.client.entity.dom.MoveToResponse.class);
     }
 
@@ -208,7 +208,7 @@ public class DOM {
     * Searches for a given string in the DOM tree. Use `getSearchResults` to access search results or `cancelSearch` to end this search session.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.PerformSearchResponse> performSearch(jpuppeteer.cdp.client.entity.dom.PerformSearchRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.PerformSearchResponse> performSearch(jpuppeteer.cdp.client.entity.dom.PerformSearchRequest request) {
         return connection.send("DOM.performSearch", request, jpuppeteer.cdp.client.entity.dom.PerformSearchResponse.class);
     }
 
@@ -217,7 +217,7 @@ public class DOM {
     * Requests that the node is sent to the caller given its path. // FIXME, use XPath
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.PushNodeByPathToFrontendResponse> pushNodeByPathToFrontend(jpuppeteer.cdp.client.entity.dom.PushNodeByPathToFrontendRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.PushNodeByPathToFrontendResponse> pushNodeByPathToFrontend(jpuppeteer.cdp.client.entity.dom.PushNodeByPathToFrontendRequest request) {
         return connection.send("DOM.pushNodeByPathToFrontend", request, jpuppeteer.cdp.client.entity.dom.PushNodeByPathToFrontendResponse.class);
     }
 
@@ -226,7 +226,7 @@ public class DOM {
     * Requests that a batch of nodes is sent to the caller given their backend node ids.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.PushNodesByBackendIdsToFrontendResponse> pushNodesByBackendIdsToFrontend(jpuppeteer.cdp.client.entity.dom.PushNodesByBackendIdsToFrontendRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.PushNodesByBackendIdsToFrontendResponse> pushNodesByBackendIdsToFrontend(jpuppeteer.cdp.client.entity.dom.PushNodesByBackendIdsToFrontendRequest request) {
         return connection.send("DOM.pushNodesByBackendIdsToFrontend", request, jpuppeteer.cdp.client.entity.dom.PushNodesByBackendIdsToFrontendResponse.class);
     }
 
@@ -234,7 +234,7 @@ public class DOM {
     /**
     * Executes `querySelector` on a given node.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.QuerySelectorResponse> querySelector(jpuppeteer.cdp.client.entity.dom.QuerySelectorRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.QuerySelectorResponse> querySelector(jpuppeteer.cdp.client.entity.dom.QuerySelectorRequest request) {
         return connection.send("DOM.querySelector", request, jpuppeteer.cdp.client.entity.dom.QuerySelectorResponse.class);
     }
 
@@ -242,7 +242,7 @@ public class DOM {
     /**
     * Executes `querySelectorAll` on a given node.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.QuerySelectorAllResponse> querySelectorAll(jpuppeteer.cdp.client.entity.dom.QuerySelectorAllRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.QuerySelectorAllResponse> querySelectorAll(jpuppeteer.cdp.client.entity.dom.QuerySelectorAllRequest request) {
         return connection.send("DOM.querySelectorAll", request, jpuppeteer.cdp.client.entity.dom.QuerySelectorAllResponse.class);
     }
 
@@ -251,7 +251,7 @@ public class DOM {
     * Re-does the last undone action.
     * experimental
     */
-    public io.netty.util.concurrent.Future redo() {
+    public jpuppeteer.util.XFuture<?> redo() {
         return connection.send("DOM.redo", null);
     }
 
@@ -259,7 +259,7 @@ public class DOM {
     /**
     * Removes attribute with given name from an element with given id.
     */
-    public io.netty.util.concurrent.Future removeAttribute(jpuppeteer.cdp.client.entity.dom.RemoveAttributeRequest request) {
+    public jpuppeteer.util.XFuture<?> removeAttribute(jpuppeteer.cdp.client.entity.dom.RemoveAttributeRequest request) {
         return connection.send("DOM.removeAttribute", request);
     }
 
@@ -267,7 +267,7 @@ public class DOM {
     /**
     * Removes node with given id.
     */
-    public io.netty.util.concurrent.Future removeNode(jpuppeteer.cdp.client.entity.dom.RemoveNodeRequest request) {
+    public jpuppeteer.util.XFuture<?> removeNode(jpuppeteer.cdp.client.entity.dom.RemoveNodeRequest request) {
         return connection.send("DOM.removeNode", request);
     }
 
@@ -275,7 +275,7 @@ public class DOM {
     /**
     * Requests that children of the node with given id are returned to the caller in form of `setChildNodes` events where not only immediate children are retrieved, but all children down to the specified depth.
     */
-    public io.netty.util.concurrent.Future requestChildNodes(jpuppeteer.cdp.client.entity.dom.RequestChildNodesRequest request) {
+    public jpuppeteer.util.XFuture<?> requestChildNodes(jpuppeteer.cdp.client.entity.dom.RequestChildNodesRequest request) {
         return connection.send("DOM.requestChildNodes", request);
     }
 
@@ -283,7 +283,7 @@ public class DOM {
     /**
     * Requests that the node is sent to the caller given the JavaScript node object reference. All nodes that form the path from the node to the root are also sent to the client as a series of `setChildNodes` notifications.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.RequestNodeResponse> requestNode(jpuppeteer.cdp.client.entity.dom.RequestNodeRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.RequestNodeResponse> requestNode(jpuppeteer.cdp.client.entity.dom.RequestNodeRequest request) {
         return connection.send("DOM.requestNode", request, jpuppeteer.cdp.client.entity.dom.RequestNodeResponse.class);
     }
 
@@ -291,7 +291,7 @@ public class DOM {
     /**
     * Resolves the JavaScript node object for a given NodeId or BackendNodeId.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.ResolveNodeResponse> resolveNode(jpuppeteer.cdp.client.entity.dom.ResolveNodeRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.ResolveNodeResponse> resolveNode(jpuppeteer.cdp.client.entity.dom.ResolveNodeRequest request) {
         return connection.send("DOM.resolveNode", request, jpuppeteer.cdp.client.entity.dom.ResolveNodeResponse.class);
     }
 
@@ -299,7 +299,7 @@ public class DOM {
     /**
     * Sets attribute for an element with given id.
     */
-    public io.netty.util.concurrent.Future setAttributeValue(jpuppeteer.cdp.client.entity.dom.SetAttributeValueRequest request) {
+    public jpuppeteer.util.XFuture<?> setAttributeValue(jpuppeteer.cdp.client.entity.dom.SetAttributeValueRequest request) {
         return connection.send("DOM.setAttributeValue", request);
     }
 
@@ -307,7 +307,7 @@ public class DOM {
     /**
     * Sets attributes on element with given id. This method is useful when user edits some existing attribute value and types in several attribute name/value pairs.
     */
-    public io.netty.util.concurrent.Future setAttributesAsText(jpuppeteer.cdp.client.entity.dom.SetAttributesAsTextRequest request) {
+    public jpuppeteer.util.XFuture<?> setAttributesAsText(jpuppeteer.cdp.client.entity.dom.SetAttributesAsTextRequest request) {
         return connection.send("DOM.setAttributesAsText", request);
     }
 
@@ -315,7 +315,7 @@ public class DOM {
     /**
     * Sets files for the given file input element.
     */
-    public io.netty.util.concurrent.Future setFileInputFiles(jpuppeteer.cdp.client.entity.dom.SetFileInputFilesRequest request) {
+    public jpuppeteer.util.XFuture<?> setFileInputFiles(jpuppeteer.cdp.client.entity.dom.SetFileInputFilesRequest request) {
         return connection.send("DOM.setFileInputFiles", request);
     }
 
@@ -324,7 +324,7 @@ public class DOM {
     * Sets if stack traces should be captured for Nodes. See `Node.getNodeStackTraces`. Default is disabled.
     * experimental
     */
-    public io.netty.util.concurrent.Future setNodeStackTracesEnabled(jpuppeteer.cdp.client.entity.dom.SetNodeStackTracesEnabledRequest request) {
+    public jpuppeteer.util.XFuture<?> setNodeStackTracesEnabled(jpuppeteer.cdp.client.entity.dom.SetNodeStackTracesEnabledRequest request) {
         return connection.send("DOM.setNodeStackTracesEnabled", request);
     }
 
@@ -333,7 +333,7 @@ public class DOM {
     * Gets stack traces associated with a Node. As of now, only provides stack trace for Node creation.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetNodeStackTracesResponse> getNodeStackTraces(jpuppeteer.cdp.client.entity.dom.GetNodeStackTracesRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.GetNodeStackTracesResponse> getNodeStackTraces(jpuppeteer.cdp.client.entity.dom.GetNodeStackTracesRequest request) {
         return connection.send("DOM.getNodeStackTraces", request, jpuppeteer.cdp.client.entity.dom.GetNodeStackTracesResponse.class);
     }
 
@@ -342,7 +342,7 @@ public class DOM {
     * Returns file information for the given File wrapper.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetFileInfoResponse> getFileInfo(jpuppeteer.cdp.client.entity.dom.GetFileInfoRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.GetFileInfoResponse> getFileInfo(jpuppeteer.cdp.client.entity.dom.GetFileInfoRequest request) {
         return connection.send("DOM.getFileInfo", request, jpuppeteer.cdp.client.entity.dom.GetFileInfoResponse.class);
     }
 
@@ -351,7 +351,7 @@ public class DOM {
     * Enables console to refer to the node with given id via $x (see Command Line API for more details $x functions).
     * experimental
     */
-    public io.netty.util.concurrent.Future setInspectedNode(jpuppeteer.cdp.client.entity.dom.SetInspectedNodeRequest request) {
+    public jpuppeteer.util.XFuture<?> setInspectedNode(jpuppeteer.cdp.client.entity.dom.SetInspectedNodeRequest request) {
         return connection.send("DOM.setInspectedNode", request);
     }
 
@@ -359,7 +359,7 @@ public class DOM {
     /**
     * Sets node name for a node with given id.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.SetNodeNameResponse> setNodeName(jpuppeteer.cdp.client.entity.dom.SetNodeNameRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.SetNodeNameResponse> setNodeName(jpuppeteer.cdp.client.entity.dom.SetNodeNameRequest request) {
         return connection.send("DOM.setNodeName", request, jpuppeteer.cdp.client.entity.dom.SetNodeNameResponse.class);
     }
 
@@ -367,7 +367,7 @@ public class DOM {
     /**
     * Sets node value for a node with given id.
     */
-    public io.netty.util.concurrent.Future setNodeValue(jpuppeteer.cdp.client.entity.dom.SetNodeValueRequest request) {
+    public jpuppeteer.util.XFuture<?> setNodeValue(jpuppeteer.cdp.client.entity.dom.SetNodeValueRequest request) {
         return connection.send("DOM.setNodeValue", request);
     }
 
@@ -375,7 +375,7 @@ public class DOM {
     /**
     * Sets node HTML markup, returns new node id.
     */
-    public io.netty.util.concurrent.Future setOuterHTML(jpuppeteer.cdp.client.entity.dom.SetOuterHTMLRequest request) {
+    public jpuppeteer.util.XFuture<?> setOuterHTML(jpuppeteer.cdp.client.entity.dom.SetOuterHTMLRequest request) {
         return connection.send("DOM.setOuterHTML", request);
     }
 
@@ -384,7 +384,7 @@ public class DOM {
     * Undoes the last performed action.
     * experimental
     */
-    public io.netty.util.concurrent.Future undo() {
+    public jpuppeteer.util.XFuture<?> undo() {
         return connection.send("DOM.undo", null);
     }
 
@@ -393,7 +393,7 @@ public class DOM {
     * Returns iframe node that owns iframe with the given domain.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.dom.GetFrameOwnerResponse> getFrameOwner(jpuppeteer.cdp.client.entity.dom.GetFrameOwnerRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.dom.GetFrameOwnerResponse> getFrameOwner(jpuppeteer.cdp.client.entity.dom.GetFrameOwnerRequest request) {
         return connection.send("DOM.getFrameOwner", request, jpuppeteer.cdp.client.entity.dom.GetFrameOwnerResponse.class);
     }
 

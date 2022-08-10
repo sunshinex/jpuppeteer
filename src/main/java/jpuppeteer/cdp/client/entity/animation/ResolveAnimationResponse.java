@@ -8,10 +8,21 @@ public class ResolveAnimationResponse {
     /**
     * Corresponding remote object.
     */
-    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject remoteObject;
+    private jpuppeteer.cdp.client.entity.runtime.RemoteObject remoteObject;
+
+    public void setRemoteObject (jpuppeteer.cdp.client.entity.runtime.RemoteObject remoteObject) {
+        this.remoteObject = remoteObject;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.RemoteObject getRemoteObject() {
+        return this.remoteObject;
+    }
 
     public ResolveAnimationResponse(jpuppeteer.cdp.client.entity.runtime.RemoteObject remoteObject) {
         this.remoteObject = remoteObject;
+    }
+
+    public ResolveAnimationResponse() {
     }
 
 }

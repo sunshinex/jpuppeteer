@@ -7,11 +7,27 @@ public class StackTraceId {
 
     /**
     */
-    public final String id;
+    private String id;
 
     /**
     */
-    public final String debuggerId;
+    private String debuggerId;
+
+    public void setId (String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public void setDebuggerId (String debuggerId) {
+        this.debuggerId = debuggerId;
+    }
+
+    public String getDebuggerId() {
+        return this.debuggerId;
+    }
 
     public StackTraceId(String id, String debuggerId) {
         this.id = id;
@@ -21,6 +37,9 @@ public class StackTraceId {
     public StackTraceId(String id) {
         this.id = id;
         this.debuggerId = null;
+    }
+
+    public StackTraceId() {
     }
 
 }

@@ -31,6 +31,11 @@ public enum CookieBlockedReason implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static CookieBlockedReason findByValue(String value) {
         for(CookieBlockedReason val : values()) {
             if (val.value.equals(value)) return val;

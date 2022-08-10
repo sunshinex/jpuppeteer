@@ -9,10 +9,21 @@ public class AnimationCreatedEvent {
     /**
     * Id of the animation that was created.
     */
-    public final String id;
+    private String id;
+
+    public void setId (String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return this.id;
+    }
 
     public AnimationCreatedEvent(String id) {
         this.id = id;
+    }
+
+    public AnimationCreatedEvent() {
     }
 
 }

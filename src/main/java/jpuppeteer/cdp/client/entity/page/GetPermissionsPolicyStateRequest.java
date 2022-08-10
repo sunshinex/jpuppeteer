@@ -6,10 +6,21 @@ public class GetPermissionsPolicyStateRequest {
 
     /**
     */
-    public final String frameId;
+    private String frameId;
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
 
     public GetPermissionsPolicyStateRequest(String frameId) {
         this.frameId = frameId;
+    }
+
+    public GetPermissionsPolicyStateRequest() {
     }
 
 }

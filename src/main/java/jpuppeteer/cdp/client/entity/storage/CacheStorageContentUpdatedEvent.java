@@ -9,16 +9,35 @@ public class CacheStorageContentUpdatedEvent {
     /**
     * Origin to update.
     */
-    public final String origin;
+    private String origin;
 
     /**
     * Name of cache in origin.
     */
-    public final String cacheName;
+    private String cacheName;
+
+    public void setOrigin (String origin) {
+        this.origin = origin;
+    }
+
+    public String getOrigin() {
+        return this.origin;
+    }
+
+    public void setCacheName (String cacheName) {
+        this.cacheName = cacheName;
+    }
+
+    public String getCacheName() {
+        return this.cacheName;
+    }
 
     public CacheStorageContentUpdatedEvent(String origin, String cacheName) {
         this.origin = origin;
         this.cacheName = cacheName;
+    }
+
+    public CacheStorageContentUpdatedEvent() {
     }
 
 }

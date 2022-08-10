@@ -7,12 +7,28 @@ public class SetTouchEmulationEnabledRequest {
     /**
     * Whether the touch event emulation should be enabled.
     */
-    public final Boolean enabled;
+    private Boolean enabled;
 
     /**
     * Maximum touch points supported. Defaults to one.
     */
-    public final Integer maxTouchPoints;
+    private Integer maxTouchPoints;
+
+    public void setEnabled (Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Boolean getEnabled() {
+        return this.enabled;
+    }
+
+    public void setMaxTouchPoints (Integer maxTouchPoints) {
+        this.maxTouchPoints = maxTouchPoints;
+    }
+
+    public Integer getMaxTouchPoints() {
+        return this.maxTouchPoints;
+    }
 
     public SetTouchEmulationEnabledRequest(Boolean enabled, Integer maxTouchPoints) {
         this.enabled = enabled;
@@ -22,6 +38,9 @@ public class SetTouchEmulationEnabledRequest {
     public SetTouchEmulationEnabledRequest(Boolean enabled) {
         this.enabled = enabled;
         this.maxTouchPoints = null;
+    }
+
+    public SetTouchEmulationEnabledRequest() {
     }
 
 }

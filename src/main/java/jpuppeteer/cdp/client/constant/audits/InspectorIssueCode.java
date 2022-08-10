@@ -31,6 +31,11 @@ public enum InspectorIssueCode implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static InspectorIssueCode findByValue(String value) {
         for(InspectorIssueCode val : values()) {
             if (val.value.equals(value)) return val;

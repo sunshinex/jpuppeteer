@@ -8,15 +8,34 @@ public class AudioNodeWillBeDestroyedEvent {
 
     /**
     */
-    public final String contextId;
+    private String contextId;
 
     /**
     */
-    public final String nodeId;
+    private String nodeId;
+
+    public void setContextId (String contextId) {
+        this.contextId = contextId;
+    }
+
+    public String getContextId() {
+        return this.contextId;
+    }
+
+    public void setNodeId (String nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public String getNodeId() {
+        return this.nodeId;
+    }
 
     public AudioNodeWillBeDestroyedEvent(String contextId, String nodeId) {
         this.contextId = contextId;
         this.nodeId = nodeId;
+    }
+
+    public AudioNodeWillBeDestroyedEvent() {
     }
 
 }

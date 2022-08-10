@@ -21,6 +21,11 @@ public enum DisabledImageType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static DisabledImageType findByValue(String value) {
         for(DisabledImageType val : values()) {
             if (val.value.equals(value)) return val;

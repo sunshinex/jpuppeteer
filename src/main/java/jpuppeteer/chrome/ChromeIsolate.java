@@ -1,6 +1,5 @@
 package jpuppeteer.chrome;
 
-import io.netty.util.concurrent.Future;
 import jpuppeteer.api.BindingFunction;
 import jpuppeteer.api.BrowserObject;
 import jpuppeteer.api.Frame;
@@ -11,7 +10,7 @@ import jpuppeteer.cdp.client.domain.Runtime;
 import jpuppeteer.cdp.client.entity.runtime.CallFunctionOnRequest;
 import jpuppeteer.cdp.client.entity.runtime.EvaluateRequest;
 import jpuppeteer.util.IsolateUtil;
-import jpuppeteer.util.SeriesPromise;
+import jpuppeteer.util.XFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,69 +61,65 @@ public class ChromeIsolate implements Isolate {
     }
 
     @Override
-    public Future<BrowserObject> eval(EvaluateRequest request) {
-        return SeriesPromise
-                .wrap(runtime().evaluate(request))
+    public XFuture<BrowserObject> eval(EvaluateRequest request) {
+        return runtime().evaluate(request)
                 .sync(o -> {
-                    IsolateUtil.checkException(o.exceptionDetails);
-                    if (checkNull(o.result.type, o.result.subtype)) {
+                    IsolateUtil.checkException(o.getExceptionDetails());
+                    if (checkNull(o.getResult().getType(), o.getResult().getSubtype())) {
                         return null;
                     }
-                    return new ChromeObject(ChromeIsolate.this, o.result.objectId);
+                    return new ChromeObject(ChromeIsolate.this, o.getResult().getObjectId());
                 });
     }
 
     @Override
-    public <R> Future<R> eval(EvaluateRequest request, Class<R> clazz) {
-        return SeriesPromise
-                .wrap(runtime().evaluate(request))
+    public <R> XFuture<R> eval(EvaluateRequest request, Class<R> clazz) {
+        return runtime().evaluate(request)
                 .sync(o -> {
-                    IsolateUtil.checkException(o.exceptionDetails);
-                    if (checkNull(o.result.type, o.result.subtype)) {
+                    IsolateUtil.checkException(o.getExceptionDetails());
+                    if (checkNull(o.getResult().getType(), o.getResult().getSubtype())) {
                         return null;
                     }
-                    return IsolateUtil.remoteObjectToValue(o.result, clazz);
+                    return IsolateUtil.remoteObjectToValue(o.getResult(), clazz);
                 });
     }
 
     @Override
-    public Future<BrowserObject> eval(String expression, Integer timeout) {
+    public XFuture<BrowserObject> eval(String expression, Integer timeout) {
         return eval(IsolateUtil.buildEvaluateRequest(expression, isolateId, false, timeout, uniqueId));
     }
 
     @Override
-    public <R> Future<R> eval(String expression, Integer timeout, Class<R> clazz) {
+    public <R> XFuture<R> eval(String expression, Integer timeout, Class<R> clazz) {
         return eval(IsolateUtil.buildEvaluateRequest(expression, isolateId, true, timeout, uniqueId), clazz);
     }
 
     @Override
-    public Future<BrowserObject> call(CallFunctionOnRequest request) {
-        return SeriesPromise
-                .wrap(runtime().callFunctionOn(request))
+    public XFuture<BrowserObject> call(CallFunctionOnRequest request) {
+        return runtime().callFunctionOn(request)
                 .sync(o -> {
-                    IsolateUtil.checkException(o.exceptionDetails);
-                    if (checkNull(o.result.type, o.result.subtype)) {
+                    IsolateUtil.checkException(o.getExceptionDetails());
+                    if (checkNull(o.getResult().getType(), o.getResult().getSubtype())) {
                         return null;
                     }
-                    return new ChromeObject(this, o.result.objectId);
+                    return new ChromeObject(this, o.getResult().getObjectId());
                 });
     }
 
     @Override
-    public <R> Future<R> call(CallFunctionOnRequest request, Class<R> clazz) {
-        return SeriesPromise
-                .wrap(runtime().callFunctionOn(request))
+    public <R> XFuture<R> call(CallFunctionOnRequest request, Class<R> clazz) {
+        return runtime().callFunctionOn(request)
                 .sync(o -> {
-                    IsolateUtil.checkException(o.exceptionDetails);
-                    if (checkNull(o.result.type, o.result.subtype)) {
+                    IsolateUtil.checkException(o.getExceptionDetails());
+                    if (checkNull(o.getResult().getType(), o.getResult().getSubtype())) {
                         return null;
                     }
-                    return IsolateUtil.remoteObjectToValue(o.result, clazz);
+                    return IsolateUtil.remoteObjectToValue(o.getResult(), clazz);
                 });
     }
 
     @Override
-    public Future<BrowserObject> call(String declaration, String objectId, Object... args) {
+    public XFuture<BrowserObject> call(String declaration, String objectId, Object... args) {
         if (objectId == null) {
             throw new IllegalArgumentException("objectId required");
         }
@@ -132,7 +127,7 @@ public class ChromeIsolate implements Isolate {
     }
 
     @Override
-    public <R> Future<R> call(String declaration, String objectId, Class<R> clazz, Object... args) {
+    public <R> XFuture<R> call(String declaration, String objectId, Class<R> clazz, Object... args) {
         if (objectId == null) {
             throw new IllegalArgumentException("objectId required");
         }
@@ -140,22 +135,22 @@ public class ChromeIsolate implements Isolate {
     }
 
     @Override
-    public Future<BrowserObject> call(String declaration, Object... args) {
+    public XFuture<BrowserObject> call(String declaration, Object... args) {
         return call(IsolateUtil.buildCallRequest(declaration, null, false, isolateId, args));
     }
 
     @Override
-    public <R> Future<R> call(String declaration, Class<R> clazz, Object... args) {
+    public <R> XFuture<R> call(String declaration, Class<R> clazz, Object... args) {
         return call(IsolateUtil.buildCallRequest(declaration, null, true, isolateId, args), clazz);
     }
 
     @Override
-    public Future addBinding(String bindingName, BindingFunction function) {
+    public XFuture<?> addBinding(String bindingName, BindingFunction function) {
         return frame.page().addBinding0(name, bindingName, function);
     }
 
     @Override
-    public Future removeBinding(String bindingName) {
+    public XFuture<?> removeBinding(String bindingName) {
         return frame.page().removeBinding0(bindingName);
     }
 

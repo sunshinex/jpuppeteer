@@ -8,17 +8,41 @@ public class WebSocketCreatedEvent {
     /**
     * Request identifier.
     */
-    public final String requestId;
+    private String requestId;
 
     /**
     * WebSocket request URL.
     */
-    public final String url;
+    private String url;
 
     /**
     * Request initiator.
     */
-    public final jpuppeteer.cdp.client.entity.network.Initiator initiator;
+    private jpuppeteer.cdp.client.entity.network.Initiator initiator;
+
+    public void setRequestId (String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestId() {
+        return this.requestId;
+    }
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setInitiator (jpuppeteer.cdp.client.entity.network.Initiator initiator) {
+        this.initiator = initiator;
+    }
+
+    public jpuppeteer.cdp.client.entity.network.Initiator getInitiator() {
+        return this.initiator;
+    }
 
     public WebSocketCreatedEvent(String requestId, String url, jpuppeteer.cdp.client.entity.network.Initiator initiator) {
         this.requestId = requestId;
@@ -30,6 +54,9 @@ public class WebSocketCreatedEvent {
         this.requestId = requestId;
         this.url = url;
         this.initiator = null;
+    }
+
+    public WebSocketCreatedEvent() {
     }
 
 }

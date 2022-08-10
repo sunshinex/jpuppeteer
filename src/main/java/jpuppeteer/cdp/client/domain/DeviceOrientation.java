@@ -14,7 +14,7 @@ public class DeviceOrientation {
     /**
     * Clears the overridden Device Orientation.
     */
-    public io.netty.util.concurrent.Future clearDeviceOrientationOverride() {
+    public jpuppeteer.util.XFuture<?> clearDeviceOrientationOverride() {
         return connection.send("DeviceOrientation.clearDeviceOrientationOverride", null);
     }
 
@@ -22,7 +22,7 @@ public class DeviceOrientation {
     /**
     * Overrides the Device Orientation.
     */
-    public io.netty.util.concurrent.Future setDeviceOrientationOverride(jpuppeteer.cdp.client.entity.deviceorientation.SetDeviceOrientationOverrideRequest request) {
+    public jpuppeteer.util.XFuture<?> setDeviceOrientationOverride(jpuppeteer.cdp.client.entity.deviceorientation.SetDeviceOrientationOverrideRequest request) {
         return connection.send("DeviceOrientation.setDeviceOrientationOverride", request);
     }
 

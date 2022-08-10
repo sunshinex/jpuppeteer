@@ -27,6 +27,11 @@ public enum TrustTokenOperationDoneEventStatus implements jpuppeteer.cdp.client.
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static TrustTokenOperationDoneEventStatus findByValue(String value) {
         for(TrustTokenOperationDoneEventStatus val : values()) {
             if (val.value.equals(value)) return val;

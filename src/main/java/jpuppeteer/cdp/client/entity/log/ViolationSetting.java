@@ -8,16 +8,35 @@ public class ViolationSetting {
     /**
     * Violation type.
     */
-    public final jpuppeteer.cdp.client.constant.log.ViolationSettingName name;
+    private jpuppeteer.cdp.client.constant.log.ViolationSettingName name;
 
     /**
     * Time threshold to trigger upon.
     */
-    public final java.math.BigDecimal threshold;
+    private java.math.BigDecimal threshold;
+
+    public void setName (jpuppeteer.cdp.client.constant.log.ViolationSettingName name) {
+        this.name = name;
+    }
+
+    public jpuppeteer.cdp.client.constant.log.ViolationSettingName getName() {
+        return this.name;
+    }
+
+    public void setThreshold (java.math.BigDecimal threshold) {
+        this.threshold = threshold;
+    }
+
+    public java.math.BigDecimal getThreshold() {
+        return this.threshold;
+    }
 
     public ViolationSetting(jpuppeteer.cdp.client.constant.log.ViolationSettingName name, java.math.BigDecimal threshold) {
         this.name = name;
         this.threshold = threshold;
+    }
+
+    public ViolationSetting() {
     }
 
 }

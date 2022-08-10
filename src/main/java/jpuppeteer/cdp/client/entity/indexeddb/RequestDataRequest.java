@@ -8,37 +8,93 @@ public class RequestDataRequest {
     /**
     * Security origin.
     */
-    public final String securityOrigin;
+    private String securityOrigin;
 
     /**
     * Database name.
     */
-    public final String databaseName;
+    private String databaseName;
 
     /**
     * Object store name.
     */
-    public final String objectStoreName;
+    private String objectStoreName;
 
     /**
     * Index name, empty string for object store data requests.
     */
-    public final String indexName;
+    private String indexName;
 
     /**
     * Number of records to skip.
     */
-    public final Integer skipCount;
+    private Integer skipCount;
 
     /**
     * Number of records to fetch.
     */
-    public final Integer pageSize;
+    private Integer pageSize;
 
     /**
     * Key range.
     */
-    public final jpuppeteer.cdp.client.entity.indexeddb.KeyRange keyRange;
+    private jpuppeteer.cdp.client.entity.indexeddb.KeyRange keyRange;
+
+    public void setSecurityOrigin (String securityOrigin) {
+        this.securityOrigin = securityOrigin;
+    }
+
+    public String getSecurityOrigin() {
+        return this.securityOrigin;
+    }
+
+    public void setDatabaseName (String databaseName) {
+        this.databaseName = databaseName;
+    }
+
+    public String getDatabaseName() {
+        return this.databaseName;
+    }
+
+    public void setObjectStoreName (String objectStoreName) {
+        this.objectStoreName = objectStoreName;
+    }
+
+    public String getObjectStoreName() {
+        return this.objectStoreName;
+    }
+
+    public void setIndexName (String indexName) {
+        this.indexName = indexName;
+    }
+
+    public String getIndexName() {
+        return this.indexName;
+    }
+
+    public void setSkipCount (Integer skipCount) {
+        this.skipCount = skipCount;
+    }
+
+    public Integer getSkipCount() {
+        return this.skipCount;
+    }
+
+    public void setPageSize (Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public Integer getPageSize() {
+        return this.pageSize;
+    }
+
+    public void setKeyRange (jpuppeteer.cdp.client.entity.indexeddb.KeyRange keyRange) {
+        this.keyRange = keyRange;
+    }
+
+    public jpuppeteer.cdp.client.entity.indexeddb.KeyRange getKeyRange() {
+        return this.keyRange;
+    }
 
     public RequestDataRequest(String securityOrigin, String databaseName, String objectStoreName, String indexName, Integer skipCount, Integer pageSize, jpuppeteer.cdp.client.entity.indexeddb.KeyRange keyRange) {
         this.securityOrigin = securityOrigin;
@@ -58,6 +114,9 @@ public class RequestDataRequest {
         this.skipCount = skipCount;
         this.pageSize = pageSize;
         this.keyRange = null;
+    }
+
+    public RequestDataRequest() {
     }
 
 }

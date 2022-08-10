@@ -6,7 +6,15 @@ public class GetManifestIconsResponse {
 
     /**
     */
-    public final String primaryIcon;
+    private String primaryIcon;
+
+    public void setPrimaryIcon (String primaryIcon) {
+        this.primaryIcon = primaryIcon;
+    }
+
+    public String getPrimaryIcon() {
+        return this.primaryIcon;
+    }
 
     public GetManifestIconsResponse(String primaryIcon) {
         this.primaryIcon = primaryIcon;

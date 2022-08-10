@@ -8,7 +8,15 @@ public class SetPausedInDebuggerMessageRequest {
     /**
     * The message to display, also triggers resume and step over controls.
     */
-    public final String message;
+    private String message;
+
+    public void setMessage (String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return this.message;
+    }
 
     public SetPausedInDebuggerMessageRequest(String message) {
         this.message = message;

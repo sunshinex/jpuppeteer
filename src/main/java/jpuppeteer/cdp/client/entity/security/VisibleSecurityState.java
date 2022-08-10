@@ -8,22 +8,54 @@ public class VisibleSecurityState {
     /**
     * The security level of the page.
     */
-    public final jpuppeteer.cdp.client.constant.security.SecurityState securityState;
+    private jpuppeteer.cdp.client.constant.security.SecurityState securityState;
 
     /**
     * Security state details about the page certificate.
     */
-    public final jpuppeteer.cdp.client.entity.security.CertificateSecurityState certificateSecurityState;
+    private jpuppeteer.cdp.client.entity.security.CertificateSecurityState certificateSecurityState;
 
     /**
     * The type of Safety Tip triggered on the page. Note that this field will be set even if the Safety Tip UI was not actually shown.
     */
-    public final jpuppeteer.cdp.client.entity.security.SafetyTipInfo safetyTipInfo;
+    private jpuppeteer.cdp.client.entity.security.SafetyTipInfo safetyTipInfo;
 
     /**
     * Array of security state issues ids.
     */
-    public final java.util.List<String> securityStateIssueIds;
+    private java.util.List<String> securityStateIssueIds;
+
+    public void setSecurityState (jpuppeteer.cdp.client.constant.security.SecurityState securityState) {
+        this.securityState = securityState;
+    }
+
+    public jpuppeteer.cdp.client.constant.security.SecurityState getSecurityState() {
+        return this.securityState;
+    }
+
+    public void setCertificateSecurityState (jpuppeteer.cdp.client.entity.security.CertificateSecurityState certificateSecurityState) {
+        this.certificateSecurityState = certificateSecurityState;
+    }
+
+    public jpuppeteer.cdp.client.entity.security.CertificateSecurityState getCertificateSecurityState() {
+        return this.certificateSecurityState;
+    }
+
+    public void setSafetyTipInfo (jpuppeteer.cdp.client.entity.security.SafetyTipInfo safetyTipInfo) {
+        this.safetyTipInfo = safetyTipInfo;
+    }
+
+    public jpuppeteer.cdp.client.entity.security.SafetyTipInfo getSafetyTipInfo() {
+        return this.safetyTipInfo;
+    }
+
+    public void setSecurityStateIssueIds (java.util.List<String> securityStateIssueIds) {
+        this.securityStateIssueIds = securityStateIssueIds;
+    }
+
+    public java.util.List<String> getSecurityStateIssueIds() {
+        return this.securityStateIssueIds;
+    }
 
     public VisibleSecurityState(jpuppeteer.cdp.client.constant.security.SecurityState securityState, jpuppeteer.cdp.client.entity.security.CertificateSecurityState certificateSecurityState, jpuppeteer.cdp.client.entity.security.SafetyTipInfo safetyTipInfo, java.util.List<String> securityStateIssueIds) {
         this.securityState = securityState;
@@ -37,6 +69,9 @@ public class VisibleSecurityState {
         this.certificateSecurityState = null;
         this.safetyTipInfo = null;
         this.securityStateIssueIds = securityStateIssueIds;
+    }
+
+    public VisibleSecurityState() {
     }
 
 }

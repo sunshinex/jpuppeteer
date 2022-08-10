@@ -7,16 +7,35 @@ public class RemoveAttributeRequest {
     /**
     * Id of the element to remove attribute from.
     */
-    public final Integer nodeId;
+    private Integer nodeId;
 
     /**
     * Name of the attribute to remove.
     */
-    public final String name;
+    private String name;
+
+    public void setNodeId (Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public Integer getNodeId() {
+        return this.nodeId;
+    }
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 
     public RemoveAttributeRequest(Integer nodeId, String name) {
         this.nodeId = nodeId;
         this.name = name;
+    }
+
+    public RemoveAttributeRequest() {
     }
 
 }

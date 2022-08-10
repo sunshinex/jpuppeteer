@@ -7,10 +7,21 @@ public class SetPageScaleFactorRequest {
     /**
     * Page scale factor.
     */
-    public final java.math.BigDecimal pageScaleFactor;
+    private java.math.BigDecimal pageScaleFactor;
+
+    public void setPageScaleFactor (java.math.BigDecimal pageScaleFactor) {
+        this.pageScaleFactor = pageScaleFactor;
+    }
+
+    public java.math.BigDecimal getPageScaleFactor() {
+        return this.pageScaleFactor;
+    }
 
     public SetPageScaleFactorRequest(java.math.BigDecimal pageScaleFactor) {
         this.pageScaleFactor = pageScaleFactor;
+    }
+
+    public SetPageScaleFactorRequest() {
     }
 
 }

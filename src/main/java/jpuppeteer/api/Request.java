@@ -1,7 +1,7 @@
 package jpuppeteer.api;
 
-import io.netty.util.concurrent.Future;
 import jpuppeteer.cdp.client.constant.network.ResourceType;
+import jpuppeteer.util.XFuture;
 
 public interface Request {
 
@@ -21,6 +21,6 @@ public interface Request {
 
     String location();
 
-    Future<String> content();
+    XFuture<String> content();
 
 }

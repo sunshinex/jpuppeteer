@@ -19,6 +19,11 @@ public enum SetWebLifecycleStateRequestState implements jpuppeteer.cdp.client.CD
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SetWebLifecycleStateRequestState findByValue(String value) {
         for(SetWebLifecycleStateRequestState val : values()) {
             if (val.value.equals(value)) return val;

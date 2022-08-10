@@ -7,10 +7,21 @@ public class GetWindowBoundsRequest {
     /**
     * Browser window id.
     */
-    public final Integer windowId;
+    private Integer windowId;
+
+    public void setWindowId (Integer windowId) {
+        this.windowId = windowId;
+    }
+
+    public Integer getWindowId() {
+        return this.windowId;
+    }
 
     public GetWindowBoundsRequest(Integer windowId) {
         this.windowId = windowId;
+    }
+
+    public GetWindowBoundsRequest() {
     }
 
 }

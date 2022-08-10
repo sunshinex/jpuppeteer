@@ -7,12 +7,28 @@ public class HandleJavaScriptDialogRequest {
     /**
     * Whether to accept or dismiss the dialog.
     */
-    public final Boolean accept;
+    private Boolean accept;
 
     /**
     * The text to enter into the dialog prompt before accepting. Used only if this is a prompt dialog.
     */
-    public final String promptText;
+    private String promptText;
+
+    public void setAccept (Boolean accept) {
+        this.accept = accept;
+    }
+
+    public Boolean getAccept() {
+        return this.accept;
+    }
+
+    public void setPromptText (String promptText) {
+        this.promptText = promptText;
+    }
+
+    public String getPromptText() {
+        return this.promptText;
+    }
 
     public HandleJavaScriptDialogRequest(Boolean accept, String promptText) {
         this.accept = accept;
@@ -22,6 +38,9 @@ public class HandleJavaScriptDialogRequest {
     public HandleJavaScriptDialogRequest(Boolean accept) {
         this.accept = accept;
         this.promptText = null;
+    }
+
+    public HandleJavaScriptDialogRequest() {
     }
 
 }

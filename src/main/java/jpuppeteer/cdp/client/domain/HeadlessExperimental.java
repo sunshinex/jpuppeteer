@@ -14,7 +14,7 @@ public class HeadlessExperimental {
     /**
     * Sends a BeginFrame to the target and returns when the frame was completed. Optionally captures a screenshot from the resulting frame. Requires that the target was created with enabled BeginFrameControl. Designed for use with --run-all-compositor-stages-before-draw, see also https://goo.gl/3zHXhB for more background.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.headlessexperimental.BeginFrameResponse> beginFrame(jpuppeteer.cdp.client.entity.headlessexperimental.BeginFrameRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.headlessexperimental.BeginFrameResponse> beginFrame(jpuppeteer.cdp.client.entity.headlessexperimental.BeginFrameRequest request) {
         return connection.send("HeadlessExperimental.beginFrame", request, jpuppeteer.cdp.client.entity.headlessexperimental.BeginFrameResponse.class);
     }
 
@@ -22,7 +22,7 @@ public class HeadlessExperimental {
     /**
     * Disables headless events for the target.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("HeadlessExperimental.disable", null);
     }
 
@@ -30,7 +30,7 @@ public class HeadlessExperimental {
     /**
     * Enables headless events for the target.
     */
-    public io.netty.util.concurrent.Future enable() {
+    public jpuppeteer.util.XFuture<?> enable() {
         return connection.send("HeadlessExperimental.enable", null);
     }
 

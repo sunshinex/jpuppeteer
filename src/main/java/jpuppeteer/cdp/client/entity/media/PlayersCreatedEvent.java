@@ -8,10 +8,21 @@ public class PlayersCreatedEvent {
 
     /**
     */
-    public final java.util.List<String> players;
+    private java.util.List<String> players;
+
+    public void setPlayers (java.util.List<String> players) {
+        this.players = players;
+    }
+
+    public java.util.List<String> getPlayers() {
+        return this.players;
+    }
 
     public PlayersCreatedEvent(java.util.List<String> players) {
         this.players = players;
+    }
+
+    public PlayersCreatedEvent() {
     }
 
 }

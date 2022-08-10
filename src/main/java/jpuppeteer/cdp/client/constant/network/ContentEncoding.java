@@ -21,6 +21,11 @@ public enum ContentEncoding implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ContentEncoding findByValue(String value) {
         for(ContentEncoding val : values()) {
             if (val.value.equals(value)) return val;

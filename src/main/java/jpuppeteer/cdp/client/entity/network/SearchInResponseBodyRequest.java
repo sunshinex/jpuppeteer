@@ -7,22 +7,54 @@ public class SearchInResponseBodyRequest {
     /**
     * Identifier of the network response to search.
     */
-    public final String requestId;
+    private String requestId;
 
     /**
     * String to search for.
     */
-    public final String query;
+    private String query;
 
     /**
     * If true, search is case sensitive.
     */
-    public final Boolean caseSensitive;
+    private Boolean caseSensitive;
 
     /**
     * If true, treats string parameter as regex.
     */
-    public final Boolean isRegex;
+    private Boolean isRegex;
+
+    public void setRequestId (String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestId() {
+        return this.requestId;
+    }
+
+    public void setQuery (String query) {
+        this.query = query;
+    }
+
+    public String getQuery() {
+        return this.query;
+    }
+
+    public void setCaseSensitive (Boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+
+    public Boolean getCaseSensitive() {
+        return this.caseSensitive;
+    }
+
+    public void setIsRegex (Boolean isRegex) {
+        this.isRegex = isRegex;
+    }
+
+    public Boolean getIsRegex() {
+        return this.isRegex;
+    }
 
     public SearchInResponseBodyRequest(String requestId, String query, Boolean caseSensitive, Boolean isRegex) {
         this.requestId = requestId;
@@ -36,6 +68,9 @@ public class SearchInResponseBodyRequest {
         this.query = query;
         this.caseSensitive = null;
         this.isRegex = null;
+    }
+
+    public SearchInResponseBodyRequest() {
     }
 
 }

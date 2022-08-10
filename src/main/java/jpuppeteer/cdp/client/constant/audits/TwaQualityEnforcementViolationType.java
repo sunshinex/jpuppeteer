@@ -21,6 +21,11 @@ public enum TwaQualityEnforcementViolationType implements jpuppeteer.cdp.client.
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static TwaQualityEnforcementViolationType findByValue(String value) {
         for(TwaQualityEnforcementViolationType val : values()) {
             if (val.value.equals(value)) return val;

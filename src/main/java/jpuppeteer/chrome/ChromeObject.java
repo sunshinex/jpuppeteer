@@ -1,13 +1,12 @@
 package jpuppeteer.chrome;
 
-import io.netty.util.concurrent.Future;
 import jpuppeteer.api.BrowserObject;
 import jpuppeteer.api.Isolate;
 import jpuppeteer.cdp.client.domain.Runtime;
 import jpuppeteer.cdp.client.entity.runtime.GetPropertiesRequest;
 import jpuppeteer.cdp.client.entity.runtime.ReleaseObjectRequest;
 import jpuppeteer.util.IsolateUtil;
-import jpuppeteer.util.SeriesPromise;
+import jpuppeteer.util.XFuture;
 
 public class ChromeObject implements BrowserObject {
 
@@ -35,26 +34,25 @@ public class ChromeObject implements BrowserObject {
     }
 
     @Override
-    public Future<BrowserObject[]> getProperties() {
-        return SeriesPromise
-                .wrap(runtime().getProperties(new GetPropertiesRequest(objectId, true, false, false)))
+    public XFuture<BrowserObject[]> getProperties() {
+        return runtime().getProperties(new GetPropertiesRequest(objectId, true, false, false))
                 .sync(o -> {
-                    IsolateUtil.checkException(o.exceptionDetails);
-                    BrowserObject[] objects = new BrowserObject[o.result.size()];
-                    for(int i=0; i<o.result.size(); i++) {
-                        objects[i] = new ChromeObject(isolate, o.result.get(i).value.objectId);
+                    IsolateUtil.checkException(o.getExceptionDetails());
+                    BrowserObject[] objects = new BrowserObject[o.getResult().size()];
+                    for(int i = 0; i< o.getResult().size(); i++) {
+                        objects[i] = new ChromeObject(isolate, o.getResult().get(i).getValue().getObjectId());
                     }
                     return objects;
                 });
     }
 
     @Override
-    public Future<BrowserObject> getProperty(String name) {
+    public XFuture<BrowserObject> getProperty(String name) {
         return isolate.call("function(name){return this[name]}", objectId, false, name);
     }
 
     @Override
-    public Future release() {
+    public XFuture<?> release() {
         ReleaseObjectRequest request = new ReleaseObjectRequest(objectId);
         return runtime().releaseObject(request);
     }

@@ -21,6 +21,11 @@ public enum SetDownloadBehaviorRequestBehavior implements jpuppeteer.cdp.client.
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SetDownloadBehaviorRequestBehavior findByValue(String value) {
         for(SetDownloadBehaviorRequestBehavior val : values()) {
             if (val.value.equals(value)) return val;

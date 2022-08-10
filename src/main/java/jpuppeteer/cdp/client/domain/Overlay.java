@@ -14,7 +14,7 @@ public class Overlay {
     /**
     * Disables domain notifications.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("Overlay.disable", null);
     }
 
@@ -22,7 +22,7 @@ public class Overlay {
     /**
     * Enables domain notifications.
     */
-    public io.netty.util.concurrent.Future enable() {
+    public jpuppeteer.util.XFuture<?> enable() {
         return connection.send("Overlay.enable", null);
     }
 
@@ -30,7 +30,7 @@ public class Overlay {
     /**
     * For testing.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.overlay.GetHighlightObjectForTestResponse> getHighlightObjectForTest(jpuppeteer.cdp.client.entity.overlay.GetHighlightObjectForTestRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.overlay.GetHighlightObjectForTestResponse> getHighlightObjectForTest(jpuppeteer.cdp.client.entity.overlay.GetHighlightObjectForTestRequest request) {
         return connection.send("Overlay.getHighlightObjectForTest", request, jpuppeteer.cdp.client.entity.overlay.GetHighlightObjectForTestResponse.class);
     }
 
@@ -38,7 +38,7 @@ public class Overlay {
     /**
     * For Persistent Grid testing.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.overlay.GetGridHighlightObjectsForTestResponse> getGridHighlightObjectsForTest(jpuppeteer.cdp.client.entity.overlay.GetGridHighlightObjectsForTestRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.overlay.GetGridHighlightObjectsForTestResponse> getGridHighlightObjectsForTest(jpuppeteer.cdp.client.entity.overlay.GetGridHighlightObjectsForTestRequest request) {
         return connection.send("Overlay.getGridHighlightObjectsForTest", request, jpuppeteer.cdp.client.entity.overlay.GetGridHighlightObjectsForTestResponse.class);
     }
 
@@ -46,7 +46,7 @@ public class Overlay {
     /**
     * For Source Order Viewer testing.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.overlay.GetSourceOrderHighlightObjectForTestResponse> getSourceOrderHighlightObjectForTest(jpuppeteer.cdp.client.entity.overlay.GetSourceOrderHighlightObjectForTestRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.overlay.GetSourceOrderHighlightObjectForTestResponse> getSourceOrderHighlightObjectForTest(jpuppeteer.cdp.client.entity.overlay.GetSourceOrderHighlightObjectForTestRequest request) {
         return connection.send("Overlay.getSourceOrderHighlightObjectForTest", request, jpuppeteer.cdp.client.entity.overlay.GetSourceOrderHighlightObjectForTestResponse.class);
     }
 
@@ -54,7 +54,7 @@ public class Overlay {
     /**
     * Hides any highlight.
     */
-    public io.netty.util.concurrent.Future hideHighlight() {
+    public jpuppeteer.util.XFuture<?> hideHighlight() {
         return connection.send("Overlay.hideHighlight", null);
     }
 
@@ -62,7 +62,7 @@ public class Overlay {
     /**
     * Highlights owner element of the frame with given id.
     */
-    public io.netty.util.concurrent.Future highlightFrame(jpuppeteer.cdp.client.entity.overlay.HighlightFrameRequest request) {
+    public jpuppeteer.util.XFuture<?> highlightFrame(jpuppeteer.cdp.client.entity.overlay.HighlightFrameRequest request) {
         return connection.send("Overlay.highlightFrame", request);
     }
 
@@ -70,7 +70,7 @@ public class Overlay {
     /**
     * Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or objectId must be specified.
     */
-    public io.netty.util.concurrent.Future highlightNode(jpuppeteer.cdp.client.entity.overlay.HighlightNodeRequest request) {
+    public jpuppeteer.util.XFuture<?> highlightNode(jpuppeteer.cdp.client.entity.overlay.HighlightNodeRequest request) {
         return connection.send("Overlay.highlightNode", request);
     }
 
@@ -78,7 +78,7 @@ public class Overlay {
     /**
     * Highlights given quad. Coordinates are absolute with respect to the main frame viewport.
     */
-    public io.netty.util.concurrent.Future highlightQuad(jpuppeteer.cdp.client.entity.overlay.HighlightQuadRequest request) {
+    public jpuppeteer.util.XFuture<?> highlightQuad(jpuppeteer.cdp.client.entity.overlay.HighlightQuadRequest request) {
         return connection.send("Overlay.highlightQuad", request);
     }
 
@@ -86,7 +86,7 @@ public class Overlay {
     /**
     * Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.
     */
-    public io.netty.util.concurrent.Future highlightRect(jpuppeteer.cdp.client.entity.overlay.HighlightRectRequest request) {
+    public jpuppeteer.util.XFuture<?> highlightRect(jpuppeteer.cdp.client.entity.overlay.HighlightRectRequest request) {
         return connection.send("Overlay.highlightRect", request);
     }
 
@@ -94,7 +94,7 @@ public class Overlay {
     /**
     * Highlights the source order of the children of the DOM node with given id or with the given JavaScript object wrapper. Either nodeId or objectId must be specified.
     */
-    public io.netty.util.concurrent.Future highlightSourceOrder(jpuppeteer.cdp.client.entity.overlay.HighlightSourceOrderRequest request) {
+    public jpuppeteer.util.XFuture<?> highlightSourceOrder(jpuppeteer.cdp.client.entity.overlay.HighlightSourceOrderRequest request) {
         return connection.send("Overlay.highlightSourceOrder", request);
     }
 
@@ -102,7 +102,7 @@ public class Overlay {
     /**
     * Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspectNodeRequested' event upon element selection.
     */
-    public io.netty.util.concurrent.Future setInspectMode(jpuppeteer.cdp.client.entity.overlay.SetInspectModeRequest request) {
+    public jpuppeteer.util.XFuture<?> setInspectMode(jpuppeteer.cdp.client.entity.overlay.SetInspectModeRequest request) {
         return connection.send("Overlay.setInspectMode", request);
     }
 
@@ -110,14 +110,14 @@ public class Overlay {
     /**
     * Highlights owner element of all frames detected to be ads.
     */
-    public io.netty.util.concurrent.Future setShowAdHighlights(jpuppeteer.cdp.client.entity.overlay.SetShowAdHighlightsRequest request) {
+    public jpuppeteer.util.XFuture<?> setShowAdHighlights(jpuppeteer.cdp.client.entity.overlay.SetShowAdHighlightsRequest request) {
         return connection.send("Overlay.setShowAdHighlights", request);
     }
 
 
     /**
     */
-    public io.netty.util.concurrent.Future setPausedInDebuggerMessage(jpuppeteer.cdp.client.entity.overlay.SetPausedInDebuggerMessageRequest request) {
+    public jpuppeteer.util.XFuture<?> setPausedInDebuggerMessage(jpuppeteer.cdp.client.entity.overlay.SetPausedInDebuggerMessageRequest request) {
         return connection.send("Overlay.setPausedInDebuggerMessage", request);
     }
 
@@ -125,7 +125,7 @@ public class Overlay {
     /**
     * Requests that backend shows debug borders on layers
     */
-    public io.netty.util.concurrent.Future setShowDebugBorders(jpuppeteer.cdp.client.entity.overlay.SetShowDebugBordersRequest request) {
+    public jpuppeteer.util.XFuture<?> setShowDebugBorders(jpuppeteer.cdp.client.entity.overlay.SetShowDebugBordersRequest request) {
         return connection.send("Overlay.setShowDebugBorders", request);
     }
 
@@ -133,7 +133,7 @@ public class Overlay {
     /**
     * Requests that backend shows the FPS counter
     */
-    public io.netty.util.concurrent.Future setShowFPSCounter(jpuppeteer.cdp.client.entity.overlay.SetShowFPSCounterRequest request) {
+    public jpuppeteer.util.XFuture<?> setShowFPSCounter(jpuppeteer.cdp.client.entity.overlay.SetShowFPSCounterRequest request) {
         return connection.send("Overlay.setShowFPSCounter", request);
     }
 
@@ -141,21 +141,21 @@ public class Overlay {
     /**
     * Highlight multiple elements with the CSS Grid overlay.
     */
-    public io.netty.util.concurrent.Future setShowGridOverlays(jpuppeteer.cdp.client.entity.overlay.SetShowGridOverlaysRequest request) {
+    public jpuppeteer.util.XFuture<?> setShowGridOverlays(jpuppeteer.cdp.client.entity.overlay.SetShowGridOverlaysRequest request) {
         return connection.send("Overlay.setShowGridOverlays", request);
     }
 
 
     /**
     */
-    public io.netty.util.concurrent.Future setShowFlexOverlays(jpuppeteer.cdp.client.entity.overlay.SetShowFlexOverlaysRequest request) {
+    public jpuppeteer.util.XFuture<?> setShowFlexOverlays(jpuppeteer.cdp.client.entity.overlay.SetShowFlexOverlaysRequest request) {
         return connection.send("Overlay.setShowFlexOverlays", request);
     }
 
 
     /**
     */
-    public io.netty.util.concurrent.Future setShowScrollSnapOverlays(jpuppeteer.cdp.client.entity.overlay.SetShowScrollSnapOverlaysRequest request) {
+    public jpuppeteer.util.XFuture<?> setShowScrollSnapOverlays(jpuppeteer.cdp.client.entity.overlay.SetShowScrollSnapOverlaysRequest request) {
         return connection.send("Overlay.setShowScrollSnapOverlays", request);
     }
 
@@ -163,7 +163,7 @@ public class Overlay {
     /**
     * Requests that backend shows paint rectangles
     */
-    public io.netty.util.concurrent.Future setShowPaintRects(jpuppeteer.cdp.client.entity.overlay.SetShowPaintRectsRequest request) {
+    public jpuppeteer.util.XFuture<?> setShowPaintRects(jpuppeteer.cdp.client.entity.overlay.SetShowPaintRectsRequest request) {
         return connection.send("Overlay.setShowPaintRects", request);
     }
 
@@ -171,7 +171,7 @@ public class Overlay {
     /**
     * Requests that backend shows layout shift regions
     */
-    public io.netty.util.concurrent.Future setShowLayoutShiftRegions(jpuppeteer.cdp.client.entity.overlay.SetShowLayoutShiftRegionsRequest request) {
+    public jpuppeteer.util.XFuture<?> setShowLayoutShiftRegions(jpuppeteer.cdp.client.entity.overlay.SetShowLayoutShiftRegionsRequest request) {
         return connection.send("Overlay.setShowLayoutShiftRegions", request);
     }
 
@@ -179,7 +179,7 @@ public class Overlay {
     /**
     * Requests that backend shows scroll bottleneck rects
     */
-    public io.netty.util.concurrent.Future setShowScrollBottleneckRects(jpuppeteer.cdp.client.entity.overlay.SetShowScrollBottleneckRectsRequest request) {
+    public jpuppeteer.util.XFuture<?> setShowScrollBottleneckRects(jpuppeteer.cdp.client.entity.overlay.SetShowScrollBottleneckRectsRequest request) {
         return connection.send("Overlay.setShowScrollBottleneckRects", request);
     }
 
@@ -187,7 +187,7 @@ public class Overlay {
     /**
     * Requests that backend shows hit-test borders on layers
     */
-    public io.netty.util.concurrent.Future setShowHitTestBorders(jpuppeteer.cdp.client.entity.overlay.SetShowHitTestBordersRequest request) {
+    public jpuppeteer.util.XFuture<?> setShowHitTestBorders(jpuppeteer.cdp.client.entity.overlay.SetShowHitTestBordersRequest request) {
         return connection.send("Overlay.setShowHitTestBorders", request);
     }
 
@@ -195,7 +195,7 @@ public class Overlay {
     /**
     * Request that backend shows an overlay with web vital metrics.
     */
-    public io.netty.util.concurrent.Future setShowWebVitals(jpuppeteer.cdp.client.entity.overlay.SetShowWebVitalsRequest request) {
+    public jpuppeteer.util.XFuture<?> setShowWebVitals(jpuppeteer.cdp.client.entity.overlay.SetShowWebVitalsRequest request) {
         return connection.send("Overlay.setShowWebVitals", request);
     }
 
@@ -203,7 +203,7 @@ public class Overlay {
     /**
     * Paints viewport size upon main frame resize.
     */
-    public io.netty.util.concurrent.Future setShowViewportSizeOnResize(jpuppeteer.cdp.client.entity.overlay.SetShowViewportSizeOnResizeRequest request) {
+    public jpuppeteer.util.XFuture<?> setShowViewportSizeOnResize(jpuppeteer.cdp.client.entity.overlay.SetShowViewportSizeOnResizeRequest request) {
         return connection.send("Overlay.setShowViewportSizeOnResize", request);
     }
 
@@ -211,7 +211,7 @@ public class Overlay {
     /**
     * Add a dual screen device hinge
     */
-    public io.netty.util.concurrent.Future setShowHinge(jpuppeteer.cdp.client.entity.overlay.SetShowHingeRequest request) {
+    public jpuppeteer.util.XFuture<?> setShowHinge(jpuppeteer.cdp.client.entity.overlay.SetShowHingeRequest request) {
         return connection.send("Overlay.setShowHinge", request);
     }
 

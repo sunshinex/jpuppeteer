@@ -7,7 +7,15 @@ public class CaptureSnapshotRequest {
     /**
     * Format (defaults to mhtml).
     */
-    public final jpuppeteer.cdp.client.constant.page.CaptureSnapshotRequestFormat format;
+    private jpuppeteer.cdp.client.constant.page.CaptureSnapshotRequestFormat format;
+
+    public void setFormat (jpuppeteer.cdp.client.constant.page.CaptureSnapshotRequestFormat format) {
+        this.format = format;
+    }
+
+    public jpuppeteer.cdp.client.constant.page.CaptureSnapshotRequestFormat getFormat() {
+        return this.format;
+    }
 
     public CaptureSnapshotRequest(jpuppeteer.cdp.client.constant.page.CaptureSnapshotRequestFormat format) {
         this.format = format;

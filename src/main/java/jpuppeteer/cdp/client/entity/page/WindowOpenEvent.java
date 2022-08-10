@@ -8,28 +8,63 @@ public class WindowOpenEvent {
     /**
     * The URL for the new window.
     */
-    public final String url;
+    private String url;
 
     /**
     * Window name.
     */
-    public final String windowName;
+    private String windowName;
 
     /**
     * An array of enabled window features.
     */
-    public final java.util.List<String> windowFeatures;
+    private java.util.List<String> windowFeatures;
 
     /**
     * Whether or not it was triggered by user gesture.
     */
-    public final Boolean userGesture;
+    private Boolean userGesture;
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setWindowName (String windowName) {
+        this.windowName = windowName;
+    }
+
+    public String getWindowName() {
+        return this.windowName;
+    }
+
+    public void setWindowFeatures (java.util.List<String> windowFeatures) {
+        this.windowFeatures = windowFeatures;
+    }
+
+    public java.util.List<String> getWindowFeatures() {
+        return this.windowFeatures;
+    }
+
+    public void setUserGesture (Boolean userGesture) {
+        this.userGesture = userGesture;
+    }
+
+    public Boolean getUserGesture() {
+        return this.userGesture;
+    }
 
     public WindowOpenEvent(String url, String windowName, java.util.List<String> windowFeatures, Boolean userGesture) {
         this.url = url;
         this.windowName = windowName;
         this.windowFeatures = windowFeatures;
         this.userGesture = userGesture;
+    }
+
+    public WindowOpenEvent() {
     }
 
 }

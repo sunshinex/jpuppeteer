@@ -22,6 +22,11 @@ public enum ImageType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ImageType findByValue(String value) {
         for(ImageType val : values()) {
             if (val.value.equals(value)) return val;

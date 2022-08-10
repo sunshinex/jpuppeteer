@@ -7,10 +7,21 @@ public class SetIgnoreInputEventsRequest {
     /**
     * Ignores input events processing when set to true.
     */
-    public final Boolean ignore;
+    private Boolean ignore;
+
+    public void setIgnore (Boolean ignore) {
+        this.ignore = ignore;
+    }
+
+    public Boolean getIgnore() {
+        return this.ignore;
+    }
 
     public SetIgnoreInputEventsRequest(Boolean ignore) {
         this.ignore = ignore;
+    }
+
+    public SetIgnoreInputEventsRequest() {
     }
 
 }

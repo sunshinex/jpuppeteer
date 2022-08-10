@@ -36,6 +36,11 @@ public enum PropertyPreviewSubtype implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static PropertyPreviewSubtype findByValue(String value) {
         for(PropertyPreviewSubtype val : values()) {
             if (val.value.equals(value)) return val;

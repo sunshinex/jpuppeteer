@@ -9,27 +9,67 @@ public class Key {
     /**
     * Key type.
     */
-    public final jpuppeteer.cdp.client.constant.indexeddb.KeyType type;
+    private jpuppeteer.cdp.client.constant.indexeddb.KeyType type;
 
     /**
     * Number value.
     */
-    public final java.math.BigDecimal number;
+    private java.math.BigDecimal number;
 
     /**
     * String value.
     */
-    public final String string;
+    private String string;
 
     /**
     * Date value.
     */
-    public final java.math.BigDecimal date;
+    private java.math.BigDecimal date;
 
     /**
     * Array value.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.indexeddb.Key> array;
+    private java.util.List<jpuppeteer.cdp.client.entity.indexeddb.Key> array;
+
+    public void setType (jpuppeteer.cdp.client.constant.indexeddb.KeyType type) {
+        this.type = type;
+    }
+
+    public jpuppeteer.cdp.client.constant.indexeddb.KeyType getType() {
+        return this.type;
+    }
+
+    public void setNumber (java.math.BigDecimal number) {
+        this.number = number;
+    }
+
+    public java.math.BigDecimal getNumber() {
+        return this.number;
+    }
+
+    public void setString (String string) {
+        this.string = string;
+    }
+
+    public String getString() {
+        return this.string;
+    }
+
+    public void setDate (java.math.BigDecimal date) {
+        this.date = date;
+    }
+
+    public java.math.BigDecimal getDate() {
+        return this.date;
+    }
+
+    public void setArray (java.util.List<jpuppeteer.cdp.client.entity.indexeddb.Key> array) {
+        this.array = array;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.indexeddb.Key> getArray() {
+        return this.array;
+    }
 
     public Key(jpuppeteer.cdp.client.constant.indexeddb.KeyType type, java.math.BigDecimal number, String string, java.math.BigDecimal date, java.util.List<jpuppeteer.cdp.client.entity.indexeddb.Key> array) {
         this.type = type;
@@ -45,6 +85,9 @@ public class Key {
         this.string = null;
         this.date = null;
         this.array = null;
+    }
+
+    public Key() {
     }
 
 }

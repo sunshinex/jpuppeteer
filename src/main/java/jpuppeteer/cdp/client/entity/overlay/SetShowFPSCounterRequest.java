@@ -8,10 +8,21 @@ public class SetShowFPSCounterRequest {
     /**
     * True for showing the FPS counter
     */
-    public final Boolean show;
+    private Boolean show;
+
+    public void setShow (Boolean show) {
+        this.show = show;
+    }
+
+    public Boolean getShow() {
+        return this.show;
+    }
 
     public SetShowFPSCounterRequest(Boolean show) {
         this.show = show;
+    }
+
+    public SetShowFPSCounterRequest() {
     }
 
 }

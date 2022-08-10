@@ -20,6 +20,11 @@ public enum InterceptionStage implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static InterceptionStage findByValue(String value) {
         for(InterceptionStage val : values()) {
             if (val.value.equals(value)) return val;

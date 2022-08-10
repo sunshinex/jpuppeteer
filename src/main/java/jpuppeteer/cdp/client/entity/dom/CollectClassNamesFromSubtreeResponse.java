@@ -7,10 +7,21 @@ public class CollectClassNamesFromSubtreeResponse {
     /**
     * Class name list.
     */
-    public final java.util.List<String> classNames;
+    private java.util.List<String> classNames;
+
+    public void setClassNames (java.util.List<String> classNames) {
+        this.classNames = classNames;
+    }
+
+    public java.util.List<String> getClassNames() {
+        return this.classNames;
+    }
 
     public CollectClassNamesFromSubtreeResponse(java.util.List<String> classNames) {
         this.classNames = classNames;
+    }
+
+    public CollectClassNamesFromSubtreeResponse() {
     }
 
 }

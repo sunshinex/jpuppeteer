@@ -2,7 +2,6 @@ package jpuppeteer.api.event.page;
 
 import com.google.common.base.Charsets;
 import io.netty.util.concurrent.EventExecutor;
-import io.netty.util.concurrent.Future;
 import jpuppeteer.api.Frame;
 import jpuppeteer.api.HttpHeader;
 import jpuppeteer.api.InterceptedRequest;
@@ -11,7 +10,7 @@ import jpuppeteer.cdp.client.constant.network.ErrorReason;
 import jpuppeteer.cdp.client.constant.network.ResourceType;
 import jpuppeteer.cdp.client.domain.Fetch;
 import jpuppeteer.cdp.client.entity.fetch.*;
-import jpuppeteer.util.SeriesPromise;
+import jpuppeteer.util.XFuture;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -117,7 +116,7 @@ public class RequestInterceptedEvent extends FrameEvent implements InterceptedRe
     }
 
     @Override
-    public Future continues(String method, String url, HttpHeader[] headers, byte[] body) {
+    public XFuture<?> continues(String method, String url, HttpHeader[] headers, byte[] body) {
         List<HeaderEntry> entries = null;
         if (headers != null && headers.length > 0) {
             entries = new ArrayList<>(headers.length);
@@ -155,26 +154,25 @@ public class RequestInterceptedEvent extends FrameEvent implements InterceptedRe
     }
 
     @Override
-    public Future<byte[]> responseBody() {
-        return SeriesPromise
-                .wrap(fetch.getResponseBody(new GetResponseBodyRequest(interceptorId)))
-                .sync(o -> o.base64Encoded ? Base64.getDecoder().decode(o.body) : o.body.getBytes(StandardCharsets.UTF_8));
+    public XFuture<byte[]> responseBody() {
+        return fetch.getResponseBody(new GetResponseBodyRequest(interceptorId))
+                .sync(o -> o.getBase64Encoded() ? Base64.getDecoder().decode(o.getBody()) : o.getBody().getBytes(StandardCharsets.UTF_8));
     }
 
     @Override
-    public Future abort() {
+    public XFuture<?> abort() {
         FailRequestRequest request = new FailRequestRequest(interceptorId, ErrorReason.ABORTED);
         return fetch.failRequest(request);
     }
 
     @Override
-    public Future continues() {
+    public XFuture<?> continues() {
         ContinueRequestRequest request = new ContinueRequestRequest(interceptorId);
         return fetch.continueRequest(request);
     }
 
     @Override
-    public Future respond(int statusCode, HttpHeader[] headers, byte[] body) {
+    public XFuture<?> respond(int statusCode, HttpHeader[] headers, byte[] body) {
         if (!STATUS_TEXT.containsKey(statusCode)) {
             throw new RuntimeException("unknown statusCode " + statusCode);
         }
@@ -258,7 +256,7 @@ public class RequestInterceptedEvent extends FrameEvent implements InterceptedRe
     }
 
     @Override
-    public Future<String> content() {
+    public XFuture<String> content() {
         return request.content();
     }
 

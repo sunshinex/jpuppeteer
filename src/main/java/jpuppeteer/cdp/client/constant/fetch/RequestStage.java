@@ -20,6 +20,11 @@ public enum RequestStage implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static RequestStage findByValue(String value) {
         for(RequestStage val : values()) {
             if (val.value.equals(value)) return val;

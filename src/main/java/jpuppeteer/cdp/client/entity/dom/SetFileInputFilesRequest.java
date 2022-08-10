@@ -7,22 +7,54 @@ public class SetFileInputFilesRequest {
     /**
     * Array of file paths to set.
     */
-    public final java.util.List<String> files;
+    private java.util.List<String> files;
 
     /**
     * Identifier of the node.
     */
-    public final Integer nodeId;
+    private Integer nodeId;
 
     /**
     * Identifier of the backend node.
     */
-    public final Integer backendNodeId;
+    private Integer backendNodeId;
 
     /**
     * JavaScript object id of the node wrapper.
     */
-    public final String objectId;
+    private String objectId;
+
+    public void setFiles (java.util.List<String> files) {
+        this.files = files;
+    }
+
+    public java.util.List<String> getFiles() {
+        return this.files;
+    }
+
+    public void setNodeId (Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public Integer getNodeId() {
+        return this.nodeId;
+    }
+
+    public void setBackendNodeId (Integer backendNodeId) {
+        this.backendNodeId = backendNodeId;
+    }
+
+    public Integer getBackendNodeId() {
+        return this.backendNodeId;
+    }
+
+    public void setObjectId (String objectId) {
+        this.objectId = objectId;
+    }
+
+    public String getObjectId() {
+        return this.objectId;
+    }
 
     public SetFileInputFilesRequest(java.util.List<String> files, Integer nodeId, Integer backendNodeId, String objectId) {
         this.files = files;
@@ -36,6 +68,9 @@ public class SetFileInputFilesRequest {
         this.nodeId = null;
         this.backendNodeId = null;
         this.objectId = null;
+    }
+
+    public SetFileInputFilesRequest() {
     }
 
 }

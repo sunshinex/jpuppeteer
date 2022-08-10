@@ -8,22 +8,54 @@ public class WebTransportCreatedEvent {
     /**
     * WebTransport identifier.
     */
-    public final String transportId;
+    private String transportId;
 
     /**
     * WebTransport request URL.
     */
-    public final String url;
+    private String url;
 
     /**
     * Timestamp.
     */
-    public final java.math.BigDecimal timestamp;
+    private java.math.BigDecimal timestamp;
 
     /**
     * Request initiator.
     */
-    public final jpuppeteer.cdp.client.entity.network.Initiator initiator;
+    private jpuppeteer.cdp.client.entity.network.Initiator initiator;
+
+    public void setTransportId (String transportId) {
+        this.transportId = transportId;
+    }
+
+    public String getTransportId() {
+        return this.transportId;
+    }
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setTimestamp (java.math.BigDecimal timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public java.math.BigDecimal getTimestamp() {
+        return this.timestamp;
+    }
+
+    public void setInitiator (jpuppeteer.cdp.client.entity.network.Initiator initiator) {
+        this.initiator = initiator;
+    }
+
+    public jpuppeteer.cdp.client.entity.network.Initiator getInitiator() {
+        return this.initiator;
+    }
 
     public WebTransportCreatedEvent(String transportId, String url, java.math.BigDecimal timestamp, jpuppeteer.cdp.client.entity.network.Initiator initiator) {
         this.transportId = transportId;
@@ -37,6 +69,9 @@ public class WebTransportCreatedEvent {
         this.url = url;
         this.timestamp = timestamp;
         this.initiator = null;
+    }
+
+    public WebTransportCreatedEvent() {
     }
 
 }

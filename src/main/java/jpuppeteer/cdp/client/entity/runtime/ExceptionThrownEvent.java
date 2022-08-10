@@ -8,15 +8,34 @@ public class ExceptionThrownEvent {
     /**
     * Timestamp of the exception.
     */
-    public final java.math.BigDecimal timestamp;
+    private java.math.BigDecimal timestamp;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails;
+    private jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails;
+
+    public void setTimestamp (java.math.BigDecimal timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public java.math.BigDecimal getTimestamp() {
+        return this.timestamp;
+    }
+
+    public void setExceptionDetails (jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails) {
+        this.exceptionDetails = exceptionDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.ExceptionDetails getExceptionDetails() {
+        return this.exceptionDetails;
+    }
 
     public ExceptionThrownEvent(java.math.BigDecimal timestamp, jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails) {
         this.timestamp = timestamp;
         this.exceptionDetails = exceptionDetails;
+    }
+
+    public ExceptionThrownEvent() {
     }
 
 }

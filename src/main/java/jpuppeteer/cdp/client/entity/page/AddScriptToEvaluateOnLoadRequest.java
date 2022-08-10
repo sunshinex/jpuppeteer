@@ -6,10 +6,21 @@ public class AddScriptToEvaluateOnLoadRequest {
 
     /**
     */
-    public final String scriptSource;
+    private String scriptSource;
+
+    public void setScriptSource (String scriptSource) {
+        this.scriptSource = scriptSource;
+    }
+
+    public String getScriptSource() {
+        return this.scriptSource;
+    }
 
     public AddScriptToEvaluateOnLoadRequest(String scriptSource) {
         this.scriptSource = scriptSource;
+    }
+
+    public AddScriptToEvaluateOnLoadRequest() {
     }
 
 }

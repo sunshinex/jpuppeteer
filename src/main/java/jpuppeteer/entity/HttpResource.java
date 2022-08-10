@@ -1,7 +1,5 @@
 package jpuppeteer.entity;
 
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.Promise;
 import jpuppeteer.api.HttpHeader;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.client.entity.io.CloseRequest;
@@ -58,12 +56,12 @@ public class HttpResource implements Closeable {
             try {
                 while (true) {
                     ReadResponse resp = connection.io.read(new ReadRequest(stream)).get(30, TimeUnit.SECONDS);
-                    if (resp.base64Encoded) {
-                        bos.write(Base64.getDecoder().decode(resp.data));
+                    if (resp.getBase64Encoded()) {
+                        bos.write(Base64.getDecoder().decode(resp.getData()));
                     } else {
-                        bos.write(resp.data.getBytes(StandardCharsets.UTF_8));
+                        bos.write(resp.getData().getBytes(StandardCharsets.UTF_8));
                     }
-                    if (resp.eof) {
+                    if (resp.getEof()) {
                         break;
                     }
                 }

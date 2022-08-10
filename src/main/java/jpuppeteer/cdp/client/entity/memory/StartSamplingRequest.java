@@ -8,12 +8,28 @@ public class StartSamplingRequest {
     /**
     * Average number of bytes between samples.
     */
-    public final Integer samplingInterval;
+    private Integer samplingInterval;
 
     /**
     * Do not randomize intervals between samples.
     */
-    public final Boolean suppressRandomness;
+    private Boolean suppressRandomness;
+
+    public void setSamplingInterval (Integer samplingInterval) {
+        this.samplingInterval = samplingInterval;
+    }
+
+    public Integer getSamplingInterval() {
+        return this.samplingInterval;
+    }
+
+    public void setSuppressRandomness (Boolean suppressRandomness) {
+        this.suppressRandomness = suppressRandomness;
+    }
+
+    public Boolean getSuppressRandomness() {
+        return this.suppressRandomness;
+    }
 
     public StartSamplingRequest(Integer samplingInterval, Boolean suppressRandomness) {
         this.samplingInterval = samplingInterval;

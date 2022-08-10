@@ -7,10 +7,21 @@ public class ClearCredentialsRequest {
 
     /**
     */
-    public final String authenticatorId;
+    private String authenticatorId;
+
+    public void setAuthenticatorId (String authenticatorId) {
+        this.authenticatorId = authenticatorId;
+    }
+
+    public String getAuthenticatorId() {
+        return this.authenticatorId;
+    }
 
     public ClearCredentialsRequest(String authenticatorId) {
         this.authenticatorId = authenticatorId;
+    }
+
+    public ClearCredentialsRequest() {
     }
 
 }

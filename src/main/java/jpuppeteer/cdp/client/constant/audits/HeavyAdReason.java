@@ -21,6 +21,11 @@ public enum HeavyAdReason implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static HeavyAdReason findByValue(String value) {
         for(HeavyAdReason val : values()) {
             if (val.value.equals(value)) return val;

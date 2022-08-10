@@ -1,7 +1,7 @@
 package jpuppeteer.api;
 
-import io.netty.util.concurrent.Future;
 import jpuppeteer.cdp.client.constant.network.ResourceType;
+import jpuppeteer.util.XFuture;
 
 import java.net.InetSocketAddress;
 
@@ -43,6 +43,6 @@ public interface Response {
 
     int encodedDataLength();
 
-    Future<byte[]> content();
+    XFuture<byte[]> content();
 
 }

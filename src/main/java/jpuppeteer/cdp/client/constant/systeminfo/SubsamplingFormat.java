@@ -22,6 +22,11 @@ public enum SubsamplingFormat implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SubsamplingFormat findByValue(String value) {
         for(SubsamplingFormat val : values()) {
             if (val.value.equals(value)) return val;

@@ -8,10 +8,21 @@ public class GetSourceOrderHighlightObjectForTestRequest {
     /**
     * Id of the node to highlight.
     */
-    public final Integer nodeId;
+    private Integer nodeId;
+
+    public void setNodeId (Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public Integer getNodeId() {
+        return this.nodeId;
+    }
 
     public GetSourceOrderHighlightObjectForTestRequest(Integer nodeId) {
         this.nodeId = nodeId;
+    }
+
+    public GetSourceOrderHighlightObjectForTestRequest() {
     }
 
 }

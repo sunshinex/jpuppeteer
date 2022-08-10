@@ -8,10 +8,21 @@ public class GetApplicationCacheForFrameResponse {
     /**
     * Relevant application cache data for the document in given frame.
     */
-    public final jpuppeteer.cdp.client.entity.applicationcache.ApplicationCache applicationCache;
+    private jpuppeteer.cdp.client.entity.applicationcache.ApplicationCache applicationCache;
+
+    public void setApplicationCache (jpuppeteer.cdp.client.entity.applicationcache.ApplicationCache applicationCache) {
+        this.applicationCache = applicationCache;
+    }
+
+    public jpuppeteer.cdp.client.entity.applicationcache.ApplicationCache getApplicationCache() {
+        return this.applicationCache;
+    }
 
     public GetApplicationCacheForFrameResponse(jpuppeteer.cdp.client.entity.applicationcache.ApplicationCache applicationCache) {
         this.applicationCache = applicationCache;
+    }
+
+    public GetApplicationCacheForFrameResponse() {
     }
 
 }

@@ -14,7 +14,7 @@ public class Tethering {
     /**
     * Request browser port binding.
     */
-    public io.netty.util.concurrent.Future bind(jpuppeteer.cdp.client.entity.tethering.BindRequest request) {
+    public jpuppeteer.util.XFuture<?> bind(jpuppeteer.cdp.client.entity.tethering.BindRequest request) {
         return connection.send("Tethering.bind", request);
     }
 
@@ -22,7 +22,7 @@ public class Tethering {
     /**
     * Request browser port unbinding.
     */
-    public io.netty.util.concurrent.Future unbind(jpuppeteer.cdp.client.entity.tethering.UnbindRequest request) {
+    public jpuppeteer.util.XFuture<?> unbind(jpuppeteer.cdp.client.entity.tethering.UnbindRequest request) {
         return connection.send("Tethering.unbind", request);
     }
 

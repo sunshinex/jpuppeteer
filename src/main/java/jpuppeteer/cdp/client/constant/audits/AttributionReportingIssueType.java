@@ -23,6 +23,11 @@ public enum AttributionReportingIssueType implements jpuppeteer.cdp.client.CDPEn
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static AttributionReportingIssueType findByValue(String value) {
         for(AttributionReportingIssueType val : values()) {
             if (val.value.equals(value)) return val;

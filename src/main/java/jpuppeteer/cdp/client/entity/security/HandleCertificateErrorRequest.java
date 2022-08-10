@@ -7,16 +7,35 @@ public class HandleCertificateErrorRequest {
     /**
     * The ID of the event.
     */
-    public final Integer eventId;
+    private Integer eventId;
 
     /**
     * The action to take on the certificate error.
     */
-    public final jpuppeteer.cdp.client.constant.security.CertificateErrorAction action;
+    private jpuppeteer.cdp.client.constant.security.CertificateErrorAction action;
+
+    public void setEventId (Integer eventId) {
+        this.eventId = eventId;
+    }
+
+    public Integer getEventId() {
+        return this.eventId;
+    }
+
+    public void setAction (jpuppeteer.cdp.client.constant.security.CertificateErrorAction action) {
+        this.action = action;
+    }
+
+    public jpuppeteer.cdp.client.constant.security.CertificateErrorAction getAction() {
+        return this.action;
+    }
 
     public HandleCertificateErrorRequest(Integer eventId, jpuppeteer.cdp.client.constant.security.CertificateErrorAction action) {
         this.eventId = eventId;
         this.action = action;
+    }
+
+    public HandleCertificateErrorRequest() {
     }
 
 }

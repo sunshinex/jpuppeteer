@@ -7,10 +7,21 @@ public class GetDatabaseTableNamesResponse {
 
     /**
     */
-    public final java.util.List<String> tableNames;
+    private java.util.List<String> tableNames;
+
+    public void setTableNames (java.util.List<String> tableNames) {
+        this.tableNames = tableNames;
+    }
+
+    public java.util.List<String> getTableNames() {
+        return this.tableNames;
+    }
 
     public GetDatabaseTableNamesResponse(java.util.List<String> tableNames) {
         this.tableNames = tableNames;
+    }
+
+    public GetDatabaseTableNamesResponse() {
     }
 
 }

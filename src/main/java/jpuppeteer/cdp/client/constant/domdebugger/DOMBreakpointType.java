@@ -21,6 +21,11 @@ public enum DOMBreakpointType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static DOMBreakpointType findByValue(String value) {
         for(DOMBreakpointType val : values()) {
             if (val.value.equals(value)) return val;

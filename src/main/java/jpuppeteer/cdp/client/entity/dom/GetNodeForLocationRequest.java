@@ -7,22 +7,54 @@ public class GetNodeForLocationRequest {
     /**
     * X coordinate.
     */
-    public final Integer x;
+    private Integer x;
 
     /**
     * Y coordinate.
     */
-    public final Integer y;
+    private Integer y;
 
     /**
     * False to skip to the nearest non-UA shadow root ancestor (default: false).
     */
-    public final Boolean includeUserAgentShadowDOM;
+    private Boolean includeUserAgentShadowDOM;
 
     /**
     * Whether to ignore pointer-events: none on elements and hit test them.
     */
-    public final Boolean ignorePointerEventsNone;
+    private Boolean ignorePointerEventsNone;
+
+    public void setX (Integer x) {
+        this.x = x;
+    }
+
+    public Integer getX() {
+        return this.x;
+    }
+
+    public void setY (Integer y) {
+        this.y = y;
+    }
+
+    public Integer getY() {
+        return this.y;
+    }
+
+    public void setIncludeUserAgentShadowDOM (Boolean includeUserAgentShadowDOM) {
+        this.includeUserAgentShadowDOM = includeUserAgentShadowDOM;
+    }
+
+    public Boolean getIncludeUserAgentShadowDOM() {
+        return this.includeUserAgentShadowDOM;
+    }
+
+    public void setIgnorePointerEventsNone (Boolean ignorePointerEventsNone) {
+        this.ignorePointerEventsNone = ignorePointerEventsNone;
+    }
+
+    public Boolean getIgnorePointerEventsNone() {
+        return this.ignorePointerEventsNone;
+    }
 
     public GetNodeForLocationRequest(Integer x, Integer y, Boolean includeUserAgentShadowDOM, Boolean ignorePointerEventsNone) {
         this.x = x;
@@ -36,6 +68,9 @@ public class GetNodeForLocationRequest {
         this.y = y;
         this.includeUserAgentShadowDOM = null;
         this.ignorePointerEventsNone = null;
+    }
+
+    public GetNodeForLocationRequest() {
     }
 
 }

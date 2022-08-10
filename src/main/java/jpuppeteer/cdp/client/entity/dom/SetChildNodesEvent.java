@@ -8,16 +8,35 @@ public class SetChildNodesEvent {
     /**
     * Parent node id to populate with children.
     */
-    public final Integer parentId;
+    private Integer parentId;
 
     /**
     * Child nodes array.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.dom.Node> nodes;
+    private java.util.List<jpuppeteer.cdp.client.entity.dom.Node> nodes;
+
+    public void setParentId (Integer parentId) {
+        this.parentId = parentId;
+    }
+
+    public Integer getParentId() {
+        return this.parentId;
+    }
+
+    public void setNodes (java.util.List<jpuppeteer.cdp.client.entity.dom.Node> nodes) {
+        this.nodes = nodes;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.dom.Node> getNodes() {
+        return this.nodes;
+    }
 
     public SetChildNodesEvent(Integer parentId, java.util.List<jpuppeteer.cdp.client.entity.dom.Node> nodes) {
         this.parentId = parentId;
         this.nodes = nodes;
+    }
+
+    public SetChildNodesEvent() {
     }
 
 }

@@ -19,6 +19,11 @@ public enum FrameDetachedEventReason implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static FrameDetachedEventReason findByValue(String value) {
         for(FrameDetachedEventReason val : values()) {
             if (val.value.equals(value)) return val;

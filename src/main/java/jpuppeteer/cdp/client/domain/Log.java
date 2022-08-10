@@ -13,7 +13,7 @@ public class Log {
     /**
     * Clears the log.
     */
-    public io.netty.util.concurrent.Future clear() {
+    public jpuppeteer.util.XFuture<?> clear() {
         return connection.send("Log.clear", null);
     }
 
@@ -21,7 +21,7 @@ public class Log {
     /**
     * Disables log domain, prevents further log entries from being reported to the client.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("Log.disable", null);
     }
 
@@ -29,7 +29,7 @@ public class Log {
     /**
     * Enables log domain, sends the entries collected so far to the client by means of the `entryAdded` notification.
     */
-    public io.netty.util.concurrent.Future enable() {
+    public jpuppeteer.util.XFuture<?> enable() {
         return connection.send("Log.enable", null);
     }
 
@@ -37,7 +37,7 @@ public class Log {
     /**
     * start violation reporting.
     */
-    public io.netty.util.concurrent.Future startViolationsReport(jpuppeteer.cdp.client.entity.log.StartViolationsReportRequest request) {
+    public jpuppeteer.util.XFuture<?> startViolationsReport(jpuppeteer.cdp.client.entity.log.StartViolationsReportRequest request) {
         return connection.send("Log.startViolationsReport", request);
     }
 
@@ -45,7 +45,7 @@ public class Log {
     /**
     * Stop violation reporting.
     */
-    public io.netty.util.concurrent.Future stopViolationsReport() {
+    public jpuppeteer.util.XFuture<?> stopViolationsReport() {
         return connection.send("Log.stopViolationsReport", null);
     }
 

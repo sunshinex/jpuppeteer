@@ -20,6 +20,11 @@ public enum PrivateNetworkRequestPolicy implements jpuppeteer.cdp.client.CDPEnum
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static PrivateNetworkRequestPolicy findByValue(String value) {
         for(PrivateNetworkRequestPolicy val : values()) {
             if (val.value.equals(value)) return val;

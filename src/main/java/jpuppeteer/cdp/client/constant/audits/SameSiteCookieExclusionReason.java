@@ -23,6 +23,11 @@ public enum SameSiteCookieExclusionReason implements jpuppeteer.cdp.client.CDPEn
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SameSiteCookieExclusionReason findByValue(String value) {
         for(SameSiteCookieExclusionReason val : values()) {
             if (val.value.equals(value)) return val;

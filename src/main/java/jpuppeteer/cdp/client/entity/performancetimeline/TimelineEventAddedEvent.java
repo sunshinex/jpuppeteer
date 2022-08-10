@@ -8,10 +8,21 @@ public class TimelineEventAddedEvent {
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.performancetimeline.TimelineEvent event;
+    private jpuppeteer.cdp.client.entity.performancetimeline.TimelineEvent event;
+
+    public void setEvent (jpuppeteer.cdp.client.entity.performancetimeline.TimelineEvent event) {
+        this.event = event;
+    }
+
+    public jpuppeteer.cdp.client.entity.performancetimeline.TimelineEvent getEvent() {
+        return this.event;
+    }
 
     public TimelineEventAddedEvent(jpuppeteer.cdp.client.entity.performancetimeline.TimelineEvent event) {
         this.event = event;
+    }
+
+    public TimelineEventAddedEvent() {
     }
 
 }

@@ -25,6 +25,11 @@ public enum RemoteObjectType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static RemoteObjectType findByValue(String value) {
         for(RemoteObjectType val : values()) {
             if (val.value.equals(value)) return val;

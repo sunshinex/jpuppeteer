@@ -7,17 +7,41 @@ public class EnableRequest {
     /**
     * Buffer size in bytes to use when preserving network payloads (XHRs, etc).
     */
-    public final Integer maxTotalBufferSize;
+    private Integer maxTotalBufferSize;
 
     /**
     * Per-resource buffer size in bytes to use when preserving network payloads (XHRs, etc).
     */
-    public final Integer maxResourceBufferSize;
+    private Integer maxResourceBufferSize;
 
     /**
     * Longest post body size (in bytes) that would be included in requestWillBeSent notification
     */
-    public final Integer maxPostDataSize;
+    private Integer maxPostDataSize;
+
+    public void setMaxTotalBufferSize (Integer maxTotalBufferSize) {
+        this.maxTotalBufferSize = maxTotalBufferSize;
+    }
+
+    public Integer getMaxTotalBufferSize() {
+        return this.maxTotalBufferSize;
+    }
+
+    public void setMaxResourceBufferSize (Integer maxResourceBufferSize) {
+        this.maxResourceBufferSize = maxResourceBufferSize;
+    }
+
+    public Integer getMaxResourceBufferSize() {
+        return this.maxResourceBufferSize;
+    }
+
+    public void setMaxPostDataSize (Integer maxPostDataSize) {
+        this.maxPostDataSize = maxPostDataSize;
+    }
+
+    public Integer getMaxPostDataSize() {
+        return this.maxPostDataSize;
+    }
 
     public EnableRequest(Integer maxTotalBufferSize, Integer maxResourceBufferSize, Integer maxPostDataSize) {
         this.maxTotalBufferSize = maxTotalBufferSize;

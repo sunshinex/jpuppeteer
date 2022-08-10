@@ -9,16 +9,35 @@ public class Size {
     /**
     * Width in pixels.
     */
-    public final Integer width;
+    private Integer width;
 
     /**
     * Height in pixels.
     */
-    public final Integer height;
+    private Integer height;
+
+    public void setWidth (Integer width) {
+        this.width = width;
+    }
+
+    public Integer getWidth() {
+        return this.width;
+    }
+
+    public void setHeight (Integer height) {
+        this.height = height;
+    }
+
+    public Integer getHeight() {
+        return this.height;
+    }
 
     public Size(Integer width, Integer height) {
         this.width = width;
         this.height = height;
+    }
+
+    public Size() {
     }
 
 }

@@ -14,7 +14,7 @@ public class Input {
     * Dispatches a drag event into the page.
     * experimental
     */
-    public io.netty.util.concurrent.Future dispatchDragEvent(jpuppeteer.cdp.client.entity.input.DispatchDragEventRequest request) {
+    public jpuppeteer.util.XFuture<?> dispatchDragEvent(jpuppeteer.cdp.client.entity.input.DispatchDragEventRequest request) {
         return connection.send("Input.dispatchDragEvent", request);
     }
 
@@ -22,7 +22,7 @@ public class Input {
     /**
     * Dispatches a key event to the page.
     */
-    public io.netty.util.concurrent.Future dispatchKeyEvent(jpuppeteer.cdp.client.entity.input.DispatchKeyEventRequest request) {
+    public jpuppeteer.util.XFuture<?> dispatchKeyEvent(jpuppeteer.cdp.client.entity.input.DispatchKeyEventRequest request) {
         return connection.send("Input.dispatchKeyEvent", request);
     }
 
@@ -31,7 +31,7 @@ public class Input {
     * This method emulates inserting text that doesn't come from a key press, for example an emoji keyboard or an IME.
     * experimental
     */
-    public io.netty.util.concurrent.Future insertText(jpuppeteer.cdp.client.entity.input.InsertTextRequest request) {
+    public jpuppeteer.util.XFuture<?> insertText(jpuppeteer.cdp.client.entity.input.InsertTextRequest request) {
         return connection.send("Input.insertText", request);
     }
 
@@ -39,7 +39,7 @@ public class Input {
     /**
     * Dispatches a mouse event to the page.
     */
-    public io.netty.util.concurrent.Future dispatchMouseEvent(jpuppeteer.cdp.client.entity.input.DispatchMouseEventRequest request) {
+    public jpuppeteer.util.XFuture<?> dispatchMouseEvent(jpuppeteer.cdp.client.entity.input.DispatchMouseEventRequest request) {
         return connection.send("Input.dispatchMouseEvent", request);
     }
 
@@ -47,7 +47,7 @@ public class Input {
     /**
     * Dispatches a touch event to the page.
     */
-    public io.netty.util.concurrent.Future dispatchTouchEvent(jpuppeteer.cdp.client.entity.input.DispatchTouchEventRequest request) {
+    public jpuppeteer.util.XFuture<?> dispatchTouchEvent(jpuppeteer.cdp.client.entity.input.DispatchTouchEventRequest request) {
         return connection.send("Input.dispatchTouchEvent", request);
     }
 
@@ -56,7 +56,7 @@ public class Input {
     * Emulates touch event from the mouse event parameters.
     * experimental
     */
-    public io.netty.util.concurrent.Future emulateTouchFromMouseEvent(jpuppeteer.cdp.client.entity.input.EmulateTouchFromMouseEventRequest request) {
+    public jpuppeteer.util.XFuture<?> emulateTouchFromMouseEvent(jpuppeteer.cdp.client.entity.input.EmulateTouchFromMouseEventRequest request) {
         return connection.send("Input.emulateTouchFromMouseEvent", request);
     }
 
@@ -64,7 +64,7 @@ public class Input {
     /**
     * Ignores input events (useful while auditing page).
     */
-    public io.netty.util.concurrent.Future setIgnoreInputEvents(jpuppeteer.cdp.client.entity.input.SetIgnoreInputEventsRequest request) {
+    public jpuppeteer.util.XFuture<?> setIgnoreInputEvents(jpuppeteer.cdp.client.entity.input.SetIgnoreInputEventsRequest request) {
         return connection.send("Input.setIgnoreInputEvents", request);
     }
 
@@ -73,7 +73,7 @@ public class Input {
     * Prevents default drag and drop behavior and instead emits `Input.dragIntercepted` events. Drag and drop behavior can be directly controlled via `Input.dispatchDragEvent`.
     * experimental
     */
-    public io.netty.util.concurrent.Future setInterceptDrags(jpuppeteer.cdp.client.entity.input.SetInterceptDragsRequest request) {
+    public jpuppeteer.util.XFuture<?> setInterceptDrags(jpuppeteer.cdp.client.entity.input.SetInterceptDragsRequest request) {
         return connection.send("Input.setInterceptDrags", request);
     }
 
@@ -82,7 +82,7 @@ public class Input {
     * Synthesizes a pinch gesture over a time period by issuing appropriate touch events.
     * experimental
     */
-    public io.netty.util.concurrent.Future synthesizePinchGesture(jpuppeteer.cdp.client.entity.input.SynthesizePinchGestureRequest request) {
+    public jpuppeteer.util.XFuture<?> synthesizePinchGesture(jpuppeteer.cdp.client.entity.input.SynthesizePinchGestureRequest request) {
         return connection.send("Input.synthesizePinchGesture", request);
     }
 
@@ -91,7 +91,7 @@ public class Input {
     * Synthesizes a scroll gesture over a time period by issuing appropriate touch events.
     * experimental
     */
-    public io.netty.util.concurrent.Future synthesizeScrollGesture(jpuppeteer.cdp.client.entity.input.SynthesizeScrollGestureRequest request) {
+    public jpuppeteer.util.XFuture<?> synthesizeScrollGesture(jpuppeteer.cdp.client.entity.input.SynthesizeScrollGestureRequest request) {
         return connection.send("Input.synthesizeScrollGesture", request);
     }
 
@@ -100,7 +100,7 @@ public class Input {
     * Synthesizes a tap gesture over a time period by issuing appropriate touch events.
     * experimental
     */
-    public io.netty.util.concurrent.Future synthesizeTapGesture(jpuppeteer.cdp.client.entity.input.SynthesizeTapGestureRequest request) {
+    public jpuppeteer.util.XFuture<?> synthesizeTapGesture(jpuppeteer.cdp.client.entity.input.SynthesizeTapGestureRequest request) {
         return connection.send("Input.synthesizeTapGesture", request);
     }
 

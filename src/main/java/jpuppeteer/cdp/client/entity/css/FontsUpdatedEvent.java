@@ -9,7 +9,15 @@ public class FontsUpdatedEvent {
     /**
     * The web font that has loaded.
     */
-    public final jpuppeteer.cdp.client.entity.css.FontFace font;
+    private jpuppeteer.cdp.client.entity.css.FontFace font;
+
+    public void setFont (jpuppeteer.cdp.client.entity.css.FontFace font) {
+        this.font = font;
+    }
+
+    public jpuppeteer.cdp.client.entity.css.FontFace getFont() {
+        return this.font;
+    }
 
     public FontsUpdatedEvent(jpuppeteer.cdp.client.entity.css.FontFace font) {
         this.font = font;

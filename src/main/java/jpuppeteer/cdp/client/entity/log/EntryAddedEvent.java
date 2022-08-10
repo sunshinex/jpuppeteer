@@ -8,10 +8,21 @@ public class EntryAddedEvent {
     /**
     * The entry.
     */
-    public final jpuppeteer.cdp.client.entity.log.LogEntry entry;
+    private jpuppeteer.cdp.client.entity.log.LogEntry entry;
+
+    public void setEntry (jpuppeteer.cdp.client.entity.log.LogEntry entry) {
+        this.entry = entry;
+    }
+
+    public jpuppeteer.cdp.client.entity.log.LogEntry getEntry() {
+        return this.entry;
+    }
 
     public EntryAddedEvent(jpuppeteer.cdp.client.entity.log.LogEntry entry) {
         this.entry = entry;
+    }
+
+    public EntryAddedEvent() {
     }
 
 }

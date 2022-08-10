@@ -7,12 +7,28 @@ public class SetEmitTouchEventsForMouseRequest {
     /**
     * Whether touch emulation based on mouse input should be enabled.
     */
-    public final Boolean enabled;
+    private Boolean enabled;
 
     /**
     * Touch/gesture events configuration. Default: current platform.
     */
-    public final jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration configuration;
+    private jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration configuration;
+
+    public void setEnabled (Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Boolean getEnabled() {
+        return this.enabled;
+    }
+
+    public void setConfiguration (jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration getConfiguration() {
+        return this.configuration;
+    }
 
     public SetEmitTouchEventsForMouseRequest(Boolean enabled, jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration configuration) {
         this.enabled = enabled;
@@ -22,6 +38,9 @@ public class SetEmitTouchEventsForMouseRequest {
     public SetEmitTouchEventsForMouseRequest(Boolean enabled) {
         this.enabled = enabled;
         this.configuration = null;
+    }
+
+    public SetEmitTouchEventsForMouseRequest() {
     }
 
 }

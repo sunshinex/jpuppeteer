@@ -7,10 +7,21 @@ public class ReplayXHRRequest {
     /**
     * Identifier of XHR to replay.
     */
-    public final String requestId;
+    private String requestId;
+
+    public void setRequestId (String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestId() {
+        return this.requestId;
+    }
 
     public ReplayXHRRequest(String requestId) {
         this.requestId = requestId;
+    }
+
+    public ReplayXHRRequest() {
     }
 
 }

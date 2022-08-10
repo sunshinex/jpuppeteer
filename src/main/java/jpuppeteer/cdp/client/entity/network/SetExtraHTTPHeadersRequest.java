@@ -7,10 +7,21 @@ public class SetExtraHTTPHeadersRequest {
     /**
     * Map with extra HTTP headers.
     */
-    public final java.util.Map<String, Object> headers;
+    private java.util.Map<String, Object> headers;
+
+    public void setHeaders (java.util.Map<String, Object> headers) {
+        this.headers = headers;
+    }
+
+    public java.util.Map<String, Object> getHeaders() {
+        return this.headers;
+    }
 
     public SetExtraHTTPHeadersRequest(java.util.Map<String, Object> headers) {
         this.headers = headers;
+    }
+
+    public SetExtraHTTPHeadersRequest() {
     }
 
 }

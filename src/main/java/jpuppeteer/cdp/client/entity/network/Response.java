@@ -8,117 +8,301 @@ public class Response {
     /**
     * Response URL. This URL can be different from CachedResource.url in case of redirect.
     */
-    public final String url;
+    private String url;
 
     /**
     * HTTP response status code.
     */
-    public final Integer status;
+    private Integer status;
 
     /**
     * HTTP response status text.
     */
-    public final String statusText;
+    private String statusText;
 
     /**
     * HTTP response headers.
     */
-    public final java.util.Map<String, Object> headers;
+    private java.util.Map<String, Object> headers;
 
     /**
     * HTTP response headers text.
     */
-    public final String headersText;
+    private String headersText;
 
     /**
     * Resource mimeType as determined by the browser.
     */
-    public final String mimeType;
+    private String mimeType;
 
     /**
     * Refined HTTP request headers that were actually transmitted over the network.
     */
-    public final java.util.Map<String, Object> requestHeaders;
+    private java.util.Map<String, Object> requestHeaders;
 
     /**
     * HTTP request headers text.
     */
-    public final String requestHeadersText;
+    private String requestHeadersText;
 
     /**
     * Specifies whether physical connection was actually reused for this request.
     */
-    public final Boolean connectionReused;
+    private Boolean connectionReused;
 
     /**
     * Physical connection id that was actually used for this request.
     */
-    public final java.math.BigDecimal connectionId;
+    private java.math.BigDecimal connectionId;
 
     /**
     * Remote IP address.
     */
-    public final String remoteIPAddress;
+    private String remoteIPAddress;
 
     /**
     * Remote port.
     */
-    public final Integer remotePort;
+    private Integer remotePort;
 
     /**
     * Specifies that the request was served from the disk cache.
     */
-    public final Boolean fromDiskCache;
+    private Boolean fromDiskCache;
 
     /**
     * Specifies that the request was served from the ServiceWorker.
     */
-    public final Boolean fromServiceWorker;
+    private Boolean fromServiceWorker;
 
     /**
     * Specifies that the request was served from the prefetch cache.
     */
-    public final Boolean fromPrefetchCache;
+    private Boolean fromPrefetchCache;
 
     /**
     * Total number of bytes received for this request so far.
     */
-    public final java.math.BigDecimal encodedDataLength;
+    private java.math.BigDecimal encodedDataLength;
 
     /**
     * Timing information for the given request.
     */
-    public final jpuppeteer.cdp.client.entity.network.ResourceTiming timing;
+    private jpuppeteer.cdp.client.entity.network.ResourceTiming timing;
 
     /**
     * Response source of response from ServiceWorker.
     */
-    public final jpuppeteer.cdp.client.constant.network.ServiceWorkerResponseSource serviceWorkerResponseSource;
+    private jpuppeteer.cdp.client.constant.network.ServiceWorkerResponseSource serviceWorkerResponseSource;
 
     /**
     * The time at which the returned response was generated.
     */
-    public final java.math.BigDecimal responseTime;
+    private java.math.BigDecimal responseTime;
 
     /**
     * Cache Storage Cache Name.
     */
-    public final String cacheStorageCacheName;
+    private String cacheStorageCacheName;
 
     /**
     * Protocol used to fetch this request.
     */
-    public final String protocol;
+    private String protocol;
 
     /**
     * Security state of the request resource.
     */
-    public final jpuppeteer.cdp.client.constant.security.SecurityState securityState;
+    private jpuppeteer.cdp.client.constant.security.SecurityState securityState;
 
     /**
     * Security details for the request.
     */
-    public final jpuppeteer.cdp.client.entity.network.SecurityDetails securityDetails;
+    private jpuppeteer.cdp.client.entity.network.SecurityDetails securityDetails;
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setStatus (Integer status) {
+        this.status = status;
+    }
+
+    public Integer getStatus() {
+        return this.status;
+    }
+
+    public void setStatusText (String statusText) {
+        this.statusText = statusText;
+    }
+
+    public String getStatusText() {
+        return this.statusText;
+    }
+
+    public void setHeaders (java.util.Map<String, Object> headers) {
+        this.headers = headers;
+    }
+
+    public java.util.Map<String, Object> getHeaders() {
+        return this.headers;
+    }
+
+    public void setHeadersText (String headersText) {
+        this.headersText = headersText;
+    }
+
+    public String getHeadersText() {
+        return this.headersText;
+    }
+
+    public void setMimeType (String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    public String getMimeType() {
+        return this.mimeType;
+    }
+
+    public void setRequestHeaders (java.util.Map<String, Object> requestHeaders) {
+        this.requestHeaders = requestHeaders;
+    }
+
+    public java.util.Map<String, Object> getRequestHeaders() {
+        return this.requestHeaders;
+    }
+
+    public void setRequestHeadersText (String requestHeadersText) {
+        this.requestHeadersText = requestHeadersText;
+    }
+
+    public String getRequestHeadersText() {
+        return this.requestHeadersText;
+    }
+
+    public void setConnectionReused (Boolean connectionReused) {
+        this.connectionReused = connectionReused;
+    }
+
+    public Boolean getConnectionReused() {
+        return this.connectionReused;
+    }
+
+    public void setConnectionId (java.math.BigDecimal connectionId) {
+        this.connectionId = connectionId;
+    }
+
+    public java.math.BigDecimal getConnectionId() {
+        return this.connectionId;
+    }
+
+    public void setRemoteIPAddress (String remoteIPAddress) {
+        this.remoteIPAddress = remoteIPAddress;
+    }
+
+    public String getRemoteIPAddress() {
+        return this.remoteIPAddress;
+    }
+
+    public void setRemotePort (Integer remotePort) {
+        this.remotePort = remotePort;
+    }
+
+    public Integer getRemotePort() {
+        return this.remotePort;
+    }
+
+    public void setFromDiskCache (Boolean fromDiskCache) {
+        this.fromDiskCache = fromDiskCache;
+    }
+
+    public Boolean getFromDiskCache() {
+        return this.fromDiskCache;
+    }
+
+    public void setFromServiceWorker (Boolean fromServiceWorker) {
+        this.fromServiceWorker = fromServiceWorker;
+    }
+
+    public Boolean getFromServiceWorker() {
+        return this.fromServiceWorker;
+    }
+
+    public void setFromPrefetchCache (Boolean fromPrefetchCache) {
+        this.fromPrefetchCache = fromPrefetchCache;
+    }
+
+    public Boolean getFromPrefetchCache() {
+        return this.fromPrefetchCache;
+    }
+
+    public void setEncodedDataLength (java.math.BigDecimal encodedDataLength) {
+        this.encodedDataLength = encodedDataLength;
+    }
+
+    public java.math.BigDecimal getEncodedDataLength() {
+        return this.encodedDataLength;
+    }
+
+    public void setTiming (jpuppeteer.cdp.client.entity.network.ResourceTiming timing) {
+        this.timing = timing;
+    }
+
+    public jpuppeteer.cdp.client.entity.network.ResourceTiming getTiming() {
+        return this.timing;
+    }
+
+    public void setServiceWorkerResponseSource (jpuppeteer.cdp.client.constant.network.ServiceWorkerResponseSource serviceWorkerResponseSource) {
+        this.serviceWorkerResponseSource = serviceWorkerResponseSource;
+    }
+
+    public jpuppeteer.cdp.client.constant.network.ServiceWorkerResponseSource getServiceWorkerResponseSource() {
+        return this.serviceWorkerResponseSource;
+    }
+
+    public void setResponseTime (java.math.BigDecimal responseTime) {
+        this.responseTime = responseTime;
+    }
+
+    public java.math.BigDecimal getResponseTime() {
+        return this.responseTime;
+    }
+
+    public void setCacheStorageCacheName (String cacheStorageCacheName) {
+        this.cacheStorageCacheName = cacheStorageCacheName;
+    }
+
+    public String getCacheStorageCacheName() {
+        return this.cacheStorageCacheName;
+    }
+
+    public void setProtocol (String protocol) {
+        this.protocol = protocol;
+    }
+
+    public String getProtocol() {
+        return this.protocol;
+    }
+
+    public void setSecurityState (jpuppeteer.cdp.client.constant.security.SecurityState securityState) {
+        this.securityState = securityState;
+    }
+
+    public jpuppeteer.cdp.client.constant.security.SecurityState getSecurityState() {
+        return this.securityState;
+    }
+
+    public void setSecurityDetails (jpuppeteer.cdp.client.entity.network.SecurityDetails securityDetails) {
+        this.securityDetails = securityDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.network.SecurityDetails getSecurityDetails() {
+        return this.securityDetails;
+    }
 
     public Response(String url, Integer status, String statusText, java.util.Map<String, Object> headers, String headersText, String mimeType, java.util.Map<String, Object> requestHeaders, String requestHeadersText, Boolean connectionReused, java.math.BigDecimal connectionId, String remoteIPAddress, Integer remotePort, Boolean fromDiskCache, Boolean fromServiceWorker, Boolean fromPrefetchCache, java.math.BigDecimal encodedDataLength, jpuppeteer.cdp.client.entity.network.ResourceTiming timing, jpuppeteer.cdp.client.constant.network.ServiceWorkerResponseSource serviceWorkerResponseSource, java.math.BigDecimal responseTime, String cacheStorageCacheName, String protocol, jpuppeteer.cdp.client.constant.security.SecurityState securityState, jpuppeteer.cdp.client.entity.network.SecurityDetails securityDetails) {
         this.url = url;
@@ -170,6 +354,9 @@ public class Response {
         this.protocol = null;
         this.securityState = securityState;
         this.securityDetails = null;
+    }
+
+    public Response() {
     }
 
 }

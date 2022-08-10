@@ -21,6 +21,11 @@ public enum EmulateTouchFromMouseEventRequestType implements jpuppeteer.cdp.clie
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static EmulateTouchFromMouseEventRequestType findByValue(String value) {
         for(EmulateTouchFromMouseEventRequestType val : values()) {
             if (val.value.equals(value)) return val;

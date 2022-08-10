@@ -20,6 +20,11 @@ public enum SameSiteCookieOperation implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SameSiteCookieOperation findByValue(String value) {
         for(SameSiteCookieOperation val : values()) {
             if (val.value.equals(value)) return val;

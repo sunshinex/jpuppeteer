@@ -7,7 +7,15 @@ public class EnableRequest {
 
     /**
     */
-    public final String presentationUrl;
+    private String presentationUrl;
+
+    public void setPresentationUrl (String presentationUrl) {
+        this.presentationUrl = presentationUrl;
+    }
+
+    public String getPresentationUrl() {
+        return this.presentationUrl;
+    }
 
     public EnableRequest(String presentationUrl) {
         this.presentationUrl = presentationUrl;

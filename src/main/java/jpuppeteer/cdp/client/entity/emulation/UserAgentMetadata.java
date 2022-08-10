@@ -7,31 +7,87 @@ public class UserAgentMetadata {
 
     /**
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.emulation.UserAgentBrandVersion> brands;
+    private java.util.List<jpuppeteer.cdp.client.entity.emulation.UserAgentBrandVersion> brands;
 
     /**
     */
-    public final String fullVersion;
+    private String fullVersion;
 
     /**
     */
-    public final String platform;
+    private String platform;
 
     /**
     */
-    public final String platformVersion;
+    private String platformVersion;
 
     /**
     */
-    public final String architecture;
+    private String architecture;
 
     /**
     */
-    public final String model;
+    private String model;
 
     /**
     */
-    public final Boolean mobile;
+    private Boolean mobile;
+
+    public void setBrands (java.util.List<jpuppeteer.cdp.client.entity.emulation.UserAgentBrandVersion> brands) {
+        this.brands = brands;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.emulation.UserAgentBrandVersion> getBrands() {
+        return this.brands;
+    }
+
+    public void setFullVersion (String fullVersion) {
+        this.fullVersion = fullVersion;
+    }
+
+    public String getFullVersion() {
+        return this.fullVersion;
+    }
+
+    public void setPlatform (String platform) {
+        this.platform = platform;
+    }
+
+    public String getPlatform() {
+        return this.platform;
+    }
+
+    public void setPlatformVersion (String platformVersion) {
+        this.platformVersion = platformVersion;
+    }
+
+    public String getPlatformVersion() {
+        return this.platformVersion;
+    }
+
+    public void setArchitecture (String architecture) {
+        this.architecture = architecture;
+    }
+
+    public String getArchitecture() {
+        return this.architecture;
+    }
+
+    public void setModel (String model) {
+        this.model = model;
+    }
+
+    public String getModel() {
+        return this.model;
+    }
+
+    public void setMobile (Boolean mobile) {
+        this.mobile = mobile;
+    }
+
+    public Boolean getMobile() {
+        return this.mobile;
+    }
 
     public UserAgentMetadata(java.util.List<jpuppeteer.cdp.client.entity.emulation.UserAgentBrandVersion> brands, String fullVersion, String platform, String platformVersion, String architecture, String model, Boolean mobile) {
         this.brands = brands;
@@ -51,6 +107,9 @@ public class UserAgentMetadata {
         this.architecture = architecture;
         this.model = model;
         this.mobile = mobile;
+    }
+
+    public UserAgentMetadata() {
     }
 
 }

@@ -7,10 +7,21 @@ public class SetOverrideCertificateErrorsRequest {
     /**
     * If true, certificate errors will be overridden.
     */
-    public final Boolean override;
+    private Boolean override;
+
+    public void setOverride (Boolean override) {
+        this.override = override;
+    }
+
+    public Boolean getOverride() {
+        return this.override;
+    }
 
     public SetOverrideCertificateErrorsRequest(Boolean override) {
         this.override = override;
+    }
+
+    public SetOverrideCertificateErrorsRequest() {
     }
 
 }

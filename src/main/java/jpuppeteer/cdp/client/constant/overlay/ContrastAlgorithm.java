@@ -21,6 +21,11 @@ public enum ContrastAlgorithm implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ContrastAlgorithm findByValue(String value) {
         for(ContrastAlgorithm val : values()) {
             if (val.value.equals(value)) return val;

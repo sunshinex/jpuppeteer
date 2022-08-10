@@ -7,10 +7,21 @@ public class GetDatabaseTableNamesRequest {
 
     /**
     */
-    public final String databaseId;
+    private String databaseId;
+
+    public void setDatabaseId (String databaseId) {
+        this.databaseId = databaseId;
+    }
+
+    public String getDatabaseId() {
+        return this.databaseId;
+    }
 
     public GetDatabaseTableNamesRequest(String databaseId) {
         this.databaseId = databaseId;
+    }
+
+    public GetDatabaseTableNamesRequest() {
     }
 
 }

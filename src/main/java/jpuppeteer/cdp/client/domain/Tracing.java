@@ -14,7 +14,7 @@ public class Tracing {
     /**
     * Stop trace events collection.
     */
-    public io.netty.util.concurrent.Future end() {
+    public jpuppeteer.util.XFuture<?> end() {
         return connection.send("Tracing.end", null);
     }
 
@@ -22,7 +22,7 @@ public class Tracing {
     /**
     * Gets supported tracing categories.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.tracing.GetCategoriesResponse> getCategories() {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.tracing.GetCategoriesResponse> getCategories() {
         return connection.send("Tracing.getCategories", null, jpuppeteer.cdp.client.entity.tracing.GetCategoriesResponse.class);
     }
 
@@ -30,7 +30,7 @@ public class Tracing {
     /**
     * Record a clock sync marker in the trace.
     */
-    public io.netty.util.concurrent.Future recordClockSyncMarker(jpuppeteer.cdp.client.entity.tracing.RecordClockSyncMarkerRequest request) {
+    public jpuppeteer.util.XFuture<?> recordClockSyncMarker(jpuppeteer.cdp.client.entity.tracing.RecordClockSyncMarkerRequest request) {
         return connection.send("Tracing.recordClockSyncMarker", request);
     }
 
@@ -38,7 +38,7 @@ public class Tracing {
     /**
     * Request a global memory dump.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.tracing.RequestMemoryDumpResponse> requestMemoryDump(jpuppeteer.cdp.client.entity.tracing.RequestMemoryDumpRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.tracing.RequestMemoryDumpResponse> requestMemoryDump(jpuppeteer.cdp.client.entity.tracing.RequestMemoryDumpRequest request) {
         return connection.send("Tracing.requestMemoryDump", request, jpuppeteer.cdp.client.entity.tracing.RequestMemoryDumpResponse.class);
     }
 
@@ -46,7 +46,7 @@ public class Tracing {
     /**
     * Start trace events collection.
     */
-    public io.netty.util.concurrent.Future start(jpuppeteer.cdp.client.entity.tracing.StartRequest request) {
+    public jpuppeteer.util.XFuture<?> start(jpuppeteer.cdp.client.entity.tracing.StartRequest request) {
         return connection.send("Tracing.start", request);
     }
 

@@ -7,15 +7,39 @@ public class ReportHeapSnapshotProgressEvent {
 
     /**
     */
-    public final Integer done;
+    private Integer done;
 
     /**
     */
-    public final Integer total;
+    private Integer total;
 
     /**
     */
-    public final Boolean finished;
+    private Boolean finished;
+
+    public void setDone (Integer done) {
+        this.done = done;
+    }
+
+    public Integer getDone() {
+        return this.done;
+    }
+
+    public void setTotal (Integer total) {
+        this.total = total;
+    }
+
+    public Integer getTotal() {
+        return this.total;
+    }
+
+    public void setFinished (Boolean finished) {
+        this.finished = finished;
+    }
+
+    public Boolean getFinished() {
+        return this.finished;
+    }
 
     public ReportHeapSnapshotProgressEvent(Integer done, Integer total, Boolean finished) {
         this.done = done;
@@ -27,6 +51,9 @@ public class ReportHeapSnapshotProgressEvent {
         this.done = done;
         this.total = total;
         this.finished = null;
+    }
+
+    public ReportHeapSnapshotProgressEvent() {
     }
 
 }

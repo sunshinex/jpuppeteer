@@ -22,6 +22,11 @@ public enum MemoryDumpLevelOfDetail implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static MemoryDumpLevelOfDetail findByValue(String value) {
         for(MemoryDumpLevelOfDetail val : values()) {
             if (val.value.equals(value)) return val;

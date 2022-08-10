@@ -1,14 +1,13 @@
 package jpuppeteer.api.event.page;
 
 import io.netty.util.concurrent.EventExecutor;
-import io.netty.util.concurrent.Future;
 import jpuppeteer.api.Frame;
 import jpuppeteer.api.HttpHeader;
 import jpuppeteer.api.Response;
 import jpuppeteer.cdp.client.constant.network.ResourceType;
 import jpuppeteer.cdp.client.domain.Network;
 import jpuppeteer.cdp.client.entity.network.GetResponseBodyRequest;
-import jpuppeteer.util.SeriesPromise;
+import jpuppeteer.util.XFuture;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -163,13 +162,12 @@ public class ResponseEvent extends FrameEvent implements Response {
     }
 
     @Override
-    public Future<byte[]> content() {
+    public XFuture<byte[]> content() {
         if (encodedDataLength == 0) {
             return null;
         }
-        return SeriesPromise
-                .wrap(network.getResponseBody(new GetResponseBodyRequest(requestId)))
-                .sync(o -> o.base64Encoded ? Base64.getDecoder().decode(o.body) : o.body.getBytes(StandardCharsets.UTF_8));
+        return network.getResponseBody(new GetResponseBodyRequest(requestId))
+                .sync(o -> o.getBase64Encoded() ? Base64.getDecoder().decode(o.getBody()) : o.getBody().getBytes(StandardCharsets.UTF_8));
     }
 
     public static ResponseEventBuilder newBuilder() {

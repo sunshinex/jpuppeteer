@@ -20,6 +20,11 @@ public enum AuthenticatorProtocol implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static AuthenticatorProtocol findByValue(String value) {
         for(AuthenticatorProtocol val : values()) {
             if (val.value.equals(value)) return val;

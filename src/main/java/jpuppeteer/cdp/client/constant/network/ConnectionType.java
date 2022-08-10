@@ -27,6 +27,11 @@ public enum ConnectionType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ConnectionType findByValue(String value) {
         for(ConnectionType val : values()) {
             if (val.value.equals(value)) return val;

@@ -8,10 +8,21 @@ public class StyleSheetChangedEvent {
 
     /**
     */
-    public final String styleSheetId;
+    private String styleSheetId;
+
+    public void setStyleSheetId (String styleSheetId) {
+        this.styleSheetId = styleSheetId;
+    }
+
+    public String getStyleSheetId() {
+        return this.styleSheetId;
+    }
 
     public StyleSheetChangedEvent(String styleSheetId) {
         this.styleSheetId = styleSheetId;
+    }
+
+    public StyleSheetChangedEvent() {
     }
 
 }

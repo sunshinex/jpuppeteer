@@ -7,12 +7,28 @@ public class PerformSearchRequest {
     /**
     * Plain text or query selector or XPath search query.
     */
-    public final String query;
+    private String query;
 
     /**
     * True to search in user agent shadow DOM.
     */
-    public final Boolean includeUserAgentShadowDOM;
+    private Boolean includeUserAgentShadowDOM;
+
+    public void setQuery (String query) {
+        this.query = query;
+    }
+
+    public String getQuery() {
+        return this.query;
+    }
+
+    public void setIncludeUserAgentShadowDOM (Boolean includeUserAgentShadowDOM) {
+        this.includeUserAgentShadowDOM = includeUserAgentShadowDOM;
+    }
+
+    public Boolean getIncludeUserAgentShadowDOM() {
+        return this.includeUserAgentShadowDOM;
+    }
 
     public PerformSearchRequest(String query, Boolean includeUserAgentShadowDOM) {
         this.query = query;
@@ -22,6 +38,9 @@ public class PerformSearchRequest {
     public PerformSearchRequest(String query) {
         this.query = query;
         this.includeUserAgentShadowDOM = null;
+    }
+
+    public PerformSearchRequest() {
     }
 
 }

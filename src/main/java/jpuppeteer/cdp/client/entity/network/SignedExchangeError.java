@@ -8,17 +8,41 @@ public class SignedExchangeError {
     /**
     * Error message.
     */
-    public final String message;
+    private String message;
 
     /**
     * The index of the signature which caused the error.
     */
-    public final Integer signatureIndex;
+    private Integer signatureIndex;
 
     /**
     * The field which caused the error.
     */
-    public final jpuppeteer.cdp.client.constant.network.SignedExchangeErrorField errorField;
+    private jpuppeteer.cdp.client.constant.network.SignedExchangeErrorField errorField;
+
+    public void setMessage (String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return this.message;
+    }
+
+    public void setSignatureIndex (Integer signatureIndex) {
+        this.signatureIndex = signatureIndex;
+    }
+
+    public Integer getSignatureIndex() {
+        return this.signatureIndex;
+    }
+
+    public void setErrorField (jpuppeteer.cdp.client.constant.network.SignedExchangeErrorField errorField) {
+        this.errorField = errorField;
+    }
+
+    public jpuppeteer.cdp.client.constant.network.SignedExchangeErrorField getErrorField() {
+        return this.errorField;
+    }
 
     public SignedExchangeError(String message, Integer signatureIndex, jpuppeteer.cdp.client.constant.network.SignedExchangeErrorField errorField) {
         this.message = message;
@@ -30,6 +54,9 @@ public class SignedExchangeError {
         this.message = message;
         this.signatureIndex = null;
         this.errorField = null;
+    }
+
+    public SignedExchangeError() {
     }
 
 }

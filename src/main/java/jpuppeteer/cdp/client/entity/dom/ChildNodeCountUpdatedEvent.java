@@ -8,16 +8,35 @@ public class ChildNodeCountUpdatedEvent {
     /**
     * Id of the node that has changed.
     */
-    public final Integer nodeId;
+    private Integer nodeId;
 
     /**
     * New node count.
     */
-    public final Integer childNodeCount;
+    private Integer childNodeCount;
+
+    public void setNodeId (Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public Integer getNodeId() {
+        return this.nodeId;
+    }
+
+    public void setChildNodeCount (Integer childNodeCount) {
+        this.childNodeCount = childNodeCount;
+    }
+
+    public Integer getChildNodeCount() {
+        return this.childNodeCount;
+    }
 
     public ChildNodeCountUpdatedEvent(Integer nodeId, Integer childNodeCount) {
         this.nodeId = nodeId;
         this.childNodeCount = childNodeCount;
+    }
+
+    public ChildNodeCountUpdatedEvent() {
     }
 
 }

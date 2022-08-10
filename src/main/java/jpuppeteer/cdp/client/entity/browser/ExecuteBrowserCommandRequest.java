@@ -6,10 +6,21 @@ public class ExecuteBrowserCommandRequest {
 
     /**
     */
-    public final jpuppeteer.cdp.client.constant.browser.BrowserCommandId commandId;
+    private jpuppeteer.cdp.client.constant.browser.BrowserCommandId commandId;
+
+    public void setCommandId (jpuppeteer.cdp.client.constant.browser.BrowserCommandId commandId) {
+        this.commandId = commandId;
+    }
+
+    public jpuppeteer.cdp.client.constant.browser.BrowserCommandId getCommandId() {
+        return this.commandId;
+    }
 
     public ExecuteBrowserCommandRequest(jpuppeteer.cdp.client.constant.browser.BrowserCommandId commandId) {
         this.commandId = commandId;
+    }
+
+    public ExecuteBrowserCommandRequest() {
     }
 
 }

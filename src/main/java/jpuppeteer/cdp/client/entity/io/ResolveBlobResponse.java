@@ -7,10 +7,21 @@ public class ResolveBlobResponse {
     /**
     * UUID of the specified Blob.
     */
-    public final String uuid;
+    private String uuid;
+
+    public void setUuid (String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getUuid() {
+        return this.uuid;
+    }
 
     public ResolveBlobResponse(String uuid) {
         this.uuid = uuid;
+    }
+
+    public ResolveBlobResponse() {
     }
 
 }

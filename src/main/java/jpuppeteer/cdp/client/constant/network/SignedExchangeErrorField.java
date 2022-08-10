@@ -24,6 +24,11 @@ public enum SignedExchangeErrorField implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SignedExchangeErrorField findByValue(String value) {
         for(SignedExchangeErrorField val : values()) {
             if (val.value.equals(value)) return val;

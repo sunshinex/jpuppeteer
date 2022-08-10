@@ -21,6 +21,11 @@ public enum StreamCompression implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static StreamCompression findByValue(String value) {
         for(StreamCompression val : values()) {
             if (val.value.equals(value)) return val;

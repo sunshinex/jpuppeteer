@@ -8,16 +8,35 @@ public class WebTransportClosedEvent {
     /**
     * WebTransport identifier.
     */
-    public final String transportId;
+    private String transportId;
 
     /**
     * Timestamp.
     */
-    public final java.math.BigDecimal timestamp;
+    private java.math.BigDecimal timestamp;
+
+    public void setTransportId (String transportId) {
+        this.transportId = transportId;
+    }
+
+    public String getTransportId() {
+        return this.transportId;
+    }
+
+    public void setTimestamp (java.math.BigDecimal timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public java.math.BigDecimal getTimestamp() {
+        return this.timestamp;
+    }
 
     public WebTransportClosedEvent(String transportId, java.math.BigDecimal timestamp) {
         this.transportId = transportId;
         this.timestamp = timestamp;
+    }
+
+    public WebTransportClosedEvent() {
     }
 
 }

@@ -20,6 +20,11 @@ public enum SetPauseOnExceptionsRequestState implements jpuppeteer.cdp.client.CD
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SetPauseOnExceptionsRequestState findByValue(String value) {
         for(SetPauseOnExceptionsRequestState val : values()) {
             if (val.value.equals(value)) return val;

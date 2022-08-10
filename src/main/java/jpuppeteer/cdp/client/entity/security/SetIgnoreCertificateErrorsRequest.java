@@ -7,10 +7,21 @@ public class SetIgnoreCertificateErrorsRequest {
     /**
     * If true, all certificate errors will be ignored.
     */
-    public final Boolean ignore;
+    private Boolean ignore;
+
+    public void setIgnore (Boolean ignore) {
+        this.ignore = ignore;
+    }
+
+    public Boolean getIgnore() {
+        return this.ignore;
+    }
 
     public SetIgnoreCertificateErrorsRequest(Boolean ignore) {
         this.ignore = ignore;
+    }
+
+    public SetIgnoreCertificateErrorsRequest() {
     }
 
 }

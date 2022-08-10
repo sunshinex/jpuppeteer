@@ -8,15 +8,34 @@ public class AudioListenerWillBeDestroyedEvent {
 
     /**
     */
-    public final String contextId;
+    private String contextId;
 
     /**
     */
-    public final String listenerId;
+    private String listenerId;
+
+    public void setContextId (String contextId) {
+        this.contextId = contextId;
+    }
+
+    public String getContextId() {
+        return this.contextId;
+    }
+
+    public void setListenerId (String listenerId) {
+        this.listenerId = listenerId;
+    }
+
+    public String getListenerId() {
+        return this.listenerId;
+    }
 
     public AudioListenerWillBeDestroyedEvent(String contextId, String listenerId) {
         this.contextId = contextId;
         this.listenerId = listenerId;
+    }
+
+    public AudioListenerWillBeDestroyedEvent() {
     }
 
 }

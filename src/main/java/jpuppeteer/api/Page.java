@@ -1,7 +1,6 @@
 package jpuppeteer.api;
 
 import com.google.common.collect.Lists;
-import io.netty.util.concurrent.Future;
 import jpuppeteer.cdp.client.constant.browser.WindowState;
 import jpuppeteer.cdp.client.constant.emulation.ScreenOrientationType;
 import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration;
@@ -21,7 +20,7 @@ import jpuppeteer.constant.MouseDefinition;
 import jpuppeteer.constant.USKeyboardDefinition;
 import jpuppeteer.entity.HttpResource;
 import jpuppeteer.entity.Point;
-import jpuppeteer.util.SetDeviceMetricsOverrideRequestBuilder;
+import jpuppeteer.util.XFuture;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -35,9 +34,9 @@ public interface Page extends Frame {
 
     String targetId();
 
-    Future reload(Boolean ignoreCache, String scriptToEvaluateOnLoad);
+    XFuture<?> reload(Boolean ignoreCache, String scriptToEvaluateOnLoad);
 
-    default Future reload() {
+    default XFuture<?> reload() {
         return reload(null, null);
     }
 
@@ -47,45 +46,45 @@ public interface Page extends Frame {
 
     BrowserContext browserContext();
 
-    Future setCookies(CookieParam... cookies);
+    XFuture<?> setCookies(CookieParam... cookies);
 
-    Future clearCookies();
+    XFuture<?> clearCookies();
 
-    Future<Cookie[]> getCookies(String... urls);
+    XFuture<Cookie[]> getCookies(String... urls);
 
-    Future bringToFront();
+    XFuture<?> bringToFront();
 
-    Future<String> addScriptToEvaluateOnNewDocument(String script);
+    XFuture<String> addScriptToEvaluateOnNewDocument(String script);
 
-    Future removeScriptToEvaluateOnNewDocument(String scriptId);
+    XFuture<?> removeScriptToEvaluateOnNewDocument(String scriptId);
 
-    Future watch(String selector, Consumer<Element> watchFunction, boolean once);
+    XFuture<?> watch(String selector, Consumer<Element> watchFunction, boolean once);
 
-    default Future watch(String selector, Consumer<Element> watchFunction) {
+    default XFuture<?> watch(String selector, Consumer<Element> watchFunction) {
         return watch(selector, watchFunction, false);
     }
 
-    Future enableNetwork(jpuppeteer.cdp.client.entity.network.EnableRequest request);
+    XFuture<?> enableNetwork(jpuppeteer.cdp.client.entity.network.EnableRequest request);
 
-    default Future enableNetwork() {
+    default XFuture<?> enableNetwork() {
         return enableNetwork(new jpuppeteer.cdp.client.entity.network.EnableRequest());
     }
 
-    Future disableNetwork();
+    XFuture<?> disableNetwork();
 
-    Future enableCache();
+    XFuture<?> enableCache();
 
-    Future disableCache();
+    XFuture<?> disableCache();
 
-    Future<HttpResource> loadResource(String url, boolean disableCache);
+    XFuture<HttpResource> loadResource(String url, boolean disableCache);
 
-    default Future<HttpResource> loadResource(String url) {
+    default XFuture<HttpResource> loadResource(String url) {
         return loadResource(url, false);
     }
 
-    Future removeBinding(String name);
+    XFuture<?> removeBinding(String name);
 
-    default Future enableAuthentication(Consumer<Authenticator> consumer) {
+    default XFuture<?> enableAuthentication(Consumer<Authenticator> consumer) {
         return enableRequestInterception(new EnableRequest(
                 Lists.newArrayList(
                         new RequestPattern("*", null, RequestStage.REQUEST)
@@ -104,158 +103,157 @@ public interface Page extends Frame {
         });
     }
 
-    Future enableRequestInterception(EnableRequest request, Interceptor<? extends InterceptedResponse> interceptor);
+    XFuture<?> enableRequestInterception(EnableRequest request, Interceptor<? extends InterceptedResponse> interceptor);
 
-    default Future enableRequestInterception(Consumer<InterceptedRequest> interceptor) {
+    default XFuture<?> enableRequestInterception(Consumer<InterceptedRequest> interceptor) {
         return enableRequestInterception(new EnableRequest(
                 Lists.newArrayList(
                         new RequestPattern("*", null, RequestStage.REQUEST)
                 ),
                 false
-        ), (Interceptor<InterceptedRequest>) request -> interceptor.accept(request));
+        ), (Interceptor<InterceptedRequest>) interceptor::accept);
     }
 
-    default Future enableRequestInterception(Consumer<InterceptedRequest> interceptor, String... urlPatterns) {
+    default XFuture<?> enableRequestInterception(Consumer<InterceptedRequest> interceptor, String... urlPatterns) {
         List<RequestPattern> requestPatterns = Arrays.stream(urlPatterns)
                 .map(pattern -> new RequestPattern(pattern, null, RequestStage.REQUEST))
                 .collect(Collectors.toList());
         return enableRequestInterception(
                 new EnableRequest(requestPatterns, false),
-                (Interceptor<InterceptedRequest>) request -> interceptor.accept(request));
+                (Interceptor<InterceptedRequest>) interceptor::accept);
     }
 
-    default Future enableResponseInterception(Consumer<InterceptedResponse> interceptor) {
+    default XFuture<?> enableResponseInterception(Consumer<InterceptedResponse> interceptor) {
         return enableRequestInterception(new EnableRequest(
                 Lists.newArrayList(
                         new RequestPattern("*", null, RequestStage.RESPONSE)
                 ),
                 false
-        ), request -> interceptor.accept(request));
+        ), interceptor::accept);
     }
 
-    default Future enableResponseInterception(Consumer<InterceptedResponse> interceptor, String... urlPatterns) {
+    default XFuture<?> enableResponseInterception(Consumer<InterceptedResponse> interceptor, String... urlPatterns) {
         List<RequestPattern> requestPatterns = Arrays.stream(urlPatterns)
                 .map(pattern -> new RequestPattern(pattern, null, RequestStage.RESPONSE))
                 .collect(Collectors.toList());
         return enableRequestInterception(
                 new EnableRequest(requestPatterns, false),
-                request -> interceptor.accept(request));
+                interceptor::accept);
     }
 
-    Future disableRequestInterception();
+    XFuture<?> disableRequestInterception();
 
-    Future enableTouchEmulation(boolean enable, Integer maxTouchPoints);
+    XFuture<?> enableTouchEmulation(boolean enable, Integer maxTouchPoints);
 
-    default Future enableTouchEmulation(boolean enable) {
+    default XFuture<?> enableTouchEmulation(boolean enable) {
         return enableTouchEmulation(enable, null);
     }
 
-    Future enableEmitTouchEventsForMouse(boolean enable, SetEmitTouchEventsForMouseRequestConfiguration configuration);
+    XFuture<?> enableEmitTouchEventsForMouse(boolean enable, SetEmitTouchEventsForMouseRequestConfiguration configuration);
 
-    default Future enableEmitTouchEventsForMouse(boolean enable) {
+    default XFuture<?> enableEmitTouchEventsForMouse(boolean enable) {
         return enableEmitTouchEventsForMouse(enable, null);
     }
 
-    Future setHeaders(HttpHeader... headers);
+    XFuture<?> setHeaders(HttpHeader... headers);
 
-    Future setGeolocation(double latitude, double longitude, double accuracy);
+    XFuture<?> setGeolocation(double latitude, double longitude, double accuracy);
 
-    Future setUserAgent(SetUserAgentOverrideRequest userAgent);
+    XFuture<?> setUserAgent(SetUserAgentOverrideRequest userAgent);
 
-    default Future setUserAgent(String userAgent) {
+    default XFuture<?> setUserAgent(String userAgent) {
         return setUserAgent(new SetUserAgentOverrideRequest(userAgent, "zh-CN,zh;q=0.9", "Win32", null));
     }
 
-    Future setDevice(SetDeviceMetricsOverrideRequest device);
+    XFuture<?> setDevice(SetDeviceMetricsOverrideRequest device);
 
-    default Future setDevice(ScreenOrientationType screenOrientation, int width, int height, int screenWidth, int screenHeight, double scale, boolean isMobile) {
-        SetDeviceMetricsOverrideRequest request = SetDeviceMetricsOverrideRequestBuilder.newBuilder()
-                .deviceScaleFactor(BigDecimal.valueOf(scale))
-                .width(width)
-                .height(height)
-                .mobile(isMobile)
-                .screenWidth(screenWidth)
-                .screenHeight(screenHeight)
-                .screenOrientation(new ScreenOrientation(screenOrientation, 0))
-                .build();
+    default XFuture<?> setDevice(ScreenOrientationType screenOrientation, int width, int height, int screenWidth, int screenHeight, double scale, boolean isMobile) {
+        SetDeviceMetricsOverrideRequest request = new SetDeviceMetricsOverrideRequest();
+        request.setDeviceScaleFactor(BigDecimal.valueOf(scale));
+        request.setWidth(width);
+        request.setHeight(height);
+        request.setMobile(isMobile);
+        request.setScreenWidth(screenWidth);
+        request.setScreenHeight(screenHeight);
+        request.setScreenOrientation(new ScreenOrientation(screenOrientation, 0));
         return setDevice(request);
     }
 
-    Future setOrientation(double alpha, double beta, double gamma);
+    XFuture<?> setOrientation(double alpha, double beta, double gamma);
 
-    Future setWindow(Bounds bounds);
+    XFuture<?> setWindow(Bounds bounds);
 
-    default Future setWindow(int width, int height) {
+    default XFuture<?> setWindow(int width, int height) {
         return setWindow(new Bounds(null, null, width, height, null));
     }
 
-    default Future setWindow(WindowState state) {
+    default XFuture<?> setWindow(WindowState state) {
         return setWindow(new Bounds(null, null, null, null, state));
     }
 
-    Future<byte[]> screenshot(CaptureScreenshotRequest request);
+    XFuture<byte[]> screenshot(CaptureScreenshotRequest request);
 
-    default Future<byte[]> screenshot(Integer quality) {
+    default XFuture<byte[]> screenshot(Integer quality) {
         return screenshot(new CaptureScreenshotRequest(CaptureScreenshotRequestFormat.JPEG, quality, null, null, null));
     }
 
-    default Future<byte[]> screenshot() {
+    default XFuture<byte[]> screenshot() {
         return screenshot(new CaptureScreenshotRequest());
     }
 
-    Future stopLoading();
+    XFuture<?> stopLoading();
 
-    Future enableInput();
+    XFuture<?> enableInput();
 
-    Future disableInput();
+    XFuture<?> disableInput();
 
-    Future activate();
+    XFuture<?> activate();
 
-    Future close();
+    XFuture<?> close();
 
     //keyboard event;
-    Future keyDown(USKeyboardDefinition key);
+    XFuture<?> keyDown(USKeyboardDefinition key);
 
-    Future keyUp(USKeyboardDefinition key);
+    XFuture<?> keyUp(USKeyboardDefinition key);
 
-    Future press(USKeyboardDefinition key, int delay);
+    XFuture<?> press(USKeyboardDefinition key, int delay);
 
-    default Future press(USKeyboardDefinition key) {
+    default XFuture<?> press(USKeyboardDefinition key) {
         return press(key, 0);
     }
 
     //mouse event
-    Future mouseDown(MouseDefinition mouseDefinition);
+    XFuture<?> mouseDown(MouseDefinition mouseDefinition);
 
-    default Future mouseDown() {
+    default XFuture<?> mouseDown() {
         return mouseDown(MouseDefinition.LEFT);
     }
 
-    Future mouseUp(MouseDefinition mouseDefinition);
+    XFuture<?> mouseUp(MouseDefinition mouseDefinition);
 
-    default Future mouseUp() {
+    default XFuture<?> mouseUp() {
         return mouseUp(MouseDefinition.LEFT);
     }
 
-    Future click(MouseDefinition mouseDefinition, int delay);
+    XFuture<?> click(MouseDefinition mouseDefinition, int delay);
 
-    Future mouseMove(int x, int y);
+    XFuture<?> mouseMove(int x, int y);
 
     Point mousePosition();
 
-    Future mouseWheel(int deltaX, int deltaY);
+    XFuture<?> mouseWheel(int deltaX, int deltaY);
 
     //touch event
-    Future touchStart(TouchPoint[] touchPoints);
+    XFuture<?> touchStart(TouchPoint[] touchPoints);
 
-    Future touchStart(int x, int y);
+    XFuture<?> touchStart(int x, int y);
 
-    Future touchEnd();
+    XFuture<?> touchEnd();
 
-    Future touchMove(TouchPoint[] touchPoints);
+    XFuture<?> touchMove(TouchPoint[] touchPoints);
 
-    Future touchMove(int x, int y);
+    XFuture<?> touchMove(int x, int y);
 
-    Future touchCancel();
+    XFuture<?> touchCancel();
 
 }

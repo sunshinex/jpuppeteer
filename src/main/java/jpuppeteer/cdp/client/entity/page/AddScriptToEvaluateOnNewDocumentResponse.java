@@ -7,10 +7,21 @@ public class AddScriptToEvaluateOnNewDocumentResponse {
     /**
     * Identifier of the added script.
     */
-    public final String identifier;
+    private String identifier;
+
+    public void setIdentifier (String identifier) {
+        this.identifier = identifier;
+    }
+
+    public String getIdentifier() {
+        return this.identifier;
+    }
 
     public AddScriptToEvaluateOnNewDocumentResponse(String identifier) {
         this.identifier = identifier;
+    }
+
+    public AddScriptToEvaluateOnNewDocumentResponse() {
     }
 
 }

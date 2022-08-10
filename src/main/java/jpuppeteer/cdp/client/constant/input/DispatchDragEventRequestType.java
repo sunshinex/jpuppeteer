@@ -21,6 +21,11 @@ public enum DispatchDragEventRequestType implements jpuppeteer.cdp.client.CDPEnu
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static DispatchDragEventRequestType findByValue(String value) {
         for(DispatchDragEventRequestType val : values()) {
             if (val.value.equals(value)) return val;

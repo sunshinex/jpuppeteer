@@ -19,6 +19,11 @@ public enum TrustTokenParamsRefreshPolicy implements jpuppeteer.cdp.client.CDPEn
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static TrustTokenParamsRefreshPolicy findByValue(String value) {
         for(TrustTokenParamsRefreshPolicy val : values()) {
             if (val.value.equals(value)) return val;

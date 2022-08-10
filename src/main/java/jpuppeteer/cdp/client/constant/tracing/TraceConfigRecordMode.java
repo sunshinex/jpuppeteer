@@ -22,6 +22,11 @@ public enum TraceConfigRecordMode implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static TraceConfigRecordMode findByValue(String value) {
         for(TraceConfigRecordMode val : values()) {
             if (val.value.equals(value)) return val;

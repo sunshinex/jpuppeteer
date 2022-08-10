@@ -8,10 +8,21 @@ public class GetSamplingProfileResponse {
     /**
     * Return the sampling profile being collected.
     */
-    public final jpuppeteer.cdp.client.entity.heapprofiler.SamplingHeapProfile profile;
+    private jpuppeteer.cdp.client.entity.heapprofiler.SamplingHeapProfile profile;
+
+    public void setProfile (jpuppeteer.cdp.client.entity.heapprofiler.SamplingHeapProfile profile) {
+        this.profile = profile;
+    }
+
+    public jpuppeteer.cdp.client.entity.heapprofiler.SamplingHeapProfile getProfile() {
+        return this.profile;
+    }
 
     public GetSamplingProfileResponse(jpuppeteer.cdp.client.entity.heapprofiler.SamplingHeapProfile profile) {
         this.profile = profile;
+    }
+
+    public GetSamplingProfileResponse() {
     }
 
 }

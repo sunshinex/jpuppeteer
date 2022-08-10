@@ -7,25 +7,60 @@ public class DispatchSyncEventRequest {
 
     /**
     */
-    public final String origin;
+    private String origin;
 
     /**
     */
-    public final String registrationId;
+    private String registrationId;
 
     /**
     */
-    public final String tag;
+    private String tag;
 
     /**
     */
-    public final Boolean lastChance;
+    private Boolean lastChance;
+
+    public void setOrigin (String origin) {
+        this.origin = origin;
+    }
+
+    public String getOrigin() {
+        return this.origin;
+    }
+
+    public void setRegistrationId (String registrationId) {
+        this.registrationId = registrationId;
+    }
+
+    public String getRegistrationId() {
+        return this.registrationId;
+    }
+
+    public void setTag (String tag) {
+        this.tag = tag;
+    }
+
+    public String getTag() {
+        return this.tag;
+    }
+
+    public void setLastChance (Boolean lastChance) {
+        this.lastChance = lastChance;
+    }
+
+    public Boolean getLastChance() {
+        return this.lastChance;
+    }
 
     public DispatchSyncEventRequest(String origin, String registrationId, String tag, Boolean lastChance) {
         this.origin = origin;
         this.registrationId = registrationId;
         this.tag = tag;
         this.lastChance = lastChance;
+    }
+
+    public DispatchSyncEventRequest() {
     }
 
 }

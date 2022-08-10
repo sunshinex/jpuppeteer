@@ -7,10 +7,21 @@ public class RestartFrameRequest {
     /**
     * Call frame identifier to evaluate on.
     */
-    public final String callFrameId;
+    private String callFrameId;
+
+    public void setCallFrameId (String callFrameId) {
+        this.callFrameId = callFrameId;
+    }
+
+    public String getCallFrameId() {
+        return this.callFrameId;
+    }
 
     public RestartFrameRequest(String callFrameId) {
         this.callFrameId = callFrameId;
+    }
+
+    public RestartFrameRequest() {
     }
 
 }

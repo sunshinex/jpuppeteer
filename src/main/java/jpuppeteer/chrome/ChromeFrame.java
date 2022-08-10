@@ -1,7 +1,6 @@
 package jpuppeteer.chrome;
 
 import io.netty.channel.EventLoop;
-import io.netty.util.concurrent.Future;
 import jpuppeteer.api.*;
 import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.api.event.AbstractListener;
@@ -11,7 +10,7 @@ import jpuppeteer.cdp.client.entity.page.NavigateRequest;
 import jpuppeteer.cdp.client.entity.runtime.CallFunctionOnRequest;
 import jpuppeteer.cdp.client.entity.runtime.EvaluateRequest;
 import jpuppeteer.util.ScriptUtil;
-import jpuppeteer.util.SeriesPromise;
+import jpuppeteer.util.XFuture;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
 public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Frame {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeFrame.class);
@@ -91,17 +89,17 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
 
     @Override
     public Frame parent() {
-        return frameInfo != null && frameInfo.parentId != null ? page().getFrame(frameInfo.parentId) : null;
+        return frameInfo != null && frameInfo.getParentId() != null ? page().getFrame(frameInfo.getParentId()) : null;
     }
 
     @Override
     public String frameId() {
-        return frameInfo != null ? frameInfo.id : null;
+        return frameInfo != null ? frameInfo.getId() : null;
     }
 
     @Override
     public String loaderId() {
-        return frameInfo != null ? frameInfo.loaderId : null;
+        return frameInfo != null ? frameInfo.getLoaderId() : null;
     }
 
     @Override
@@ -109,31 +107,29 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
         if (frameInfo == null) {
             return null;
         }
-        String url = frameInfo.url;
-        if (frameInfo.urlFragment != null) {
-            url += frameInfo.urlFragment;
+        String url = frameInfo.getUrl();
+        if (frameInfo.getUrlFragment() != null) {
+            url += frameInfo.getUrlFragment();
         }
         return url;
     }
 
     @Override
-    public Future<String> navigate(String url, String referer) {
-        return SeriesPromise
-                .wrap(page().connection().page.navigate(new NavigateRequest(url, referer, null, frameId(), null)))
+    public XFuture<String> navigate(String url, String referer) {
+        return page().connection().page.navigate(new NavigateRequest(url, referer, null, frameId(), null))
                 .sync(o -> {
-                    if (StringUtils.isNoneEmpty(o.errorText)) {
-                        throw new RuntimeException(o.errorText);
+                    if (StringUtils.isNoneEmpty(o.getErrorText())) {
+                        throw new RuntimeException(o.getErrorText());
                     } else {
-                        return o.loaderId;
+                        return o.getLoaderId();
                     }
                 });
     }
 
     @Override
-    public Future<Isolate> createIsolate(String isolateName) {
-        return SeriesPromise
-                .wrap(page().connection().page.createIsolatedWorld(new CreateIsolatedWorldRequest(frameId(), isolateName, true)))
-                .sync(o -> new ChromeIsolate(this, o.executionContextId, isolateName, null));
+    public XFuture<Isolate> createIsolate(String isolateName) {
+        return page().connection().page.createIsolatedWorld(new CreateIsolatedWorldRequest(frameId(), isolateName, true))
+                .sync(o -> new ChromeIsolate(this, o.getExecutionContextId(), isolateName, null));
     }
 
     @Override
@@ -147,66 +143,64 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
     }
 
     @Override
-    public Future<BrowserObject> eval(EvaluateRequest request) {
+    public XFuture<BrowserObject> eval(EvaluateRequest request) {
         return assertIsolateNotNull().eval(request);
     }
 
     @Override
-    public <R> Future<R> eval(EvaluateRequest request, Class<R> clazz) {
+    public <R> XFuture<R> eval(EvaluateRequest request, Class<R> clazz) {
         return assertIsolateNotNull().eval(request, clazz);
     }
 
     @Override
-    public Future<BrowserObject> eval(String expression, Integer timeout) {
+    public XFuture<BrowserObject> eval(String expression, Integer timeout) {
         return assertIsolateNotNull().eval(expression, timeout);
     }
 
     @Override
-    public <R> Future<R> eval(String expression, Integer timeout, Class<R> clazz) {
+    public <R> XFuture<R> eval(String expression, Integer timeout, Class<R> clazz) {
         return assertIsolateNotNull().eval(expression, timeout, clazz);
     }
 
     @Override
-    public Future<BrowserObject> call(CallFunctionOnRequest request) {
+    public XFuture<BrowserObject> call(CallFunctionOnRequest request) {
         return assertIsolateNotNull().call(request);
     }
 
     @Override
-    public <R> Future<R> call(CallFunctionOnRequest request, Class<R> clazz) {
+    public <R> XFuture<R> call(CallFunctionOnRequest request, Class<R> clazz) {
         return assertIsolateNotNull().call(request, clazz);
     }
 
     @Override
-    public Future<BrowserObject> call(String declaration, String objectId, Object... args) {
+    public XFuture<BrowserObject> call(String declaration, String objectId, Object... args) {
         return assertIsolateNotNull().call(declaration, objectId, args);
     }
 
     @Override
-    public <R> Future<R> call(String declaration, String objectId, Class<R> clazz, Object... args) {
+    public <R> XFuture<R> call(String declaration, String objectId, Class<R> clazz, Object... args) {
         return assertIsolateNotNull().call(declaration, objectId, clazz, args);
     }
 
     @Override
-    public Future<BrowserObject> call(String declaration, Object... args) {
+    public XFuture<BrowserObject> call(String declaration, Object... args) {
         return assertIsolateNotNull().call(declaration, args);
     }
 
     @Override
-    public <R> Future<R> call(String declaration, Class<R> clazz, Object... args) {
+    public <R> XFuture<R> call(String declaration, Class<R> clazz, Object... args) {
         return assertIsolateNotNull().call(declaration, clazz, args);
     }
 
     @Override
-    public Future<Element> querySelector(String selector) {
-        return SeriesPromise
-                .wrap(assertIsolateNotNull().call("function (selector){return document.querySelector(selector);}", (Object) selector))
+    public XFuture<Element> querySelector(String selector) {
+        return assertIsolateNotNull().call("function (selector){return document.querySelector(selector);}", (Object) selector)
                 .sync(o -> o != null ? new ChromeElement(this, o) : null);
     }
 
     @Override
-    public Future<Element[]> querySelectorAll(String selector) {
-        return SeriesPromise
-                .wrap(assertIsolateNotNull().call("function (selector){return document.querySelectorAll(selector);}", (Object) selector))
+    public XFuture<Element[]> querySelectorAll(String selector) {
+        return assertIsolateNotNull().call("function (selector){return document.querySelectorAll(selector);}", (Object) selector)
                 .async(BrowserObject::getProperties)
                 .sync(browserObjects -> {
                     Element[] elements = new Element[browserObjects.length];
@@ -218,18 +212,16 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
     }
 
     @Override
-    public Future<Element> waitSelector(String selector, long timeout, TimeUnit unit) {
+    public XFuture<Element> waitSelector(String selector, long timeout, TimeUnit unit) {
         timeout = unit.toMillis(timeout);
-        return SeriesPromise
-                .wrap(assertIsolateNotNull().call(SCRIPT_WAIT_SELECTOR, (Object) selector, timeout))
+        return assertIsolateNotNull().call(SCRIPT_WAIT_SELECTOR, (Object) selector, timeout)
                 .sync(o -> new ChromeElement(this, o));
     }
 
     @Override
-    public Future watch(String selector, Consumer<Element> watchFunction, boolean once) {
+    public XFuture<?> watch(String selector, Consumer<Element> watchFunction, boolean once) {
         String functionName = "watch_" + UUID.randomUUID().toString().replace("-", "");
-        return SeriesPromise.wrap(
-                addBinding(functionName, (isolate, hash) -> {
+        return addBinding(functionName, (isolate, hash) -> {
                     isolate.eval("window['" + hash + "']")
                             .addListener(f -> {
                                 if (f.cause() != null) {
@@ -239,28 +231,27 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
                                     watchFunction.accept(node);
                                 }
                             });
-                }))
+                })
                 .async(o -> call(SCRIPT_WATCH, (Object) selector, functionName, once));
     }
 
     @Override
-    public Future addBinding(String bindingName, BindingFunction function) {
+    public XFuture<?> addBinding(String bindingName, BindingFunction function) {
         return page().addBinding0(null, bindingName, function);
     }
 
     @Override
-    public Future removeBinding(String bindingName) {
+    public XFuture<?> removeBinding(String bindingName) {
         return page().removeBinding0(bindingName);
     }
 
     @Override
-    public Future<String> html() {
+    public XFuture<String> html() {
         return assertIsolateNotNull().eval("document.documentElement.outerHTML;", null, String.class);
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public Future html(String html) {
+    public XFuture<?> html(String html) {
         return assertIsolateNotNull().call("function (html){document.documentElement.outerHTML=html;}", (Object) html);
     }
 }

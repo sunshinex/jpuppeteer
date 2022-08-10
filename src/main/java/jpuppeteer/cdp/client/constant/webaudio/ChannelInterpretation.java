@@ -21,6 +21,11 @@ public enum ChannelInterpretation implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ChannelInterpretation findByValue(String value) {
         for(ChannelInterpretation val : values()) {
             if (val.value.equals(value)) return val;

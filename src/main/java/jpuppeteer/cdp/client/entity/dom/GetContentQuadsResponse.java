@@ -7,10 +7,21 @@ public class GetContentQuadsResponse {
     /**
     * Quads that describe node layout relative to viewport.
     */
-    public final java.util.List<java.util.List<java.math.BigDecimal>> quads;
+    private java.util.List<java.util.List<java.math.BigDecimal>> quads;
+
+    public void setQuads (java.util.List<java.util.List<java.math.BigDecimal>> quads) {
+        this.quads = quads;
+    }
+
+    public java.util.List<java.util.List<java.math.BigDecimal>> getQuads() {
+        return this.quads;
+    }
 
     public GetContentQuadsResponse(java.util.List<java.util.List<java.math.BigDecimal>> quads) {
         this.quads = quads;
+    }
+
+    public GetContentQuadsResponse() {
     }
 
 }

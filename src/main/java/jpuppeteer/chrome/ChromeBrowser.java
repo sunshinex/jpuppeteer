@@ -2,8 +2,6 @@ package jpuppeteer.chrome;
 
 import io.netty.channel.EventLoop;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.Promise;
 import jpuppeteer.api.Browser;
 import jpuppeteer.api.BrowserContext;
 import jpuppeteer.api.event.AbstractEventEmitter;
@@ -17,6 +15,8 @@ import jpuppeteer.cdp.client.entity.network.Cookie;
 import jpuppeteer.cdp.client.entity.network.CookieParam;
 import jpuppeteer.cdp.client.entity.storage.ClearDataForOriginRequest;
 import jpuppeteer.cdp.client.entity.target.*;
+import jpuppeteer.util.XFuture;
+import jpuppeteer.util.XPromise;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
 public class ChromeBrowser extends ChromeContext implements Browser {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeBrowser.class);
@@ -73,19 +72,19 @@ public class ChromeBrowser extends ChromeContext implements Browser {
     }
 
     @Override
-    public Future<GetVersionResponse> version() {
+    public XFuture<GetVersionResponse> version() {
         return connection.browser.getVersion();
     }
 
     @Override
-    public Future<BrowserContext> createContext(CreateBrowserContextRequest request) {
-        Promise<BrowserContext> promise = eventLoop.newPromise();
+    public XFuture<BrowserContext> createContext(CreateBrowserContextRequest request) {
+        XPromise<BrowserContext> promise = new XPromise<>(eventLoop);
         connection.target.createBrowserContext(request).addListener(f -> {
             if (f.cause() != null) {
                 promise.tryFailure(f.cause());
             } else {
                 CreateBrowserContextResponse response = (CreateBrowserContextResponse) f.getNow();
-                ChromeContext context = new ChromeContext(ChromeBrowser.this, response.browserContextId);
+                ChromeContext context = new ChromeContext(ChromeBrowser.this, response.getBrowserContextId());
                 promise.trySuccess(context);
             }
         });
@@ -93,7 +92,7 @@ public class ChromeBrowser extends ChromeContext implements Browser {
     }
 
     @Override
-    public Future clearData(String origin, StorageType... storageTypes) {
+    public XFuture<?> clearData(String origin, StorageType... storageTypes) {
         List<String> types = Arrays.stream(storageTypes)
                 .map(StorageType::value)
                 .collect(Collectors.toList());
@@ -136,17 +135,17 @@ public class ChromeBrowser extends ChromeContext implements Browser {
     }
 
     @Override
-    public Future setCookies(CookieParam... cookies) {
+    public XFuture<?> setCookies(CookieParam... cookies) {
         return super.setCookies(cookies);
     }
 
     @Override
-    public Future clearCookies() {
+    public XFuture<?> clearCookies() {
         return super.clearCookies();
     }
 
     @Override
-    public Future<Cookie[]> getCookies() {
+    public XFuture<Cookie[]> getCookies() {
         return super.getCookies();
     }
 
@@ -187,25 +186,25 @@ public class ChromeBrowser extends ChromeContext implements Browser {
             switch (event.method) {
                 case TARGET_TARGETCREATED:
                     TargetCreatedEvent targetCreatedEvent = event.getObject();
-                    eventEmitter.emit(new TargetCreated(targetCreatedEvent.targetInfo));
+                    eventEmitter.emit(new TargetCreated(targetCreatedEvent.getTargetInfo()));
                     break;
 
                 case TARGET_TARGETINFOCHANGED:
                     TargetInfoChangedEvent targetInfoChangedEvent = event.getObject();
-                    eventEmitter.emit(new TargetInfoChanged(targetInfoChangedEvent.targetInfo));
+                    eventEmitter.emit(new TargetInfoChanged(targetInfoChangedEvent.getTargetInfo()));
                     break;
 
                 case TARGET_TARGETCRASHED:
                     TargetCrashedEvent targetCrashedEvent = event.getObject();
                     eventEmitter.emit(new TargetCrashed(
-                                    targetCrashedEvent.targetId,
-                                    targetCrashedEvent.status,
-                                    targetCrashedEvent.errorCode));
+                            targetCrashedEvent.getTargetId(),
+                            targetCrashedEvent.getStatus(),
+                            targetCrashedEvent.getErrorCode()));
                     break;
 
                 case TARGET_TARGETDESTROYED:
                     TargetDestroyedEvent targetDestroyedEvent = event.getObject();
-                    eventEmitter.emit(new TargetClosed(targetDestroyedEvent.targetId));
+                    eventEmitter.emit(new TargetClosed(targetDestroyedEvent.getTargetId()));
                     break;
             }
         }

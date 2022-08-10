@@ -20,6 +20,11 @@ public enum SharedArrayBufferIssueType implements jpuppeteer.cdp.client.CDPEnum 
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SharedArrayBufferIssueType findByValue(String value) {
         for(SharedArrayBufferIssueType val : values()) {
             if (val.value.equals(value)) return val;

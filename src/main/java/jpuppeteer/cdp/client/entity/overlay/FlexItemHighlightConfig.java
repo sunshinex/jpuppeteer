@@ -9,17 +9,41 @@ public class FlexItemHighlightConfig {
     /**
     * Style of the box representing the item's base size
     */
-    public final jpuppeteer.cdp.client.entity.overlay.BoxStyle baseSizeBox;
+    private jpuppeteer.cdp.client.entity.overlay.BoxStyle baseSizeBox;
 
     /**
     * Style of the border around the box representing the item's base size
     */
-    public final jpuppeteer.cdp.client.entity.overlay.LineStyle baseSizeBorder;
+    private jpuppeteer.cdp.client.entity.overlay.LineStyle baseSizeBorder;
 
     /**
     * Style of the arrow representing if the item grew or shrank
     */
-    public final jpuppeteer.cdp.client.entity.overlay.LineStyle flexibilityArrow;
+    private jpuppeteer.cdp.client.entity.overlay.LineStyle flexibilityArrow;
+
+    public void setBaseSizeBox (jpuppeteer.cdp.client.entity.overlay.BoxStyle baseSizeBox) {
+        this.baseSizeBox = baseSizeBox;
+    }
+
+    public jpuppeteer.cdp.client.entity.overlay.BoxStyle getBaseSizeBox() {
+        return this.baseSizeBox;
+    }
+
+    public void setBaseSizeBorder (jpuppeteer.cdp.client.entity.overlay.LineStyle baseSizeBorder) {
+        this.baseSizeBorder = baseSizeBorder;
+    }
+
+    public jpuppeteer.cdp.client.entity.overlay.LineStyle getBaseSizeBorder() {
+        return this.baseSizeBorder;
+    }
+
+    public void setFlexibilityArrow (jpuppeteer.cdp.client.entity.overlay.LineStyle flexibilityArrow) {
+        this.flexibilityArrow = flexibilityArrow;
+    }
+
+    public jpuppeteer.cdp.client.entity.overlay.LineStyle getFlexibilityArrow() {
+        return this.flexibilityArrow;
+    }
 
     public FlexItemHighlightConfig(jpuppeteer.cdp.client.entity.overlay.BoxStyle baseSizeBox, jpuppeteer.cdp.client.entity.overlay.LineStyle baseSizeBorder, jpuppeteer.cdp.client.entity.overlay.LineStyle flexibilityArrow) {
         this.baseSizeBox = baseSizeBox;

@@ -20,6 +20,11 @@ public enum AuthChallengeResponseResponse implements jpuppeteer.cdp.client.CDPEn
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static AuthChallengeResponseResponse findByValue(String value) {
         for(AuthChallengeResponseResponse val : values()) {
             if (val.value.equals(value)) return val;

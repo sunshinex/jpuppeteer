@@ -7,10 +7,21 @@ public class SearchInResourceResponse {
     /**
     * List of search matches.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.debugger.SearchMatch> result;
+    private java.util.List<jpuppeteer.cdp.client.entity.debugger.SearchMatch> result;
+
+    public void setResult (java.util.List<jpuppeteer.cdp.client.entity.debugger.SearchMatch> result) {
+        this.result = result;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.debugger.SearchMatch> getResult() {
+        return this.result;
+    }
 
     public SearchInResourceResponse(java.util.List<jpuppeteer.cdp.client.entity.debugger.SearchMatch> result) {
         this.result = result;
+    }
+
+    public SearchInResourceResponse() {
     }
 
 }

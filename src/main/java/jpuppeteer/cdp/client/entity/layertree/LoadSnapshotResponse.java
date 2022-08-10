@@ -8,10 +8,21 @@ public class LoadSnapshotResponse {
     /**
     * The id of the snapshot.
     */
-    public final String snapshotId;
+    private String snapshotId;
+
+    public void setSnapshotId (String snapshotId) {
+        this.snapshotId = snapshotId;
+    }
+
+    public String getSnapshotId() {
+        return this.snapshotId;
+    }
 
     public LoadSnapshotResponse(String snapshotId) {
         this.snapshotId = snapshotId;
+    }
+
+    public LoadSnapshotResponse() {
     }
 
 }

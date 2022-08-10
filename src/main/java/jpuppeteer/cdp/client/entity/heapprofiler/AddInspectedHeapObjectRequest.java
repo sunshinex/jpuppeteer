@@ -8,10 +8,21 @@ public class AddInspectedHeapObjectRequest {
     /**
     * Heap snapshot object id to be accessible by means of $x command line API.
     */
-    public final String heapObjectId;
+    private String heapObjectId;
+
+    public void setHeapObjectId (String heapObjectId) {
+        this.heapObjectId = heapObjectId;
+    }
+
+    public String getHeapObjectId() {
+        return this.heapObjectId;
+    }
 
     public AddInspectedHeapObjectRequest(String heapObjectId) {
         this.heapObjectId = heapObjectId;
+    }
+
+    public AddInspectedHeapObjectRequest() {
     }
 
 }

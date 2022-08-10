@@ -14,7 +14,7 @@ public class DOMSnapshot {
     /**
     * Disables DOM snapshot agent for the given page.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("DOMSnapshot.disable", null);
     }
 
@@ -22,7 +22,7 @@ public class DOMSnapshot {
     /**
     * Enables DOM snapshot agent for the given page.
     */
-    public io.netty.util.concurrent.Future enable() {
+    public jpuppeteer.util.XFuture<?> enable() {
         return connection.send("DOMSnapshot.enable", null);
     }
 
@@ -31,7 +31,7 @@ public class DOMSnapshot {
     * Returns a document snapshot, including the full DOM tree of the root node (including iframes, template contents, and imported documents) in a flattened array, as well as layout and white-listed computed style information for the nodes. Shadow DOM in the returned DOM tree is flattened.
     */
     @java.lang.Deprecated
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.domsnapshot.GetSnapshotResponse> getSnapshot(jpuppeteer.cdp.client.entity.domsnapshot.GetSnapshotRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.domsnapshot.GetSnapshotResponse> getSnapshot(jpuppeteer.cdp.client.entity.domsnapshot.GetSnapshotRequest request) {
         return connection.send("DOMSnapshot.getSnapshot", request, jpuppeteer.cdp.client.entity.domsnapshot.GetSnapshotResponse.class);
     }
 
@@ -39,7 +39,7 @@ public class DOMSnapshot {
     /**
     * Returns a document snapshot, including the full DOM tree of the root node (including iframes, template contents, and imported documents) in a flattened array, as well as layout and white-listed computed style information for the nodes. Shadow DOM in the returned DOM tree is flattened.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.domsnapshot.CaptureSnapshotResponse> captureSnapshot(jpuppeteer.cdp.client.entity.domsnapshot.CaptureSnapshotRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.domsnapshot.CaptureSnapshotResponse> captureSnapshot(jpuppeteer.cdp.client.entity.domsnapshot.CaptureSnapshotRequest request) {
         return connection.send("DOMSnapshot.captureSnapshot", request, jpuppeteer.cdp.client.entity.domsnapshot.CaptureSnapshotResponse.class);
     }
 

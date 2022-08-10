@@ -13,7 +13,7 @@ public class Debugger {
     /**
     * Continues execution until specific location is reached.
     */
-    public io.netty.util.concurrent.Future continueToLocation(jpuppeteer.cdp.client.entity.debugger.ContinueToLocationRequest request) {
+    public jpuppeteer.util.XFuture<?> continueToLocation(jpuppeteer.cdp.client.entity.debugger.ContinueToLocationRequest request) {
         return connection.send("Debugger.continueToLocation", request);
     }
 
@@ -21,7 +21,7 @@ public class Debugger {
     /**
     * Disables debugger for given page.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("Debugger.disable", null);
     }
 
@@ -29,7 +29,7 @@ public class Debugger {
     /**
     * Enables debugger for the given page. Clients should not assume that the debugging has been enabled until the result for this command is received.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.EnableResponse> enable(jpuppeteer.cdp.client.entity.debugger.EnableRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.debugger.EnableResponse> enable(jpuppeteer.cdp.client.entity.debugger.EnableRequest request) {
         return connection.send("Debugger.enable", request, jpuppeteer.cdp.client.entity.debugger.EnableResponse.class);
     }
 
@@ -37,7 +37,7 @@ public class Debugger {
     /**
     * Evaluates expression on a given call frame.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.EvaluateOnCallFrameResponse> evaluateOnCallFrame(jpuppeteer.cdp.client.entity.debugger.EvaluateOnCallFrameRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.debugger.EvaluateOnCallFrameResponse> evaluateOnCallFrame(jpuppeteer.cdp.client.entity.debugger.EvaluateOnCallFrameRequest request) {
         return connection.send("Debugger.evaluateOnCallFrame", request, jpuppeteer.cdp.client.entity.debugger.EvaluateOnCallFrameResponse.class);
     }
 
@@ -45,7 +45,7 @@ public class Debugger {
     /**
     * Returns possible locations for breakpoint. scriptId in start and end range locations should be the same.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.GetPossibleBreakpointsResponse> getPossibleBreakpoints(jpuppeteer.cdp.client.entity.debugger.GetPossibleBreakpointsRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.debugger.GetPossibleBreakpointsResponse> getPossibleBreakpoints(jpuppeteer.cdp.client.entity.debugger.GetPossibleBreakpointsRequest request) {
         return connection.send("Debugger.getPossibleBreakpoints", request, jpuppeteer.cdp.client.entity.debugger.GetPossibleBreakpointsResponse.class);
     }
 
@@ -53,7 +53,7 @@ public class Debugger {
     /**
     * Returns source for the script with given id.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.GetScriptSourceResponse> getScriptSource(jpuppeteer.cdp.client.entity.debugger.GetScriptSourceRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.debugger.GetScriptSourceResponse> getScriptSource(jpuppeteer.cdp.client.entity.debugger.GetScriptSourceRequest request) {
         return connection.send("Debugger.getScriptSource", request, jpuppeteer.cdp.client.entity.debugger.GetScriptSourceResponse.class);
     }
 
@@ -62,7 +62,7 @@ public class Debugger {
     * This command is deprecated. Use getScriptSource instead.
     */
     @java.lang.Deprecated
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.GetWasmBytecodeResponse> getWasmBytecode(jpuppeteer.cdp.client.entity.debugger.GetWasmBytecodeRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.debugger.GetWasmBytecodeResponse> getWasmBytecode(jpuppeteer.cdp.client.entity.debugger.GetWasmBytecodeRequest request) {
         return connection.send("Debugger.getWasmBytecode", request, jpuppeteer.cdp.client.entity.debugger.GetWasmBytecodeResponse.class);
     }
 
@@ -71,7 +71,7 @@ public class Debugger {
     * Returns stack trace with given `stackTraceId`.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.GetStackTraceResponse> getStackTrace(jpuppeteer.cdp.client.entity.debugger.GetStackTraceRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.debugger.GetStackTraceResponse> getStackTrace(jpuppeteer.cdp.client.entity.debugger.GetStackTraceRequest request) {
         return connection.send("Debugger.getStackTrace", request, jpuppeteer.cdp.client.entity.debugger.GetStackTraceResponse.class);
     }
 
@@ -79,7 +79,7 @@ public class Debugger {
     /**
     * Stops on the next JavaScript statement.
     */
-    public io.netty.util.concurrent.Future pause() {
+    public jpuppeteer.util.XFuture<?> pause() {
         return connection.send("Debugger.pause", null);
     }
 
@@ -88,7 +88,7 @@ public class Debugger {
     * experimental
     */
     @java.lang.Deprecated
-    public io.netty.util.concurrent.Future pauseOnAsyncCall(jpuppeteer.cdp.client.entity.debugger.PauseOnAsyncCallRequest request) {
+    public jpuppeteer.util.XFuture<?> pauseOnAsyncCall(jpuppeteer.cdp.client.entity.debugger.PauseOnAsyncCallRequest request) {
         return connection.send("Debugger.pauseOnAsyncCall", request);
     }
 
@@ -96,7 +96,7 @@ public class Debugger {
     /**
     * Removes JavaScript breakpoint.
     */
-    public io.netty.util.concurrent.Future removeBreakpoint(jpuppeteer.cdp.client.entity.debugger.RemoveBreakpointRequest request) {
+    public jpuppeteer.util.XFuture<?> removeBreakpoint(jpuppeteer.cdp.client.entity.debugger.RemoveBreakpointRequest request) {
         return connection.send("Debugger.removeBreakpoint", request);
     }
 
@@ -104,7 +104,7 @@ public class Debugger {
     /**
     * Restarts particular call frame from the beginning.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.RestartFrameResponse> restartFrame(jpuppeteer.cdp.client.entity.debugger.RestartFrameRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.debugger.RestartFrameResponse> restartFrame(jpuppeteer.cdp.client.entity.debugger.RestartFrameRequest request) {
         return connection.send("Debugger.restartFrame", request, jpuppeteer.cdp.client.entity.debugger.RestartFrameResponse.class);
     }
 
@@ -112,7 +112,7 @@ public class Debugger {
     /**
     * Resumes JavaScript execution.
     */
-    public io.netty.util.concurrent.Future resume(jpuppeteer.cdp.client.entity.debugger.ResumeRequest request) {
+    public jpuppeteer.util.XFuture<?> resume(jpuppeteer.cdp.client.entity.debugger.ResumeRequest request) {
         return connection.send("Debugger.resume", request);
     }
 
@@ -120,7 +120,7 @@ public class Debugger {
     /**
     * Searches for given string in script content.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.SearchInContentResponse> searchInContent(jpuppeteer.cdp.client.entity.debugger.SearchInContentRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.debugger.SearchInContentResponse> searchInContent(jpuppeteer.cdp.client.entity.debugger.SearchInContentRequest request) {
         return connection.send("Debugger.searchInContent", request, jpuppeteer.cdp.client.entity.debugger.SearchInContentResponse.class);
     }
 
@@ -128,7 +128,7 @@ public class Debugger {
     /**
     * Enables or disables async call stacks tracking.
     */
-    public io.netty.util.concurrent.Future setAsyncCallStackDepth(jpuppeteer.cdp.client.entity.debugger.SetAsyncCallStackDepthRequest request) {
+    public jpuppeteer.util.XFuture<?> setAsyncCallStackDepth(jpuppeteer.cdp.client.entity.debugger.SetAsyncCallStackDepthRequest request) {
         return connection.send("Debugger.setAsyncCallStackDepth", request);
     }
 
@@ -137,7 +137,7 @@ public class Debugger {
     * Replace previous blackbox patterns with passed ones. Forces backend to skip stepping/pausing in scripts with url matching one of the patterns. VM will try to leave blackboxed script by performing 'step in' several times, finally resorting to 'step out' if unsuccessful.
     * experimental
     */
-    public io.netty.util.concurrent.Future setBlackboxPatterns(jpuppeteer.cdp.client.entity.debugger.SetBlackboxPatternsRequest request) {
+    public jpuppeteer.util.XFuture<?> setBlackboxPatterns(jpuppeteer.cdp.client.entity.debugger.SetBlackboxPatternsRequest request) {
         return connection.send("Debugger.setBlackboxPatterns", request);
     }
 
@@ -146,7 +146,7 @@ public class Debugger {
     * Makes backend skip steps in the script in blackboxed ranges. VM will try leave blacklisted scripts by performing 'step in' several times, finally resorting to 'step out' if unsuccessful. Positions array contains positions where blackbox state is changed. First interval isn't blackboxed. Array should be sorted.
     * experimental
     */
-    public io.netty.util.concurrent.Future setBlackboxedRanges(jpuppeteer.cdp.client.entity.debugger.SetBlackboxedRangesRequest request) {
+    public jpuppeteer.util.XFuture<?> setBlackboxedRanges(jpuppeteer.cdp.client.entity.debugger.SetBlackboxedRangesRequest request) {
         return connection.send("Debugger.setBlackboxedRanges", request);
     }
 
@@ -154,7 +154,7 @@ public class Debugger {
     /**
     * Sets JavaScript breakpoint at a given location.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.SetBreakpointResponse> setBreakpoint(jpuppeteer.cdp.client.entity.debugger.SetBreakpointRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.debugger.SetBreakpointResponse> setBreakpoint(jpuppeteer.cdp.client.entity.debugger.SetBreakpointRequest request) {
         return connection.send("Debugger.setBreakpoint", request, jpuppeteer.cdp.client.entity.debugger.SetBreakpointResponse.class);
     }
 
@@ -162,7 +162,7 @@ public class Debugger {
     /**
     * Sets instrumentation breakpoint.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.SetInstrumentationBreakpointResponse> setInstrumentationBreakpoint(jpuppeteer.cdp.client.entity.debugger.SetInstrumentationBreakpointRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.debugger.SetInstrumentationBreakpointResponse> setInstrumentationBreakpoint(jpuppeteer.cdp.client.entity.debugger.SetInstrumentationBreakpointRequest request) {
         return connection.send("Debugger.setInstrumentationBreakpoint", request, jpuppeteer.cdp.client.entity.debugger.SetInstrumentationBreakpointResponse.class);
     }
 
@@ -170,7 +170,7 @@ public class Debugger {
     /**
     * Sets JavaScript breakpoint at given location specified either by URL or URL regex. Once this command is issued, all existing parsed scripts will have breakpoints resolved and returned in `locations` property. Further matching script parsing will result in subsequent `breakpointResolved` events issued. This logical breakpoint will survive page reloads.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.SetBreakpointByUrlResponse> setBreakpointByUrl(jpuppeteer.cdp.client.entity.debugger.SetBreakpointByUrlRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.debugger.SetBreakpointByUrlResponse> setBreakpointByUrl(jpuppeteer.cdp.client.entity.debugger.SetBreakpointByUrlRequest request) {
         return connection.send("Debugger.setBreakpointByUrl", request, jpuppeteer.cdp.client.entity.debugger.SetBreakpointByUrlResponse.class);
     }
 
@@ -179,7 +179,7 @@ public class Debugger {
     * Sets JavaScript breakpoint before each call to the given function. If another function was created from the same source as a given one, calling it will also trigger the breakpoint.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.SetBreakpointOnFunctionCallResponse> setBreakpointOnFunctionCall(jpuppeteer.cdp.client.entity.debugger.SetBreakpointOnFunctionCallRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.debugger.SetBreakpointOnFunctionCallResponse> setBreakpointOnFunctionCall(jpuppeteer.cdp.client.entity.debugger.SetBreakpointOnFunctionCallRequest request) {
         return connection.send("Debugger.setBreakpointOnFunctionCall", request, jpuppeteer.cdp.client.entity.debugger.SetBreakpointOnFunctionCallResponse.class);
     }
 
@@ -187,7 +187,7 @@ public class Debugger {
     /**
     * Activates / deactivates all breakpoints on the page.
     */
-    public io.netty.util.concurrent.Future setBreakpointsActive(jpuppeteer.cdp.client.entity.debugger.SetBreakpointsActiveRequest request) {
+    public jpuppeteer.util.XFuture<?> setBreakpointsActive(jpuppeteer.cdp.client.entity.debugger.SetBreakpointsActiveRequest request) {
         return connection.send("Debugger.setBreakpointsActive", request);
     }
 
@@ -195,7 +195,7 @@ public class Debugger {
     /**
     * Defines pause on exceptions state. Can be set to stop on all exceptions, uncaught exceptions or no exceptions. Initial pause on exceptions state is `none`.
     */
-    public io.netty.util.concurrent.Future setPauseOnExceptions(jpuppeteer.cdp.client.entity.debugger.SetPauseOnExceptionsRequest request) {
+    public jpuppeteer.util.XFuture<?> setPauseOnExceptions(jpuppeteer.cdp.client.entity.debugger.SetPauseOnExceptionsRequest request) {
         return connection.send("Debugger.setPauseOnExceptions", request);
     }
 
@@ -204,7 +204,7 @@ public class Debugger {
     * Changes return value in top frame. Available only at return break position.
     * experimental
     */
-    public io.netty.util.concurrent.Future setReturnValue(jpuppeteer.cdp.client.entity.debugger.SetReturnValueRequest request) {
+    public jpuppeteer.util.XFuture<?> setReturnValue(jpuppeteer.cdp.client.entity.debugger.SetReturnValueRequest request) {
         return connection.send("Debugger.setReturnValue", request);
     }
 
@@ -212,7 +212,7 @@ public class Debugger {
     /**
     * Edits JavaScript source live.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.debugger.SetScriptSourceResponse> setScriptSource(jpuppeteer.cdp.client.entity.debugger.SetScriptSourceRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.debugger.SetScriptSourceResponse> setScriptSource(jpuppeteer.cdp.client.entity.debugger.SetScriptSourceRequest request) {
         return connection.send("Debugger.setScriptSource", request, jpuppeteer.cdp.client.entity.debugger.SetScriptSourceResponse.class);
     }
 
@@ -220,7 +220,7 @@ public class Debugger {
     /**
     * Makes page not interrupt on any pauses (breakpoint, exception, dom exception etc).
     */
-    public io.netty.util.concurrent.Future setSkipAllPauses(jpuppeteer.cdp.client.entity.debugger.SetSkipAllPausesRequest request) {
+    public jpuppeteer.util.XFuture<?> setSkipAllPauses(jpuppeteer.cdp.client.entity.debugger.SetSkipAllPausesRequest request) {
         return connection.send("Debugger.setSkipAllPauses", request);
     }
 
@@ -228,7 +228,7 @@ public class Debugger {
     /**
     * Changes value of variable in a callframe. Object-based scopes are not supported and must be mutated manually.
     */
-    public io.netty.util.concurrent.Future setVariableValue(jpuppeteer.cdp.client.entity.debugger.SetVariableValueRequest request) {
+    public jpuppeteer.util.XFuture<?> setVariableValue(jpuppeteer.cdp.client.entity.debugger.SetVariableValueRequest request) {
         return connection.send("Debugger.setVariableValue", request);
     }
 
@@ -236,7 +236,7 @@ public class Debugger {
     /**
     * Steps into the function call.
     */
-    public io.netty.util.concurrent.Future stepInto(jpuppeteer.cdp.client.entity.debugger.StepIntoRequest request) {
+    public jpuppeteer.util.XFuture<?> stepInto(jpuppeteer.cdp.client.entity.debugger.StepIntoRequest request) {
         return connection.send("Debugger.stepInto", request);
     }
 
@@ -244,7 +244,7 @@ public class Debugger {
     /**
     * Steps out of the function call.
     */
-    public io.netty.util.concurrent.Future stepOut() {
+    public jpuppeteer.util.XFuture<?> stepOut() {
         return connection.send("Debugger.stepOut", null);
     }
 
@@ -252,7 +252,7 @@ public class Debugger {
     /**
     * Steps over the statement.
     */
-    public io.netty.util.concurrent.Future stepOver(jpuppeteer.cdp.client.entity.debugger.StepOverRequest request) {
+    public jpuppeteer.util.XFuture<?> stepOver(jpuppeteer.cdp.client.entity.debugger.StepOverRequest request) {
         return connection.send("Debugger.stepOver", request);
     }
 

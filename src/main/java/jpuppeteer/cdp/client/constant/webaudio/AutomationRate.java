@@ -21,6 +21,11 @@ public enum AutomationRate implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static AutomationRate findByValue(String value) {
         for(AutomationRate val : values()) {
             if (val.value.equals(value)) return val;

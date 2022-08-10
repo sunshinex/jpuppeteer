@@ -9,27 +9,67 @@ public class CSSRule {
     /**
     * The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
     */
-    public final String styleSheetId;
+    private String styleSheetId;
 
     /**
     * Rule selector data.
     */
-    public final jpuppeteer.cdp.client.entity.css.SelectorList selectorList;
+    private jpuppeteer.cdp.client.entity.css.SelectorList selectorList;
 
     /**
     * Parent stylesheet's origin.
     */
-    public final jpuppeteer.cdp.client.constant.css.StyleSheetOrigin origin;
+    private jpuppeteer.cdp.client.constant.css.StyleSheetOrigin origin;
 
     /**
     * Associated style declaration.
     */
-    public final jpuppeteer.cdp.client.entity.css.CSSStyle style;
+    private jpuppeteer.cdp.client.entity.css.CSSStyle style;
 
     /**
     * Media list array (for rules involving media queries). The array enumerates media queries starting with the innermost one, going outwards.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.css.CSSMedia> media;
+    private java.util.List<jpuppeteer.cdp.client.entity.css.CSSMedia> media;
+
+    public void setStyleSheetId (String styleSheetId) {
+        this.styleSheetId = styleSheetId;
+    }
+
+    public String getStyleSheetId() {
+        return this.styleSheetId;
+    }
+
+    public void setSelectorList (jpuppeteer.cdp.client.entity.css.SelectorList selectorList) {
+        this.selectorList = selectorList;
+    }
+
+    public jpuppeteer.cdp.client.entity.css.SelectorList getSelectorList() {
+        return this.selectorList;
+    }
+
+    public void setOrigin (jpuppeteer.cdp.client.constant.css.StyleSheetOrigin origin) {
+        this.origin = origin;
+    }
+
+    public jpuppeteer.cdp.client.constant.css.StyleSheetOrigin getOrigin() {
+        return this.origin;
+    }
+
+    public void setStyle (jpuppeteer.cdp.client.entity.css.CSSStyle style) {
+        this.style = style;
+    }
+
+    public jpuppeteer.cdp.client.entity.css.CSSStyle getStyle() {
+        return this.style;
+    }
+
+    public void setMedia (java.util.List<jpuppeteer.cdp.client.entity.css.CSSMedia> media) {
+        this.media = media;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.css.CSSMedia> getMedia() {
+        return this.media;
+    }
 
     public CSSRule(String styleSheetId, jpuppeteer.cdp.client.entity.css.SelectorList selectorList, jpuppeteer.cdp.client.constant.css.StyleSheetOrigin origin, jpuppeteer.cdp.client.entity.css.CSSStyle style, java.util.List<jpuppeteer.cdp.client.entity.css.CSSMedia> media) {
         this.styleSheetId = styleSheetId;
@@ -45,6 +85,9 @@ public class CSSRule {
         this.origin = origin;
         this.style = style;
         this.media = null;
+    }
+
+    public CSSRule() {
     }
 
 }

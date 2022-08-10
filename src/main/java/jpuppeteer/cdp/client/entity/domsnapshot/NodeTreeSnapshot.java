@@ -9,77 +9,197 @@ public class NodeTreeSnapshot {
     /**
     * Parent node index.
     */
-    public final java.util.List<Integer> parentIndex;
+    private java.util.List<Integer> parentIndex;
 
     /**
     * `Node`'s nodeType.
     */
-    public final java.util.List<Integer> nodeType;
+    private java.util.List<Integer> nodeType;
 
     /**
     * `Node`'s nodeName.
     */
-    public final java.util.List<Integer> nodeName;
+    private java.util.List<Integer> nodeName;
 
     /**
     * `Node`'s nodeValue.
     */
-    public final java.util.List<Integer> nodeValue;
+    private java.util.List<Integer> nodeValue;
 
     /**
     * `Node`'s id, corresponds to DOM.Node.backendNodeId.
     */
-    public final java.util.List<Integer> backendNodeId;
+    private java.util.List<Integer> backendNodeId;
 
     /**
     * Attributes of an `Element` node. Flatten name, value pairs.
     */
-    public final java.util.List<java.util.List<Integer>> attributes;
+    private java.util.List<java.util.List<Integer>> attributes;
 
     /**
     * Only set for textarea elements, contains the text value.
     */
-    public final jpuppeteer.cdp.client.entity.domsnapshot.RareStringData textValue;
+    private jpuppeteer.cdp.client.entity.domsnapshot.RareStringData textValue;
 
     /**
     * Only set for input elements, contains the input's associated text value.
     */
-    public final jpuppeteer.cdp.client.entity.domsnapshot.RareStringData inputValue;
+    private jpuppeteer.cdp.client.entity.domsnapshot.RareStringData inputValue;
 
     /**
     * Only set for radio and checkbox input elements, indicates if the element has been checked
     */
-    public final jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData inputChecked;
+    private jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData inputChecked;
 
     /**
     * Only set for option elements, indicates if the element has been selected
     */
-    public final jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData optionSelected;
+    private jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData optionSelected;
 
     /**
     * The index of the document in the list of the snapshot documents.
     */
-    public final jpuppeteer.cdp.client.entity.domsnapshot.RareIntegerData contentDocumentIndex;
+    private jpuppeteer.cdp.client.entity.domsnapshot.RareIntegerData contentDocumentIndex;
 
     /**
     * Type of a pseudo element node.
     */
-    public final jpuppeteer.cdp.client.entity.domsnapshot.RareStringData pseudoType;
+    private jpuppeteer.cdp.client.entity.domsnapshot.RareStringData pseudoType;
 
     /**
     * Whether this DOM node responds to mouse clicks. This includes nodes that have had click event listeners attached via JavaScript as well as anchor tags that naturally navigate when clicked.
     */
-    public final jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData isClickable;
+    private jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData isClickable;
 
     /**
     * The selected url for nodes with a srcset attribute.
     */
-    public final jpuppeteer.cdp.client.entity.domsnapshot.RareStringData currentSourceURL;
+    private jpuppeteer.cdp.client.entity.domsnapshot.RareStringData currentSourceURL;
 
     /**
     * The url of the script (if any) that generates this node.
     */
-    public final jpuppeteer.cdp.client.entity.domsnapshot.RareStringData originURL;
+    private jpuppeteer.cdp.client.entity.domsnapshot.RareStringData originURL;
+
+    public void setParentIndex (java.util.List<Integer> parentIndex) {
+        this.parentIndex = parentIndex;
+    }
+
+    public java.util.List<Integer> getParentIndex() {
+        return this.parentIndex;
+    }
+
+    public void setNodeType (java.util.List<Integer> nodeType) {
+        this.nodeType = nodeType;
+    }
+
+    public java.util.List<Integer> getNodeType() {
+        return this.nodeType;
+    }
+
+    public void setNodeName (java.util.List<Integer> nodeName) {
+        this.nodeName = nodeName;
+    }
+
+    public java.util.List<Integer> getNodeName() {
+        return this.nodeName;
+    }
+
+    public void setNodeValue (java.util.List<Integer> nodeValue) {
+        this.nodeValue = nodeValue;
+    }
+
+    public java.util.List<Integer> getNodeValue() {
+        return this.nodeValue;
+    }
+
+    public void setBackendNodeId (java.util.List<Integer> backendNodeId) {
+        this.backendNodeId = backendNodeId;
+    }
+
+    public java.util.List<Integer> getBackendNodeId() {
+        return this.backendNodeId;
+    }
+
+    public void setAttributes (java.util.List<java.util.List<Integer>> attributes) {
+        this.attributes = attributes;
+    }
+
+    public java.util.List<java.util.List<Integer>> getAttributes() {
+        return this.attributes;
+    }
+
+    public void setTextValue (jpuppeteer.cdp.client.entity.domsnapshot.RareStringData textValue) {
+        this.textValue = textValue;
+    }
+
+    public jpuppeteer.cdp.client.entity.domsnapshot.RareStringData getTextValue() {
+        return this.textValue;
+    }
+
+    public void setInputValue (jpuppeteer.cdp.client.entity.domsnapshot.RareStringData inputValue) {
+        this.inputValue = inputValue;
+    }
+
+    public jpuppeteer.cdp.client.entity.domsnapshot.RareStringData getInputValue() {
+        return this.inputValue;
+    }
+
+    public void setInputChecked (jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData inputChecked) {
+        this.inputChecked = inputChecked;
+    }
+
+    public jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData getInputChecked() {
+        return this.inputChecked;
+    }
+
+    public void setOptionSelected (jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData optionSelected) {
+        this.optionSelected = optionSelected;
+    }
+
+    public jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData getOptionSelected() {
+        return this.optionSelected;
+    }
+
+    public void setContentDocumentIndex (jpuppeteer.cdp.client.entity.domsnapshot.RareIntegerData contentDocumentIndex) {
+        this.contentDocumentIndex = contentDocumentIndex;
+    }
+
+    public jpuppeteer.cdp.client.entity.domsnapshot.RareIntegerData getContentDocumentIndex() {
+        return this.contentDocumentIndex;
+    }
+
+    public void setPseudoType (jpuppeteer.cdp.client.entity.domsnapshot.RareStringData pseudoType) {
+        this.pseudoType = pseudoType;
+    }
+
+    public jpuppeteer.cdp.client.entity.domsnapshot.RareStringData getPseudoType() {
+        return this.pseudoType;
+    }
+
+    public void setIsClickable (jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData isClickable) {
+        this.isClickable = isClickable;
+    }
+
+    public jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData getIsClickable() {
+        return this.isClickable;
+    }
+
+    public void setCurrentSourceURL (jpuppeteer.cdp.client.entity.domsnapshot.RareStringData currentSourceURL) {
+        this.currentSourceURL = currentSourceURL;
+    }
+
+    public jpuppeteer.cdp.client.entity.domsnapshot.RareStringData getCurrentSourceURL() {
+        return this.currentSourceURL;
+    }
+
+    public void setOriginURL (jpuppeteer.cdp.client.entity.domsnapshot.RareStringData originURL) {
+        this.originURL = originURL;
+    }
+
+    public jpuppeteer.cdp.client.entity.domsnapshot.RareStringData getOriginURL() {
+        return this.originURL;
+    }
 
     public NodeTreeSnapshot(java.util.List<Integer> parentIndex, java.util.List<Integer> nodeType, java.util.List<Integer> nodeName, java.util.List<Integer> nodeValue, java.util.List<Integer> backendNodeId, java.util.List<java.util.List<Integer>> attributes, jpuppeteer.cdp.client.entity.domsnapshot.RareStringData textValue, jpuppeteer.cdp.client.entity.domsnapshot.RareStringData inputValue, jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData inputChecked, jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData optionSelected, jpuppeteer.cdp.client.entity.domsnapshot.RareIntegerData contentDocumentIndex, jpuppeteer.cdp.client.entity.domsnapshot.RareStringData pseudoType, jpuppeteer.cdp.client.entity.domsnapshot.RareBooleanData isClickable, jpuppeteer.cdp.client.entity.domsnapshot.RareStringData currentSourceURL, jpuppeteer.cdp.client.entity.domsnapshot.RareStringData originURL) {
         this.parentIndex = parentIndex;

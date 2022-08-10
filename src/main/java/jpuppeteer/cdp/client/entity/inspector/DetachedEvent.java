@@ -9,10 +9,21 @@ public class DetachedEvent {
     /**
     * The reason why connection has been terminated.
     */
-    public final String reason;
+    private String reason;
+
+    public void setReason (String reason) {
+        this.reason = reason;
+    }
+
+    public String getReason() {
+        return this.reason;
+    }
 
     public DetachedEvent(String reason) {
         this.reason = reason;
+    }
+
+    public DetachedEvent() {
     }
 
 }

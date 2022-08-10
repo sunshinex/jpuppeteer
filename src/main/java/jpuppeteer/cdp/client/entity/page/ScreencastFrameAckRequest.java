@@ -7,10 +7,21 @@ public class ScreencastFrameAckRequest {
     /**
     * Frame number.
     */
-    public final Integer sessionId;
+    private Integer sessionId;
+
+    public void setSessionId (Integer sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public Integer getSessionId() {
+        return this.sessionId;
+    }
 
     public ScreencastFrameAckRequest(Integer sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public ScreencastFrameAckRequest() {
     }
 
 }

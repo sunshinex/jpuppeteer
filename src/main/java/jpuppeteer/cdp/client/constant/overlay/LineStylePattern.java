@@ -20,6 +20,11 @@ public enum LineStylePattern implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static LineStylePattern findByValue(String value) {
         for(LineStylePattern val : values()) {
             if (val.value.equals(value)) return val;

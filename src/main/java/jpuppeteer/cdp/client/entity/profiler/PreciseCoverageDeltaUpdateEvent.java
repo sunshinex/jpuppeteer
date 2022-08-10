@@ -8,22 +8,49 @@ public class PreciseCoverageDeltaUpdateEvent {
     /**
     * Monotonically increasing time (in seconds) when the coverage update was taken in the backend.
     */
-    public final java.math.BigDecimal timestamp;
+    private java.math.BigDecimal timestamp;
 
     /**
     * Identifier for distinguishing coverage events.
     */
-    public final String occassion;
+    private String occassion;
 
     /**
     * Coverage data for the current isolate.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.profiler.ScriptCoverage> result;
+    private java.util.List<jpuppeteer.cdp.client.entity.profiler.ScriptCoverage> result;
+
+    public void setTimestamp (java.math.BigDecimal timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public java.math.BigDecimal getTimestamp() {
+        return this.timestamp;
+    }
+
+    public void setOccassion (String occassion) {
+        this.occassion = occassion;
+    }
+
+    public String getOccassion() {
+        return this.occassion;
+    }
+
+    public void setResult (java.util.List<jpuppeteer.cdp.client.entity.profiler.ScriptCoverage> result) {
+        this.result = result;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.profiler.ScriptCoverage> getResult() {
+        return this.result;
+    }
 
     public PreciseCoverageDeltaUpdateEvent(java.math.BigDecimal timestamp, String occassion, java.util.List<jpuppeteer.cdp.client.entity.profiler.ScriptCoverage> result) {
         this.timestamp = timestamp;
         this.occassion = occassion;
         this.result = result;
+    }
+
+    public PreciseCoverageDeltaUpdateEvent() {
     }
 
 }

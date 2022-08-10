@@ -22,6 +22,11 @@ public enum ServiceWorkerVersionRunningStatus implements jpuppeteer.cdp.client.C
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ServiceWorkerVersionRunningStatus findByValue(String value) {
         for(ServiceWorkerVersionRunningStatus val : values()) {
             if (val.value.equals(value)) return val;

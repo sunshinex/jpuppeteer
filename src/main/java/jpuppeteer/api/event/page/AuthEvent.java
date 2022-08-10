@@ -1,6 +1,5 @@
 package jpuppeteer.api.event.page;
 
-import io.netty.util.concurrent.Future;
 import jpuppeteer.api.Authenticator;
 import jpuppeteer.api.Frame;
 import jpuppeteer.api.HttpHeader;
@@ -12,6 +11,7 @@ import jpuppeteer.cdp.client.domain.Fetch;
 import jpuppeteer.cdp.client.entity.fetch.AuthChallenge;
 import jpuppeteer.cdp.client.entity.fetch.AuthChallengeResponse;
 import jpuppeteer.cdp.client.entity.fetch.ContinueWithAuthRequest;
+import jpuppeteer.util.XFuture;
 
 public class AuthEvent extends FrameEvent implements Authenticator {
 
@@ -33,10 +33,10 @@ public class AuthEvent extends FrameEvent implements Authenticator {
         super(frame);
         this.fetch = fetch;
         this.interceptorId = interceptorId;
-        this.origin = challenge.origin;
-        this.scheme = challenge.scheme;
-        this.realm = challenge.realm;
-        this.source = challenge.source;
+        this.origin = challenge.getOrigin();
+        this.scheme = challenge.getScheme();
+        this.realm = challenge.getRealm();
+        this.source = challenge.getSource();
         this.request = request;
     }
 
@@ -77,23 +77,15 @@ public class AuthEvent extends FrameEvent implements Authenticator {
     }
 
     @Override
-    public Future accept(String username, String password) {
-        return fetch.continueWithAuth(
-                createRequest(
-                        AuthChallengeResponseResponse.PROVIDECREDENTIALS,
-                        username, password
-                )
-        );
+    public XFuture<?> accept(String username, String password) {
+        ContinueWithAuthRequest request = createRequest(AuthChallengeResponseResponse.PROVIDECREDENTIALS, username, password);
+        return fetch.continueWithAuth(request);
     }
 
     @Override
-    public Future cancel() {
-        return fetch.continueWithAuth(
-                createRequest(
-                        AuthChallengeResponseResponse.CANCELAUTH,
-                        null, null
-                )
-        );
+    public XFuture<?> cancel() {
+        ContinueWithAuthRequest request = createRequest(AuthChallengeResponseResponse.CANCELAUTH, null, null);
+        return fetch.continueWithAuth(request);
     }
 
     @Override
@@ -132,7 +124,7 @@ public class AuthEvent extends FrameEvent implements Authenticator {
     }
 
     @Override
-    public Future<String> content() {
+    public XFuture<String> content() {
         return request.content();
     }
 }

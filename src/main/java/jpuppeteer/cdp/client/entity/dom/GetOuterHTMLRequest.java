@@ -7,17 +7,41 @@ public class GetOuterHTMLRequest {
     /**
     * Identifier of the node.
     */
-    public final Integer nodeId;
+    private Integer nodeId;
 
     /**
     * Identifier of the backend node.
     */
-    public final Integer backendNodeId;
+    private Integer backendNodeId;
 
     /**
     * JavaScript object id of the node wrapper.
     */
-    public final String objectId;
+    private String objectId;
+
+    public void setNodeId (Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public Integer getNodeId() {
+        return this.nodeId;
+    }
+
+    public void setBackendNodeId (Integer backendNodeId) {
+        this.backendNodeId = backendNodeId;
+    }
+
+    public Integer getBackendNodeId() {
+        return this.backendNodeId;
+    }
+
+    public void setObjectId (String objectId) {
+        this.objectId = objectId;
+    }
+
+    public String getObjectId() {
+        return this.objectId;
+    }
 
     public GetOuterHTMLRequest(Integer nodeId, Integer backendNodeId, String objectId) {
         this.nodeId = nodeId;

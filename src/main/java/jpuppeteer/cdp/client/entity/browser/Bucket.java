@@ -8,22 +8,49 @@ public class Bucket {
     /**
     * Minimum value (inclusive).
     */
-    public final Integer low;
+    private Integer low;
 
     /**
     * Maximum value (exclusive).
     */
-    public final Integer high;
+    private Integer high;
 
     /**
     * Number of samples.
     */
-    public final Integer count;
+    private Integer count;
+
+    public void setLow (Integer low) {
+        this.low = low;
+    }
+
+    public Integer getLow() {
+        return this.low;
+    }
+
+    public void setHigh (Integer high) {
+        this.high = high;
+    }
+
+    public Integer getHigh() {
+        return this.high;
+    }
+
+    public void setCount (Integer count) {
+        this.count = count;
+    }
+
+    public Integer getCount() {
+        return this.count;
+    }
 
     public Bucket(Integer low, Integer high, Integer count) {
         this.low = low;
         this.high = high;
         this.count = count;
+    }
+
+    public Bucket() {
     }
 
 }

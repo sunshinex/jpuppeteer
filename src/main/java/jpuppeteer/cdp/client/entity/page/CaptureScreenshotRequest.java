@@ -7,27 +7,67 @@ public class CaptureScreenshotRequest {
     /**
     * Image compression format (defaults to png).
     */
-    public final jpuppeteer.cdp.client.constant.page.CaptureScreenshotRequestFormat format;
+    private jpuppeteer.cdp.client.constant.page.CaptureScreenshotRequestFormat format;
 
     /**
     * Compression quality from range [0..100] (jpeg only).
     */
-    public final Integer quality;
+    private Integer quality;
 
     /**
     * Capture the screenshot of a given region only.
     */
-    public final jpuppeteer.cdp.client.entity.page.Viewport clip;
+    private jpuppeteer.cdp.client.entity.page.Viewport clip;
 
     /**
     * Capture the screenshot from the surface, rather than the view. Defaults to true.
     */
-    public final Boolean fromSurface;
+    private Boolean fromSurface;
 
     /**
     * Capture the screenshot beyond the viewport. Defaults to false.
     */
-    public final Boolean captureBeyondViewport;
+    private Boolean captureBeyondViewport;
+
+    public void setFormat (jpuppeteer.cdp.client.constant.page.CaptureScreenshotRequestFormat format) {
+        this.format = format;
+    }
+
+    public jpuppeteer.cdp.client.constant.page.CaptureScreenshotRequestFormat getFormat() {
+        return this.format;
+    }
+
+    public void setQuality (Integer quality) {
+        this.quality = quality;
+    }
+
+    public Integer getQuality() {
+        return this.quality;
+    }
+
+    public void setClip (jpuppeteer.cdp.client.entity.page.Viewport clip) {
+        this.clip = clip;
+    }
+
+    public jpuppeteer.cdp.client.entity.page.Viewport getClip() {
+        return this.clip;
+    }
+
+    public void setFromSurface (Boolean fromSurface) {
+        this.fromSurface = fromSurface;
+    }
+
+    public Boolean getFromSurface() {
+        return this.fromSurface;
+    }
+
+    public void setCaptureBeyondViewport (Boolean captureBeyondViewport) {
+        this.captureBeyondViewport = captureBeyondViewport;
+    }
+
+    public Boolean getCaptureBeyondViewport() {
+        return this.captureBeyondViewport;
+    }
 
     public CaptureScreenshotRequest(jpuppeteer.cdp.client.constant.page.CaptureScreenshotRequestFormat format, Integer quality, jpuppeteer.cdp.client.entity.page.Viewport clip, Boolean fromSurface, Boolean captureBeyondViewport) {
         this.format = format;

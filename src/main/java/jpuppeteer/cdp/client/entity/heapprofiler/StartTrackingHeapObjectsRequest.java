@@ -7,7 +7,15 @@ public class StartTrackingHeapObjectsRequest {
 
     /**
     */
-    public final Boolean trackAllocations;
+    private Boolean trackAllocations;
+
+    public void setTrackAllocations (Boolean trackAllocations) {
+        this.trackAllocations = trackAllocations;
+    }
+
+    public Boolean getTrackAllocations() {
+        return this.trackAllocations;
+    }
 
     public StartTrackingHeapObjectsRequest(Boolean trackAllocations) {
         this.trackAllocations = trackAllocations;

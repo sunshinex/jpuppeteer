@@ -21,6 +21,11 @@ public enum CookiePriority implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static CookiePriority findByValue(String value) {
         for(CookiePriority val : values()) {
             if (val.value.equals(value)) return val;

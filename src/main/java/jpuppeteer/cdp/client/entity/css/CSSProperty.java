@@ -9,42 +9,106 @@ public class CSSProperty {
     /**
     * The property name.
     */
-    public final String name;
+    private String name;
 
     /**
     * The property value.
     */
-    public final String value;
+    private String value;
 
     /**
     * Whether the property has "!important" annotation (implies `false` if absent).
     */
-    public final Boolean important;
+    private Boolean important;
 
     /**
     * Whether the property is implicit (implies `false` if absent).
     */
-    public final Boolean implicit;
+    private Boolean implicit;
 
     /**
     * The full property text as specified in the style.
     */
-    public final String text;
+    private String text;
 
     /**
     * Whether the property is understood by the browser (implies `true` if absent).
     */
-    public final Boolean parsedOk;
+    private Boolean parsedOk;
 
     /**
     * Whether the property is disabled by the user (present for source-based properties only).
     */
-    public final Boolean disabled;
+    private Boolean disabled;
 
     /**
     * The entire property range in the enclosing style declaration (if available).
     */
-    public final jpuppeteer.cdp.client.entity.css.SourceRange range;
+    private jpuppeteer.cdp.client.entity.css.SourceRange range;
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setValue (String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
+    public void setImportant (Boolean important) {
+        this.important = important;
+    }
+
+    public Boolean getImportant() {
+        return this.important;
+    }
+
+    public void setImplicit (Boolean implicit) {
+        this.implicit = implicit;
+    }
+
+    public Boolean getImplicit() {
+        return this.implicit;
+    }
+
+    public void setText (String text) {
+        this.text = text;
+    }
+
+    public String getText() {
+        return this.text;
+    }
+
+    public void setParsedOk (Boolean parsedOk) {
+        this.parsedOk = parsedOk;
+    }
+
+    public Boolean getParsedOk() {
+        return this.parsedOk;
+    }
+
+    public void setDisabled (Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public Boolean getDisabled() {
+        return this.disabled;
+    }
+
+    public void setRange (jpuppeteer.cdp.client.entity.css.SourceRange range) {
+        this.range = range;
+    }
+
+    public jpuppeteer.cdp.client.entity.css.SourceRange getRange() {
+        return this.range;
+    }
 
     public CSSProperty(String name, String value, Boolean important, Boolean implicit, String text, Boolean parsedOk, Boolean disabled, jpuppeteer.cdp.client.entity.css.SourceRange range) {
         this.name = name;
@@ -66,6 +130,9 @@ public class CSSProperty {
         this.parsedOk = null;
         this.disabled = null;
         this.range = null;
+    }
+
+    public CSSProperty() {
     }
 
 }

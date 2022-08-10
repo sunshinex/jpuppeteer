@@ -1,7 +1,7 @@
 package jpuppeteer.api;
 
-import io.netty.util.concurrent.Future;
 import jpuppeteer.cdp.client.constant.network.ErrorReason;
+import jpuppeteer.util.XFuture;
 
 public interface InterceptedResponse extends Request {
 
@@ -13,15 +13,15 @@ public interface InterceptedResponse extends Request {
 
     HttpHeader[] responseHeaders();
 
-    Future<byte[]> responseBody();
+    XFuture<byte[]> responseBody();
 
-    Future abort();
+    XFuture<?> abort();
 
-    Future continues();
+    XFuture<?> continues();
 
-    Future respond(int statusCode, HttpHeader[] headers, byte[] body);
+    XFuture<?> respond(int statusCode, HttpHeader[] headers, byte[] body);
 
-    default Future respond(int statusCode) {
+    default XFuture<?> respond(int statusCode) {
         return respond(statusCode, null, null);
     }
 

@@ -8,10 +8,21 @@ public class DataCollectedEvent {
 
     /**
     */
-    public final java.util.List<java.util.Map<String, Object>> value;
+    private java.util.List<java.util.Map<String, Object>> value;
+
+    public void setValue (java.util.List<java.util.Map<String, Object>> value) {
+        this.value = value;
+    }
+
+    public java.util.List<java.util.Map<String, Object>> getValue() {
+        return this.value;
+    }
 
     public DataCollectedEvent(java.util.List<java.util.Map<String, Object>> value) {
         this.value = value;
+    }
+
+    public DataCollectedEvent() {
     }
 
 }

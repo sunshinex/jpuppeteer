@@ -1,8 +1,8 @@
 package jpuppeteer.api;
 
-import io.netty.util.concurrent.Future;
 import jpuppeteer.api.event.EventEmitter;
 import jpuppeteer.api.event.page.PageEvent;
+import jpuppeteer.util.XFuture;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -21,27 +21,27 @@ public interface Frame extends EventEmitter<PageEvent>, Isolate {
 
     String url();
 
-    Future<Element> querySelector(String selector);
+    XFuture<Element> querySelector(String selector);
 
-    Future<Element[]> querySelectorAll(String selector);
+    XFuture<Element[]> querySelectorAll(String selector);
 
-    Future<Element> waitSelector(String selector, long timeout, TimeUnit unit);
+    XFuture<Element> waitSelector(String selector, long timeout, TimeUnit unit);
 
-    Future watch(String selector, Consumer<Element> watchFunction, boolean once);
+    XFuture<?> watch(String selector, Consumer<Element> watchFunction, boolean once);
 
-    Future<String> navigate(String url, String referer);
+    XFuture<String> navigate(String url, String referer);
 
-    default Future<String> navigate(String url) {
+    default XFuture<String> navigate(String url) {
         return navigate(url, null);
     }
 
-    Future<Isolate> createIsolate(String isolateName);
+    XFuture<Isolate> createIsolate(String isolateName);
 
-    Future addBinding(String bindingName, BindingFunction function);
+    XFuture<?> addBinding(String bindingName, BindingFunction function);
 
-    Future<String> html();
+    XFuture<String> html();
 
-    Future html(String html);
+    XFuture<?> html(String html);
 
 }
 

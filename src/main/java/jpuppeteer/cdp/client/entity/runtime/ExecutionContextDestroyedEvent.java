@@ -8,10 +8,21 @@ public class ExecutionContextDestroyedEvent {
     /**
     * Id of the destroyed context
     */
-    public final Integer executionContextId;
+    private Integer executionContextId;
+
+    public void setExecutionContextId (Integer executionContextId) {
+        this.executionContextId = executionContextId;
+    }
+
+    public Integer getExecutionContextId() {
+        return this.executionContextId;
+    }
 
     public ExecutionContextDestroyedEvent(Integer executionContextId) {
         this.executionContextId = executionContextId;
+    }
+
+    public ExecutionContextDestroyedEvent() {
     }
 
 }

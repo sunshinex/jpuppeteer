@@ -1,13 +1,10 @@
 package jpuppeteer.util;
 
-import com.alibaba.fastjson.parser.ParserConfig;
-import com.alibaba.fastjson.util.TypeUtils;
-import io.netty.util.concurrent.EventExecutor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.POJONode;
 import jpuppeteer.api.BrowserObject;
-import jpuppeteer.api.Element;
 import jpuppeteer.cdp.client.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.client.constant.runtime.RemoteObjectType;
-import jpuppeteer.cdp.client.domain.DOM;
 import jpuppeteer.cdp.client.entity.runtime.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,36 +30,37 @@ public class IsolateUtil {
     public static void checkException(ExceptionDetails exceptionDetails) throws ExecutionException {
         if (exceptionDetails != null) {
             String error = "null";
-            if (StringUtils.isNotEmpty(exceptionDetails.text)) {
-                error = exceptionDetails.text;
+            if (StringUtils.isNotEmpty(exceptionDetails.getText())) {
+                error = exceptionDetails.getText();
             }
-            if (exceptionDetails.exception != null && StringUtils.isNotEmpty(exceptionDetails.exception.description)) {
-                error = exceptionDetails.exception.description;
+            if (exceptionDetails.getException() != null && StringUtils.isNotEmpty(exceptionDetails.getException().getDescription())) {
+                error = exceptionDetails.getException().getDescription();
             }
-            throw new ExecutionException(error, exceptionDetails.stackTrace);
+            throw new ExecutionException(error, exceptionDetails.getStackTrace());
         }
     }
 
     public static EvaluateRequest buildEvaluateRequest(String expression, Integer isolateId, boolean returnValue, Integer timeout, String uniqueId) {
         BigDecimal tmOut = timeout != null ? BigDecimal.valueOf(timeout) : null;
-        EvaluateRequestBuilder builder = EvaluateRequestBuilder.newBuilder()
-                .expression(expression);
+        EvaluateRequest request = new EvaluateRequest();
+        request.setExpression(expression);
         if (uniqueId != null) {
-            builder.uniqueContextId(uniqueId);
+            request.setUniqueContextId(uniqueId);
         } else {
-            builder.contextId(isolateId);
+            request.setContextId(isolateId);
         }
-        return builder.returnByValue(returnValue)
-                .timeout(tmOut)
-                .includeCommandLineAPI(true)
-                .silent(true)
-                .generatePreview(false)
-                .userGesture(true)
-                .awaitPromise(true)
-                .throwOnSideEffect(false)
-                .disableBreaks(true)
-                .replMode(true)
-                .build();
+        request.setReturnByValue(returnValue);
+        request.setTimeout(tmOut);
+        request.setIncludeCommandLineAPI(true);
+        request.setSilent(true);
+        request.setGeneratePreview(false);
+        request.setUserGesture(true);
+        request.setAwaitPromise(true);
+        request.setThrowOnSideEffect(false);
+        request.setDisableBreaks(true);
+        request.setReplMode(true);
+
+        return request;
     }
 
     public static CallFunctionOnRequest buildCallRequest(String declaration, String objectId, boolean returnValue, Integer isolateId, Object... args) {
@@ -89,24 +87,29 @@ public class IsolateUtil {
     }
 
     public static <R> R remoteObjectToValue(RemoteObject object, Class<R> clazz) {
-        if (object.objectId != null) {
+        if (object.getObjectId() != null) {
             //对于objectId存在的，直接返回空
             return null;
         }
-        Object value = object.value;
-        if (RemoteObjectType.OBJECT.equals(object.type) &&
-                RemoteObjectSubtype.DATE.equals(object.subtype)) {
+        Object value = object.getValue();
+        if (RemoteObjectType.OBJECT.equals(object.getType()) &&
+                RemoteObjectSubtype.DATE.equals(object.getSubtype())) {
             value = null;
-        } else if (RemoteObjectType.NUMBER.equals(object.type) && StringUtils.isNotEmpty(object.unserializableValue)) {
-            if (NEGATIVE_ZERO.equals(object.unserializableValue)) {
+        } else if (RemoteObjectType.NUMBER.equals(object.getType()) && StringUtils.isNotEmpty(object.getUnserializableValue())) {
+            if (NEGATIVE_ZERO.equals(object.getUnserializableValue())) {
                 value = -0;
             } else {
                 value = null;
             }
-        } else if (RemoteObjectType.BIGINT.equals(object.type)) {
-            value = new BigInteger(StringUtils.removeEnd(object.unserializableValue, "n"));
+        } else if (RemoteObjectType.BIGINT.equals(object.getType())) {
+            value = new BigInteger(StringUtils.removeEnd(object.getUnserializableValue(), "n"));
         }
-        return TypeUtils.cast(value, clazz, ParserConfig.getGlobalInstance());
+        POJONode node = new POJONode(value);
+        try {
+            return JacksonUtil.INSTANCE.treeToValue(node, clazz);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Object to JavaObject `"+clazz.getName()+"` failed", e);
+        }
     }
 
 }

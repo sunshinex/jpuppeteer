@@ -22,6 +22,11 @@ public enum PlayerMessageLevel implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static PlayerMessageLevel findByValue(String value) {
         for(PlayerMessageLevel val : values()) {
             if (val.value.equals(value)) return val;

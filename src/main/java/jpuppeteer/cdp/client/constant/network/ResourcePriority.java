@@ -23,6 +23,11 @@ public enum ResourcePriority implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ResourcePriority findByValue(String value) {
         for(ResourcePriority val : values()) {
             if (val.value.equals(value)) return val;

@@ -9,10 +9,21 @@ public class StyleSheetRemovedEvent {
     /**
     * Identifier of the removed stylesheet.
     */
-    public final String styleSheetId;
+    private String styleSheetId;
+
+    public void setStyleSheetId (String styleSheetId) {
+        this.styleSheetId = styleSheetId;
+    }
+
+    public String getStyleSheetId() {
+        return this.styleSheetId;
+    }
 
     public StyleSheetRemovedEvent(String styleSheetId) {
         this.styleSheetId = styleSheetId;
+    }
+
+    public StyleSheetRemovedEvent() {
     }
 
 }

@@ -20,6 +20,11 @@ public enum ScriptLanguage implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ScriptLanguage findByValue(String value) {
         for(ScriptLanguage val : values()) {
             if (val.value.equals(value)) return val;

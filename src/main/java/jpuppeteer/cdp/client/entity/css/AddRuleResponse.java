@@ -8,10 +8,21 @@ public class AddRuleResponse {
     /**
     * The newly created rule.
     */
-    public final jpuppeteer.cdp.client.entity.css.CSSRule rule;
+    private jpuppeteer.cdp.client.entity.css.CSSRule rule;
+
+    public void setRule (jpuppeteer.cdp.client.entity.css.CSSRule rule) {
+        this.rule = rule;
+    }
+
+    public jpuppeteer.cdp.client.entity.css.CSSRule getRule() {
+        return this.rule;
+    }
 
     public AddRuleResponse(jpuppeteer.cdp.client.entity.css.CSSRule rule) {
         this.rule = rule;
+    }
+
+    public AddRuleResponse() {
     }
 
 }

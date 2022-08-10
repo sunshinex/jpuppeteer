@@ -22,6 +22,11 @@ public enum WindowState implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static WindowState findByValue(String value) {
         for(WindowState val : values()) {
             if (val.value.equals(value)) return val;

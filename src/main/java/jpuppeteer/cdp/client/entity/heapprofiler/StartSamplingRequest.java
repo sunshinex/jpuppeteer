@@ -8,7 +8,15 @@ public class StartSamplingRequest {
     /**
     * Average sample interval in bytes. Poisson distribution is used for the intervals. The default value is 32768 bytes.
     */
-    public final java.math.BigDecimal samplingInterval;
+    private java.math.BigDecimal samplingInterval;
+
+    public void setSamplingInterval (java.math.BigDecimal samplingInterval) {
+        this.samplingInterval = samplingInterval;
+    }
+
+    public java.math.BigDecimal getSamplingInterval() {
+        return this.samplingInterval;
+    }
 
     public StartSamplingRequest(java.math.BigDecimal samplingInterval) {
         this.samplingInterval = samplingInterval;

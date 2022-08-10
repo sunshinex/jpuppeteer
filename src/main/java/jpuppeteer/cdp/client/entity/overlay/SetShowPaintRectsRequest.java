@@ -8,10 +8,21 @@ public class SetShowPaintRectsRequest {
     /**
     * True for showing paint rectangles
     */
-    public final Boolean result;
+    private Boolean result;
+
+    public void setResult (Boolean result) {
+        this.result = result;
+    }
+
+    public Boolean getResult() {
+        return this.result;
+    }
 
     public SetShowPaintRectsRequest(Boolean result) {
         this.result = result;
+    }
+
+    public SetShowPaintRectsRequest() {
     }
 
 }

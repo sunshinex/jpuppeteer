@@ -8,10 +8,21 @@ public class AppManifestParsedProperties {
     /**
     * Computed scope value
     */
-    public final String scope;
+    private String scope;
+
+    public void setScope (String scope) {
+        this.scope = scope;
+    }
+
+    public String getScope() {
+        return this.scope;
+    }
 
     public AppManifestParsedProperties(String scope) {
         this.scope = scope;
+    }
+
+    public AppManifestParsedProperties() {
     }
 
 }

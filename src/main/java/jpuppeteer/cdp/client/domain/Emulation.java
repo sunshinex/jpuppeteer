@@ -13,7 +13,7 @@ public class Emulation {
     /**
     * Tells whether emulation is supported.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.emulation.CanEmulateResponse> canEmulate() {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.emulation.CanEmulateResponse> canEmulate() {
         return connection.send("Emulation.canEmulate", null, jpuppeteer.cdp.client.entity.emulation.CanEmulateResponse.class);
     }
 
@@ -21,7 +21,7 @@ public class Emulation {
     /**
     * Clears the overridden device metrics.
     */
-    public io.netty.util.concurrent.Future clearDeviceMetricsOverride() {
+    public jpuppeteer.util.XFuture<?> clearDeviceMetricsOverride() {
         return connection.send("Emulation.clearDeviceMetricsOverride", null);
     }
 
@@ -29,7 +29,7 @@ public class Emulation {
     /**
     * Clears the overridden Geolocation Position and Error.
     */
-    public io.netty.util.concurrent.Future clearGeolocationOverride() {
+    public jpuppeteer.util.XFuture<?> clearGeolocationOverride() {
         return connection.send("Emulation.clearGeolocationOverride", null);
     }
 
@@ -38,7 +38,7 @@ public class Emulation {
     * Requests that page scale factor is reset to initial values.
     * experimental
     */
-    public io.netty.util.concurrent.Future resetPageScaleFactor() {
+    public jpuppeteer.util.XFuture<?> resetPageScaleFactor() {
         return connection.send("Emulation.resetPageScaleFactor", null);
     }
 
@@ -47,7 +47,7 @@ public class Emulation {
     * Enables or disables simulating a focused and active page.
     * experimental
     */
-    public io.netty.util.concurrent.Future setFocusEmulationEnabled(jpuppeteer.cdp.client.entity.emulation.SetFocusEmulationEnabledRequest request) {
+    public jpuppeteer.util.XFuture<?> setFocusEmulationEnabled(jpuppeteer.cdp.client.entity.emulation.SetFocusEmulationEnabledRequest request) {
         return connection.send("Emulation.setFocusEmulationEnabled", request);
     }
 
@@ -56,7 +56,7 @@ public class Emulation {
     * Enables CPU throttling to emulate slow CPUs.
     * experimental
     */
-    public io.netty.util.concurrent.Future setCPUThrottlingRate(jpuppeteer.cdp.client.entity.emulation.SetCPUThrottlingRateRequest request) {
+    public jpuppeteer.util.XFuture<?> setCPUThrottlingRate(jpuppeteer.cdp.client.entity.emulation.SetCPUThrottlingRateRequest request) {
         return connection.send("Emulation.setCPUThrottlingRate", request);
     }
 
@@ -64,7 +64,7 @@ public class Emulation {
     /**
     * Sets or clears an override of the default background color of the frame. This override is used if the content does not specify one.
     */
-    public io.netty.util.concurrent.Future setDefaultBackgroundColorOverride(jpuppeteer.cdp.client.entity.emulation.SetDefaultBackgroundColorOverrideRequest request) {
+    public jpuppeteer.util.XFuture<?> setDefaultBackgroundColorOverride(jpuppeteer.cdp.client.entity.emulation.SetDefaultBackgroundColorOverrideRequest request) {
         return connection.send("Emulation.setDefaultBackgroundColorOverride", request);
     }
 
@@ -72,7 +72,7 @@ public class Emulation {
     /**
     * Overrides the values of device screen dimensions (window.screen.width, window.screen.height, window.innerWidth, window.innerHeight, and "device-width"/"device-height"-related CSS media query results).
     */
-    public io.netty.util.concurrent.Future setDeviceMetricsOverride(jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest request) {
+    public jpuppeteer.util.XFuture<?> setDeviceMetricsOverride(jpuppeteer.cdp.client.entity.emulation.SetDeviceMetricsOverrideRequest request) {
         return connection.send("Emulation.setDeviceMetricsOverride", request);
     }
 
@@ -80,7 +80,7 @@ public class Emulation {
     /**
     * experimental
     */
-    public io.netty.util.concurrent.Future setScrollbarsHidden(jpuppeteer.cdp.client.entity.emulation.SetScrollbarsHiddenRequest request) {
+    public jpuppeteer.util.XFuture<?> setScrollbarsHidden(jpuppeteer.cdp.client.entity.emulation.SetScrollbarsHiddenRequest request) {
         return connection.send("Emulation.setScrollbarsHidden", request);
     }
 
@@ -88,7 +88,7 @@ public class Emulation {
     /**
     * experimental
     */
-    public io.netty.util.concurrent.Future setDocumentCookieDisabled(jpuppeteer.cdp.client.entity.emulation.SetDocumentCookieDisabledRequest request) {
+    public jpuppeteer.util.XFuture<?> setDocumentCookieDisabled(jpuppeteer.cdp.client.entity.emulation.SetDocumentCookieDisabledRequest request) {
         return connection.send("Emulation.setDocumentCookieDisabled", request);
     }
 
@@ -96,7 +96,7 @@ public class Emulation {
     /**
     * experimental
     */
-    public io.netty.util.concurrent.Future setEmitTouchEventsForMouse(jpuppeteer.cdp.client.entity.emulation.SetEmitTouchEventsForMouseRequest request) {
+    public jpuppeteer.util.XFuture<?> setEmitTouchEventsForMouse(jpuppeteer.cdp.client.entity.emulation.SetEmitTouchEventsForMouseRequest request) {
         return connection.send("Emulation.setEmitTouchEventsForMouse", request);
     }
 
@@ -104,7 +104,7 @@ public class Emulation {
     /**
     * Emulates the given media type or media feature for CSS media queries.
     */
-    public io.netty.util.concurrent.Future setEmulatedMedia(jpuppeteer.cdp.client.entity.emulation.SetEmulatedMediaRequest request) {
+    public jpuppeteer.util.XFuture<?> setEmulatedMedia(jpuppeteer.cdp.client.entity.emulation.SetEmulatedMediaRequest request) {
         return connection.send("Emulation.setEmulatedMedia", request);
     }
 
@@ -113,7 +113,7 @@ public class Emulation {
     * Emulates the given vision deficiency.
     * experimental
     */
-    public io.netty.util.concurrent.Future setEmulatedVisionDeficiency(jpuppeteer.cdp.client.entity.emulation.SetEmulatedVisionDeficiencyRequest request) {
+    public jpuppeteer.util.XFuture<?> setEmulatedVisionDeficiency(jpuppeteer.cdp.client.entity.emulation.SetEmulatedVisionDeficiencyRequest request) {
         return connection.send("Emulation.setEmulatedVisionDeficiency", request);
     }
 
@@ -121,7 +121,7 @@ public class Emulation {
     /**
     * Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position unavailable.
     */
-    public io.netty.util.concurrent.Future setGeolocationOverride(jpuppeteer.cdp.client.entity.emulation.SetGeolocationOverrideRequest request) {
+    public jpuppeteer.util.XFuture<?> setGeolocationOverride(jpuppeteer.cdp.client.entity.emulation.SetGeolocationOverrideRequest request) {
         return connection.send("Emulation.setGeolocationOverride", request);
     }
 
@@ -130,7 +130,7 @@ public class Emulation {
     * Overrides the Idle state.
     * experimental
     */
-    public io.netty.util.concurrent.Future setIdleOverride(jpuppeteer.cdp.client.entity.emulation.SetIdleOverrideRequest request) {
+    public jpuppeteer.util.XFuture<?> setIdleOverride(jpuppeteer.cdp.client.entity.emulation.SetIdleOverrideRequest request) {
         return connection.send("Emulation.setIdleOverride", request);
     }
 
@@ -139,7 +139,7 @@ public class Emulation {
     * Clears Idle state overrides.
     * experimental
     */
-    public io.netty.util.concurrent.Future clearIdleOverride() {
+    public jpuppeteer.util.XFuture<?> clearIdleOverride() {
         return connection.send("Emulation.clearIdleOverride", null);
     }
 
@@ -149,7 +149,7 @@ public class Emulation {
     * experimental
     */
     @java.lang.Deprecated
-    public io.netty.util.concurrent.Future setNavigatorOverrides(jpuppeteer.cdp.client.entity.emulation.SetNavigatorOverridesRequest request) {
+    public jpuppeteer.util.XFuture<?> setNavigatorOverrides(jpuppeteer.cdp.client.entity.emulation.SetNavigatorOverridesRequest request) {
         return connection.send("Emulation.setNavigatorOverrides", request);
     }
 
@@ -158,7 +158,7 @@ public class Emulation {
     * Sets a specified page scale factor.
     * experimental
     */
-    public io.netty.util.concurrent.Future setPageScaleFactor(jpuppeteer.cdp.client.entity.emulation.SetPageScaleFactorRequest request) {
+    public jpuppeteer.util.XFuture<?> setPageScaleFactor(jpuppeteer.cdp.client.entity.emulation.SetPageScaleFactorRequest request) {
         return connection.send("Emulation.setPageScaleFactor", request);
     }
 
@@ -166,7 +166,7 @@ public class Emulation {
     /**
     * Switches script execution in the page.
     */
-    public io.netty.util.concurrent.Future setScriptExecutionDisabled(jpuppeteer.cdp.client.entity.emulation.SetScriptExecutionDisabledRequest request) {
+    public jpuppeteer.util.XFuture<?> setScriptExecutionDisabled(jpuppeteer.cdp.client.entity.emulation.SetScriptExecutionDisabledRequest request) {
         return connection.send("Emulation.setScriptExecutionDisabled", request);
     }
 
@@ -174,7 +174,7 @@ public class Emulation {
     /**
     * Enables touch on platforms which do not support them.
     */
-    public io.netty.util.concurrent.Future setTouchEmulationEnabled(jpuppeteer.cdp.client.entity.emulation.SetTouchEmulationEnabledRequest request) {
+    public jpuppeteer.util.XFuture<?> setTouchEmulationEnabled(jpuppeteer.cdp.client.entity.emulation.SetTouchEmulationEnabledRequest request) {
         return connection.send("Emulation.setTouchEmulationEnabled", request);
     }
 
@@ -183,7 +183,7 @@ public class Emulation {
     * Turns on virtual time for all frames (replacing real-time with a synthetic time source) and sets the current virtual time policy.  Note this supersedes any previous time budget.
     * experimental
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.emulation.SetVirtualTimePolicyResponse> setVirtualTimePolicy(jpuppeteer.cdp.client.entity.emulation.SetVirtualTimePolicyRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.emulation.SetVirtualTimePolicyResponse> setVirtualTimePolicy(jpuppeteer.cdp.client.entity.emulation.SetVirtualTimePolicyRequest request) {
         return connection.send("Emulation.setVirtualTimePolicy", request, jpuppeteer.cdp.client.entity.emulation.SetVirtualTimePolicyResponse.class);
     }
 
@@ -192,7 +192,7 @@ public class Emulation {
     * Overrides default host system locale with the specified one.
     * experimental
     */
-    public io.netty.util.concurrent.Future setLocaleOverride(jpuppeteer.cdp.client.entity.emulation.SetLocaleOverrideRequest request) {
+    public jpuppeteer.util.XFuture<?> setLocaleOverride(jpuppeteer.cdp.client.entity.emulation.SetLocaleOverrideRequest request) {
         return connection.send("Emulation.setLocaleOverride", request);
     }
 
@@ -201,7 +201,7 @@ public class Emulation {
     * Overrides default host system timezone with the specified one.
     * experimental
     */
-    public io.netty.util.concurrent.Future setTimezoneOverride(jpuppeteer.cdp.client.entity.emulation.SetTimezoneOverrideRequest request) {
+    public jpuppeteer.util.XFuture<?> setTimezoneOverride(jpuppeteer.cdp.client.entity.emulation.SetTimezoneOverrideRequest request) {
         return connection.send("Emulation.setTimezoneOverride", request);
     }
 
@@ -211,7 +211,7 @@ public class Emulation {
     * experimental
     */
     @java.lang.Deprecated
-    public io.netty.util.concurrent.Future setVisibleSize(jpuppeteer.cdp.client.entity.emulation.SetVisibleSizeRequest request) {
+    public jpuppeteer.util.XFuture<?> setVisibleSize(jpuppeteer.cdp.client.entity.emulation.SetVisibleSizeRequest request) {
         return connection.send("Emulation.setVisibleSize", request);
     }
 
@@ -219,7 +219,7 @@ public class Emulation {
     /**
     * experimental
     */
-    public io.netty.util.concurrent.Future setDisabledImageTypes(jpuppeteer.cdp.client.entity.emulation.SetDisabledImageTypesRequest request) {
+    public jpuppeteer.util.XFuture<?> setDisabledImageTypes(jpuppeteer.cdp.client.entity.emulation.SetDisabledImageTypesRequest request) {
         return connection.send("Emulation.setDisabledImageTypes", request);
     }
 
@@ -227,7 +227,7 @@ public class Emulation {
     /**
     * Allows overriding user agent with the given string.
     */
-    public io.netty.util.concurrent.Future setUserAgentOverride(jpuppeteer.cdp.client.entity.emulation.SetUserAgentOverrideRequest request) {
+    public jpuppeteer.util.XFuture<?> setUserAgentOverride(jpuppeteer.cdp.client.entity.emulation.SetUserAgentOverrideRequest request) {
         return connection.send("Emulation.setUserAgentOverride", request);
     }
 

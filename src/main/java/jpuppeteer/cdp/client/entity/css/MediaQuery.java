@@ -9,16 +9,35 @@ public class MediaQuery {
     /**
     * Array of media query expressions.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.css.MediaQueryExpression> expressions;
+    private java.util.List<jpuppeteer.cdp.client.entity.css.MediaQueryExpression> expressions;
 
     /**
     * Whether the media query condition is satisfied.
     */
-    public final Boolean active;
+    private Boolean active;
+
+    public void setExpressions (java.util.List<jpuppeteer.cdp.client.entity.css.MediaQueryExpression> expressions) {
+        this.expressions = expressions;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.css.MediaQueryExpression> getExpressions() {
+        return this.expressions;
+    }
+
+    public void setActive (Boolean active) {
+        this.active = active;
+    }
+
+    public Boolean getActive() {
+        return this.active;
+    }
 
     public MediaQuery(java.util.List<jpuppeteer.cdp.client.entity.css.MediaQueryExpression> expressions, Boolean active) {
         this.expressions = expressions;
         this.active = active;
+    }
+
+    public MediaQuery() {
     }
 
 }

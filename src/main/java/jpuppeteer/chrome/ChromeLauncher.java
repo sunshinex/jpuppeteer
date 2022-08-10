@@ -3,13 +3,12 @@ package jpuppeteer.chrome;
 import com.google.common.util.concurrent.SettableFuture;
 import io.netty.channel.EventLoop;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import jpuppeteer.api.Browser;
 import jpuppeteer.api.Launcher;
-import jpuppeteer.api.Page;
 import jpuppeteer.cdp.client.entity.target.TargetInfo;
-import jpuppeteer.entity.HttpResource;
+import jpuppeteer.util.XFuture;
+import jpuppeteer.util.XPromise;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,8 +104,8 @@ public class ChromeLauncher implements Launcher {
         );
         ChromePage page = new WebViewPage(uri, targetInfo, null, eventLoop) {
             @Override
-            public Future close() {
-                return GlobalEventExecutor.INSTANCE.submit(() -> {
+            public XFuture<?> close() {
+                return XPromise.wrap(GlobalEventExecutor.INSTANCE.submit(() -> {
                     try {
                         super.close().get(30, TimeUnit.SECONDS);
                     } catch (Exception e) {
@@ -114,7 +113,7 @@ public class ChromeLauncher implements Launcher {
                     } finally {
                         eventLoop.shutdownGracefully();
                     }
-                });
+                }));
             }
         };
         page.attach();

@@ -23,6 +23,11 @@ public enum StyleSheetOrigin implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static StyleSheetOrigin findByValue(String value) {
         for(StyleSheetOrigin val : values()) {
             if (val.value.equals(value)) return val;

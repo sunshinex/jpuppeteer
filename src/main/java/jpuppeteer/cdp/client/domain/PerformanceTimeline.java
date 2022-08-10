@@ -14,7 +14,7 @@ public class PerformanceTimeline {
     /**
     * Previously buffered events would be reported before method returns. See also: timelineEventAdded
     */
-    public io.netty.util.concurrent.Future enable(jpuppeteer.cdp.client.entity.performancetimeline.EnableRequest request) {
+    public jpuppeteer.util.XFuture<?> enable(jpuppeteer.cdp.client.entity.performancetimeline.EnableRequest request) {
         return connection.send("PerformanceTimeline.enable", request);
     }
 

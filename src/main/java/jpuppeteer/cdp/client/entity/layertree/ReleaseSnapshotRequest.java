@@ -8,10 +8,21 @@ public class ReleaseSnapshotRequest {
     /**
     * The id of the layer snapshot.
     */
-    public final String snapshotId;
+    private String snapshotId;
+
+    public void setSnapshotId (String snapshotId) {
+        this.snapshotId = snapshotId;
+    }
+
+    public String getSnapshotId() {
+        return this.snapshotId;
+    }
 
     public ReleaseSnapshotRequest(String snapshotId) {
         this.snapshotId = snapshotId;
+    }
+
+    public ReleaseSnapshotRequest() {
     }
 
 }

@@ -21,6 +21,11 @@ public enum CertificateTransparencyCompliance implements jpuppeteer.cdp.client.C
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static CertificateTransparencyCompliance findByValue(String value) {
         for(CertificateTransparencyCompliance val : values()) {
             if (val.value.equals(value)) return val;

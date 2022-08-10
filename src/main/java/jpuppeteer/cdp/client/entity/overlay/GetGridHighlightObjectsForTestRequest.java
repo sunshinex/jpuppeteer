@@ -8,10 +8,21 @@ public class GetGridHighlightObjectsForTestRequest {
     /**
     * Ids of the node to get highlight object for.
     */
-    public final java.util.List<Integer> nodeIds;
+    private java.util.List<Integer> nodeIds;
+
+    public void setNodeIds (java.util.List<Integer> nodeIds) {
+        this.nodeIds = nodeIds;
+    }
+
+    public java.util.List<Integer> getNodeIds() {
+        return this.nodeIds;
+    }
 
     public GetGridHighlightObjectsForTestRequest(java.util.List<Integer> nodeIds) {
         this.nodeIds = nodeIds;
+    }
+
+    public GetGridHighlightObjectsForTestRequest() {
     }
 
 }

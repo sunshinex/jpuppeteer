@@ -7,10 +7,21 @@ public class GetCertificateRequest {
     /**
     * Origin to get certificate for.
     */
-    public final String origin;
+    private String origin;
+
+    public void setOrigin (String origin) {
+        this.origin = origin;
+    }
+
+    public String getOrigin() {
+        return this.origin;
+    }
 
     public GetCertificateRequest(String origin) {
         this.origin = origin;
+    }
+
+    public GetCertificateRequest() {
     }
 
 }

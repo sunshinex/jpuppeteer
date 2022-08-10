@@ -7,7 +7,15 @@ public class PostDataEntry {
 
     /**
     */
-    public final String bytes;
+    private String bytes;
+
+    public void setBytes (String bytes) {
+        this.bytes = bytes;
+    }
+
+    public String getBytes() {
+        return this.bytes;
+    }
 
     public PostDataEntry(String bytes) {
         this.bytes = bytes;

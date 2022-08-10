@@ -7,17 +7,41 @@ public class StartPreciseCoverageRequest {
     /**
     * Collect accurate call counts beyond simple 'covered' or 'not covered'.
     */
-    public final Boolean callCount;
+    private Boolean callCount;
 
     /**
     * Collect block-based coverage.
     */
-    public final Boolean detailed;
+    private Boolean detailed;
 
     /**
     * Allow the backend to send updates on its own initiative
     */
-    public final Boolean allowTriggeredUpdates;
+    private Boolean allowTriggeredUpdates;
+
+    public void setCallCount (Boolean callCount) {
+        this.callCount = callCount;
+    }
+
+    public Boolean getCallCount() {
+        return this.callCount;
+    }
+
+    public void setDetailed (Boolean detailed) {
+        this.detailed = detailed;
+    }
+
+    public Boolean getDetailed() {
+        return this.detailed;
+    }
+
+    public void setAllowTriggeredUpdates (Boolean allowTriggeredUpdates) {
+        this.allowTriggeredUpdates = allowTriggeredUpdates;
+    }
+
+    public Boolean getAllowTriggeredUpdates() {
+        return this.allowTriggeredUpdates;
+    }
 
     public StartPreciseCoverageRequest(Boolean callCount, Boolean detailed, Boolean allowTriggeredUpdates) {
         this.callCount = callCount;

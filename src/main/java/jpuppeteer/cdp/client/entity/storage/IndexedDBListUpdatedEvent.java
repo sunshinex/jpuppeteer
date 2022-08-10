@@ -9,10 +9,21 @@ public class IndexedDBListUpdatedEvent {
     /**
     * Origin to update.
     */
-    public final String origin;
+    private String origin;
+
+    public void setOrigin (String origin) {
+        this.origin = origin;
+    }
+
+    public String getOrigin() {
+        return this.origin;
+    }
 
     public IndexedDBListUpdatedEvent(String origin) {
         this.origin = origin;
+    }
+
+    public IndexedDBListUpdatedEvent() {
     }
 
 }

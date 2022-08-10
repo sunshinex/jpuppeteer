@@ -8,16 +8,35 @@ public class SubresourceWebBundleMetadataErrorEvent {
     /**
     * Request identifier. Used to match this information to another event.
     */
-    public final String requestId;
+    private String requestId;
 
     /**
     * Error message
     */
-    public final String errorMessage;
+    private String errorMessage;
+
+    public void setRequestId (String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestId() {
+        return this.requestId;
+    }
+
+    public void setErrorMessage (String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public String getErrorMessage() {
+        return this.errorMessage;
+    }
 
     public SubresourceWebBundleMetadataErrorEvent(String requestId, String errorMessage) {
         this.requestId = requestId;
         this.errorMessage = errorMessage;
+    }
+
+    public SubresourceWebBundleMetadataErrorEvent() {
     }
 
 }

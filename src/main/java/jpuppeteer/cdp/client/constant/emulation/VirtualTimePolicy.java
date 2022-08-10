@@ -21,6 +21,11 @@ public enum VirtualTimePolicy implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static VirtualTimePolicy findByValue(String value) {
         for(VirtualTimePolicy val : values()) {
             if (val.value.equals(value)) return val;

@@ -24,6 +24,11 @@ public enum SecurityState implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SecurityState findByValue(String value) {
         for(SecurityState val : values()) {
             if (val.value.equals(value)) return val;

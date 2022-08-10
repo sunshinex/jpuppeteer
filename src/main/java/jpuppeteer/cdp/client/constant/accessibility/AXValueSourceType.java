@@ -25,6 +25,11 @@ public enum AXValueSourceType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static AXValueSourceType findByValue(String value) {
         for(AXValueSourceType val : values()) {
             if (val.value.equals(value)) return val;

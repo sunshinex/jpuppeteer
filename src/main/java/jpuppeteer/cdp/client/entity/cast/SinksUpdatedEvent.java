@@ -8,10 +8,21 @@ public class SinksUpdatedEvent {
 
     /**
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.cast.Sink> sinks;
+    private java.util.List<jpuppeteer.cdp.client.entity.cast.Sink> sinks;
+
+    public void setSinks (java.util.List<jpuppeteer.cdp.client.entity.cast.Sink> sinks) {
+        this.sinks = sinks;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.cast.Sink> getSinks() {
+        return this.sinks;
+    }
 
     public SinksUpdatedEvent(java.util.List<jpuppeteer.cdp.client.entity.cast.Sink> sinks) {
         this.sinks = sinks;
+    }
+
+    public SinksUpdatedEvent() {
     }
 
 }

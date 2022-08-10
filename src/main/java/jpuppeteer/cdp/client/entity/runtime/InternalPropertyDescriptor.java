@@ -8,12 +8,28 @@ public class InternalPropertyDescriptor {
     /**
     * Conventional property name.
     */
-    public final String name;
+    private String name;
 
     /**
     * The value associated with the property.
     */
-    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject value;
+    private jpuppeteer.cdp.client.entity.runtime.RemoteObject value;
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setValue (jpuppeteer.cdp.client.entity.runtime.RemoteObject value) {
+        this.value = value;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.RemoteObject getValue() {
+        return this.value;
+    }
 
     public InternalPropertyDescriptor(String name, jpuppeteer.cdp.client.entity.runtime.RemoteObject value) {
         this.name = name;
@@ -23,6 +39,9 @@ public class InternalPropertyDescriptor {
     public InternalPropertyDescriptor(String name) {
         this.name = name;
         this.value = null;
+    }
+
+    public InternalPropertyDescriptor() {
     }
 
 }

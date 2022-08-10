@@ -20,6 +20,11 @@ public enum PlayerErrorType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static PlayerErrorType findByValue(String value) {
         for(PlayerErrorType val : values()) {
             if (val.value.equals(value)) return val;

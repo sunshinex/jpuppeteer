@@ -8,16 +8,35 @@ public class PseudoElementAddedEvent {
     /**
     * Pseudo element's parent element id.
     */
-    public final Integer parentId;
+    private Integer parentId;
 
     /**
     * The added pseudo element.
     */
-    public final jpuppeteer.cdp.client.entity.dom.Node pseudoElement;
+    private jpuppeteer.cdp.client.entity.dom.Node pseudoElement;
+
+    public void setParentId (Integer parentId) {
+        this.parentId = parentId;
+    }
+
+    public Integer getParentId() {
+        return this.parentId;
+    }
+
+    public void setPseudoElement (jpuppeteer.cdp.client.entity.dom.Node pseudoElement) {
+        this.pseudoElement = pseudoElement;
+    }
+
+    public jpuppeteer.cdp.client.entity.dom.Node getPseudoElement() {
+        return this.pseudoElement;
+    }
 
     public PseudoElementAddedEvent(Integer parentId, jpuppeteer.cdp.client.entity.dom.Node pseudoElement) {
         this.parentId = parentId;
         this.pseudoElement = pseudoElement;
+    }
+
+    public PseudoElementAddedEvent() {
     }
 
 }

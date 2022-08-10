@@ -23,6 +23,11 @@ public enum InspectMode implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static InspectMode findByValue(String value) {
         for(InspectMode val : values()) {
             if (val.value.equals(value)) return val;

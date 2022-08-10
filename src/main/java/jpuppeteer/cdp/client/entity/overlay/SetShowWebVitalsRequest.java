@@ -7,10 +7,21 @@ public class SetShowWebVitalsRequest {
 
     /**
     */
-    public final Boolean show;
+    private Boolean show;
+
+    public void setShow (Boolean show) {
+        this.show = show;
+    }
+
+    public Boolean getShow() {
+        return this.show;
+    }
 
     public SetShowWebVitalsRequest(Boolean show) {
         this.show = show;
+    }
+
+    public SetShowWebVitalsRequest() {
     }
 
 }

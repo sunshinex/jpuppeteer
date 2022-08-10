@@ -1,9 +1,8 @@
 package jpuppeteer.cdp;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.ParserConfig;
-import com.alibaba.fastjson.serializer.ValueFilter;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
@@ -14,35 +13,31 @@ import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
-import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.Promise;
 import jpuppeteer.cdp.client.CDPEventType;
 import jpuppeteer.cdp.client.domain.Runtime;
 import jpuppeteer.cdp.client.domain.*;
-import jpuppeteer.util.CDPEnumFilter;
 import jpuppeteer.util.CDPException;
-import jpuppeteer.util.CDPParserConfig;
+import jpuppeteer.util.JacksonUtil;
+import jpuppeteer.util.XFuture;
+import jpuppeteer.util.XPromise;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.nio.channels.ClosedChannelException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
 public class CDPConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(CDPConnection.class);
-
-    private static final ValueFilter CDP_ENUM_SERIALIZE_FILTER = new CDPEnumFilter();
-
-    private static final ParserConfig CDP_PARSER_CONFIG = new CDPParserConfig();
 
     private static final String WS = "ws";
 
@@ -56,6 +51,8 @@ public class CDPConnection {
 
     protected static final String RESULT = "result";
 
+    private final ObjectMapper mapper;
+
     private final EventLoop eventLoop;
 
     private final URI uri;
@@ -64,9 +61,9 @@ public class CDPConnection {
 
     private final Channel channel;
 
-    private final Promise connectFuture;
+    private final Promise<?> connectFuture;
 
-    private final Map<Integer, Promise<JSONObject>> promiseMap;
+    private final Map<Integer, XPromise<JsonNode>> promiseMap;
 
     //domains
     public final Browser browser;
@@ -96,6 +93,7 @@ public class CDPConnection {
     public final DeviceOrientation deviceOrientation;
 
     public CDPConnection(EventLoop eventLoop, URI uri) {
+        this.mapper = JacksonUtil.INSTANCE;
         this.eventLoop = eventLoop;
         this.uri = uri;
         this.messageIdGen = new AtomicInteger(0);
@@ -157,25 +155,30 @@ public class CDPConnection {
         return !(channel.isOpen() && channel.isActive());
     }
 
-    public Future close() {
+    public Future<?> close() {
         connectFuture.cancel(true);
         return channel.close();
     }
 
-    private Future<JSONObject> send0(String method, Object params) {
-        JSONObject json = new JSONObject();
+    private XFuture<JsonNode> send0(String method, Object params) {
+        Map<String, Object> json = new HashMap<>();
         int id = messageIdGen.getAndIncrement();
         json.put(ID, id);
         json.put(METHOD, method);
         json.put(PARAMS, params);
 
-        String jsonStr = JSON.toJSONString(json, CDP_ENUM_SERIALIZE_FILTER);
+        String jsonStr;
+        try {
+            jsonStr = mapper.writeValueAsString(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("serialize failed", e);
+        }
 
         if (logger.isDebugEnabled()) {
             logger.debug("[{}] ==> send message={}", uri.getPath(), jsonStr);
         }
 
-        Promise<JSONObject> promise = new DefaultPromise<>(eventLoop);
+        XPromise<JsonNode> promise = new XPromise<>(eventLoop);
         promiseMap.put(id, promise);
         TextWebSocketFrame frame = new TextWebSocketFrame(jsonStr);
         connectFuture.addListener(f -> {
@@ -200,15 +203,14 @@ public class CDPConnection {
         return promise;
     }
 
-    public <T> Future<T> send(String method, Object params, Function<String, T> function) {
-        Promise<T> promise = new DefaultPromise<>(eventLoop);
+    public <T> XFuture<T> send(String method, Object params, Function<JsonNode, T> function) {
+        XPromise<T> promise = new XPromise<>(eventLoop);
         send0(method, params).addListener(f -> {
             if (f.cause() != null) {
                 promise.tryFailure(f.cause());
             } else {
                 try {
-                    String jsonStr = JSON.toJSONString(f.getNow());
-                    T result = function.apply(jsonStr);
+                    T result = function.apply((JsonNode) f.getNow());
                     promise.trySuccess(result);
                 } catch (Throwable cause) {
                     promise.tryFailure(cause);
@@ -218,12 +220,18 @@ public class CDPConnection {
         return promise;
     }
 
-    public final Future send(String method, Object params) {
+    public final XFuture<?> send(String method, Object params) {
         return send0(method, params);
     }
 
-    public final <T> Future<T> send(String method, Object params, Class<T> clazz) {
-        return send(method, params, o -> JSON.parseObject(o, clazz, CDP_PARSER_CONFIG));
+    public final <T> XFuture<T> send(String method, Object params, Class<T> clazz) {
+        return send(method, params, o -> {
+            try {
+                return mapper.treeToValue(o, clazz);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("JsonNode to JavaObject failed", e);
+            }
+        });
     }
 
     private class Handshake extends SimpleChannelInboundHandler<FullHttpResponse> {
@@ -281,43 +289,48 @@ public class CDPConnection {
                 TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
                 String message = textFrame.text();
                 logger.debug("[{}] <== recv message={}", uri.getPath(), message);
-                JSONObject json = JSON.parseObject(message);
-                String methodName = json.getString(METHOD);
-                if (StringUtils.isNotEmpty(methodName)) {
+                JsonNode json;
+                try {
+                    json = mapper.readTree(message);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException("serialize failed", e);
+                }
+                JsonNode methodNode = json.get(METHOD);
+                if (methodNode != null) {
+                    String methodName = methodNode.asText();
                     //这种格式的就是event notification
                     CDPEventType eventType = CDPEventType.findByName(methodName);
                     if (eventType == null) {
                         logger.warn("Unknown event: {}", message);
                         return;
                     }
-                    String paramsString = JSON.toJSONString(json.get(PARAMS));
                     CDPEvent event = new CDPEvent(
                             eventType,
-                            JSON.parseObject(paramsString, eventType.getClazz(), CDP_PARSER_CONFIG)
+                            json.get(PARAMS)
                     );
                     onEvent(event);
                     return;
                 }
-                if (!json.containsKey(ID)) {
+                if (!json.has(ID)) {
                     //没有ID就是异常的返回
                     throw new IllegalArgumentException("attribute \"id\" can not be null");
                 }
-                Integer id = json.getInteger(ID);
-                Promise<JSONObject> promise = promiseMap.remove(id);
+                Integer id = json.get(ID).asInt();
+                Promise<JsonNode> promise = promiseMap.remove(id);
                 if (promise == null) {
                     logger.warn("can not found promise, drop message id={}", id);
                     return;
                 }
-                if (json.containsKey(ERROR)) {
-                    JSONObject error = json.getJSONObject(ERROR);
-                    String errorMsg = error.getString("message");
-                    String errorData = error.getString("data");
+                if (json.has(ERROR)) {
+                    JsonNode error = json.get(ERROR);
+                    String errorMsg = error.get("message").asText();
+                    String errorData = error.get("data").asText();
                     if (StringUtils.isNotEmpty(errorData)) {
                         errorMsg += "(" + errorData + ")";
                     }
-                    promise.tryFailure(new CDPException(error.getIntValue("code"), errorMsg));
+                    promise.tryFailure(new CDPException(error.get("code").asInt(), errorMsg));
                 } else {
-                    promise.trySuccess(json.getJSONObject(RESULT));
+                    promise.trySuccess(json.get(RESULT));
                 }
             } else if (frame instanceof CloseWebSocketFrame) {
                 ctx.close();
@@ -327,14 +340,13 @@ public class CDPConnection {
         @Override
         public void channelInactive(ChannelHandlerContext ctx) throws Exception {
             //如果连接关闭，则将所有的promise都失败掉
-            Iterator<Map.Entry<Integer, Promise<JSONObject>>> iterator = promiseMap.entrySet().iterator();
+            Iterator<Map.Entry<Integer, XPromise<JsonNode>>> iterator = promiseMap.entrySet().iterator();
             while (iterator.hasNext()) {
-                Map.Entry<Integer, Promise<JSONObject>> entry = iterator.next();
+                Map.Entry<Integer, XPromise<JsonNode>> entry = iterator.next();
                 entry.getValue().tryFailure(new ClosedChannelException());
                 iterator.remove();
             }
             super.channelInactive(ctx);
         }
     }
-
 }

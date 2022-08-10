@@ -1,8 +1,8 @@
 package jpuppeteer.api;
 
-import io.netty.util.concurrent.Future;
 import jpuppeteer.cdp.client.entity.dom.BoxModel;
 import jpuppeteer.constant.MouseDefinition;
+import jpuppeteer.util.XFuture;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -12,63 +12,63 @@ public interface Element extends BrowserObject {
 
     Frame frame();
 
-    Future<Element> querySelector(String selector);
+    XFuture<Element> querySelector(String selector);
 
-    Future<Element[]> querySelectorAll(String selector);
+    XFuture<Element[]> querySelectorAll(String selector);
 
-    Future<Element> waitSelector(String selector, long timeout, TimeUnit unit);
+    XFuture<Element> waitSelector(String selector, long timeout, TimeUnit unit);
 
-    Future watch(String selector, Consumer<Element> watchFunction, boolean once);
+    XFuture<?> watch(String selector, Consumer<Element> watchFunction, boolean once);
 
-    default Future watch(String selector, Consumer<Element> watchFunction) {
+    default XFuture<?> watch(String selector, Consumer<Element> watchFunction) {
         return watch(selector, watchFunction, false);
     }
 
-    Future<String> getAttribute(String name);
+    XFuture<String> getAttribute(String name);
 
-    Future setAttribute(String name, String value);
+    XFuture<?> setAttribute(String name, String value);
 
-    Future removeAttribute(String name);
+    XFuture<?> removeAttribute(String name);
 
-    Future<BoxModel> boxModel();
+    XFuture<BoxModel> boxModel();
 
-    Future uploadFile(File... files);
+    XFuture<?> uploadFile(File... files);
 
-    Future focus();
+    XFuture<?> focus();
 
-    Future remove();
+    XFuture<?> remove();
 
-    Future<String> value();
+    XFuture<String> value();
 
-    Future value(String value);
+    XFuture<?> value(String value);
 
-    Future<String> html();
+    XFuture<String> html();
 
-    Future html(String html);
+    XFuture<?> html(String html);
 
-    Future scrollIntoView();
+    XFuture<?> scrollIntoView();
 
-    Future clear();
+    XFuture<?> clear();
 
-    Future input(String text, int delay);
+    XFuture<?> input(String text, int delay);
 
-    default Future input(String text) {
+    default XFuture<?> input(String text) {
         return input(text, 30);
     }
 
-    Future select(String... values);
+    XFuture<?> select(String... values);
 
     //click
-    Future click(MouseDefinition buttonType, int delay);
+    XFuture<?> click(MouseDefinition buttonType, int delay);
 
-    default Future click() {
+    default XFuture<?> click() {
         return click(MouseDefinition.LEFT, 0);
     }
 
     //tap
-    Future tap(int delay);
+    XFuture<?> tap(int delay);
 
-    default Future tap() {
+    default XFuture<?> tap() {
         return tap(0);
     }
 

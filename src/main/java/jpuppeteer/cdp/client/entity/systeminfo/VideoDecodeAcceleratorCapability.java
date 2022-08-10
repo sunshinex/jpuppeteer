@@ -9,22 +9,49 @@ public class VideoDecodeAcceleratorCapability {
     /**
     * Video codec profile that is supported, e.g. VP9 Profile 2.
     */
-    public final String profile;
+    private String profile;
 
     /**
     * Maximum video dimensions in pixels supported for this |profile|.
     */
-    public final jpuppeteer.cdp.client.entity.systeminfo.Size maxResolution;
+    private jpuppeteer.cdp.client.entity.systeminfo.Size maxResolution;
 
     /**
     * Minimum video dimensions in pixels supported for this |profile|.
     */
-    public final jpuppeteer.cdp.client.entity.systeminfo.Size minResolution;
+    private jpuppeteer.cdp.client.entity.systeminfo.Size minResolution;
+
+    public void setProfile (String profile) {
+        this.profile = profile;
+    }
+
+    public String getProfile() {
+        return this.profile;
+    }
+
+    public void setMaxResolution (jpuppeteer.cdp.client.entity.systeminfo.Size maxResolution) {
+        this.maxResolution = maxResolution;
+    }
+
+    public jpuppeteer.cdp.client.entity.systeminfo.Size getMaxResolution() {
+        return this.maxResolution;
+    }
+
+    public void setMinResolution (jpuppeteer.cdp.client.entity.systeminfo.Size minResolution) {
+        this.minResolution = minResolution;
+    }
+
+    public jpuppeteer.cdp.client.entity.systeminfo.Size getMinResolution() {
+        return this.minResolution;
+    }
 
     public VideoDecodeAcceleratorCapability(String profile, jpuppeteer.cdp.client.entity.systeminfo.Size maxResolution, jpuppeteer.cdp.client.entity.systeminfo.Size minResolution) {
         this.profile = profile;
         this.maxResolution = maxResolution;
         this.minResolution = minResolution;
+    }
+
+    public VideoDecodeAcceleratorCapability() {
     }
 
 }

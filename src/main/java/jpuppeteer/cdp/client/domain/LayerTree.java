@@ -14,7 +14,7 @@ public class LayerTree {
     /**
     * Provides the reasons why the given layer was composited.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.layertree.CompositingReasonsResponse> compositingReasons(jpuppeteer.cdp.client.entity.layertree.CompositingReasonsRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.layertree.CompositingReasonsResponse> compositingReasons(jpuppeteer.cdp.client.entity.layertree.CompositingReasonsRequest request) {
         return connection.send("LayerTree.compositingReasons", request, jpuppeteer.cdp.client.entity.layertree.CompositingReasonsResponse.class);
     }
 
@@ -22,7 +22,7 @@ public class LayerTree {
     /**
     * Disables compositing tree inspection.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("LayerTree.disable", null);
     }
 
@@ -30,7 +30,7 @@ public class LayerTree {
     /**
     * Enables compositing tree inspection.
     */
-    public io.netty.util.concurrent.Future enable() {
+    public jpuppeteer.util.XFuture<?> enable() {
         return connection.send("LayerTree.enable", null);
     }
 
@@ -38,7 +38,7 @@ public class LayerTree {
     /**
     * Returns the snapshot identifier.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.layertree.LoadSnapshotResponse> loadSnapshot(jpuppeteer.cdp.client.entity.layertree.LoadSnapshotRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.layertree.LoadSnapshotResponse> loadSnapshot(jpuppeteer.cdp.client.entity.layertree.LoadSnapshotRequest request) {
         return connection.send("LayerTree.loadSnapshot", request, jpuppeteer.cdp.client.entity.layertree.LoadSnapshotResponse.class);
     }
 
@@ -46,14 +46,14 @@ public class LayerTree {
     /**
     * Returns the layer snapshot identifier.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.layertree.MakeSnapshotResponse> makeSnapshot(jpuppeteer.cdp.client.entity.layertree.MakeSnapshotRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.layertree.MakeSnapshotResponse> makeSnapshot(jpuppeteer.cdp.client.entity.layertree.MakeSnapshotRequest request) {
         return connection.send("LayerTree.makeSnapshot", request, jpuppeteer.cdp.client.entity.layertree.MakeSnapshotResponse.class);
     }
 
 
     /**
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.layertree.ProfileSnapshotResponse> profileSnapshot(jpuppeteer.cdp.client.entity.layertree.ProfileSnapshotRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.layertree.ProfileSnapshotResponse> profileSnapshot(jpuppeteer.cdp.client.entity.layertree.ProfileSnapshotRequest request) {
         return connection.send("LayerTree.profileSnapshot", request, jpuppeteer.cdp.client.entity.layertree.ProfileSnapshotResponse.class);
     }
 
@@ -61,7 +61,7 @@ public class LayerTree {
     /**
     * Releases layer snapshot captured by the back-end.
     */
-    public io.netty.util.concurrent.Future releaseSnapshot(jpuppeteer.cdp.client.entity.layertree.ReleaseSnapshotRequest request) {
+    public jpuppeteer.util.XFuture<?> releaseSnapshot(jpuppeteer.cdp.client.entity.layertree.ReleaseSnapshotRequest request) {
         return connection.send("LayerTree.releaseSnapshot", request);
     }
 
@@ -69,7 +69,7 @@ public class LayerTree {
     /**
     * Replays the layer snapshot and returns the resulting bitmap.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.layertree.ReplaySnapshotResponse> replaySnapshot(jpuppeteer.cdp.client.entity.layertree.ReplaySnapshotRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.layertree.ReplaySnapshotResponse> replaySnapshot(jpuppeteer.cdp.client.entity.layertree.ReplaySnapshotRequest request) {
         return connection.send("LayerTree.replaySnapshot", request, jpuppeteer.cdp.client.entity.layertree.ReplaySnapshotResponse.class);
     }
 
@@ -77,7 +77,7 @@ public class LayerTree {
     /**
     * Replays the layer snapshot and returns canvas log.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.layertree.SnapshotCommandLogResponse> snapshotCommandLog(jpuppeteer.cdp.client.entity.layertree.SnapshotCommandLogRequest request) {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.layertree.SnapshotCommandLogResponse> snapshotCommandLog(jpuppeteer.cdp.client.entity.layertree.SnapshotCommandLogRequest request) {
         return connection.send("LayerTree.snapshotCommandLog", request, jpuppeteer.cdp.client.entity.layertree.SnapshotCommandLogResponse.class);
     }
 

@@ -7,42 +7,106 @@ public class RunScriptRequest {
     /**
     * Id of the script to run.
     */
-    public final String scriptId;
+    private String scriptId;
 
     /**
     * Specifies in which execution context to perform script run. If the parameter is omitted the evaluation will be performed in the context of the inspected page.
     */
-    public final Integer executionContextId;
+    private Integer executionContextId;
 
     /**
     * Symbolic group name that can be used to release multiple objects.
     */
-    public final String objectGroup;
+    private String objectGroup;
 
     /**
     * In silent mode exceptions thrown during evaluation are not reported and do not pause execution. Overrides `setPauseOnException` state.
     */
-    public final Boolean silent;
+    private Boolean silent;
 
     /**
     * Determines whether Command Line API should be available during the evaluation.
     */
-    public final Boolean includeCommandLineAPI;
+    private Boolean includeCommandLineAPI;
 
     /**
     * Whether the result is expected to be a JSON object which should be sent by value.
     */
-    public final Boolean returnByValue;
+    private Boolean returnByValue;
 
     /**
     * Whether preview should be generated for the result.
     */
-    public final Boolean generatePreview;
+    private Boolean generatePreview;
 
     /**
     * Whether execution should `await` for resulting value and return once awaited promise is resolved.
     */
-    public final Boolean awaitPromise;
+    private Boolean awaitPromise;
+
+    public void setScriptId (String scriptId) {
+        this.scriptId = scriptId;
+    }
+
+    public String getScriptId() {
+        return this.scriptId;
+    }
+
+    public void setExecutionContextId (Integer executionContextId) {
+        this.executionContextId = executionContextId;
+    }
+
+    public Integer getExecutionContextId() {
+        return this.executionContextId;
+    }
+
+    public void setObjectGroup (String objectGroup) {
+        this.objectGroup = objectGroup;
+    }
+
+    public String getObjectGroup() {
+        return this.objectGroup;
+    }
+
+    public void setSilent (Boolean silent) {
+        this.silent = silent;
+    }
+
+    public Boolean getSilent() {
+        return this.silent;
+    }
+
+    public void setIncludeCommandLineAPI (Boolean includeCommandLineAPI) {
+        this.includeCommandLineAPI = includeCommandLineAPI;
+    }
+
+    public Boolean getIncludeCommandLineAPI() {
+        return this.includeCommandLineAPI;
+    }
+
+    public void setReturnByValue (Boolean returnByValue) {
+        this.returnByValue = returnByValue;
+    }
+
+    public Boolean getReturnByValue() {
+        return this.returnByValue;
+    }
+
+    public void setGeneratePreview (Boolean generatePreview) {
+        this.generatePreview = generatePreview;
+    }
+
+    public Boolean getGeneratePreview() {
+        return this.generatePreview;
+    }
+
+    public void setAwaitPromise (Boolean awaitPromise) {
+        this.awaitPromise = awaitPromise;
+    }
+
+    public Boolean getAwaitPromise() {
+        return this.awaitPromise;
+    }
 
     public RunScriptRequest(String scriptId, Integer executionContextId, String objectGroup, Boolean silent, Boolean includeCommandLineAPI, Boolean returnByValue, Boolean generatePreview, Boolean awaitPromise) {
         this.scriptId = scriptId;
@@ -64,6 +128,9 @@ public class RunScriptRequest {
         this.returnByValue = null;
         this.generatePreview = null;
         this.awaitPromise = null;
+    }
+
+    public RunScriptRequest() {
     }
 
 }

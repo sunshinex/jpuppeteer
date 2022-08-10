@@ -8,10 +8,21 @@ public class GetHighlightObjectForTestResponse {
     /**
     * Highlight data for the node.
     */
-    public final java.util.Map<String, Object> highlight;
+    private java.util.Map<String, Object> highlight;
+
+    public void setHighlight (java.util.Map<String, Object> highlight) {
+        this.highlight = highlight;
+    }
+
+    public java.util.Map<String, Object> getHighlight() {
+        return this.highlight;
+    }
 
     public GetHighlightObjectForTestResponse(java.util.Map<String, Object> highlight) {
         this.highlight = highlight;
+    }
+
+    public GetHighlightObjectForTestResponse() {
     }
 
 }

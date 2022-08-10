@@ -9,12 +9,28 @@ public class Value {
     /**
     * Value text.
     */
-    public final String text;
+    private String text;
 
     /**
     * Value range in the underlying resource (if available).
     */
-    public final jpuppeteer.cdp.client.entity.css.SourceRange range;
+    private jpuppeteer.cdp.client.entity.css.SourceRange range;
+
+    public void setText (String text) {
+        this.text = text;
+    }
+
+    public String getText() {
+        return this.text;
+    }
+
+    public void setRange (jpuppeteer.cdp.client.entity.css.SourceRange range) {
+        this.range = range;
+    }
+
+    public jpuppeteer.cdp.client.entity.css.SourceRange getRange() {
+        return this.range;
+    }
 
     public Value(String text, jpuppeteer.cdp.client.entity.css.SourceRange range) {
         this.text = text;
@@ -24,6 +40,9 @@ public class Value {
     public Value(String text) {
         this.text = text;
         this.range = null;
+    }
+
+    public Value() {
     }
 
 }

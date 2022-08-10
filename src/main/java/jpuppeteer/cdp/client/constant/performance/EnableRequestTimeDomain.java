@@ -19,6 +19,11 @@ public enum EnableRequestTimeDomain implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static EnableRequestTimeDomain findByValue(String value) {
         for(EnableRequestTimeDomain val : values()) {
             if (val.value.equals(value)) return val;

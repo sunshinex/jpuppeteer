@@ -21,6 +21,11 @@ public enum AdFrameType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static AdFrameType findByValue(String value) {
         for(AdFrameType val : values()) {
             if (val.value.equals(value)) return val;

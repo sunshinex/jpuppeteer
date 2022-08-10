@@ -9,28 +9,63 @@ public class ObjectStoreIndex {
     /**
     * Index name.
     */
-    public final String name;
+    private String name;
 
     /**
     * Index key path.
     */
-    public final jpuppeteer.cdp.client.entity.indexeddb.KeyPath keyPath;
+    private jpuppeteer.cdp.client.entity.indexeddb.KeyPath keyPath;
 
     /**
     * If true, index is unique.
     */
-    public final Boolean unique;
+    private Boolean unique;
 
     /**
     * If true, index allows multiple entries for a key.
     */
-    public final Boolean multiEntry;
+    private Boolean multiEntry;
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setKeyPath (jpuppeteer.cdp.client.entity.indexeddb.KeyPath keyPath) {
+        this.keyPath = keyPath;
+    }
+
+    public jpuppeteer.cdp.client.entity.indexeddb.KeyPath getKeyPath() {
+        return this.keyPath;
+    }
+
+    public void setUnique (Boolean unique) {
+        this.unique = unique;
+    }
+
+    public Boolean getUnique() {
+        return this.unique;
+    }
+
+    public void setMultiEntry (Boolean multiEntry) {
+        this.multiEntry = multiEntry;
+    }
+
+    public Boolean getMultiEntry() {
+        return this.multiEntry;
+    }
 
     public ObjectStoreIndex(String name, jpuppeteer.cdp.client.entity.indexeddb.KeyPath keyPath, Boolean unique, Boolean multiEntry) {
         this.name = name;
         this.keyPath = keyPath;
         this.unique = unique;
         this.multiEntry = multiEntry;
+    }
+
+    public ObjectStoreIndex() {
     }
 
 }

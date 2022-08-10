@@ -8,10 +8,21 @@ public class ScreencastVisibilityChangedEvent {
     /**
     * True if the page is visible.
     */
-    public final Boolean visible;
+    private Boolean visible;
+
+    public void setVisible (Boolean visible) {
+        this.visible = visible;
+    }
+
+    public Boolean getVisible() {
+        return this.visible;
+    }
 
     public ScreencastVisibilityChangedEvent(Boolean visible) {
         this.visible = visible;
+    }
+
+    public ScreencastVisibilityChangedEvent() {
     }
 
 }

@@ -8,16 +8,35 @@ public class RequestMemoryDumpResponse {
     /**
     * GUID of the resulting global memory dump.
     */
-    public final String dumpGuid;
+    private String dumpGuid;
 
     /**
     * True iff the global memory dump succeeded.
     */
-    public final Boolean success;
+    private Boolean success;
+
+    public void setDumpGuid (String dumpGuid) {
+        this.dumpGuid = dumpGuid;
+    }
+
+    public String getDumpGuid() {
+        return this.dumpGuid;
+    }
+
+    public void setSuccess (Boolean success) {
+        this.success = success;
+    }
+
+    public Boolean getSuccess() {
+        return this.success;
+    }
 
     public RequestMemoryDumpResponse(String dumpGuid, Boolean success) {
         this.dumpGuid = dumpGuid;
         this.success = success;
+    }
+
+    public RequestMemoryDumpResponse() {
     }
 
 }

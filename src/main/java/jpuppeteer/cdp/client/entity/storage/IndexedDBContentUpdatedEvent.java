@@ -9,22 +9,49 @@ public class IndexedDBContentUpdatedEvent {
     /**
     * Origin to update.
     */
-    public final String origin;
+    private String origin;
 
     /**
     * Database to update.
     */
-    public final String databaseName;
+    private String databaseName;
 
     /**
     * ObjectStore to update.
     */
-    public final String objectStoreName;
+    private String objectStoreName;
+
+    public void setOrigin (String origin) {
+        this.origin = origin;
+    }
+
+    public String getOrigin() {
+        return this.origin;
+    }
+
+    public void setDatabaseName (String databaseName) {
+        this.databaseName = databaseName;
+    }
+
+    public String getDatabaseName() {
+        return this.databaseName;
+    }
+
+    public void setObjectStoreName (String objectStoreName) {
+        this.objectStoreName = objectStoreName;
+    }
+
+    public String getObjectStoreName() {
+        return this.objectStoreName;
+    }
 
     public IndexedDBContentUpdatedEvent(String origin, String databaseName, String objectStoreName) {
         this.origin = origin;
         this.databaseName = databaseName;
         this.objectStoreName = objectStoreName;
+    }
+
+    public IndexedDBContentUpdatedEvent() {
     }
 
 }

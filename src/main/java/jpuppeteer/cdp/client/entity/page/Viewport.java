@@ -8,27 +8,67 @@ public class Viewport {
     /**
     * X offset in device independent pixels (dip).
     */
-    public final java.math.BigDecimal x;
+    private java.math.BigDecimal x;
 
     /**
     * Y offset in device independent pixels (dip).
     */
-    public final java.math.BigDecimal y;
+    private java.math.BigDecimal y;
 
     /**
     * Rectangle width in device independent pixels (dip).
     */
-    public final java.math.BigDecimal width;
+    private java.math.BigDecimal width;
 
     /**
     * Rectangle height in device independent pixels (dip).
     */
-    public final java.math.BigDecimal height;
+    private java.math.BigDecimal height;
 
     /**
     * Page scale factor.
     */
-    public final java.math.BigDecimal scale;
+    private java.math.BigDecimal scale;
+
+    public void setX (java.math.BigDecimal x) {
+        this.x = x;
+    }
+
+    public java.math.BigDecimal getX() {
+        return this.x;
+    }
+
+    public void setY (java.math.BigDecimal y) {
+        this.y = y;
+    }
+
+    public java.math.BigDecimal getY() {
+        return this.y;
+    }
+
+    public void setWidth (java.math.BigDecimal width) {
+        this.width = width;
+    }
+
+    public java.math.BigDecimal getWidth() {
+        return this.width;
+    }
+
+    public void setHeight (java.math.BigDecimal height) {
+        this.height = height;
+    }
+
+    public java.math.BigDecimal getHeight() {
+        return this.height;
+    }
+
+    public void setScale (java.math.BigDecimal scale) {
+        this.scale = scale;
+    }
+
+    public java.math.BigDecimal getScale() {
+        return this.scale;
+    }
 
     public Viewport(java.math.BigDecimal x, java.math.BigDecimal y, java.math.BigDecimal width, java.math.BigDecimal height, java.math.BigDecimal scale) {
         this.x = x;
@@ -36,6 +76,9 @@ public class Viewport {
         this.width = width;
         this.height = height;
         this.scale = scale;
+    }
+
+    public Viewport() {
     }
 
 }

@@ -7,20 +7,47 @@ public class LocationRange {
 
     /**
     */
-    public final String scriptId;
+    private String scriptId;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.debugger.ScriptPosition start;
+    private jpuppeteer.cdp.client.entity.debugger.ScriptPosition start;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.debugger.ScriptPosition end;
+    private jpuppeteer.cdp.client.entity.debugger.ScriptPosition end;
+
+    public void setScriptId (String scriptId) {
+        this.scriptId = scriptId;
+    }
+
+    public String getScriptId() {
+        return this.scriptId;
+    }
+
+    public void setStart (jpuppeteer.cdp.client.entity.debugger.ScriptPosition start) {
+        this.start = start;
+    }
+
+    public jpuppeteer.cdp.client.entity.debugger.ScriptPosition getStart() {
+        return this.start;
+    }
+
+    public void setEnd (jpuppeteer.cdp.client.entity.debugger.ScriptPosition end) {
+        this.end = end;
+    }
+
+    public jpuppeteer.cdp.client.entity.debugger.ScriptPosition getEnd() {
+        return this.end;
+    }
 
     public LocationRange(String scriptId, jpuppeteer.cdp.client.entity.debugger.ScriptPosition start, jpuppeteer.cdp.client.entity.debugger.ScriptPosition end) {
         this.scriptId = scriptId;
         this.start = start;
         this.end = end;
+    }
+
+    public LocationRange() {
     }
 
 }

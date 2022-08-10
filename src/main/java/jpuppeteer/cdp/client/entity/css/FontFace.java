@@ -9,47 +9,119 @@ public class FontFace {
     /**
     * The font-family.
     */
-    public final String fontFamily;
+    private String fontFamily;
 
     /**
     * The font-style.
     */
-    public final String fontStyle;
+    private String fontStyle;
 
     /**
     * The font-variant.
     */
-    public final String fontVariant;
+    private String fontVariant;
 
     /**
     * The font-weight.
     */
-    public final String fontWeight;
+    private String fontWeight;
 
     /**
     * The font-stretch.
     */
-    public final String fontStretch;
+    private String fontStretch;
 
     /**
     * The unicode-range.
     */
-    public final String unicodeRange;
+    private String unicodeRange;
 
     /**
     * The src.
     */
-    public final String src;
+    private String src;
 
     /**
     * The resolved platform font family
     */
-    public final String platformFontFamily;
+    private String platformFontFamily;
 
     /**
     * Available variation settings (a.k.a. "axes").
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.css.FontVariationAxis> fontVariationAxes;
+    private java.util.List<jpuppeteer.cdp.client.entity.css.FontVariationAxis> fontVariationAxes;
+
+    public void setFontFamily (String fontFamily) {
+        this.fontFamily = fontFamily;
+    }
+
+    public String getFontFamily() {
+        return this.fontFamily;
+    }
+
+    public void setFontStyle (String fontStyle) {
+        this.fontStyle = fontStyle;
+    }
+
+    public String getFontStyle() {
+        return this.fontStyle;
+    }
+
+    public void setFontVariant (String fontVariant) {
+        this.fontVariant = fontVariant;
+    }
+
+    public String getFontVariant() {
+        return this.fontVariant;
+    }
+
+    public void setFontWeight (String fontWeight) {
+        this.fontWeight = fontWeight;
+    }
+
+    public String getFontWeight() {
+        return this.fontWeight;
+    }
+
+    public void setFontStretch (String fontStretch) {
+        this.fontStretch = fontStretch;
+    }
+
+    public String getFontStretch() {
+        return this.fontStretch;
+    }
+
+    public void setUnicodeRange (String unicodeRange) {
+        this.unicodeRange = unicodeRange;
+    }
+
+    public String getUnicodeRange() {
+        return this.unicodeRange;
+    }
+
+    public void setSrc (String src) {
+        this.src = src;
+    }
+
+    public String getSrc() {
+        return this.src;
+    }
+
+    public void setPlatformFontFamily (String platformFontFamily) {
+        this.platformFontFamily = platformFontFamily;
+    }
+
+    public String getPlatformFontFamily() {
+        return this.platformFontFamily;
+    }
+
+    public void setFontVariationAxes (java.util.List<jpuppeteer.cdp.client.entity.css.FontVariationAxis> fontVariationAxes) {
+        this.fontVariationAxes = fontVariationAxes;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.css.FontVariationAxis> getFontVariationAxes() {
+        return this.fontVariationAxes;
+    }
 
     public FontFace(String fontFamily, String fontStyle, String fontVariant, String fontWeight, String fontStretch, String unicodeRange, String src, String platformFontFamily, java.util.List<jpuppeteer.cdp.client.entity.css.FontVariationAxis> fontVariationAxes) {
         this.fontFamily = fontFamily;
@@ -73,6 +145,9 @@ public class FontFace {
         this.src = src;
         this.platformFontFamily = platformFontFamily;
         this.fontVariationAxes = null;
+    }
+
+    public FontFace() {
     }
 
 }

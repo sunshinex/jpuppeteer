@@ -7,10 +7,21 @@ public class StopWorkerRequest {
 
     /**
     */
-    public final String versionId;
+    private String versionId;
+
+    public void setVersionId (String versionId) {
+        this.versionId = versionId;
+    }
+
+    public String getVersionId() {
+        return this.versionId;
+    }
 
     public StopWorkerRequest(String versionId) {
         this.versionId = versionId;
+    }
+
+    public StopWorkerRequest() {
     }
 
 }

@@ -21,6 +21,11 @@ public enum KeyPathType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static KeyPathType findByValue(String value) {
         for(KeyPathType val : values()) {
             if (val.value.equals(value)) return val;

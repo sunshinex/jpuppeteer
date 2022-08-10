@@ -19,6 +19,11 @@ public enum ContinueToLocationRequestTargetCallFrames implements jpuppeteer.cdp.
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ContinueToLocationRequestTargetCallFrames findByValue(String value) {
         for(ContinueToLocationRequestTargetCallFrames val : values()) {
             if (val.value.equals(value)) return val;

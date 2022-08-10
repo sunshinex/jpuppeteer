@@ -21,6 +21,11 @@ public enum ShadowRootType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ShadowRootType findByValue(String value) {
         for(ShadowRootType val : values()) {
             if (val.value.equals(value)) return val;

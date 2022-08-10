@@ -14,7 +14,7 @@ public class SystemInfo {
     /**
     * Returns information about the system.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.systeminfo.GetInfoResponse> getInfo() {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.systeminfo.GetInfoResponse> getInfo() {
         return connection.send("SystemInfo.getInfo", null, jpuppeteer.cdp.client.entity.systeminfo.GetInfoResponse.class);
     }
 
@@ -22,7 +22,7 @@ public class SystemInfo {
     /**
     * Returns information about all running processes.
     */
-    public io.netty.util.concurrent.Future<jpuppeteer.cdp.client.entity.systeminfo.GetProcessInfoResponse> getProcessInfo() {
+    public jpuppeteer.util.XFuture<jpuppeteer.cdp.client.entity.systeminfo.GetProcessInfoResponse> getProcessInfo() {
         return connection.send("SystemInfo.getProcessInfo", null, jpuppeteer.cdp.client.entity.systeminfo.GetProcessInfoResponse.class);
     }
 

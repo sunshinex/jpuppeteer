@@ -7,11 +7,27 @@ public class NavigatorUserAgentIssueDetails {
 
     /**
     */
-    public final String url;
+    private String url;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.SourceCodeLocation location;
+    private jpuppeteer.cdp.client.entity.audits.SourceCodeLocation location;
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setLocation (jpuppeteer.cdp.client.entity.audits.SourceCodeLocation location) {
+        this.location = location;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.SourceCodeLocation getLocation() {
+        return this.location;
+    }
 
     public NavigatorUserAgentIssueDetails(String url, jpuppeteer.cdp.client.entity.audits.SourceCodeLocation location) {
         this.url = url;
@@ -21,6 +37,9 @@ public class NavigatorUserAgentIssueDetails {
     public NavigatorUserAgentIssueDetails(String url) {
         this.url = url;
         this.location = null;
+    }
+
+    public NavigatorUserAgentIssueDetails() {
     }
 
 }

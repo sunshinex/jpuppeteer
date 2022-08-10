@@ -7,10 +7,21 @@ public class SetBypassServiceWorkerRequest {
     /**
     * Bypass service worker and load from network.
     */
-    public final Boolean bypass;
+    private Boolean bypass;
+
+    public void setBypass (Boolean bypass) {
+        this.bypass = bypass;
+    }
+
+    public Boolean getBypass() {
+        return this.bypass;
+    }
 
     public SetBypassServiceWorkerRequest(Boolean bypass) {
         this.bypass = bypass;
+    }
+
+    public SetBypassServiceWorkerRequest() {
     }
 
 }

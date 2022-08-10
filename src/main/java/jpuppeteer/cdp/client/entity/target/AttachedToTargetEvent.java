@@ -8,20 +8,47 @@ public class AttachedToTargetEvent {
     /**
     * Identifier assigned to the session used to send/receive messages.
     */
-    public final String sessionId;
+    private String sessionId;
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo;
+    private jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo;
 
     /**
     */
-    public final Boolean waitingForDebugger;
+    private Boolean waitingForDebugger;
+
+    public void setSessionId (String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getSessionId() {
+        return this.sessionId;
+    }
+
+    public void setTargetInfo (jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo) {
+        this.targetInfo = targetInfo;
+    }
+
+    public jpuppeteer.cdp.client.entity.target.TargetInfo getTargetInfo() {
+        return this.targetInfo;
+    }
+
+    public void setWaitingForDebugger (Boolean waitingForDebugger) {
+        this.waitingForDebugger = waitingForDebugger;
+    }
+
+    public Boolean getWaitingForDebugger() {
+        return this.waitingForDebugger;
+    }
 
     public AttachedToTargetEvent(String sessionId, jpuppeteer.cdp.client.entity.target.TargetInfo targetInfo, Boolean waitingForDebugger) {
         this.sessionId = sessionId;
         this.targetInfo = targetInfo;
         this.waitingForDebugger = waitingForDebugger;
+    }
+
+    public AttachedToTargetEvent() {
     }
 
 }

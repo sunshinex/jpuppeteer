@@ -19,6 +19,11 @@ public enum FileChooserOpenedEventMode implements jpuppeteer.cdp.client.CDPEnum 
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static FileChooserOpenedEventMode findByValue(String value) {
         for(FileChooserOpenedEventMode val : values()) {
             if (val.value.equals(value)) return val;

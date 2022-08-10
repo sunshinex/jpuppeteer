@@ -1,15 +1,15 @@
 package jpuppeteer.api.event.page;
 
 import io.netty.util.concurrent.EventExecutor;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.SucceededFuture;
 import jpuppeteer.api.Frame;
 import jpuppeteer.api.HttpHeader;
 import jpuppeteer.api.Request;
 import jpuppeteer.cdp.client.constant.network.ResourceType;
 import jpuppeteer.cdp.client.domain.Network;
 import jpuppeteer.cdp.client.entity.network.GetRequestPostDataRequest;
-import jpuppeteer.util.SeriesPromise;
+import jpuppeteer.cdp.client.entity.network.GetRequestPostDataResponse;
+import jpuppeteer.util.XFuture;
+import jpuppeteer.util.XPromise;
 
 public class RequestEvent extends FrameEvent implements Request {
 
@@ -86,16 +86,18 @@ public class RequestEvent extends FrameEvent implements Request {
     }
 
     @Override
-    public Future<String> content() {
+    public XFuture<String> content() {
         if (!hasPostData) {
             return null;
         }
         if (postData != null) {
-            return new SucceededFuture<>(executor, postData);
+            XPromise<String> promise = new XPromise<>(executor);
+            promise.trySuccess(postData);
+            return promise;
         }
-        return SeriesPromise
-                .wrap(network.getRequestPostData(new GetRequestPostDataRequest(requestId)))
-                .sync(o -> o.postData);
+        GetRequestPostDataRequest request = new GetRequestPostDataRequest(requestId);
+        return network.getRequestPostData(new GetRequestPostDataRequest(requestId))
+                .sync(GetRequestPostDataResponse::getPostData);
     }
 
     public static RequestEventBuilder newBuilder() {

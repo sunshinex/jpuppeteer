@@ -8,10 +8,21 @@ public class UntrackCacheStorageForOriginRequest {
     /**
     * Security origin.
     */
-    public final String origin;
+    private String origin;
+
+    public void setOrigin (String origin) {
+        this.origin = origin;
+    }
+
+    public String getOrigin() {
+        return this.origin;
+    }
 
     public UntrackCacheStorageForOriginRequest(String origin) {
         this.origin = origin;
+    }
+
+    public UntrackCacheStorageForOriginRequest() {
     }
 
 }

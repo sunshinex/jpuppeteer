@@ -8,10 +8,21 @@ public class RequestServedFromCacheEvent {
     /**
     * Request identifier.
     */
-    public final String requestId;
+    private String requestId;
+
+    public void setRequestId (String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestId() {
+        return this.requestId;
+    }
 
     public RequestServedFromCacheEvent(String requestId) {
         this.requestId = requestId;
+    }
+
+    public RequestServedFromCacheEvent() {
     }
 
 }

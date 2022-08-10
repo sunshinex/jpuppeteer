@@ -2,7 +2,6 @@ package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
 import io.netty.channel.EventLoop;
-import io.netty.util.concurrent.Future;
 import jpuppeteer.api.Request;
 import jpuppeteer.api.Response;
 import jpuppeteer.api.*;
@@ -42,7 +41,7 @@ import jpuppeteer.constant.USKeyboardDefinition;
 import jpuppeteer.entity.BasicHttpHeader;
 import jpuppeteer.entity.HttpResource;
 import jpuppeteer.entity.Point;
-import jpuppeteer.util.SeriesPromise;
+import jpuppeteer.util.XFuture;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +53,6 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
 public class ChromePage extends ChromeFrame implements Page {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromePage.class);
@@ -98,7 +96,7 @@ public class ChromePage extends ChromeFrame implements Page {
     public ChromePage(ChromeContext browserContext, TargetInfo targetInfo, ChromePage opener) {
         this(
                 browserContext,
-                createURI(browserContext.browser().uri(), targetInfo.targetId),
+                createURI(browserContext.browser().uri(), targetInfo.getTargetId()),
                 targetInfo, opener
         );
     }
@@ -123,10 +121,10 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     private void initFrame(ChromeFrame parent, FrameTree node) {
-        ChromeFrame frame = parent.appendChild(node.frame);
-        frameMap.put(node.frame.id, frame);
-        if (node.childFrames != null) {
-            for(FrameTree child : node.childFrames) {
+        ChromeFrame frame = parent.appendChild(node.getFrame());
+        frameMap.put(node.getFrame().getId(), frame);
+        if (node.getChildFrames() != null) {
+            for(FrameTree child : node.getChildFrames()) {
                 initFrame(frame, child);
             }
         }
@@ -140,11 +138,11 @@ public class ChromePage extends ChromeFrame implements Page {
                 logger.error("init page frame tree failed, targetId={}, error={}", targetId(), f.cause().getMessage(), f.cause());
             } else {
                 GetFrameTreeResponse response = (GetFrameTreeResponse) f.getNow();
-                FrameTree root = response.frameTree;
-                setFrameInfo(root.frame);
-                frameMap.put(root.frame.id, this);
-                if (root.childFrames != null) {
-                    for(FrameTree node : root.childFrames) {
+                FrameTree root = response.getFrameTree();
+                setFrameInfo(root.getFrame());
+                frameMap.put(root.getFrame().getId(), this);
+                if (root.getChildFrames() != null) {
+                    for(FrameTree node : root.getChildFrames()) {
                         initFrame(this, node);
                     }
                 }
@@ -196,7 +194,7 @@ public class ChromePage extends ChromeFrame implements Page {
                 try {
                     onTargetDestroyed(event.targetId);
                 } finally {
-                    if (targetInfo.targetId.equals(event.targetId)) {
+                    if (targetInfo.getTargetId().equals(event.targetId)) {
                         browserContext().browser().removeListener(createdListener);
                         browserContext().browser().removeListener(changedListener);
                         browserContext().browser().removeListener(crashedListener);
@@ -212,10 +210,10 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     private void onTargetCreated(TargetInfo info) {
-        if (targetInfo.targetId.equals(info.targetId)) {
+        if (targetInfo.getTargetId().equals(info.getTargetId())) {
             targetInfo = info;
         }
-        if (targetInfo.targetId.equals(info.openerId) || (frameId() != null && frameId().equals(info.openerId))) {
+        if (targetInfo.getTargetId().equals(info.getOpenerId()) || (frameId() != null && frameId().equals(info.getOpenerId()))) {
             //如果targetId或者frameId有一个是相同的，则就是这个页面打开的
             ChromePage newPage = newOpener(info);
             emit(new NewPageEvent(newPage));
@@ -223,19 +221,19 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     private void onTargetInfoChanged(TargetInfo info) {
-        if (targetInfo.targetId.equals(info.targetId)) {
+        if (targetInfo.getTargetId().equals(info.getTargetId())) {
             targetInfo = info;
         }
     }
 
     private void onTargetCrashed(String targetId, String status, int errorCode) {
-        if (targetInfo.targetId.equals(targetId)) {
+        if (targetInfo.getTargetId().equals(targetId)) {
             emit(new CrashedEvent(errorCode, status));
         }
     }
 
     private void onTargetDestroyed(String targetId) {
-        if (targetInfo.targetId.equals(targetId)) {
+        if (targetInfo.getTargetId().equals(targetId)) {
             emit(new ClosedEvent());
         }
     }
@@ -251,12 +249,12 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     private void onFrameNavigated(FrameNavigatedEvent event) {
-        ChromeFrame frame = frameMap.get(event.frame.id);
+        ChromeFrame frame = frameMap.get(event.getFrame().getId());
         if (frame == null) {
-            logger.warn("frame not found, frameId={}", event.frame.id);
+            logger.warn("frame not found, frameId={}", event.getFrame().getId());
             return;
         }
-        frame.setFrameInfo(event.frame);
+        frame.setFrameInfo(event.getFrame());
         if (frame == ChromePage.this) {
             //如果是页面的跳转，则清空所有的请求跟响应map
             Request request = requestMap.remove(loaderId());
@@ -277,21 +275,21 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     private void onExecutionCreated(ExecutionContextDescription description) {
-        Map<String, Object> auxData = description.auxData;
+        Map<String, Object> auxData = description.getAuxData();
         String frameId = (String) auxData.get("frameId");
         ChromeFrame frame = frameMap.get(frameId);
         if (frame == null) {
-            logger.warn("frame not found, frameId={}, isolateId={}", frameId, description.id);
+            logger.warn("frame not found, frameId={}, isolateId={}", frameId, description.getId());
             return;
         }
         boolean isDefault = (boolean) auxData.get("isDefault");
         String type = (String) auxData.get("type");
-        ChromeIsolate isolate = new ChromeIsolate(frame, description.id, description.name, description.uniqueId);
+        ChromeIsolate isolate = new ChromeIsolate(frame, description.getId(), description.getName(), description.getUniqueId());
         if (isDefault && "default".equals(type)) {
             frame.setIsolate(isolate);
-            isolateMap.put(description.id, frame);
+            isolateMap.put(description.getId(), frame);
         } else {
-            isolateMap.putIfAbsent(description.id, isolate);
+            isolateMap.putIfAbsent(description.getId(), isolate);
         }
     }
 
@@ -316,60 +314,60 @@ public class ChromePage extends ChromeFrame implements Page {
         }
     }
 
-    protected Future addBinding0(String isolateName, String name, BindingFunction function) {
+    protected XFuture<?> addBinding0(String isolateName, String name, BindingFunction function) {
         AddBindingRequest request = new AddBindingRequest(name, null, isolateName);
         bindingMap.put(name, function);
         return connection.runtime.addBinding(request);
     }
 
-    protected Future removeBinding0(String name) {
+    protected XFuture<?> removeBinding0(String name) {
         RemoveBindingRequest request = new RemoveBindingRequest(name);
         bindingMap.remove(name);
         return connection.runtime.removeBinding(request);
     }
 
     protected void onBindingCall(BindingCalledEvent event) {
-        BindingFunction function = bindingMap.get(event.name);
+        BindingFunction function = bindingMap.get(event.getName());
         if (function == null) {
-            logger.warn("binding function not found, targetId={}, name={}", targetId(), event.name);
+            logger.warn("binding function not found, targetId={}, name={}", targetId(), event.getName());
             return;
         }
-        Isolate isolate = this.isolateMap.get(event.executionContextId);
+        Isolate isolate = this.isolateMap.get(event.getExecutionContextId());
         if (isolate == null) {
-            logger.warn("isolate not found, targetId={}, isolateId={}", targetId(), event.executionContextId);
+            logger.warn("isolate not found, targetId={}, isolateId={}", targetId(), event.getExecutionContextId());
             return;
         }
-        function.call(isolate, event.payload);
+        function.call(isolate, event.getPayload());
     }
 
     protected void onLifecycle(LifecycleEvent event) {
-        ChromeFrame frame = this.frameMap.get(event.frameId);
+        ChromeFrame frame = this.frameMap.get(event.getFrameId());
         if (frame == null) {
-            logger.warn("handle lifecycle event failed, targetId={}, frameId={}", targetId(), event.frameId);
+            logger.warn("handle lifecycle event failed, targetId={}, frameId={}", targetId(), event.getFrameId());
             return;
         }
-        LifecyclePhase phase = LifecyclePhase.findByValue(event.name);
+        LifecyclePhase phase = LifecyclePhase.findByValue(event.getName());
         if (phase == null) {
-            logger.warn("unsupported lifecycle, targetId={}, event={}", targetId(), event.name);
+            logger.warn("unsupported lifecycle, targetId={}, event={}", targetId(), event.getName());
             return;
         }
         emit(new jpuppeteer.api.event.page.LifecycleEvent(frame, phase));
     }
 
     protected void onDomContentLoaded(DomContentEventFiredEvent event) {
-        emit(new DomReadyEvent(event.timestamp));
+        emit(new DomReadyEvent(event.getTimestamp()));
     }
 
     protected void onPageLoaded(LoadEventFiredEvent event) {
-        emit(new LoadedEvent(event.timestamp));
+        emit(new LoadedEvent(event.getTimestamp()));
     }
 
     protected void onJavascriptDialog(JavascriptDialogOpeningEvent event) {
-        emit(new DialogEvent(connection.page, event.url, event.type, event.message, event.defaultPrompt, event.hasBrowserHandler));
+        emit(new DialogEvent(connection.page, event.getUrl(), event.getType(), event.getMessage(), event.getDefaultPrompt(), event.getHasBrowserHandler()));
     }
 
     protected void onExceptionThrown(ExceptionThrownEvent event) {
-        emit(new ErrorEvent(event.exceptionDetails));
+        emit(new ErrorEvent(event.getExceptionDetails()));
     }
 
     private static HttpHeader[] parseHeaders(Map<String, Object> headerMap) {
@@ -390,121 +388,121 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     private RequestEvent.RequestEventBuilder requestBuilder(jpuppeteer.cdp.client.entity.network.Request request) {
-        HttpHeader[] headers = parseHeaders(request.headers);
-        String url = request.url;
-        if (StringUtils.isNotEmpty(request.urlFragment)) {
-            url += "#" + request.urlFragment;
+        HttpHeader[] headers = parseHeaders(request.getHeaders());
+        String url = request.getUrl();
+        if (StringUtils.isNotEmpty(request.getUrlFragment())) {
+            url += "#" + request.getUrlFragment();
         }
         return RequestEvent.newBuilder()
                 .network(connection.network)
                 .executor(eventLoop())
                 .url(url)
-                .method(request.method)
+                .method(request.getMethod())
                 .headers(headers)
-                .hasPostData(request.hasPostData != null && request.hasPostData)
-                .postData(request.postData);
+                .hasPostData(request.getHasPostData() != null && request.getHasPostData())
+                .postData(request.getPostData());
     }
 
     protected void onRequest(RequestWillBeSentEvent event) {
-        if (event.frameId == null) {
+        if (event.getFrameId() == null) {
             return;
         }
-        ChromeFrame frame = this.frameMap.get(event.frameId);
+        ChromeFrame frame = this.frameMap.get(event.getFrameId());
         if (frame == null) {
-            logger.error("handle request failed, targetId={}, frameId={}", targetId(), event.frameId);
+            logger.error("handle request failed, targetId={}, frameId={}", targetId(), event.getFrameId());
             return;
         }
-        String location = event.redirectResponse != null ? event.redirectResponse.url : null;
-        RequestEvent requestEvent = requestBuilder(event.request)
-                .requestId(event.requestId)
-                .loaderId(event.loaderId)
+        String location = event.getRedirectResponse() != null ? event.getRedirectResponse().getUrl() : null;
+        RequestEvent requestEvent = requestBuilder(event.getRequest())
+                .requestId(event.getRequestId())
+                .loaderId(event.getLoaderId())
                 .frame(frame)
-                .resourceType(event.type)
+                .resourceType(event.getType())
                 .location(location)
                 .build();
-        requestMap.put(event.requestId, requestEvent);
+        requestMap.put(event.getRequestId(), requestEvent);
         emit(requestEvent);
     }
 
     protected void onResponse(ResponseReceivedEvent event) {
-        if (event.frameId == null) {
+        if (event.getFrameId() == null) {
             return;
         }
-        ChromeFrame frame = this.frameMap.get(event.frameId);
+        ChromeFrame frame = this.frameMap.get(event.getFrameId());
         if (frame == null) {
-            logger.error("handle response failed, targetId={}, frameId={}", targetId(), event.frameId);
+            logger.error("handle response failed, targetId={}, frameId={}", targetId(), event.getFrameId());
             return;
         }
-        HttpHeader[] headers = parseHeaders(event.response.headers);
-        HttpHeader[] requestHeaders = parseHeaders(event.response.requestHeaders);
+        HttpHeader[] headers = parseHeaders(event.getResponse().getHeaders());
+        HttpHeader[] requestHeaders = parseHeaders(event.getResponse().getRequestHeaders());
         InetSocketAddress remoteAddress = null;
-        if (StringUtils.isNotEmpty(event.response.remoteIPAddress)) {
-            remoteAddress = new InetSocketAddress(event.response.remoteIPAddress, event.response.remotePort);
+        if (StringUtils.isNotEmpty(event.getResponse().getRemoteIPAddress())) {
+            remoteAddress = new InetSocketAddress(event.getResponse().getRemoteIPAddress(), event.getResponse().getRemotePort());
         }
 
         ResponseEvent responseEvent = ResponseEvent.newBuilder()
                 .network(connection.network)
                 .executor(eventLoop())
-                .requestId(event.requestId)
-                .loaderId(event.loaderId)
+                .requestId(event.getRequestId())
+                .loaderId(event.getLoaderId())
                 .frame(frame)
-                .resourceType(event.type)
-                .url(event.response.url)
-                .protocol(event.response.protocol)
-                .status(event.response.status)
-                .statusText(event.response.statusText)
-                .mimeType(event.response.mimeType)
+                .resourceType(event.getType())
+                .url(event.getResponse().getUrl())
+                .protocol(event.getResponse().getProtocol())
+                .status(event.getResponse().getStatus())
+                .statusText(event.getResponse().getStatusText())
+                .mimeType(event.getResponse().getMimeType())
                 .headers(headers)
                 .requestHeaders(requestHeaders)
-                .connectionReused(event.response.connectionReused)
-                .connectionId(event.response.connectionId.intValue())
+                .connectionReused(event.getResponse().getConnectionReused())
+                .connectionId(event.getResponse().getConnectionId().intValue())
                 .remoteAddress(remoteAddress)
-                .fromDiskCache(event.response.fromDiskCache)
-                .fromServiceWorker(event.response.fromServiceWorker)
-                .fromPrefetchCache(event.response.fromPrefetchCache)
-                .encodedDataLength(event.response.encodedDataLength.intValue())
+                .fromDiskCache(event.getResponse().getFromDiskCache())
+                .fromServiceWorker(event.getResponse().getFromServiceWorker())
+                .fromPrefetchCache(event.getResponse().getFromPrefetchCache())
+                .encodedDataLength(event.getResponse().getEncodedDataLength().intValue())
                 .build();
-        responseMap.put(event.requestId, responseEvent);
+        responseMap.put(event.getRequestId(), responseEvent);
         emit(responseEvent);
     }
 
     protected void onRequestFailed(LoadingFailedEvent event) {
-        Request request = requestMap.remove(event.requestId);
-        Response response = responseMap.remove(event.requestId);
-        emit(new RequestFailedEvent(request, response, event.requestId, event.errorText, event.canceled));
+        Request request = requestMap.remove(event.getRequestId());
+        Response response = responseMap.remove(event.getRequestId());
+        emit(new RequestFailedEvent(request, response, event.getRequestId(), event.getErrorText(), event.getCanceled()));
     }
 
     protected void onRequestFinished(LoadingFinishedEvent event) {
-        Request request = requestMap.remove(event.requestId);
-        Response response = responseMap.remove(event.requestId);
-        emit(new RequestFinishedEvent(request, response, event.requestId, event.encodedDataLength.intValue()));
+        Request request = requestMap.remove(event.getRequestId());
+        Response response = responseMap.remove(event.getRequestId());
+        emit(new RequestFinishedEvent(request, response, event.getRequestId(), event.getEncodedDataLength().intValue()));
     }
 
     protected void onRequestPaused(RequestPausedEvent event) {
-        if (event.frameId == null) {
+        if (event.getFrameId() == null) {
             return;
         }
-        ChromeFrame frame = this.frameMap.get(event.frameId);
+        ChromeFrame frame = this.frameMap.get(event.getFrameId());
         if (frame == null) {
-            logger.error("handle request intercept failed, targetId={}, frameId={}", targetId(), event.frameId);
+            logger.error("handle request intercept failed, targetId={}, frameId={}", targetId(), event.getFrameId());
             return;
         }
-        Request request = requestBuilder(event.request)
-                .requestId(event.networkId)
+        Request request = requestBuilder(event.getRequest())
+                .requestId(event.getNetworkId())
                 .loaderId(null)
                 .frame(frame)
-                .resourceType(event.resourceType)
+                .resourceType(event.getResourceType())
                 .build();
 
         HttpHeader[] responseHeaders = null;
-        if (event.responseHeaders != null && event.responseHeaders.size() > 0) {
-            List<HttpHeader> responseHeaderList = new ArrayList<>(event.responseHeaders.size());
-            for (int i=0; i<event.responseHeaders.size(); i++) {
-                HeaderEntry entry = event.responseHeaders.get(i);
-                String[] items = entry.value.split("\n");
+        if (event.getResponseHeaders() != null && event.getResponseHeaders().size() > 0) {
+            List<HttpHeader> responseHeaderList = new ArrayList<>(event.getResponseHeaders().size());
+            for (int i = 0; i< event.getResponseHeaders().size(); i++) {
+                HeaderEntry entry = event.getResponseHeaders().get(i);
+                String[] items = entry.getValue().split("\n");
                 for(String item : items) {
                     item = StringUtils.trim(item);
-                    responseHeaderList.add(new BasicHttpHeader(entry.name, item));
+                    responseHeaderList.add(new BasicHttpHeader(entry.getName(), item));
                 }
             }
             responseHeaders = new HttpHeader[responseHeaderList.size()];
@@ -514,10 +512,10 @@ public class ChromePage extends ChromeFrame implements Page {
                 .fetch(connection.fetch)
                 .executor(eventLoop())
                 .frame(frame)
-                .interceptorId(event.requestId)
+                .interceptorId(event.getRequestId())
                 .request(request)
-                .responseErrorReason(event.responseErrorReason)
-                .responseStatusCode(event.responseStatusCode)
+                .responseErrorReason(event.getResponseErrorReason())
+                .responseStatusCode(event.getResponseStatusCode())
                 .responseHeaders(responseHeaders)
                 .build();
 
@@ -533,36 +531,36 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     protected void onAuthRequired(AuthRequiredEvent event) {
-        ChromeFrame frame = this.frameMap.get(event.frameId);
+        ChromeFrame frame = this.frameMap.get(event.getFrameId());
         if (frame == null) {
-            logger.error("handle auth failed, targetId={}, frameId={}", targetId(), event.frameId);
+            logger.error("handle auth failed, targetId={}, frameId={}", targetId(), event.getFrameId());
             return;
         }
-        Request request = requestBuilder(event.request)
+        Request request = requestBuilder(event.getRequest())
                 .requestId(null)
                 .loaderId(null)
                 .frame(frame)
-                .resourceType(event.resourceType)
+                .resourceType(event.getResourceType())
                 .build();
         AuthEvent auth = new AuthEvent(
-                frame, connection.fetch, event.requestId,
-                event.authChallenge, request);
+                frame, connection.fetch, event.getRequestId(),
+                event.getAuthChallenge(), request);
         interceptor.authenticate(auth);
     }
 
     @Override
     public String targetId() {
-        return targetInfo.targetId;
+        return targetInfo.getTargetId();
     }
 
     @Override
     public String title() {
-        return targetInfo.title;
+        return targetInfo.getTitle();
     }
 
     @Override
     public String url() {
-        return targetInfo.url;
+        return targetInfo.getUrl();
     }
 
     @Override
@@ -571,7 +569,7 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public Future reload(Boolean ignoreCache, String scriptToEvaluateOnLoad) {
+    public XFuture<?> reload(Boolean ignoreCache, String scriptToEvaluateOnLoad) {
         return connection.page.reload(new ReloadRequest(ignoreCache, scriptToEvaluateOnLoad));
     }
 
@@ -582,18 +580,18 @@ public class ChromePage extends ChromeFrame implements Page {
 
     @Override
     public ChromeFrame openerFrame() {
-        if (targetInfo.openerFrameId == null) {
+        if (targetInfo.getOpenerFrameId() == null) {
             return null;
         }
         ChromePage opener = opener();
         if (opener == null) {
             return null;
         }
-        return opener.frameMap.get(targetInfo.openerFrameId);
+        return opener.frameMap.get(targetInfo.getOpenerFrameId());
     }
 
     @Override
-    public Future bringToFront() {
+    public XFuture<?> bringToFront() {
         return connection.page.bringToFront();
     }
 
@@ -603,111 +601,109 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public Future setCookies(CookieParam... cookies) {
+    public XFuture<?> setCookies(CookieParam... cookies) {
         SetCookiesRequest request = new SetCookiesRequest(Lists.newArrayList(cookies));
         return connection.network.setCookies(request);
     }
 
     @Override
-    public Future clearCookies() {
+    public XFuture<?> clearCookies() {
         return connection.network.clearBrowserCookies();
     }
 
     @Override
-    public Future<Cookie[]> getCookies(String... urls) {
-        return SeriesPromise
-                .wrap(connection.network.getCookies(new GetCookiesRequest(Lists.newArrayList(urls))))
+    public XFuture<Cookie[]> getCookies(String... urls) {
+        return connection.network.getCookies(new GetCookiesRequest(Lists.newArrayList(urls)))
                 .sync(o -> {
-                    Cookie[] cookies = new Cookie[o.cookies.size()];
-                    o.cookies.toArray(cookies);
+                    Cookie[] cookies = new Cookie[o.getCookies().size()];
+                    o.getCookies().toArray(cookies);
                     return cookies;
                 });
     }
 
     @Override
-    public Future close() {
+    public XFuture<?> close() {
         requestMap.clear();
         responseMap.clear();
         return connection.target.closeTarget(new CloseTargetRequest(targetId()));
     }
 
     @Override
-    public Future<String> addScriptToEvaluateOnNewDocument(String script) {
-        return SeriesPromise
-                .wrap(connection.page.addScriptToEvaluateOnNewDocument(new AddScriptToEvaluateOnNewDocumentRequest(script)))
-                .sync(o -> o.identifier);
+    public XFuture<String> addScriptToEvaluateOnNewDocument(String script) {
+        return connection.page.addScriptToEvaluateOnNewDocument(new AddScriptToEvaluateOnNewDocumentRequest(script))
+                .sync(AddScriptToEvaluateOnNewDocumentResponse::getIdentifier);
     }
 
     @Override
-    public Future removeScriptToEvaluateOnNewDocument(String scriptId) {
+    public XFuture<?> removeScriptToEvaluateOnNewDocument(String scriptId) {
         RemoveScriptToEvaluateOnNewDocumentRequest request = new RemoveScriptToEvaluateOnNewDocumentRequest(scriptId);
         return connection.page.removeScriptToEvaluateOnNewDocument(request);
     }
 
     @Override
-    public Future enableNetwork(EnableRequest request) {
+    public XFuture<?> enableNetwork(EnableRequest request) {
         return connection.network.enable(request);
     }
 
     @Override
-    public Future disableNetwork() {
+    public XFuture<?> disableNetwork() {
         return connection.network.disable();
     }
 
     @Override
-    public Future enableCache() {
+    public XFuture<?> enableCache() {
         SetCacheDisabledRequest request = new SetCacheDisabledRequest(false);
         return connection.network.setCacheDisabled(request);
     }
 
     @Override
-    public Future disableCache() {
+    public XFuture<?> disableCache() {
         SetCacheDisabledRequest request = new SetCacheDisabledRequest(true);
         return connection.network.setCacheDisabled(request);
     }
 
     @Override
-    public Future<HttpResource> loadResource(String url, boolean disableCache) {
+    public XFuture<HttpResource> loadResource(String url, boolean disableCache) {
         LoadNetworkResourceRequest request = new LoadNetworkResourceRequest(frameId(), url, new LoadNetworkResourceOptions(disableCache, true));
-        return SeriesPromise.wrap(connection.network.loadNetworkResource(request))
+        return connection.network.loadNetworkResource(request)
                         .sync(o -> {
-                            if (!o.resource.success) {
-                                throw new RuntimeException("load resource failed:" + o.resource.netErrorName + "("+o.resource.netError+")");
+                            if (!o.getResource().getSuccess()) {
+                                throw new RuntimeException("load resource failed:" + o.getResource().getNetErrorName() + "("+ o.getResource().getNetError() +")");
                             } else {
                                 return new HttpResource(
                                         connection,
-                                        o.resource.httpStatusCode.intValue(),
-                                        parseHeaders(o.resource.headers),
-                                        o.resource.stream
+                                        o.getResource().getHttpStatusCode().intValue(),
+                                        parseHeaders(o.getResource().getHeaders()),
+                                        o.getResource().getStream()
                                 );
                             }
                         });
     }
 
     @Override
-    public Future enableRequestInterception(jpuppeteer.cdp.client.entity.fetch.EnableRequest request, Interceptor<? extends InterceptedResponse> interceptor) {
+    public XFuture<?> enableRequestInterception(jpuppeteer.cdp.client.entity.fetch.EnableRequest request, Interceptor<? extends InterceptedResponse> interceptor) {
         this.interceptor = interceptor;
         return connection.fetch.enable(request);
     }
 
     @Override
-    public Future disableRequestInterception() {
+    public XFuture<?> disableRequestInterception() {
         this.interceptor = null;
         return connection.fetch.disable();
     }
 
     @Override
-    public Future enableTouchEmulation(boolean enable, Integer maxTouchPoints) {
+    public XFuture<?> enableTouchEmulation(boolean enable, Integer maxTouchPoints) {
         return connection.emulation.setTouchEmulationEnabled(new SetTouchEmulationEnabledRequest(enable, maxTouchPoints));
     }
 
     @Override
-    public Future enableEmitTouchEventsForMouse(boolean enable, SetEmitTouchEventsForMouseRequestConfiguration configuration) {
+    public XFuture<?> enableEmitTouchEventsForMouse(boolean enable, SetEmitTouchEventsForMouseRequestConfiguration configuration) {
         return connection.emulation.setEmitTouchEventsForMouse(new SetEmitTouchEventsForMouseRequest(enable, configuration));
     }
 
     @Override
-    public Future setHeaders(HttpHeader... headers) {
+    public XFuture<?> setHeaders(HttpHeader... headers) {
         Map<String, Object> extraHeaders = new HashMap<>();
         for(HttpHeader header : headers) {
             extraHeaders.put(header.name(), header.value());
@@ -717,7 +713,7 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public Future setGeolocation(double latitude, double longitude, double accuracy) {
+    public XFuture<?> setGeolocation(double latitude, double longitude, double accuracy) {
         SetGeolocationOverrideRequest request = new SetGeolocationOverrideRequest(
                 BigDecimal.valueOf(latitude),
                 BigDecimal.valueOf(longitude),
@@ -726,17 +722,17 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public Future setUserAgent(SetUserAgentOverrideRequest userAgent) {
+    public XFuture<?> setUserAgent(SetUserAgentOverrideRequest userAgent) {
         return connection.emulation.setUserAgentOverride(userAgent);
     }
 
     @Override
-    public Future setDevice(SetDeviceMetricsOverrideRequest device) {
+    public XFuture<?> setDevice(SetDeviceMetricsOverrideRequest device) {
         return connection.emulation.setDeviceMetricsOverride(device);
     }
 
     @Override
-    public Future setOrientation(double alpha, double beta, double gamma) {
+    public XFuture<?> setOrientation(double alpha, double beta, double gamma) {
         SetDeviceOrientationOverrideRequest request = new SetDeviceOrientationOverrideRequest(
                 BigDecimal.valueOf(alpha),
                 BigDecimal.valueOf(beta),
@@ -746,17 +742,15 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public Future setWindow(Bounds bounds) {
-        return SeriesPromise
-                .wrap(connection.browser.getWindowForTarget(new GetWindowForTargetRequest(targetId())))
-                .async(o -> connection.browser.setWindowBounds(new SetWindowBoundsRequest(o.windowId, bounds)));
+    public XFuture<?> setWindow(Bounds bounds) {
+        return connection.browser.getWindowForTarget(new GetWindowForTargetRequest(targetId()))
+                .async(o -> connection.browser.setWindowBounds(new SetWindowBoundsRequest(o.getWindowId(), bounds)));
     }
 
     @Override
-    public Future<byte[]> screenshot(CaptureScreenshotRequest request) {
-        Future<byte[]> future = SeriesPromise
-                .wrap(connection.page.captureScreenshot(request))
-                .sync(o -> Base64.getDecoder().decode(o.data));
+    public XFuture<byte[]> screenshot(CaptureScreenshotRequest request) {
+        XFuture<byte[]> future = connection.page.captureScreenshot(request)
+                .sync(o -> Base64.getDecoder().decode(o.getData()));
         bringToFront().addListener(f -> {
             if (f.cause() != null) {
                 future.cancel(true);
@@ -766,52 +760,52 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public Future stopLoading() {
+    public XFuture<?> stopLoading() {
         return connection.page.stopLoading();
     }
 
     @Override
-    public Future enableInput() {
+    public XFuture<?> enableInput() {
         return connection.inputWrapper.enable();
     }
 
     @Override
-    public Future disableInput() {
+    public XFuture<?> disableInput() {
         return connection.inputWrapper.disable();
     }
 
     @Override
-    public Future keyDown(USKeyboardDefinition key) {
+    public XFuture<?> keyDown(USKeyboardDefinition key) {
         return connection.inputWrapper.keyDown(key);
     }
 
     @Override
-    public Future keyUp(USKeyboardDefinition key) {
+    public XFuture<?> keyUp(USKeyboardDefinition key) {
         return connection.inputWrapper.keyUp(key);
     }
 
     @Override
-    public Future press(USKeyboardDefinition key, int delay) {
+    public XFuture<?> press(USKeyboardDefinition key, int delay) {
         return connection.inputWrapper.press(key, delay);
     }
 
     @Override
-    public Future mouseDown(MouseDefinition mouseDefinition) {
+    public XFuture<?> mouseDown(MouseDefinition mouseDefinition) {
         return connection.inputWrapper.mouseDown(mouseDefinition);
     }
 
     @Override
-    public Future mouseUp(MouseDefinition mouseDefinition) {
+    public XFuture<?> mouseUp(MouseDefinition mouseDefinition) {
         return connection.inputWrapper.mouseUp(mouseDefinition);
     }
 
     @Override
-    public Future click(MouseDefinition mouseDefinition, int delay) {
+    public XFuture<?> click(MouseDefinition mouseDefinition, int delay) {
         return connection.inputWrapper.click(mouseDefinition, delay);
     }
 
     @Override
-    public Future mouseMove(int x, int y) {
+    public XFuture<?> mouseMove(int x, int y) {
         return connection.inputWrapper.mouseMove(x, y);
     }
 
@@ -821,42 +815,42 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public Future mouseWheel(int deltaX, int deltaY) {
+    public XFuture<?> mouseWheel(int deltaX, int deltaY) {
         return connection.inputWrapper.mouseWheel(deltaX, deltaY);
     }
 
     @Override
-    public Future touchStart(TouchPoint[] touchPoints) {
+    public XFuture<?> touchStart(TouchPoint[] touchPoints) {
         return connection.inputWrapper.touchStart(touchPoints);
     }
 
     @Override
-    public Future touchStart(int x, int y) {
+    public XFuture<?> touchStart(int x, int y) {
         return connection.inputWrapper.touchStart(x, y);
     }
 
     @Override
-    public Future touchEnd() {
+    public XFuture<?> touchEnd() {
         return connection.inputWrapper.touchEnd();
     }
 
     @Override
-    public Future touchMove(TouchPoint[] touchPoints) {
+    public XFuture<?> touchMove(TouchPoint[] touchPoints) {
         return connection.inputWrapper.touchMove(touchPoints);
     }
 
     @Override
-    public Future touchMove(int x, int y) {
+    public XFuture<?> touchMove(int x, int y) {
         return connection.inputWrapper.touchMove(x, y);
     }
 
     @Override
-    public Future touchCancel() {
+    public XFuture<?> touchCancel() {
         return connection.inputWrapper.touchCancel();
     }
 
     @Override
-    public Future activate() {
+    public XFuture<?> activate() {
         return connection.target.activateTarget(new ActivateTargetRequest(targetId()));
     }
 
@@ -872,7 +866,7 @@ public class ChromePage extends ChromeFrame implements Page {
 
                 case PAGE_FRAMEATTACHED:
                     FrameAttachedEvent frameAttachedEvent = event.getObject();
-                    onFrameAttached(frameAttachedEvent.parentFrameId, frameAttachedEvent.frameId);
+                    onFrameAttached(frameAttachedEvent.getParentFrameId(), frameAttachedEvent.getFrameId());
                     break;
 
                 case PAGE_FRAMENAVIGATED:
@@ -882,7 +876,7 @@ public class ChromePage extends ChromeFrame implements Page {
 
                 case PAGE_FRAMEDETACHED:
                     FrameDetachedEvent frameDetachedEvent = event.getObject();
-                    onFrameDetached(frameDetachedEvent.frameId);
+                    onFrameDetached(frameDetachedEvent.getFrameId());
                     break;
 
                 case PAGE_LIFECYCLEEVENT:
@@ -907,12 +901,12 @@ public class ChromePage extends ChromeFrame implements Page {
 
                 case RUNTIME_EXECUTIONCONTEXTCREATED:
                     ExecutionContextCreatedEvent executionContextCreatedEvent = event.getObject();
-                    onExecutionCreated(executionContextCreatedEvent.context);
+                    onExecutionCreated(executionContextCreatedEvent.getContext());
                     break;
 
                 case RUNTIME_EXECUTIONCONTEXTDESTROYED:
                     ExecutionContextDestroyedEvent executionContextDestroyedEvent = event.getObject();
-                    onExecutionDestroyed(executionContextDestroyedEvent.executionContextId);
+                    onExecutionDestroyed(executionContextDestroyedEvent.getExecutionContextId());
                     break;
 
                 case RUNTIME_EXECUTIONCONTEXTSCLEARED:

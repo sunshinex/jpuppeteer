@@ -7,7 +7,15 @@ public class SetDefaultBackgroundColorOverrideRequest {
     /**
     * RGBA of the default background color. If not specified, any existing override will be cleared.
     */
-    public final jpuppeteer.cdp.client.entity.dom.RGBA color;
+    private jpuppeteer.cdp.client.entity.dom.RGBA color;
+
+    public void setColor (jpuppeteer.cdp.client.entity.dom.RGBA color) {
+        this.color = color;
+    }
+
+    public jpuppeteer.cdp.client.entity.dom.RGBA getColor() {
+        return this.color;
+    }
 
     public SetDefaultBackgroundColorOverrideRequest(jpuppeteer.cdp.client.entity.dom.RGBA color) {
         this.color = color;

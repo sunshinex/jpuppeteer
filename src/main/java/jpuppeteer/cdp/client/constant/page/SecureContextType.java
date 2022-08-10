@@ -22,6 +22,11 @@ public enum SecureContextType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SecureContextType findByValue(String value) {
         for(SecureContextType val : values()) {
             if (val.value.equals(value)) return val;

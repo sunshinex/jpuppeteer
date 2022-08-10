@@ -9,16 +9,35 @@ public class KeyframeStyle {
     /**
     * Keyframe's time offset.
     */
-    public final String offset;
+    private String offset;
 
     /**
     * `AnimationEffect`'s timing function.
     */
-    public final String easing;
+    private String easing;
+
+    public void setOffset (String offset) {
+        this.offset = offset;
+    }
+
+    public String getOffset() {
+        return this.offset;
+    }
+
+    public void setEasing (String easing) {
+        this.easing = easing;
+    }
+
+    public String getEasing() {
+        return this.easing;
+    }
 
     public KeyframeStyle(String offset, String easing) {
         this.offset = offset;
         this.easing = easing;
+    }
+
+    public KeyframeStyle() {
     }
 
 }

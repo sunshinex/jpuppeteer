@@ -9,10 +9,21 @@ public class NeedsBeginFramesChangedEvent {
     /**
     * True if BeginFrames are needed, false otherwise.
     */
-    public final Boolean needsBeginFrames;
+    private Boolean needsBeginFrames;
+
+    public void setNeedsBeginFrames (Boolean needsBeginFrames) {
+        this.needsBeginFrames = needsBeginFrames;
+    }
+
+    public Boolean getNeedsBeginFrames() {
+        return this.needsBeginFrames;
+    }
 
     public NeedsBeginFramesChangedEvent(Boolean needsBeginFrames) {
         this.needsBeginFrames = needsBeginFrames;
+    }
+
+    public NeedsBeginFramesChangedEvent() {
     }
 
 }

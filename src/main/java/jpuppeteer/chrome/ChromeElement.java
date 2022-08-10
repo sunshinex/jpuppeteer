@@ -1,7 +1,6 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
-import io.netty.util.concurrent.Future;
 import jpuppeteer.api.BrowserObject;
 import jpuppeteer.api.Element;
 import jpuppeteer.api.Frame;
@@ -13,7 +12,7 @@ import jpuppeteer.constant.USKeyboardDefinition;
 import jpuppeteer.entity.Point;
 import jpuppeteer.util.Input;
 import jpuppeteer.util.ScriptUtil;
-import jpuppeteer.util.SeriesPromise;
+import jpuppeteer.util.XFuture;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
 public class ChromeElement implements Element {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeElement.class);
@@ -60,16 +58,14 @@ public class ChromeElement implements Element {
     }
 
     @Override
-    public Future<Element> querySelector(String selector) {
-        return SeriesPromise
-                .wrap(frame.call("function (selector){return this.querySelector(selector);}", objectId(), selector))
+    public XFuture<Element> querySelector(String selector) {
+        return frame.call("function (selector){return this.querySelector(selector);}", objectId(), selector)
                 .sync(o -> o != null ? new ChromeElement(frame, o) : null);
     }
 
     @Override
-    public Future<Element[]> querySelectorAll(String selector) {
-        return SeriesPromise
-                .wrap(frame.call("function (selector){return this.querySelectorAll(selector);}", (Object) selector))
+    public XFuture<Element[]> querySelectorAll(String selector) {
+        return frame.call("function (selector){return this.querySelectorAll(selector);}", (Object) selector)
                 .async(BrowserObject::getProperties)
                 .sync(browserObjects -> {
                     Element[] elements = new Element[browserObjects.length];
@@ -81,18 +77,16 @@ public class ChromeElement implements Element {
     }
 
     @Override
-    public Future<Element> waitSelector(String selector, long timeout, TimeUnit unit) {
+    public XFuture<Element> waitSelector(String selector, long timeout, TimeUnit unit) {
         timeout = unit.toMillis(timeout);
-        return SeriesPromise
-                .wrap(frame.call(SCRIPT_WAIT_SELECTOR, objectId(), selector, timeout))
+        return frame.call(SCRIPT_WAIT_SELECTOR, objectId(), selector, timeout)
                 .sync(o -> new ChromeElement(frame, o));
     }
 
     @Override
-    public Future watch(String selector, Consumer<Element> watchFunction, boolean once) {
+    public XFuture<?> watch(String selector, Consumer<Element> watchFunction, boolean once) {
         String functionName = "watch_" + UUID.randomUUID().toString().replace("-", "");
-        return SeriesPromise.wrap(
-                frame.addBinding(functionName, (i, hash) -> {
+        return frame.addBinding(functionName, (i, hash) -> {
                     i.eval("window['" + hash + "']")
                             .addListener(f -> {
                                 if (f.cause() != null) {
@@ -103,34 +97,32 @@ public class ChromeElement implements Element {
                                 }
                             });
                 })
-                )
                 .async(o -> frame.call(SCRIPT_WATCH, objectId(), selector, functionName, once));
     }
 
     @Override
-    public Future<String> getAttribute(String name) {
+    public XFuture<String> getAttribute(String name) {
         return frame.call("function (name){return this.getAttribute(name);}", objectId(), String.class, name);
     }
 
     @Override
-    public Future setAttribute(String name, String value) {
+    public XFuture<?> setAttribute(String name, String value) {
         return frame.call("function (name, value){this.setAttribute(name, value);}", objectId(), name, value);
     }
 
     @Override
-    public Future removeAttribute(String name) {
+    public XFuture<?> removeAttribute(String name) {
         return frame.call("function (name){this.removeAttribute(name);}", objectId(), name);
     }
 
     @Override
-    public Future<BoxModel> boxModel() {
-        return SeriesPromise
-                .wrap(dom().getBoxModel(new GetBoxModelRequest(null, null, objectId())))
-                .sync(o -> o.model);
+    public XFuture<BoxModel> boxModel() {
+        return dom().getBoxModel(new GetBoxModelRequest(null, null, objectId()))
+                .sync(GetBoxModelResponse::getModel);
     }
 
     @Override
-    public Future uploadFile(File... files) {
+    public XFuture<?> uploadFile(File... files) {
         List<String> paths = Arrays.stream(files)
                 .map(File::getAbsolutePath)
                 .collect(Collectors.toList());
@@ -139,50 +131,49 @@ public class ChromeElement implements Element {
     }
 
     @Override
-    public Future focus() {
+    public XFuture<?> focus() {
         return dom().focus(new FocusRequest(null, null, objectId()));
     }
 
     @Override
-    public Future remove() {
+    public XFuture<?> remove() {
         return frame.call("function (){this.parentNode.removeChild(this);}", objectId());
     }
 
     @Override
-    public Future<String> value() {
+    public XFuture<String> value() {
         return frame.call("function (){return this.value;}", objectId(), String.class);
     }
 
     @Override
-    public Future value(String value) {
+    public XFuture<?> value(String value) {
         return frame.call("function (value){this.value=value;}", objectId(), value);
     }
 
     @Override
-    public Future<String> html() {
-        return SeriesPromise
-                .wrap(dom().getOuterHTML(new GetOuterHTMLRequest(null, null, objectId())))
-                .sync(o -> o.outerHTML);
+    public XFuture<String> html() {
+        return dom().getOuterHTML(new GetOuterHTMLRequest(null, null, objectId()))
+                .sync(GetOuterHTMLResponse::getOuterHTML);
     }
 
     @Override
-    public Future html(String html) {
+    public XFuture<?> html(String html) {
         return frame.call("function (html){this.outerHTML=html;}", objectId(), html);
     }
 
     @Override
-    public Future scrollIntoView() {
+    public XFuture<?> scrollIntoView() {
         return frame.call("function (){this.scrollIntoViewIfNeeded();}", objectId());
     }
 
     @Override
-    public Future clear() {
+    public XFuture<?> clear() {
         return value(StringUtils.EMPTY);
     }
 
     @Override
-    public Future input(String text, int delay) {
-        SeriesPromise next = SeriesPromise.wrap(focus());
+    public XFuture<?> input(String text, int delay) {
+        XFuture<?> next = focus();
         for(char chr : text.toCharArray()) {
             String chrStr = String.valueOf(chr);
             USKeyboardDefinition def = USKeyboardDefinition.find(chrStr);
@@ -196,28 +187,25 @@ public class ChromeElement implements Element {
     }
 
     @Override
-    public Future select(String... values) {
+    public XFuture<?> select(String... values) {
         return frame.call(SCRIPT_SELECT, objectId(), Lists.newArrayList(values));
     }
 
-    private Future<Point> center() {
-        return SeriesPromise
-                .wrap(scrollIntoView())//滚动到可见区域
+    private XFuture<Point> center() {
+        return scrollIntoView() //滚动到可见区域
                 .async(o -> boxModel())
                 .sync(o -> {
-                    BoxModel boxModel = (BoxModel) o;
-                    int left = boxModel.content.get(0).intValue();
-                    int top = boxModel.content.get(1).intValue();
-                    int x = left + (boxModel.width / 2);
-                    int y = top + (boxModel.height / 2);
+                    int left = o.getContent().get(0).intValue();
+                    int top = o.getContent().get(1).intValue();
+                    int x = left + (o.getWidth() / 2);
+                    int y = top + (o.getHeight() / 2);
                     return new Point(x, y);
                 });
     }
 
     @Override
-    public Future click(MouseDefinition buttonType, int delay) {
-        return SeriesPromise
-                .wrap(center())
+    public XFuture<?> click(MouseDefinition buttonType, int delay) {
+        return center()
                 .async(o -> input().mouseMove(o.x, o.y))
                 .async(o -> input().mouseDown(buttonType))
                 //此处单纯为了延迟，没啥鸟用
@@ -226,9 +214,8 @@ public class ChromeElement implements Element {
     }
 
     @Override
-    public Future tap(int delay) {
-        return SeriesPromise
-                .wrap(center())
+    public XFuture<?> tap(int delay) {
+        return center()
                 .async(o -> input().touchStart(Double.valueOf(o.x).intValue(), Double.valueOf(o.y).intValue()))
                 //此处单纯为了延迟，没啥鸟用
                 .async(o -> frame.eventLoop().schedule(() -> o, delay, TimeUnit.MILLISECONDS))
@@ -246,17 +233,17 @@ public class ChromeElement implements Element {
     }
 
     @Override
-    public Future<BrowserObject[]> getProperties() {
+    public XFuture<BrowserObject[]> getProperties() {
         return object.getProperties();
     }
 
     @Override
-    public Future<BrowserObject> getProperty(String name) {
+    public XFuture<BrowserObject> getProperty(String name) {
         return object.getProperty(name);
     }
 
     @Override
-    public Future release() {
+    public XFuture<?> release() {
         return object.release();
     }
 }

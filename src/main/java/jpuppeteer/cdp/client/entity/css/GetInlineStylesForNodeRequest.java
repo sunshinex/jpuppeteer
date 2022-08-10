@@ -7,10 +7,21 @@ public class GetInlineStylesForNodeRequest {
 
     /**
     */
-    public final Integer nodeId;
+    private Integer nodeId;
+
+    public void setNodeId (Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public Integer getNodeId() {
+        return this.nodeId;
+    }
 
     public GetInlineStylesForNodeRequest(Integer nodeId) {
         this.nodeId = nodeId;
+    }
+
+    public GetInlineStylesForNodeRequest() {
     }
 
 }

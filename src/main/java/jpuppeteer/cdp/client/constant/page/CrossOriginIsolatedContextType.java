@@ -21,6 +21,11 @@ public enum CrossOriginIsolatedContextType implements jpuppeteer.cdp.client.CDPE
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static CrossOriginIsolatedContextType findByValue(String value) {
         for(CrossOriginIsolatedContextType val : values()) {
             if (val.value.equals(value)) return val;

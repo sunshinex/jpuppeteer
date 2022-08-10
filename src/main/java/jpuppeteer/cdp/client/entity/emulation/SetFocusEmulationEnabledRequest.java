@@ -7,10 +7,21 @@ public class SetFocusEmulationEnabledRequest {
     /**
     * Whether to enable to disable focus emulation.
     */
-    public final Boolean enabled;
+    private Boolean enabled;
+
+    public void setEnabled (Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Boolean getEnabled() {
+        return this.enabled;
+    }
 
     public SetFocusEmulationEnabledRequest(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public SetFocusEmulationEnabledRequest() {
     }
 
 }

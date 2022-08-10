@@ -25,6 +25,11 @@ public enum ServiceName implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ServiceName findByValue(String value) {
         for(ServiceName val : values()) {
             if (val.value.equals(value)) return val;

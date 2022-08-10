@@ -8,15 +8,34 @@ public class TrustTokens {
 
     /**
     */
-    public final String issuerOrigin;
+    private String issuerOrigin;
 
     /**
     */
-    public final java.math.BigDecimal count;
+    private java.math.BigDecimal count;
+
+    public void setIssuerOrigin (String issuerOrigin) {
+        this.issuerOrigin = issuerOrigin;
+    }
+
+    public String getIssuerOrigin() {
+        return this.issuerOrigin;
+    }
+
+    public void setCount (java.math.BigDecimal count) {
+        this.count = count;
+    }
+
+    public java.math.BigDecimal getCount() {
+        return this.count;
+    }
 
     public TrustTokens(String issuerOrigin, java.math.BigDecimal count) {
         this.issuerOrigin = issuerOrigin;
         this.count = count;
+    }
+
+    public TrustTokens() {
     }
 
 }

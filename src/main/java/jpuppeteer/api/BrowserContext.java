@@ -1,9 +1,9 @@
 package jpuppeteer.api;
 
-import io.netty.util.concurrent.Future;
 import jpuppeteer.cdp.client.constant.browser.PermissionType;
 import jpuppeteer.cdp.client.entity.network.Cookie;
 import jpuppeteer.cdp.client.entity.network.CookieParam;
+import jpuppeteer.util.XFuture;
 
 public interface BrowserContext {
 
@@ -11,25 +11,25 @@ public interface BrowserContext {
 
     Browser browser();
 
-    Future grantPermissions(String origin, PermissionType... permissions);
+    XFuture<?> grantPermissions(String origin, PermissionType... permissions);
 
-    Future resetPermissions();
+    XFuture<?> resetPermissions();
 
-    Future<Page> newPage(String url, Integer width, Integer height);
+    XFuture<Page> newPage(String url, Integer width, Integer height);
 
-    default Future<Page> newPage(String url) {
+    default XFuture<Page> newPage(String url) {
         return newPage(url, null, null);
     }
 
-    default Future<Page> newPage() {
+    default XFuture<Page> newPage() {
         return newPage("about:blank", null, null);
     }
 
-    Future setCookies(CookieParam... cookies);
+    XFuture<?> setCookies(CookieParam... cookies);
 
-    Future clearCookies();
+    XFuture<?> clearCookies();
 
-    Future<Cookie[]> getCookies();
+    XFuture<Cookie[]> getCookies();
 
     void close();
 

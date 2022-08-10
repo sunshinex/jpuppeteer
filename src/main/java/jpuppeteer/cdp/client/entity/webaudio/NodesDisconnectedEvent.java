@@ -8,23 +8,63 @@ public class NodesDisconnectedEvent {
 
     /**
     */
-    public final String contextId;
+    private String contextId;
 
     /**
     */
-    public final String sourceId;
+    private String sourceId;
 
     /**
     */
-    public final String destinationId;
+    private String destinationId;
 
     /**
     */
-    public final java.math.BigDecimal sourceOutputIndex;
+    private java.math.BigDecimal sourceOutputIndex;
 
     /**
     */
-    public final java.math.BigDecimal destinationInputIndex;
+    private java.math.BigDecimal destinationInputIndex;
+
+    public void setContextId (String contextId) {
+        this.contextId = contextId;
+    }
+
+    public String getContextId() {
+        return this.contextId;
+    }
+
+    public void setSourceId (String sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public String getSourceId() {
+        return this.sourceId;
+    }
+
+    public void setDestinationId (String destinationId) {
+        this.destinationId = destinationId;
+    }
+
+    public String getDestinationId() {
+        return this.destinationId;
+    }
+
+    public void setSourceOutputIndex (java.math.BigDecimal sourceOutputIndex) {
+        this.sourceOutputIndex = sourceOutputIndex;
+    }
+
+    public java.math.BigDecimal getSourceOutputIndex() {
+        return this.sourceOutputIndex;
+    }
+
+    public void setDestinationInputIndex (java.math.BigDecimal destinationInputIndex) {
+        this.destinationInputIndex = destinationInputIndex;
+    }
+
+    public java.math.BigDecimal getDestinationInputIndex() {
+        return this.destinationInputIndex;
+    }
 
     public NodesDisconnectedEvent(String contextId, String sourceId, String destinationId, java.math.BigDecimal sourceOutputIndex, java.math.BigDecimal destinationInputIndex) {
         this.contextId = contextId;
@@ -40,6 +80,9 @@ public class NodesDisconnectedEvent {
         this.destinationId = destinationId;
         this.sourceOutputIndex = null;
         this.destinationInputIndex = null;
+    }
+
+    public NodesDisconnectedEvent() {
     }
 
 }

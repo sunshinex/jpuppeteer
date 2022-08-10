@@ -35,6 +35,11 @@ public enum ConsoleAPICalledEventType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ConsoleAPICalledEventType findByValue(String value) {
         for(ConsoleAPICalledEventType val : values()) {
             if (val.value.equals(value)) return val;

@@ -9,22 +9,49 @@ public class FrameWithManifest {
     /**
     * Frame identifier.
     */
-    public final String frameId;
+    private String frameId;
 
     /**
     * Manifest URL.
     */
-    public final String manifestURL;
+    private String manifestURL;
 
     /**
     * Application cache status.
     */
-    public final Integer status;
+    private Integer status;
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
+
+    public void setManifestURL (String manifestURL) {
+        this.manifestURL = manifestURL;
+    }
+
+    public String getManifestURL() {
+        return this.manifestURL;
+    }
+
+    public void setStatus (Integer status) {
+        this.status = status;
+    }
+
+    public Integer getStatus() {
+        return this.status;
+    }
 
     public FrameWithManifest(String frameId, String manifestURL, Integer status) {
         this.frameId = frameId;
         this.manifestURL = manifestURL;
         this.status = status;
+    }
+
+    public FrameWithManifest() {
     }
 
 }

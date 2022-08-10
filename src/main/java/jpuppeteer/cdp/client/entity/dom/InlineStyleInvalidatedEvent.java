@@ -8,10 +8,21 @@ public class InlineStyleInvalidatedEvent {
     /**
     * Ids of the nodes for which the inline styles have been invalidated.
     */
-    public final java.util.List<Integer> nodeIds;
+    private java.util.List<Integer> nodeIds;
+
+    public void setNodeIds (java.util.List<Integer> nodeIds) {
+        this.nodeIds = nodeIds;
+    }
+
+    public java.util.List<Integer> getNodeIds() {
+        return this.nodeIds;
+    }
 
     public InlineStyleInvalidatedEvent(java.util.List<Integer> nodeIds) {
         this.nodeIds = nodeIds;
+    }
+
+    public InlineStyleInvalidatedEvent() {
     }
 
 }

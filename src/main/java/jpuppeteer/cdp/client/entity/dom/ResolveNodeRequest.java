@@ -7,22 +7,54 @@ public class ResolveNodeRequest {
     /**
     * Id of the node to resolve.
     */
-    public final Integer nodeId;
+    private Integer nodeId;
 
     /**
     * Backend identifier of the node to resolve.
     */
-    public final Integer backendNodeId;
+    private Integer backendNodeId;
 
     /**
     * Symbolic group name that can be used to release multiple objects.
     */
-    public final String objectGroup;
+    private String objectGroup;
 
     /**
     * Execution context in which to resolve the node.
     */
-    public final Integer executionContextId;
+    private Integer executionContextId;
+
+    public void setNodeId (Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public Integer getNodeId() {
+        return this.nodeId;
+    }
+
+    public void setBackendNodeId (Integer backendNodeId) {
+        this.backendNodeId = backendNodeId;
+    }
+
+    public Integer getBackendNodeId() {
+        return this.backendNodeId;
+    }
+
+    public void setObjectGroup (String objectGroup) {
+        this.objectGroup = objectGroup;
+    }
+
+    public String getObjectGroup() {
+        return this.objectGroup;
+    }
+
+    public void setExecutionContextId (Integer executionContextId) {
+        this.executionContextId = executionContextId;
+    }
+
+    public Integer getExecutionContextId() {
+        return this.executionContextId;
+    }
 
     public ResolveNodeRequest(Integer nodeId, Integer backendNodeId, String objectGroup, Integer executionContextId) {
         this.nodeId = nodeId;

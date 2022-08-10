@@ -7,10 +7,21 @@ public class GetRequestPostDataResponse {
     /**
     * Request body string, omitting files from multipart requests
     */
-    public final String postData;
+    private String postData;
+
+    public void setPostData (String postData) {
+        this.postData = postData;
+    }
+
+    public String getPostData() {
+        return this.postData;
+    }
 
     public GetRequestPostDataResponse(String postData) {
         this.postData = postData;
+    }
+
+    public GetRequestPostDataResponse() {
     }
 
 }

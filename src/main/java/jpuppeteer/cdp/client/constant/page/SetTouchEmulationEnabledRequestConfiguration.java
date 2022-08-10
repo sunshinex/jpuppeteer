@@ -19,6 +19,11 @@ public enum SetTouchEmulationEnabledRequestConfiguration implements jpuppeteer.c
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SetTouchEmulationEnabledRequestConfiguration findByValue(String value) {
         for(SetTouchEmulationEnabledRequestConfiguration val : values()) {
             if (val.value.equals(value)) return val;

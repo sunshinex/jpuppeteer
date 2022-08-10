@@ -8,17 +8,41 @@ public class HighlightFrameRequest {
     /**
     * Identifier of the frame to highlight.
     */
-    public final String frameId;
+    private String frameId;
 
     /**
     * The content box highlight fill color (default: transparent).
     */
-    public final jpuppeteer.cdp.client.entity.dom.RGBA contentColor;
+    private jpuppeteer.cdp.client.entity.dom.RGBA contentColor;
 
     /**
     * The content box highlight outline color (default: transparent).
     */
-    public final jpuppeteer.cdp.client.entity.dom.RGBA contentOutlineColor;
+    private jpuppeteer.cdp.client.entity.dom.RGBA contentOutlineColor;
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
+
+    public void setContentColor (jpuppeteer.cdp.client.entity.dom.RGBA contentColor) {
+        this.contentColor = contentColor;
+    }
+
+    public jpuppeteer.cdp.client.entity.dom.RGBA getContentColor() {
+        return this.contentColor;
+    }
+
+    public void setContentOutlineColor (jpuppeteer.cdp.client.entity.dom.RGBA contentOutlineColor) {
+        this.contentOutlineColor = contentOutlineColor;
+    }
+
+    public jpuppeteer.cdp.client.entity.dom.RGBA getContentOutlineColor() {
+        return this.contentOutlineColor;
+    }
 
     public HighlightFrameRequest(String frameId, jpuppeteer.cdp.client.entity.dom.RGBA contentColor, jpuppeteer.cdp.client.entity.dom.RGBA contentOutlineColor) {
         this.frameId = frameId;
@@ -30,6 +54,9 @@ public class HighlightFrameRequest {
         this.frameId = frameId;
         this.contentColor = null;
         this.contentOutlineColor = null;
+    }
+
+    public HighlightFrameRequest() {
     }
 
 }

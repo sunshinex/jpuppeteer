@@ -7,12 +7,28 @@ public class SafetyTipInfo {
     /**
     * Describes whether the page triggers any safety tips or reputation warnings. Default is unknown.
     */
-    public final jpuppeteer.cdp.client.constant.security.SafetyTipStatus safetyTipStatus;
+    private jpuppeteer.cdp.client.constant.security.SafetyTipStatus safetyTipStatus;
 
     /**
     * The URL the safety tip suggested ("Did you mean?"). Only filled in for lookalike matches.
     */
-    public final String safeUrl;
+    private String safeUrl;
+
+    public void setSafetyTipStatus (jpuppeteer.cdp.client.constant.security.SafetyTipStatus safetyTipStatus) {
+        this.safetyTipStatus = safetyTipStatus;
+    }
+
+    public jpuppeteer.cdp.client.constant.security.SafetyTipStatus getSafetyTipStatus() {
+        return this.safetyTipStatus;
+    }
+
+    public void setSafeUrl (String safeUrl) {
+        this.safeUrl = safeUrl;
+    }
+
+    public String getSafeUrl() {
+        return this.safeUrl;
+    }
 
     public SafetyTipInfo(jpuppeteer.cdp.client.constant.security.SafetyTipStatus safetyTipStatus, String safeUrl) {
         this.safetyTipStatus = safetyTipStatus;
@@ -22,6 +38,9 @@ public class SafetyTipInfo {
     public SafetyTipInfo(jpuppeteer.cdp.client.constant.security.SafetyTipStatus safetyTipStatus) {
         this.safetyTipStatus = safetyTipStatus;
         this.safeUrl = null;
+    }
+
+    public SafetyTipInfo() {
     }
 
 }

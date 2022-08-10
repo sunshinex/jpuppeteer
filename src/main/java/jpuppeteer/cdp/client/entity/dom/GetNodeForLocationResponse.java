@@ -7,17 +7,41 @@ public class GetNodeForLocationResponse {
     /**
     * Resulting node.
     */
-    public final Integer backendNodeId;
+    private Integer backendNodeId;
 
     /**
     * Frame this node belongs to.
     */
-    public final String frameId;
+    private String frameId;
 
     /**
     * Id of the node at given coordinates, only when enabled and requested document.
     */
-    public final Integer nodeId;
+    private Integer nodeId;
+
+    public void setBackendNodeId (Integer backendNodeId) {
+        this.backendNodeId = backendNodeId;
+    }
+
+    public Integer getBackendNodeId() {
+        return this.backendNodeId;
+    }
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
+
+    public void setNodeId (Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public Integer getNodeId() {
+        return this.nodeId;
+    }
 
     public GetNodeForLocationResponse(Integer backendNodeId, String frameId, Integer nodeId) {
         this.backendNodeId = backendNodeId;
@@ -29,6 +53,9 @@ public class GetNodeForLocationResponse {
         this.backendNodeId = backendNodeId;
         this.frameId = frameId;
         this.nodeId = null;
+    }
+
+    public GetNodeForLocationResponse() {
     }
 
 }

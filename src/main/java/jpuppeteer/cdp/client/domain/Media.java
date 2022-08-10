@@ -14,7 +14,7 @@ public class Media {
     /**
     * Enables the Media domain
     */
-    public io.netty.util.concurrent.Future enable() {
+    public jpuppeteer.util.XFuture<?> enable() {
         return connection.send("Media.enable", null);
     }
 
@@ -22,7 +22,7 @@ public class Media {
     /**
     * Disables the Media domain.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("Media.disable", null);
     }
 

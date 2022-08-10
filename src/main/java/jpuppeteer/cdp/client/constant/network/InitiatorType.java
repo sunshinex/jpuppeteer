@@ -23,6 +23,11 @@ public enum InitiatorType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static InitiatorType findByValue(String value) {
         for(InitiatorType val : values()) {
             if (val.value.equals(value)) return val;

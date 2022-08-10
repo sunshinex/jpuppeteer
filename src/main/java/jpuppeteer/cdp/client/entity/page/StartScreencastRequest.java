@@ -7,27 +7,67 @@ public class StartScreencastRequest {
     /**
     * Image compression format.
     */
-    public final jpuppeteer.cdp.client.constant.page.StartScreencastRequestFormat format;
+    private jpuppeteer.cdp.client.constant.page.StartScreencastRequestFormat format;
 
     /**
     * Compression quality from range [0..100].
     */
-    public final Integer quality;
+    private Integer quality;
 
     /**
     * Maximum screenshot width.
     */
-    public final Integer maxWidth;
+    private Integer maxWidth;
 
     /**
     * Maximum screenshot height.
     */
-    public final Integer maxHeight;
+    private Integer maxHeight;
 
     /**
     * Send every n-th frame.
     */
-    public final Integer everyNthFrame;
+    private Integer everyNthFrame;
+
+    public void setFormat (jpuppeteer.cdp.client.constant.page.StartScreencastRequestFormat format) {
+        this.format = format;
+    }
+
+    public jpuppeteer.cdp.client.constant.page.StartScreencastRequestFormat getFormat() {
+        return this.format;
+    }
+
+    public void setQuality (Integer quality) {
+        this.quality = quality;
+    }
+
+    public Integer getQuality() {
+        return this.quality;
+    }
+
+    public void setMaxWidth (Integer maxWidth) {
+        this.maxWidth = maxWidth;
+    }
+
+    public Integer getMaxWidth() {
+        return this.maxWidth;
+    }
+
+    public void setMaxHeight (Integer maxHeight) {
+        this.maxHeight = maxHeight;
+    }
+
+    public Integer getMaxHeight() {
+        return this.maxHeight;
+    }
+
+    public void setEveryNthFrame (Integer everyNthFrame) {
+        this.everyNthFrame = everyNthFrame;
+    }
+
+    public Integer getEveryNthFrame() {
+        return this.everyNthFrame;
+    }
 
     public StartScreencastRequest(jpuppeteer.cdp.client.constant.page.StartScreencastRequestFormat format, Integer quality, Integer maxWidth, Integer maxHeight, Integer everyNthFrame) {
         this.format = format;

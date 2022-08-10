@@ -6,10 +6,21 @@ public class GetFrameOwnerRequest {
 
     /**
     */
-    public final String frameId;
+    private String frameId;
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
 
     public GetFrameOwnerRequest(String frameId) {
         this.frameId = frameId;
+    }
+
+    public GetFrameOwnerRequest() {
     }
 
 }

@@ -7,10 +7,21 @@ public class MoveToResponse {
     /**
     * New id of the moved node.
     */
-    public final Integer nodeId;
+    private Integer nodeId;
+
+    public void setNodeId (Integer nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public Integer getNodeId() {
+        return this.nodeId;
+    }
 
     public MoveToResponse(Integer nodeId) {
         this.nodeId = nodeId;
+    }
+
+    public MoveToResponse() {
     }
 
 }

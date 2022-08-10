@@ -8,10 +8,21 @@ public class LoadSnapshotRequest {
     /**
     * An array of tiles composing the snapshot.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.layertree.PictureTile> tiles;
+    private java.util.List<jpuppeteer.cdp.client.entity.layertree.PictureTile> tiles;
+
+    public void setTiles (java.util.List<jpuppeteer.cdp.client.entity.layertree.PictureTile> tiles) {
+        this.tiles = tiles;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.layertree.PictureTile> getTiles() {
+        return this.tiles;
+    }
 
     public LoadSnapshotRequest(java.util.List<jpuppeteer.cdp.client.entity.layertree.PictureTile> tiles) {
         this.tiles = tiles;
+    }
+
+    public LoadSnapshotRequest() {
     }
 
 }

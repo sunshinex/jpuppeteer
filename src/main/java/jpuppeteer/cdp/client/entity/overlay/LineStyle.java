@@ -9,12 +9,28 @@ public class LineStyle {
     /**
     * The color of the line (default: transparent)
     */
-    public final jpuppeteer.cdp.client.entity.dom.RGBA color;
+    private jpuppeteer.cdp.client.entity.dom.RGBA color;
 
     /**
     * The line pattern (default: solid)
     */
-    public final jpuppeteer.cdp.client.constant.overlay.LineStylePattern pattern;
+    private jpuppeteer.cdp.client.constant.overlay.LineStylePattern pattern;
+
+    public void setColor (jpuppeteer.cdp.client.entity.dom.RGBA color) {
+        this.color = color;
+    }
+
+    public jpuppeteer.cdp.client.entity.dom.RGBA getColor() {
+        return this.color;
+    }
+
+    public void setPattern (jpuppeteer.cdp.client.constant.overlay.LineStylePattern pattern) {
+        this.pattern = pattern;
+    }
+
+    public jpuppeteer.cdp.client.constant.overlay.LineStylePattern getPattern() {
+        return this.pattern;
+    }
 
     public LineStyle(jpuppeteer.cdp.client.entity.dom.RGBA color, jpuppeteer.cdp.client.constant.overlay.LineStylePattern pattern) {
         this.color = color;

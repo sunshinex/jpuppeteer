@@ -6,10 +6,21 @@ public class DomContentEventFiredEvent {
 
     /**
     */
-    public final java.math.BigDecimal timestamp;
+    private java.math.BigDecimal timestamp;
+
+    public void setTimestamp (java.math.BigDecimal timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public java.math.BigDecimal getTimestamp() {
+        return this.timestamp;
+    }
 
     public DomContentEventFiredEvent(java.math.BigDecimal timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public DomContentEventFiredEvent() {
     }
 
 }

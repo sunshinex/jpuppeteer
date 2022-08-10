@@ -21,6 +21,11 @@ public enum CookieSourceScheme implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static CookieSourceScheme findByValue(String value) {
         for(CookieSourceScheme val : values()) {
             if (val.value.equals(value)) return val;

@@ -7,10 +7,21 @@ public class GetCredentialsRequest {
 
     /**
     */
-    public final String authenticatorId;
+    private String authenticatorId;
+
+    public void setAuthenticatorId (String authenticatorId) {
+        this.authenticatorId = authenticatorId;
+    }
+
+    public String getAuthenticatorId() {
+        return this.authenticatorId;
+    }
 
     public GetCredentialsRequest(String authenticatorId) {
         this.authenticatorId = authenticatorId;
+    }
+
+    public GetCredentialsRequest() {
     }
 
 }

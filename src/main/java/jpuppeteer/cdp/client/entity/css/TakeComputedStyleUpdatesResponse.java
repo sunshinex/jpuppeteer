@@ -8,10 +8,21 @@ public class TakeComputedStyleUpdatesResponse {
     /**
     * The list of node Ids that have their tracked computed styles updated
     */
-    public final java.util.List<Integer> nodeIds;
+    private java.util.List<Integer> nodeIds;
+
+    public void setNodeIds (java.util.List<Integer> nodeIds) {
+        this.nodeIds = nodeIds;
+    }
+
+    public java.util.List<Integer> getNodeIds() {
+        return this.nodeIds;
+    }
 
     public TakeComputedStyleUpdatesResponse(java.util.List<Integer> nodeIds) {
         this.nodeIds = nodeIds;
+    }
+
+    public TakeComputedStyleUpdatesResponse() {
     }
 
 }

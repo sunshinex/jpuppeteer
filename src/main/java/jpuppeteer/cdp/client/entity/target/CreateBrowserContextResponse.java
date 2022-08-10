@@ -7,10 +7,21 @@ public class CreateBrowserContextResponse {
     /**
     * The id of the context created.
     */
-    public final String browserContextId;
+    private String browserContextId;
+
+    public void setBrowserContextId (String browserContextId) {
+        this.browserContextId = browserContextId;
+    }
+
+    public String getBrowserContextId() {
+        return this.browserContextId;
+    }
 
     public CreateBrowserContextResponse(String browserContextId) {
         this.browserContextId = browserContextId;
+    }
+
+    public CreateBrowserContextResponse() {
     }
 
 }

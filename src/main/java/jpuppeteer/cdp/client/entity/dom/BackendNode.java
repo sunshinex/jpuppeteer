@@ -8,21 +8,48 @@ public class BackendNode {
     /**
     * `Node`'s nodeType.
     */
-    public final Integer nodeType;
+    private Integer nodeType;
 
     /**
     * `Node`'s nodeName.
     */
-    public final String nodeName;
+    private String nodeName;
 
     /**
     */
-    public final Integer backendNodeId;
+    private Integer backendNodeId;
+
+    public void setNodeType (Integer nodeType) {
+        this.nodeType = nodeType;
+    }
+
+    public Integer getNodeType() {
+        return this.nodeType;
+    }
+
+    public void setNodeName (String nodeName) {
+        this.nodeName = nodeName;
+    }
+
+    public String getNodeName() {
+        return this.nodeName;
+    }
+
+    public void setBackendNodeId (Integer backendNodeId) {
+        this.backendNodeId = backendNodeId;
+    }
+
+    public Integer getBackendNodeId() {
+        return this.backendNodeId;
+    }
 
     public BackendNode(Integer nodeType, String nodeName, Integer backendNodeId) {
         this.nodeType = nodeType;
         this.nodeName = nodeName;
         this.backendNodeId = backendNodeId;
+    }
+
+    public BackendNode() {
     }
 
 }

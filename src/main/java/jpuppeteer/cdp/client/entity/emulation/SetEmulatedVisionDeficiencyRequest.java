@@ -7,10 +7,21 @@ public class SetEmulatedVisionDeficiencyRequest {
     /**
     * Vision deficiency to emulate.
     */
-    public final jpuppeteer.cdp.client.constant.emulation.SetEmulatedVisionDeficiencyRequestType type;
+    private jpuppeteer.cdp.client.constant.emulation.SetEmulatedVisionDeficiencyRequestType type;
+
+    public void setType (jpuppeteer.cdp.client.constant.emulation.SetEmulatedVisionDeficiencyRequestType type) {
+        this.type = type;
+    }
+
+    public jpuppeteer.cdp.client.constant.emulation.SetEmulatedVisionDeficiencyRequestType getType() {
+        return this.type;
+    }
 
     public SetEmulatedVisionDeficiencyRequest(jpuppeteer.cdp.client.constant.emulation.SetEmulatedVisionDeficiencyRequestType type) {
         this.type = type;
+    }
+
+    public SetEmulatedVisionDeficiencyRequest() {
     }
 
 }

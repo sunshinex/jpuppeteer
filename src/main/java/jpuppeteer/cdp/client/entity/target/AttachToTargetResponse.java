@@ -7,10 +7,21 @@ public class AttachToTargetResponse {
     /**
     * Id assigned to the session.
     */
-    public final String sessionId;
+    private String sessionId;
+
+    public void setSessionId (String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getSessionId() {
+        return this.sessionId;
+    }
 
     public AttachToTargetResponse(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public AttachToTargetResponse() {
     }
 
 }

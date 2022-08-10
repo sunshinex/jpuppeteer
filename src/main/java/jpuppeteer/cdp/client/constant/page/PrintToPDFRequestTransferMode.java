@@ -19,6 +19,11 @@ public enum PrintToPDFRequestTransferMode implements jpuppeteer.cdp.client.CDPEn
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static PrintToPDFRequestTransferMode findByValue(String value) {
         for(PrintToPDFRequestTransferMode val : values()) {
             if (val.value.equals(value)) return val;

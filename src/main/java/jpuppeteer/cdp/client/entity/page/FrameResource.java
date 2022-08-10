@@ -8,37 +8,93 @@ public class FrameResource {
     /**
     * Resource URL.
     */
-    public final String url;
+    private String url;
 
     /**
     * Type of this resource.
     */
-    public final jpuppeteer.cdp.client.constant.network.ResourceType type;
+    private jpuppeteer.cdp.client.constant.network.ResourceType type;
 
     /**
     * Resource mimeType as determined by the browser.
     */
-    public final String mimeType;
+    private String mimeType;
 
     /**
     * last-modified timestamp as reported by server.
     */
-    public final java.math.BigDecimal lastModified;
+    private java.math.BigDecimal lastModified;
 
     /**
     * Resource content size.
     */
-    public final java.math.BigDecimal contentSize;
+    private java.math.BigDecimal contentSize;
 
     /**
     * True if the resource failed to load.
     */
-    public final Boolean failed;
+    private Boolean failed;
 
     /**
     * True if the resource was canceled during loading.
     */
-    public final Boolean canceled;
+    private Boolean canceled;
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setType (jpuppeteer.cdp.client.constant.network.ResourceType type) {
+        this.type = type;
+    }
+
+    public jpuppeteer.cdp.client.constant.network.ResourceType getType() {
+        return this.type;
+    }
+
+    public void setMimeType (String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    public String getMimeType() {
+        return this.mimeType;
+    }
+
+    public void setLastModified (java.math.BigDecimal lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public java.math.BigDecimal getLastModified() {
+        return this.lastModified;
+    }
+
+    public void setContentSize (java.math.BigDecimal contentSize) {
+        this.contentSize = contentSize;
+    }
+
+    public java.math.BigDecimal getContentSize() {
+        return this.contentSize;
+    }
+
+    public void setFailed (Boolean failed) {
+        this.failed = failed;
+    }
+
+    public Boolean getFailed() {
+        return this.failed;
+    }
+
+    public void setCanceled (Boolean canceled) {
+        this.canceled = canceled;
+    }
+
+    public Boolean getCanceled() {
+        return this.canceled;
+    }
 
     public FrameResource(String url, jpuppeteer.cdp.client.constant.network.ResourceType type, String mimeType, java.math.BigDecimal lastModified, java.math.BigDecimal contentSize, Boolean failed, Boolean canceled) {
         this.url = url;
@@ -58,6 +114,9 @@ public class FrameResource {
         this.contentSize = null;
         this.failed = null;
         this.canceled = null;
+    }
+
+    public FrameResource() {
     }
 
 }

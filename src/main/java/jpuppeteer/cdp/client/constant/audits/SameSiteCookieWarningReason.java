@@ -26,6 +26,11 @@ public enum SameSiteCookieWarningReason implements jpuppeteer.cdp.client.CDPEnum
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static SameSiteCookieWarningReason findByValue(String value) {
         for(SameSiteCookieWarningReason val : values()) {
             if (val.value.equals(value)) return val;

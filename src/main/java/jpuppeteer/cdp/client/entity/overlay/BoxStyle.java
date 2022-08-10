@@ -9,12 +9,28 @@ public class BoxStyle {
     /**
     * The background color for the box (default: transparent)
     */
-    public final jpuppeteer.cdp.client.entity.dom.RGBA fillColor;
+    private jpuppeteer.cdp.client.entity.dom.RGBA fillColor;
 
     /**
     * The hatching color for the box (default: transparent)
     */
-    public final jpuppeteer.cdp.client.entity.dom.RGBA hatchColor;
+    private jpuppeteer.cdp.client.entity.dom.RGBA hatchColor;
+
+    public void setFillColor (jpuppeteer.cdp.client.entity.dom.RGBA fillColor) {
+        this.fillColor = fillColor;
+    }
+
+    public jpuppeteer.cdp.client.entity.dom.RGBA getFillColor() {
+        return this.fillColor;
+    }
+
+    public void setHatchColor (jpuppeteer.cdp.client.entity.dom.RGBA hatchColor) {
+        this.hatchColor = hatchColor;
+    }
+
+    public jpuppeteer.cdp.client.entity.dom.RGBA getHatchColor() {
+        return this.hatchColor;
+    }
 
     public BoxStyle(jpuppeteer.cdp.client.entity.dom.RGBA fillColor, jpuppeteer.cdp.client.entity.dom.RGBA hatchColor) {
         this.fillColor = fillColor;

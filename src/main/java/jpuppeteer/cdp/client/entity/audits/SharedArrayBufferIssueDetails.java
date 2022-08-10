@@ -8,20 +8,47 @@ public class SharedArrayBufferIssueDetails {
 
     /**
     */
-    public final jpuppeteer.cdp.client.entity.audits.SourceCodeLocation sourceCodeLocation;
+    private jpuppeteer.cdp.client.entity.audits.SourceCodeLocation sourceCodeLocation;
 
     /**
     */
-    public final Boolean isWarning;
+    private Boolean isWarning;
 
     /**
     */
-    public final jpuppeteer.cdp.client.constant.audits.SharedArrayBufferIssueType type;
+    private jpuppeteer.cdp.client.constant.audits.SharedArrayBufferIssueType type;
+
+    public void setSourceCodeLocation (jpuppeteer.cdp.client.entity.audits.SourceCodeLocation sourceCodeLocation) {
+        this.sourceCodeLocation = sourceCodeLocation;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.SourceCodeLocation getSourceCodeLocation() {
+        return this.sourceCodeLocation;
+    }
+
+    public void setIsWarning (Boolean isWarning) {
+        this.isWarning = isWarning;
+    }
+
+    public Boolean getIsWarning() {
+        return this.isWarning;
+    }
+
+    public void setType (jpuppeteer.cdp.client.constant.audits.SharedArrayBufferIssueType type) {
+        this.type = type;
+    }
+
+    public jpuppeteer.cdp.client.constant.audits.SharedArrayBufferIssueType getType() {
+        return this.type;
+    }
 
     public SharedArrayBufferIssueDetails(jpuppeteer.cdp.client.entity.audits.SourceCodeLocation sourceCodeLocation, Boolean isWarning, jpuppeteer.cdp.client.constant.audits.SharedArrayBufferIssueType type) {
         this.sourceCodeLocation = sourceCodeLocation;
         this.isWarning = isWarning;
         this.type = type;
+    }
+
+    public SharedArrayBufferIssueDetails() {
     }
 
 }

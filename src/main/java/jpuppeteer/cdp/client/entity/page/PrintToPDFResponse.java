@@ -7,12 +7,28 @@ public class PrintToPDFResponse {
     /**
     * Base64-encoded pdf data. Empty if |returnAsStream| is specified. (Encoded as a base64 string when passed over JSON)
     */
-    public final String data;
+    private String data;
 
     /**
     * A handle of the stream that holds resulting PDF data.
     */
-    public final String stream;
+    private String stream;
+
+    public void setData (String data) {
+        this.data = data;
+    }
+
+    public String getData() {
+        return this.data;
+    }
+
+    public void setStream (String stream) {
+        this.stream = stream;
+    }
+
+    public String getStream() {
+        return this.stream;
+    }
 
     public PrintToPDFResponse(String data, String stream) {
         this.data = data;
@@ -22,6 +38,9 @@ public class PrintToPDFResponse {
     public PrintToPDFResponse(String data) {
         this.data = data;
         this.stream = null;
+    }
+
+    public PrintToPDFResponse() {
     }
 
 }

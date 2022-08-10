@@ -8,10 +8,21 @@ public class IssueUpdatedEvent {
 
     /**
     */
-    public final String issueMessage;
+    private String issueMessage;
+
+    public void setIssueMessage (String issueMessage) {
+        this.issueMessage = issueMessage;
+    }
+
+    public String getIssueMessage() {
+        return this.issueMessage;
+    }
 
     public IssueUpdatedEvent(String issueMessage) {
         this.issueMessage = issueMessage;
+    }
+
+    public IssueUpdatedEvent() {
     }
 
 }

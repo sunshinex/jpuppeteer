@@ -8,10 +8,21 @@ public class GetObjectByHeapObjectIdResponse {
     /**
     * Evaluation result.
     */
-    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject result;
+    private jpuppeteer.cdp.client.entity.runtime.RemoteObject result;
+
+    public void setResult (jpuppeteer.cdp.client.entity.runtime.RemoteObject result) {
+        this.result = result;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.RemoteObject getResult() {
+        return this.result;
+    }
 
     public GetObjectByHeapObjectIdResponse(jpuppeteer.cdp.client.entity.runtime.RemoteObject result) {
         this.result = result;
+    }
+
+    public GetObjectByHeapObjectIdResponse() {
     }
 
 }

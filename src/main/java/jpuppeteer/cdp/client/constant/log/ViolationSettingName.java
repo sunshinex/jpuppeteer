@@ -24,6 +24,11 @@ public enum ViolationSettingName implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ViolationSettingName findByValue(String value) {
         for(ViolationSettingName val : values()) {
             if (val.value.equals(value)) return val;

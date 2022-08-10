@@ -7,10 +7,21 @@ public class GetRequestPostDataRequest {
     /**
     * Identifier of the network request to get content for.
     */
-    public final String requestId;
+    private String requestId;
+
+    public void setRequestId (String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestId() {
+        return this.requestId;
+    }
 
     public GetRequestPostDataRequest(String requestId) {
         this.requestId = requestId;
+    }
+
+    public GetRequestPostDataRequest() {
     }
 
 }

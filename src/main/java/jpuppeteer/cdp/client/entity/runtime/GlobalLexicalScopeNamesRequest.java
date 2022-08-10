@@ -7,7 +7,15 @@ public class GlobalLexicalScopeNamesRequest {
     /**
     * Specifies in which execution context to lookup global scope variables.
     */
-    public final Integer executionContextId;
+    private Integer executionContextId;
+
+    public void setExecutionContextId (Integer executionContextId) {
+        this.executionContextId = executionContextId;
+    }
+
+    public Integer getExecutionContextId() {
+        return this.executionContextId;
+    }
 
     public GlobalLexicalScopeNamesRequest(Integer executionContextId) {
         this.executionContextId = executionContextId;

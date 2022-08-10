@@ -8,10 +8,21 @@ public class SetShowViewportSizeOnResizeRequest {
     /**
     * Whether to paint size or not.
     */
-    public final Boolean show;
+    private Boolean show;
+
+    public void setShow (Boolean show) {
+        this.show = show;
+    }
+
+    public Boolean getShow() {
+        return this.show;
+    }
 
     public SetShowViewportSizeOnResizeRequest(Boolean show) {
         this.show = show;
+    }
+
+    public SetShowViewportSizeOnResizeRequest() {
     }
 
 }

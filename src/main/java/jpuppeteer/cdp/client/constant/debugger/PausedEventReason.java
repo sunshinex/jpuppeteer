@@ -29,6 +29,11 @@ public enum PausedEventReason implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static PausedEventReason findByValue(String value) {
         for(PausedEventReason val : values()) {
             if (val.value.equals(value)) return val;

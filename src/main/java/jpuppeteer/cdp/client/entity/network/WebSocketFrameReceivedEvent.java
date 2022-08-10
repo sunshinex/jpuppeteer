@@ -8,22 +8,49 @@ public class WebSocketFrameReceivedEvent {
     /**
     * Request identifier.
     */
-    public final String requestId;
+    private String requestId;
 
     /**
     * Timestamp.
     */
-    public final java.math.BigDecimal timestamp;
+    private java.math.BigDecimal timestamp;
 
     /**
     * WebSocket response data.
     */
-    public final jpuppeteer.cdp.client.entity.network.WebSocketFrame response;
+    private jpuppeteer.cdp.client.entity.network.WebSocketFrame response;
+
+    public void setRequestId (String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestId() {
+        return this.requestId;
+    }
+
+    public void setTimestamp (java.math.BigDecimal timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public java.math.BigDecimal getTimestamp() {
+        return this.timestamp;
+    }
+
+    public void setResponse (jpuppeteer.cdp.client.entity.network.WebSocketFrame response) {
+        this.response = response;
+    }
+
+    public jpuppeteer.cdp.client.entity.network.WebSocketFrame getResponse() {
+        return this.response;
+    }
 
     public WebSocketFrameReceivedEvent(String requestId, java.math.BigDecimal timestamp, jpuppeteer.cdp.client.entity.network.WebSocketFrame response) {
         this.requestId = requestId;
         this.timestamp = timestamp;
         this.response = response;
+    }
+
+    public WebSocketFrameReceivedEvent() {
     }
 
 }

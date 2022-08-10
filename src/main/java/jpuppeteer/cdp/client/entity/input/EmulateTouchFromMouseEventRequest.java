@@ -7,47 +7,119 @@ public class EmulateTouchFromMouseEventRequest {
     /**
     * Type of the mouse event.
     */
-    public final jpuppeteer.cdp.client.constant.input.EmulateTouchFromMouseEventRequestType type;
+    private jpuppeteer.cdp.client.constant.input.EmulateTouchFromMouseEventRequestType type;
 
     /**
     * X coordinate of the mouse pointer in DIP.
     */
-    public final Integer x;
+    private Integer x;
 
     /**
     * Y coordinate of the mouse pointer in DIP.
     */
-    public final Integer y;
+    private Integer y;
 
     /**
     * Mouse button. Only "none", "left", "right" are supported.
     */
-    public final jpuppeteer.cdp.client.constant.input.MouseButton button;
+    private jpuppeteer.cdp.client.constant.input.MouseButton button;
 
     /**
     * Time at which the event occurred (default: current time).
     */
-    public final java.math.BigDecimal timestamp;
+    private java.math.BigDecimal timestamp;
 
     /**
     * X delta in DIP for mouse wheel event (default: 0).
     */
-    public final java.math.BigDecimal deltaX;
+    private java.math.BigDecimal deltaX;
 
     /**
     * Y delta in DIP for mouse wheel event (default: 0).
     */
-    public final java.math.BigDecimal deltaY;
+    private java.math.BigDecimal deltaY;
 
     /**
     * Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
     */
-    public final Integer modifiers;
+    private Integer modifiers;
 
     /**
     * Number of times the mouse button was clicked (default: 0).
     */
-    public final Integer clickCount;
+    private Integer clickCount;
+
+    public void setType (jpuppeteer.cdp.client.constant.input.EmulateTouchFromMouseEventRequestType type) {
+        this.type = type;
+    }
+
+    public jpuppeteer.cdp.client.constant.input.EmulateTouchFromMouseEventRequestType getType() {
+        return this.type;
+    }
+
+    public void setX (Integer x) {
+        this.x = x;
+    }
+
+    public Integer getX() {
+        return this.x;
+    }
+
+    public void setY (Integer y) {
+        this.y = y;
+    }
+
+    public Integer getY() {
+        return this.y;
+    }
+
+    public void setButton (jpuppeteer.cdp.client.constant.input.MouseButton button) {
+        this.button = button;
+    }
+
+    public jpuppeteer.cdp.client.constant.input.MouseButton getButton() {
+        return this.button;
+    }
+
+    public void setTimestamp (java.math.BigDecimal timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public java.math.BigDecimal getTimestamp() {
+        return this.timestamp;
+    }
+
+    public void setDeltaX (java.math.BigDecimal deltaX) {
+        this.deltaX = deltaX;
+    }
+
+    public java.math.BigDecimal getDeltaX() {
+        return this.deltaX;
+    }
+
+    public void setDeltaY (java.math.BigDecimal deltaY) {
+        this.deltaY = deltaY;
+    }
+
+    public java.math.BigDecimal getDeltaY() {
+        return this.deltaY;
+    }
+
+    public void setModifiers (Integer modifiers) {
+        this.modifiers = modifiers;
+    }
+
+    public Integer getModifiers() {
+        return this.modifiers;
+    }
+
+    public void setClickCount (Integer clickCount) {
+        this.clickCount = clickCount;
+    }
+
+    public Integer getClickCount() {
+        return this.clickCount;
+    }
 
     public EmulateTouchFromMouseEventRequest(jpuppeteer.cdp.client.constant.input.EmulateTouchFromMouseEventRequestType type, Integer x, Integer y, jpuppeteer.cdp.client.constant.input.MouseButton button, java.math.BigDecimal timestamp, java.math.BigDecimal deltaX, java.math.BigDecimal deltaY, Integer modifiers, Integer clickCount) {
         this.type = type;
@@ -71,6 +143,9 @@ public class EmulateTouchFromMouseEventRequest {
         this.deltaY = null;
         this.modifiers = null;
         this.clickCount = null;
+    }
+
+    public EmulateTouchFromMouseEventRequest() {
     }
 
 }

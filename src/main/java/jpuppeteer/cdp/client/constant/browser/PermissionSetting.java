@@ -20,6 +20,11 @@ public enum PermissionSetting implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static PermissionSetting findByValue(String value) {
         for(PermissionSetting val : values()) {
             if (val.value.equals(value)) return val;

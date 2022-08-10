@@ -9,141 +9,365 @@ public class DOMNode {
     /**
     * `Node`'s nodeType.
     */
-    public final Integer nodeType;
+    private Integer nodeType;
 
     /**
     * `Node`'s nodeName.
     */
-    public final String nodeName;
+    private String nodeName;
 
     /**
     * `Node`'s nodeValue.
     */
-    public final String nodeValue;
+    private String nodeValue;
 
     /**
     * Only set for textarea elements, contains the text value.
     */
-    public final String textValue;
+    private String textValue;
 
     /**
     * Only set for input elements, contains the input's associated text value.
     */
-    public final String inputValue;
+    private String inputValue;
 
     /**
     * Only set for radio and checkbox input elements, indicates if the element has been checked
     */
-    public final Boolean inputChecked;
+    private Boolean inputChecked;
 
     /**
     * Only set for option elements, indicates if the element has been selected
     */
-    public final Boolean optionSelected;
+    private Boolean optionSelected;
 
     /**
     * `Node`'s id, corresponds to DOM.Node.backendNodeId.
     */
-    public final Integer backendNodeId;
+    private Integer backendNodeId;
 
     /**
     * The indexes of the node's child nodes in the `domNodes` array returned by `getSnapshot`, if any.
     */
-    public final java.util.List<Integer> childNodeIndexes;
+    private java.util.List<Integer> childNodeIndexes;
 
     /**
     * Attributes of an `Element` node.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.domsnapshot.NameValue> attributes;
+    private java.util.List<jpuppeteer.cdp.client.entity.domsnapshot.NameValue> attributes;
 
     /**
     * Indexes of pseudo elements associated with this node in the `domNodes` array returned by `getSnapshot`, if any.
     */
-    public final java.util.List<Integer> pseudoElementIndexes;
+    private java.util.List<Integer> pseudoElementIndexes;
 
     /**
     * The index of the node's related layout tree node in the `layoutTreeNodes` array returned by `getSnapshot`, if any.
     */
-    public final Integer layoutNodeIndex;
+    private Integer layoutNodeIndex;
 
     /**
     * Document URL that `Document` or `FrameOwner` node points to.
     */
-    public final String documentURL;
+    private String documentURL;
 
     /**
     * Base URL that `Document` or `FrameOwner` node uses for URL completion.
     */
-    public final String baseURL;
+    private String baseURL;
 
     /**
     * Only set for documents, contains the document's content language.
     */
-    public final String contentLanguage;
+    private String contentLanguage;
 
     /**
     * Only set for documents, contains the document's character set encoding.
     */
-    public final String documentEncoding;
+    private String documentEncoding;
 
     /**
     * `DocumentType` node's publicId.
     */
-    public final String publicId;
+    private String publicId;
 
     /**
     * `DocumentType` node's systemId.
     */
-    public final String systemId;
+    private String systemId;
 
     /**
     * Frame ID for frame owner elements and also for the document node.
     */
-    public final String frameId;
+    private String frameId;
 
     /**
     * The index of a frame owner element's content document in the `domNodes` array returned by `getSnapshot`, if any.
     */
-    public final Integer contentDocumentIndex;
+    private Integer contentDocumentIndex;
 
     /**
     * Type of a pseudo element node.
     */
-    public final jpuppeteer.cdp.client.constant.dom.PseudoType pseudoType;
+    private jpuppeteer.cdp.client.constant.dom.PseudoType pseudoType;
 
     /**
     * Shadow root type.
     */
-    public final jpuppeteer.cdp.client.constant.dom.ShadowRootType shadowRootType;
+    private jpuppeteer.cdp.client.constant.dom.ShadowRootType shadowRootType;
 
     /**
     * Whether this DOM node responds to mouse clicks. This includes nodes that have had click event listeners attached via JavaScript as well as anchor tags that naturally navigate when clicked.
     */
-    public final Boolean isClickable;
+    private Boolean isClickable;
 
     /**
     * Details of the node's event listeners, if any.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.domdebugger.EventListener> eventListeners;
+    private java.util.List<jpuppeteer.cdp.client.entity.domdebugger.EventListener> eventListeners;
 
     /**
     * The selected url for nodes with a srcset attribute.
     */
-    public final String currentSourceURL;
+    private String currentSourceURL;
 
     /**
     * The url of the script (if any) that generates this node.
     */
-    public final String originURL;
+    private String originURL;
 
     /**
     * Scroll offsets, set when this node is a Document.
     */
-    public final java.math.BigDecimal scrollOffsetX;
+    private java.math.BigDecimal scrollOffsetX;
 
     /**
     */
-    public final java.math.BigDecimal scrollOffsetY;
+    private java.math.BigDecimal scrollOffsetY;
+
+    public void setNodeType (Integer nodeType) {
+        this.nodeType = nodeType;
+    }
+
+    public Integer getNodeType() {
+        return this.nodeType;
+    }
+
+    public void setNodeName (String nodeName) {
+        this.nodeName = nodeName;
+    }
+
+    public String getNodeName() {
+        return this.nodeName;
+    }
+
+    public void setNodeValue (String nodeValue) {
+        this.nodeValue = nodeValue;
+    }
+
+    public String getNodeValue() {
+        return this.nodeValue;
+    }
+
+    public void setTextValue (String textValue) {
+        this.textValue = textValue;
+    }
+
+    public String getTextValue() {
+        return this.textValue;
+    }
+
+    public void setInputValue (String inputValue) {
+        this.inputValue = inputValue;
+    }
+
+    public String getInputValue() {
+        return this.inputValue;
+    }
+
+    public void setInputChecked (Boolean inputChecked) {
+        this.inputChecked = inputChecked;
+    }
+
+    public Boolean getInputChecked() {
+        return this.inputChecked;
+    }
+
+    public void setOptionSelected (Boolean optionSelected) {
+        this.optionSelected = optionSelected;
+    }
+
+    public Boolean getOptionSelected() {
+        return this.optionSelected;
+    }
+
+    public void setBackendNodeId (Integer backendNodeId) {
+        this.backendNodeId = backendNodeId;
+    }
+
+    public Integer getBackendNodeId() {
+        return this.backendNodeId;
+    }
+
+    public void setChildNodeIndexes (java.util.List<Integer> childNodeIndexes) {
+        this.childNodeIndexes = childNodeIndexes;
+    }
+
+    public java.util.List<Integer> getChildNodeIndexes() {
+        return this.childNodeIndexes;
+    }
+
+    public void setAttributes (java.util.List<jpuppeteer.cdp.client.entity.domsnapshot.NameValue> attributes) {
+        this.attributes = attributes;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.domsnapshot.NameValue> getAttributes() {
+        return this.attributes;
+    }
+
+    public void setPseudoElementIndexes (java.util.List<Integer> pseudoElementIndexes) {
+        this.pseudoElementIndexes = pseudoElementIndexes;
+    }
+
+    public java.util.List<Integer> getPseudoElementIndexes() {
+        return this.pseudoElementIndexes;
+    }
+
+    public void setLayoutNodeIndex (Integer layoutNodeIndex) {
+        this.layoutNodeIndex = layoutNodeIndex;
+    }
+
+    public Integer getLayoutNodeIndex() {
+        return this.layoutNodeIndex;
+    }
+
+    public void setDocumentURL (String documentURL) {
+        this.documentURL = documentURL;
+    }
+
+    public String getDocumentURL() {
+        return this.documentURL;
+    }
+
+    public void setBaseURL (String baseURL) {
+        this.baseURL = baseURL;
+    }
+
+    public String getBaseURL() {
+        return this.baseURL;
+    }
+
+    public void setContentLanguage (String contentLanguage) {
+        this.contentLanguage = contentLanguage;
+    }
+
+    public String getContentLanguage() {
+        return this.contentLanguage;
+    }
+
+    public void setDocumentEncoding (String documentEncoding) {
+        this.documentEncoding = documentEncoding;
+    }
+
+    public String getDocumentEncoding() {
+        return this.documentEncoding;
+    }
+
+    public void setPublicId (String publicId) {
+        this.publicId = publicId;
+    }
+
+    public String getPublicId() {
+        return this.publicId;
+    }
+
+    public void setSystemId (String systemId) {
+        this.systemId = systemId;
+    }
+
+    public String getSystemId() {
+        return this.systemId;
+    }
+
+    public void setFrameId (String frameId) {
+        this.frameId = frameId;
+    }
+
+    public String getFrameId() {
+        return this.frameId;
+    }
+
+    public void setContentDocumentIndex (Integer contentDocumentIndex) {
+        this.contentDocumentIndex = contentDocumentIndex;
+    }
+
+    public Integer getContentDocumentIndex() {
+        return this.contentDocumentIndex;
+    }
+
+    public void setPseudoType (jpuppeteer.cdp.client.constant.dom.PseudoType pseudoType) {
+        this.pseudoType = pseudoType;
+    }
+
+    public jpuppeteer.cdp.client.constant.dom.PseudoType getPseudoType() {
+        return this.pseudoType;
+    }
+
+    public void setShadowRootType (jpuppeteer.cdp.client.constant.dom.ShadowRootType shadowRootType) {
+        this.shadowRootType = shadowRootType;
+    }
+
+    public jpuppeteer.cdp.client.constant.dom.ShadowRootType getShadowRootType() {
+        return this.shadowRootType;
+    }
+
+    public void setIsClickable (Boolean isClickable) {
+        this.isClickable = isClickable;
+    }
+
+    public Boolean getIsClickable() {
+        return this.isClickable;
+    }
+
+    public void setEventListeners (java.util.List<jpuppeteer.cdp.client.entity.domdebugger.EventListener> eventListeners) {
+        this.eventListeners = eventListeners;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.domdebugger.EventListener> getEventListeners() {
+        return this.eventListeners;
+    }
+
+    public void setCurrentSourceURL (String currentSourceURL) {
+        this.currentSourceURL = currentSourceURL;
+    }
+
+    public String getCurrentSourceURL() {
+        return this.currentSourceURL;
+    }
+
+    public void setOriginURL (String originURL) {
+        this.originURL = originURL;
+    }
+
+    public String getOriginURL() {
+        return this.originURL;
+    }
+
+    public void setScrollOffsetX (java.math.BigDecimal scrollOffsetX) {
+        this.scrollOffsetX = scrollOffsetX;
+    }
+
+    public java.math.BigDecimal getScrollOffsetX() {
+        return this.scrollOffsetX;
+    }
+
+    public void setScrollOffsetY (java.math.BigDecimal scrollOffsetY) {
+        this.scrollOffsetY = scrollOffsetY;
+    }
+
+    public java.math.BigDecimal getScrollOffsetY() {
+        return this.scrollOffsetY;
+    }
 
     public DOMNode(Integer nodeType, String nodeName, String nodeValue, String textValue, String inputValue, Boolean inputChecked, Boolean optionSelected, Integer backendNodeId, java.util.List<Integer> childNodeIndexes, java.util.List<jpuppeteer.cdp.client.entity.domsnapshot.NameValue> attributes, java.util.List<Integer> pseudoElementIndexes, Integer layoutNodeIndex, String documentURL, String baseURL, String contentLanguage, String documentEncoding, String publicId, String systemId, String frameId, Integer contentDocumentIndex, jpuppeteer.cdp.client.constant.dom.PseudoType pseudoType, jpuppeteer.cdp.client.constant.dom.ShadowRootType shadowRootType, Boolean isClickable, java.util.List<jpuppeteer.cdp.client.entity.domdebugger.EventListener> eventListeners, String currentSourceURL, String originURL, java.math.BigDecimal scrollOffsetX, java.math.BigDecimal scrollOffsetY) {
         this.nodeType = nodeType;
@@ -205,6 +429,9 @@ public class DOMNode {
         this.originURL = null;
         this.scrollOffsetX = null;
         this.scrollOffsetY = null;
+    }
+
+    public DOMNode() {
     }
 
 }

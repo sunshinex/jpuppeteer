@@ -35,6 +35,11 @@ public enum ResourceType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static ResourceType findByValue(String value) {
         for(ResourceType val : values()) {
             if (val.value.equals(value)) return val;

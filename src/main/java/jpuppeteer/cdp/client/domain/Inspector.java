@@ -14,7 +14,7 @@ public class Inspector {
     /**
     * Disables inspector domain notifications.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("Inspector.disable", null);
     }
 
@@ -22,7 +22,7 @@ public class Inspector {
     /**
     * Enables inspector domain notifications.
     */
-    public io.netty.util.concurrent.Future enable() {
+    public jpuppeteer.util.XFuture<?> enable() {
         return connection.send("Inspector.enable", null);
     }
 

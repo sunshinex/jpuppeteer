@@ -24,6 +24,11 @@ public enum BlockedByResponseReason implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static BlockedByResponseReason findByValue(String value) {
         for(BlockedByResponseReason val : values()) {
             if (val.value.equals(value)) return val;

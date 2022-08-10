@@ -8,32 +8,80 @@ public class MixedContentIssueDetails {
     /**
     * The type of resource causing the mixed content issue (css, js, iframe, form,...). Marked as optional because it is mapped to from blink::mojom::RequestContextType, which will be replaced by network::mojom::RequestDestination
     */
-    public final jpuppeteer.cdp.client.constant.audits.MixedContentResourceType resourceType;
+    private jpuppeteer.cdp.client.constant.audits.MixedContentResourceType resourceType;
 
     /**
     * The way the mixed content issue is being resolved.
     */
-    public final jpuppeteer.cdp.client.constant.audits.MixedContentResolutionStatus resolutionStatus;
+    private jpuppeteer.cdp.client.constant.audits.MixedContentResolutionStatus resolutionStatus;
 
     /**
     * The unsafe http url causing the mixed content issue.
     */
-    public final String insecureURL;
+    private String insecureURL;
 
     /**
     * The url responsible for the call to an unsafe url.
     */
-    public final String mainResourceURL;
+    private String mainResourceURL;
 
     /**
     * The mixed content request. Does not always exist (e.g. for unsafe form submission urls).
     */
-    public final jpuppeteer.cdp.client.entity.audits.AffectedRequest request;
+    private jpuppeteer.cdp.client.entity.audits.AffectedRequest request;
 
     /**
     * Optional because not every mixed content issue is necessarily linked to a frame.
     */
-    public final jpuppeteer.cdp.client.entity.audits.AffectedFrame frame;
+    private jpuppeteer.cdp.client.entity.audits.AffectedFrame frame;
+
+    public void setResourceType (jpuppeteer.cdp.client.constant.audits.MixedContentResourceType resourceType) {
+        this.resourceType = resourceType;
+    }
+
+    public jpuppeteer.cdp.client.constant.audits.MixedContentResourceType getResourceType() {
+        return this.resourceType;
+    }
+
+    public void setResolutionStatus (jpuppeteer.cdp.client.constant.audits.MixedContentResolutionStatus resolutionStatus) {
+        this.resolutionStatus = resolutionStatus;
+    }
+
+    public jpuppeteer.cdp.client.constant.audits.MixedContentResolutionStatus getResolutionStatus() {
+        return this.resolutionStatus;
+    }
+
+    public void setInsecureURL (String insecureURL) {
+        this.insecureURL = insecureURL;
+    }
+
+    public String getInsecureURL() {
+        return this.insecureURL;
+    }
+
+    public void setMainResourceURL (String mainResourceURL) {
+        this.mainResourceURL = mainResourceURL;
+    }
+
+    public String getMainResourceURL() {
+        return this.mainResourceURL;
+    }
+
+    public void setRequest (jpuppeteer.cdp.client.entity.audits.AffectedRequest request) {
+        this.request = request;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.AffectedRequest getRequest() {
+        return this.request;
+    }
+
+    public void setFrame (jpuppeteer.cdp.client.entity.audits.AffectedFrame frame) {
+        this.frame = frame;
+    }
+
+    public jpuppeteer.cdp.client.entity.audits.AffectedFrame getFrame() {
+        return this.frame;
+    }
 
     public MixedContentIssueDetails(jpuppeteer.cdp.client.constant.audits.MixedContentResourceType resourceType, jpuppeteer.cdp.client.constant.audits.MixedContentResolutionStatus resolutionStatus, String insecureURL, String mainResourceURL, jpuppeteer.cdp.client.entity.audits.AffectedRequest request, jpuppeteer.cdp.client.entity.audits.AffectedFrame frame) {
         this.resourceType = resourceType;
@@ -51,6 +99,9 @@ public class MixedContentIssueDetails {
         this.mainResourceURL = mainResourceURL;
         this.request = null;
         this.frame = null;
+    }
+
+    public MixedContentIssueDetails() {
     }
 
 }

@@ -7,10 +7,21 @@ public class CreateIsolatedWorldResponse {
     /**
     * Execution context of the isolated world.
     */
-    public final Integer executionContextId;
+    private Integer executionContextId;
+
+    public void setExecutionContextId (Integer executionContextId) {
+        this.executionContextId = executionContextId;
+    }
+
+    public Integer getExecutionContextId() {
+        return this.executionContextId;
+    }
 
     public CreateIsolatedWorldResponse(Integer executionContextId) {
         this.executionContextId = executionContextId;
+    }
+
+    public CreateIsolatedWorldResponse() {
     }
 
 }

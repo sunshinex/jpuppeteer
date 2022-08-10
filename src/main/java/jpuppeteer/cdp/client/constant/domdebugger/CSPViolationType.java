@@ -20,6 +20,11 @@ public enum CSPViolationType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static CSPViolationType findByValue(String value) {
         for(CSPViolationType val : values()) {
             if (val.value.equals(value)) return val;

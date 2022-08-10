@@ -7,67 +7,171 @@ public class SetCookieRequest {
     /**
     * Cookie name.
     */
-    public final String name;
+    private String name;
 
     /**
     * Cookie value.
     */
-    public final String value;
+    private String value;
 
     /**
     * The request-URI to associate with the setting of the cookie. This value can affect the default domain, path, source port, and source scheme values of the created cookie.
     */
-    public final String url;
+    private String url;
 
     /**
     * Cookie domain.
     */
-    public final String domain;
+    private String domain;
 
     /**
     * Cookie path.
     */
-    public final String path;
+    private String path;
 
     /**
     * True if cookie is secure.
     */
-    public final Boolean secure;
+    private Boolean secure;
 
     /**
     * True if cookie is http-only.
     */
-    public final Boolean httpOnly;
+    private Boolean httpOnly;
 
     /**
     * Cookie SameSite type.
     */
-    public final jpuppeteer.cdp.client.constant.network.CookieSameSite sameSite;
+    private jpuppeteer.cdp.client.constant.network.CookieSameSite sameSite;
 
     /**
     * Cookie expiration date, session cookie if not set
     */
-    public final java.math.BigDecimal expires;
+    private java.math.BigDecimal expires;
 
     /**
     * Cookie Priority type.
     */
-    public final jpuppeteer.cdp.client.constant.network.CookiePriority priority;
+    private jpuppeteer.cdp.client.constant.network.CookiePriority priority;
 
     /**
     * True if cookie is SameParty.
     */
-    public final Boolean sameParty;
+    private Boolean sameParty;
 
     /**
     * Cookie source scheme type.
     */
-    public final jpuppeteer.cdp.client.constant.network.CookieSourceScheme sourceScheme;
+    private jpuppeteer.cdp.client.constant.network.CookieSourceScheme sourceScheme;
 
     /**
     * Cookie source port. Valid values are {-1, [1, 65535]}, -1 indicates an unspecified port. An unspecified port value allows protocol clients to emulate legacy cookie scope for the port. This is a temporary ability and it will be removed in the future.
     */
-    public final Integer sourcePort;
+    private Integer sourcePort;
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setValue (String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setDomain (String domain) {
+        this.domain = domain;
+    }
+
+    public String getDomain() {
+        return this.domain;
+    }
+
+    public void setPath (String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return this.path;
+    }
+
+    public void setSecure (Boolean secure) {
+        this.secure = secure;
+    }
+
+    public Boolean getSecure() {
+        return this.secure;
+    }
+
+    public void setHttpOnly (Boolean httpOnly) {
+        this.httpOnly = httpOnly;
+    }
+
+    public Boolean getHttpOnly() {
+        return this.httpOnly;
+    }
+
+    public void setSameSite (jpuppeteer.cdp.client.constant.network.CookieSameSite sameSite) {
+        this.sameSite = sameSite;
+    }
+
+    public jpuppeteer.cdp.client.constant.network.CookieSameSite getSameSite() {
+        return this.sameSite;
+    }
+
+    public void setExpires (java.math.BigDecimal expires) {
+        this.expires = expires;
+    }
+
+    public java.math.BigDecimal getExpires() {
+        return this.expires;
+    }
+
+    public void setPriority (jpuppeteer.cdp.client.constant.network.CookiePriority priority) {
+        this.priority = priority;
+    }
+
+    public jpuppeteer.cdp.client.constant.network.CookiePriority getPriority() {
+        return this.priority;
+    }
+
+    public void setSameParty (Boolean sameParty) {
+        this.sameParty = sameParty;
+    }
+
+    public Boolean getSameParty() {
+        return this.sameParty;
+    }
+
+    public void setSourceScheme (jpuppeteer.cdp.client.constant.network.CookieSourceScheme sourceScheme) {
+        this.sourceScheme = sourceScheme;
+    }
+
+    public jpuppeteer.cdp.client.constant.network.CookieSourceScheme getSourceScheme() {
+        return this.sourceScheme;
+    }
+
+    public void setSourcePort (Integer sourcePort) {
+        this.sourcePort = sourcePort;
+    }
+
+    public Integer getSourcePort() {
+        return this.sourcePort;
+    }
 
     public SetCookieRequest(String name, String value, String url, String domain, String path, Boolean secure, Boolean httpOnly, jpuppeteer.cdp.client.constant.network.CookieSameSite sameSite, java.math.BigDecimal expires, jpuppeteer.cdp.client.constant.network.CookiePriority priority, Boolean sameParty, jpuppeteer.cdp.client.constant.network.CookieSourceScheme sourceScheme, Integer sourcePort) {
         this.name = name;
@@ -99,6 +203,9 @@ public class SetCookieRequest {
         this.sameParty = null;
         this.sourceScheme = null;
         this.sourcePort = null;
+    }
+
+    public SetCookieRequest() {
     }
 
 }

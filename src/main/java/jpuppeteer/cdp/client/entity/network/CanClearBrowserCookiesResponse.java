@@ -7,10 +7,21 @@ public class CanClearBrowserCookiesResponse {
     /**
     * True if browser cookies can be cleared.
     */
-    public final Boolean result;
+    private Boolean result;
+
+    public void setResult (Boolean result) {
+        this.result = result;
+    }
+
+    public Boolean getResult() {
+        return this.result;
+    }
 
     public CanClearBrowserCookiesResponse(Boolean result) {
         this.result = result;
+    }
+
+    public CanClearBrowserCookiesResponse() {
     }
 
 }

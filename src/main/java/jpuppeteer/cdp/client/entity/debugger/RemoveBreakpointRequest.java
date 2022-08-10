@@ -6,10 +6,21 @@ public class RemoveBreakpointRequest {
 
     /**
     */
-    public final String breakpointId;
+    private String breakpointId;
+
+    public void setBreakpointId (String breakpointId) {
+        this.breakpointId = breakpointId;
+    }
+
+    public String getBreakpointId() {
+        return this.breakpointId;
+    }
 
     public RemoveBreakpointRequest(String breakpointId) {
         this.breakpointId = breakpointId;
+    }
+
+    public RemoveBreakpointRequest() {
     }
 
 }

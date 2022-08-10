@@ -9,11 +9,27 @@ public class AffectedRequest {
     /**
     * The unique request id.
     */
-    public final String requestId;
+    private String requestId;
 
     /**
     */
-    public final String url;
+    private String url;
+
+    public void setRequestId (String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestId() {
+        return this.requestId;
+    }
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
 
     public AffectedRequest(String requestId, String url) {
         this.requestId = requestId;
@@ -23,6 +39,9 @@ public class AffectedRequest {
     public AffectedRequest(String requestId) {
         this.requestId = requestId;
         this.url = null;
+    }
+
+    public AffectedRequest() {
     }
 
 }

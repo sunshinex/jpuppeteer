@@ -7,22 +7,54 @@ public class GetPropertiesResponse {
     /**
     * Object properties.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyDescriptor> result;
+    private java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyDescriptor> result;
 
     /**
     * Internal object properties (only of the element itself).
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.runtime.InternalPropertyDescriptor> internalProperties;
+    private java.util.List<jpuppeteer.cdp.client.entity.runtime.InternalPropertyDescriptor> internalProperties;
 
     /**
     * Object private properties.
     */
-    public final java.util.List<jpuppeteer.cdp.client.entity.runtime.PrivatePropertyDescriptor> privateProperties;
+    private java.util.List<jpuppeteer.cdp.client.entity.runtime.PrivatePropertyDescriptor> privateProperties;
 
     /**
     * Exception details.
     */
-    public final jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails;
+    private jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails;
+
+    public void setResult (java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyDescriptor> result) {
+        this.result = result;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyDescriptor> getResult() {
+        return this.result;
+    }
+
+    public void setInternalProperties (java.util.List<jpuppeteer.cdp.client.entity.runtime.InternalPropertyDescriptor> internalProperties) {
+        this.internalProperties = internalProperties;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.runtime.InternalPropertyDescriptor> getInternalProperties() {
+        return this.internalProperties;
+    }
+
+    public void setPrivateProperties (java.util.List<jpuppeteer.cdp.client.entity.runtime.PrivatePropertyDescriptor> privateProperties) {
+        this.privateProperties = privateProperties;
+    }
+
+    public java.util.List<jpuppeteer.cdp.client.entity.runtime.PrivatePropertyDescriptor> getPrivateProperties() {
+        return this.privateProperties;
+    }
+
+    public void setExceptionDetails (jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails) {
+        this.exceptionDetails = exceptionDetails;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.ExceptionDetails getExceptionDetails() {
+        return this.exceptionDetails;
+    }
 
     public GetPropertiesResponse(java.util.List<jpuppeteer.cdp.client.entity.runtime.PropertyDescriptor> result, java.util.List<jpuppeteer.cdp.client.entity.runtime.InternalPropertyDescriptor> internalProperties, java.util.List<jpuppeteer.cdp.client.entity.runtime.PrivatePropertyDescriptor> privateProperties, jpuppeteer.cdp.client.entity.runtime.ExceptionDetails exceptionDetails) {
         this.result = result;
@@ -36,6 +68,9 @@ public class GetPropertiesResponse {
         this.internalProperties = null;
         this.privateProperties = null;
         this.exceptionDetails = null;
+    }
+
+    public GetPropertiesResponse() {
     }
 
 }

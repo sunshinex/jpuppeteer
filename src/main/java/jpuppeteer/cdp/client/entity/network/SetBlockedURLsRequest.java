@@ -7,10 +7,21 @@ public class SetBlockedURLsRequest {
     /**
     * URL patterns to block. Wildcards ('*') are allowed.
     */
-    public final java.util.List<String> urls;
+    private java.util.List<String> urls;
+
+    public void setUrls (java.util.List<String> urls) {
+        this.urls = urls;
+    }
+
+    public java.util.List<String> getUrls() {
+        return this.urls;
+    }
 
     public SetBlockedURLsRequest(java.util.List<String> urls) {
         this.urls = urls;
+    }
+
+    public SetBlockedURLsRequest() {
     }
 
 }

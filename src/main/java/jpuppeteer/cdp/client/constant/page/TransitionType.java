@@ -31,6 +31,11 @@ public enum TransitionType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static TransitionType findByValue(String value) {
         for(TransitionType val : values()) {
             if (val.value.equals(value)) return val;

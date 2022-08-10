@@ -14,7 +14,7 @@ public class Console {
     /**
     * Does nothing.
     */
-    public io.netty.util.concurrent.Future clearMessages() {
+    public jpuppeteer.util.XFuture<?> clearMessages() {
         return connection.send("Console.clearMessages", null);
     }
 
@@ -22,7 +22,7 @@ public class Console {
     /**
     * Disables console domain, prevents further console messages from being reported to the client.
     */
-    public io.netty.util.concurrent.Future disable() {
+    public jpuppeteer.util.XFuture<?> disable() {
         return connection.send("Console.disable", null);
     }
 
@@ -30,7 +30,7 @@ public class Console {
     /**
     * Enables console domain, sends the messages collected so far to the client by means of the `messageAdded` notification.
     */
-    public io.netty.util.concurrent.Future enable() {
+    public jpuppeteer.util.XFuture<?> enable() {
         return connection.send("Console.enable", null);
     }
 

@@ -8,52 +8,132 @@ public class PropertyDescriptor {
     /**
     * Property name or symbol description.
     */
-    public final String name;
+    private String name;
 
     /**
     * The value associated with the property.
     */
-    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject value;
+    private jpuppeteer.cdp.client.entity.runtime.RemoteObject value;
 
     /**
     * True if the value associated with the property may be changed (data descriptors only).
     */
-    public final Boolean writable;
+    private Boolean writable;
 
     /**
     * A function which serves as a getter for the property, or `undefined` if there is no getter (accessor descriptors only).
     */
-    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject get;
+    private jpuppeteer.cdp.client.entity.runtime.RemoteObject get;
 
     /**
     * A function which serves as a setter for the property, or `undefined` if there is no setter (accessor descriptors only).
     */
-    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject set;
+    private jpuppeteer.cdp.client.entity.runtime.RemoteObject set;
 
     /**
     * True if the type of this property descriptor may be changed and if the property may be deleted from the corresponding object.
     */
-    public final Boolean configurable;
+    private Boolean configurable;
 
     /**
     * True if this property shows up during enumeration of the properties on the corresponding object.
     */
-    public final Boolean enumerable;
+    private Boolean enumerable;
 
     /**
     * True if the result was thrown during the evaluation.
     */
-    public final Boolean wasThrown;
+    private Boolean wasThrown;
 
     /**
     * True if the property is owned for the object.
     */
-    public final Boolean isOwn;
+    private Boolean isOwn;
 
     /**
     * Property symbol object, if the property is of the `symbol` type.
     */
-    public final jpuppeteer.cdp.client.entity.runtime.RemoteObject symbol;
+    private jpuppeteer.cdp.client.entity.runtime.RemoteObject symbol;
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setValue (jpuppeteer.cdp.client.entity.runtime.RemoteObject value) {
+        this.value = value;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.RemoteObject getValue() {
+        return this.value;
+    }
+
+    public void setWritable (Boolean writable) {
+        this.writable = writable;
+    }
+
+    public Boolean getWritable() {
+        return this.writable;
+    }
+
+    public void setGet (jpuppeteer.cdp.client.entity.runtime.RemoteObject get) {
+        this.get = get;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.RemoteObject getGet() {
+        return this.get;
+    }
+
+    public void setSet (jpuppeteer.cdp.client.entity.runtime.RemoteObject set) {
+        this.set = set;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.RemoteObject getSet() {
+        return this.set;
+    }
+
+    public void setConfigurable (Boolean configurable) {
+        this.configurable = configurable;
+    }
+
+    public Boolean getConfigurable() {
+        return this.configurable;
+    }
+
+    public void setEnumerable (Boolean enumerable) {
+        this.enumerable = enumerable;
+    }
+
+    public Boolean getEnumerable() {
+        return this.enumerable;
+    }
+
+    public void setWasThrown (Boolean wasThrown) {
+        this.wasThrown = wasThrown;
+    }
+
+    public Boolean getWasThrown() {
+        return this.wasThrown;
+    }
+
+    public void setIsOwn (Boolean isOwn) {
+        this.isOwn = isOwn;
+    }
+
+    public Boolean getIsOwn() {
+        return this.isOwn;
+    }
+
+    public void setSymbol (jpuppeteer.cdp.client.entity.runtime.RemoteObject symbol) {
+        this.symbol = symbol;
+    }
+
+    public jpuppeteer.cdp.client.entity.runtime.RemoteObject getSymbol() {
+        return this.symbol;
+    }
 
     public PropertyDescriptor(String name, jpuppeteer.cdp.client.entity.runtime.RemoteObject value, Boolean writable, jpuppeteer.cdp.client.entity.runtime.RemoteObject get, jpuppeteer.cdp.client.entity.runtime.RemoteObject set, Boolean configurable, Boolean enumerable, Boolean wasThrown, Boolean isOwn, jpuppeteer.cdp.client.entity.runtime.RemoteObject symbol) {
         this.name = name;
@@ -79,6 +159,9 @@ public class PropertyDescriptor {
         this.wasThrown = null;
         this.isOwn = null;
         this.symbol = null;
+    }
+
+    public PropertyDescriptor() {
     }
 
 }

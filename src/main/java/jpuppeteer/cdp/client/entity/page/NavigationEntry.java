@@ -8,27 +8,67 @@ public class NavigationEntry {
     /**
     * Unique id of the navigation history entry.
     */
-    public final Integer id;
+    private Integer id;
 
     /**
     * URL of the navigation history entry.
     */
-    public final String url;
+    private String url;
 
     /**
     * URL that the user typed in the url bar.
     */
-    public final String userTypedURL;
+    private String userTypedURL;
 
     /**
     * Title of the navigation history entry.
     */
-    public final String title;
+    private String title;
 
     /**
     * Transition type.
     */
-    public final jpuppeteer.cdp.client.constant.page.TransitionType transitionType;
+    private jpuppeteer.cdp.client.constant.page.TransitionType transitionType;
+
+    public void setId (Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return this.id;
+    }
+
+    public void setUrl (String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setUserTypedURL (String userTypedURL) {
+        this.userTypedURL = userTypedURL;
+    }
+
+    public String getUserTypedURL() {
+        return this.userTypedURL;
+    }
+
+    public void setTitle (String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public void setTransitionType (jpuppeteer.cdp.client.constant.page.TransitionType transitionType) {
+        this.transitionType = transitionType;
+    }
+
+    public jpuppeteer.cdp.client.constant.page.TransitionType getTransitionType() {
+        return this.transitionType;
+    }
 
     public NavigationEntry(Integer id, String url, String userTypedURL, String title, jpuppeteer.cdp.client.constant.page.TransitionType transitionType) {
         this.id = id;
@@ -36,6 +76,9 @@ public class NavigationEntry {
         this.userTypedURL = userTypedURL;
         this.title = title;
         this.transitionType = transitionType;
+    }
+
+    public NavigationEntry() {
     }
 
 }

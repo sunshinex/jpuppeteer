@@ -9,22 +9,54 @@ public class TracingCompleteEvent {
     /**
     * Indicates whether some trace data is known to have been lost, e.g. because the trace ring buffer wrapped around.
     */
-    public final Boolean dataLossOccurred;
+    private Boolean dataLossOccurred;
 
     /**
     * A handle of the stream that holds resulting trace data.
     */
-    public final String stream;
+    private String stream;
 
     /**
     * Trace data format of returned stream.
     */
-    public final jpuppeteer.cdp.client.constant.tracing.StreamFormat traceFormat;
+    private jpuppeteer.cdp.client.constant.tracing.StreamFormat traceFormat;
 
     /**
     * Compression format of returned stream.
     */
-    public final jpuppeteer.cdp.client.constant.tracing.StreamCompression streamCompression;
+    private jpuppeteer.cdp.client.constant.tracing.StreamCompression streamCompression;
+
+    public void setDataLossOccurred (Boolean dataLossOccurred) {
+        this.dataLossOccurred = dataLossOccurred;
+    }
+
+    public Boolean getDataLossOccurred() {
+        return this.dataLossOccurred;
+    }
+
+    public void setStream (String stream) {
+        this.stream = stream;
+    }
+
+    public String getStream() {
+        return this.stream;
+    }
+
+    public void setTraceFormat (jpuppeteer.cdp.client.constant.tracing.StreamFormat traceFormat) {
+        this.traceFormat = traceFormat;
+    }
+
+    public jpuppeteer.cdp.client.constant.tracing.StreamFormat getTraceFormat() {
+        return this.traceFormat;
+    }
+
+    public void setStreamCompression (jpuppeteer.cdp.client.constant.tracing.StreamCompression streamCompression) {
+        this.streamCompression = streamCompression;
+    }
+
+    public jpuppeteer.cdp.client.constant.tracing.StreamCompression getStreamCompression() {
+        return this.streamCompression;
+    }
 
     public TracingCompleteEvent(Boolean dataLossOccurred, String stream, jpuppeteer.cdp.client.constant.tracing.StreamFormat traceFormat, jpuppeteer.cdp.client.constant.tracing.StreamCompression streamCompression) {
         this.dataLossOccurred = dataLossOccurred;
@@ -38,6 +70,9 @@ public class TracingCompleteEvent {
         this.stream = null;
         this.traceFormat = null;
         this.streamCompression = null;
+    }
+
+    public TracingCompleteEvent() {
     }
 
 }

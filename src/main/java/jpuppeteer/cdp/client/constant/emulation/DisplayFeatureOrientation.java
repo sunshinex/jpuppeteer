@@ -19,6 +19,11 @@ public enum DisplayFeatureOrientation implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static DisplayFeatureOrientation findByValue(String value) {
         for(DisplayFeatureOrientation val : values()) {
             if (val.value.equals(value)) return val;

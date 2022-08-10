@@ -21,6 +21,11 @@ public enum MixedContentType implements jpuppeteer.cdp.client.CDPEnum {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static MixedContentType findByValue(String value) {
         for(MixedContentType val : values()) {
             if (val.value.equals(value)) return val;

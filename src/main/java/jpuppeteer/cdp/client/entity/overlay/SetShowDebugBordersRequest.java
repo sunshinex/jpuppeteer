@@ -8,10 +8,21 @@ public class SetShowDebugBordersRequest {
     /**
     * True for showing debug borders
     */
-    public final Boolean show;
+    private Boolean show;
+
+    public void setShow (Boolean show) {
+        this.show = show;
+    }
+
+    public Boolean getShow() {
+        return this.show;
+    }
 
     public SetShowDebugBordersRequest(Boolean show) {
         this.show = show;
+    }
+
+    public SetShowDebugBordersRequest() {
     }
 
 }

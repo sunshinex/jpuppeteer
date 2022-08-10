@@ -7,10 +7,21 @@ public class SetBreakpointsActiveRequest {
     /**
     * New value for breakpoints active state.
     */
-    public final Boolean active;
+    private Boolean active;
+
+    public void setActive (Boolean active) {
+        this.active = active;
+    }
+
+    public Boolean getActive() {
+        return this.active;
+    }
 
     public SetBreakpointsActiveRequest(Boolean active) {
         this.active = active;
+    }
+
+    public SetBreakpointsActiveRequest() {
     }
 
 }
