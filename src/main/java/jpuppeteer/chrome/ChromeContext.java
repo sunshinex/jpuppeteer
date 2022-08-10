@@ -61,15 +61,15 @@ public class ChromeContext implements BrowserContext {
                 url, width, height, browserContextId(),
                 null, null, true);
         return browser().connection().target.createTarget(request)
-                .sync(o -> {
+                .async(o -> {
                     TargetInfo targetInfo = new TargetInfo(
                             o.getTargetId(), "page", "", url,
                             false, false
                     );
                     ChromePage page = new ChromePage(this, targetInfo);
-                    page.attach();
-                    return page;
-                });
+                    return page.attach();
+                })
+                .sync(o -> o);
     }
 
     @Override

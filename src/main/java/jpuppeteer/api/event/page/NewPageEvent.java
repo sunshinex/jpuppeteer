@@ -15,7 +15,6 @@ public class NewPageEvent extends PageEvent {
     }
 
     public Page page() {
-        page.attach();
         return page;
     }
 }

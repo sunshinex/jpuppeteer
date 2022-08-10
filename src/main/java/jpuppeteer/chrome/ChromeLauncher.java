@@ -116,8 +116,7 @@ public class ChromeLauncher implements Launcher {
                 }));
             }
         };
-        page.attach();
-        return page;
+        return page.attach().get(30, TimeUnit.SECONDS);
     }
 
     private static class WebViewPage extends ChromePage {

@@ -130,26 +130,27 @@ public class ChromePage extends ChromeFrame implements Page {
         }
     }
 
-    public void attach() {
+    public XFuture<ChromePage> attach() {
         this.connection = new PageConnection();
-        this.connection.page.enable();
-        this.connection.page.getFrameTree().addListener(f -> {
-            if (f.cause() != null) {
-                logger.error("init page frame tree failed, targetId={}, error={}", targetId(), f.cause().getMessage(), f.cause());
-            } else {
-                GetFrameTreeResponse response = (GetFrameTreeResponse) f.getNow();
-                FrameTree root = response.getFrameTree();
-                setFrameInfo(root.getFrame());
-                frameMap.put(root.getFrame().getId(), this);
-                if (root.getChildFrames() != null) {
-                    for(FrameTree node : root.getChildFrames()) {
-                        initFrame(this, node);
+        return this.connection.page.enable()
+                .async(o -> this.connection.page.getFrameTree())
+                .sync(response -> {
+                    FrameTree root = response.getFrameTree();
+                    setFrameInfo(root.getFrame());
+                    frameMap.put(root.getFrame().getId(), this);
+                    if (root.getChildFrames() != null) {
+                        for(FrameTree node : root.getChildFrames()) {
+                            initFrame(this, node);
+                        }
                     }
-                }
-                this.connection.page.setLifecycleEventsEnabled(new SetLifecycleEventsEnabledRequest(true));
-                this.connection.runtime.enable();
-            }
-        });
+                    return response;
+                })
+                .async(o -> {
+                    SetLifecycleEventsEnabledRequest request = new SetLifecycleEventsEnabledRequest(true);
+                    return this.connection.page.setLifecycleEventsEnabled(request);
+                })
+                .async(o -> this.connection.runtime.enable())
+                .sync(o -> this);
     }
 
     protected EventLoop eventLoop() {
@@ -216,7 +217,13 @@ public class ChromePage extends ChromeFrame implements Page {
         if (targetInfo.getTargetId().equals(info.getOpenerId()) || (frameId() != null && frameId().equals(info.getOpenerId()))) {
             //如果targetId或者frameId有一个是相同的，则就是这个页面打开的
             ChromePage newPage = newOpener(info);
-            emit(new NewPageEvent(newPage));
+            newPage.attach().addListener(f -> {
+                if (f.isSuccess()) {
+                    emit(new NewPageEvent((ChromePage) f.getNow()));
+                } else {
+                    logger.error("new page attach failed", f.cause());
+                }
+            });
         }
     }
 
