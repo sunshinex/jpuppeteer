@@ -68,8 +68,7 @@ public class ChromeContext implements BrowserContext {
                     );
                     ChromePage page = new ChromePage(this, targetInfo);
                     return page.attach();
-                })
-                .sync(o -> o);
+                });
     }
 
     @Override

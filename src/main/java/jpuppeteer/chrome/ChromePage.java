@@ -130,7 +130,7 @@ public class ChromePage extends ChromeFrame implements Page {
         }
     }
 
-    public XFuture<ChromePage> attach() {
+    public XFuture<Page> attach() {
         this.connection = new PageConnection();
         return this.connection.page.enable()
                 .async(o -> this.connection.page.getFrameTree())
