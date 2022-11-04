@@ -8,6 +8,8 @@ import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import jpuppeteer.api.Browser;
+import jpuppeteer.api.DownloadListener;
+import jpuppeteer.api.DownloadObject;
 import jpuppeteer.api.Page;
 import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.api.event.page.LoadedEvent;
@@ -33,10 +35,7 @@ public class MainTest {
     @Test
     public void test() throws Exception {
         Browser browser = new ChromeLauncher("D:\\chrome93\\chrome.exe").launch(/*new String[]{"--proxy-server=58.215.100.180:20154"}*/);
-        Page page = browser.createContext()
-                .get(30, TimeUnit.SECONDS)
-                .newPage()
-                .get(30, TimeUnit.SECONDS);
+        Page page = browser.newPage().get(30, TimeUnit.SECONDS);
         page.addScriptToEvaluateOnNewDocument("window.fakeRandom = " + Math.random())
                 .get(5, TimeUnit.SECONDS);
         page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/fake.js"))
@@ -52,7 +51,28 @@ public class MainTest {
                         .get(5, TimeUnit.SECONDS);
         page.enableTouchEmulation(true, 5).get(5, TimeUnit.SECONDS);
         page.enableEmitTouchEventsForMouse(true, SetEmitTouchEventsForMouseRequestConfiguration.MOBILE).get(5, TimeUnit.SECONDS);
-        page.navigate("https://m.dewu.com/router/");
+        page.browserContext().enableDownloader("D:\\tmp\\download", new DownloadListener() {
+            @Override
+            public void onStart(DownloadObject downloadObject) {
+                System.out.println("download start:" + downloadObject.guid());
+            }
+
+            @Override
+            public void onProgress(DownloadObject downloadObject) {
+                System.out.println("download progress:" + downloadObject.guid());
+            }
+
+            @Override
+            public void onComplete(DownloadObject downloadObject) {
+                System.out.println("download complete:" + downloadObject.guid());
+            }
+
+            @Override
+            public void onCancel(DownloadObject downloadObject) {
+                System.out.println("download canceled:" + downloadObject.guid());
+            }
+        });
+        page.navigate("https://speedtest02.js165.com.prod.hosts.ooklaserver.net:8080/download?size=25000000");
         TimeUnit.DAYS.sleep(1);
     }
 

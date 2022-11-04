@@ -2,18 +2,17 @@ package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
 import io.netty.channel.EventLoop;
+import jpuppeteer.api.Frame;
 import jpuppeteer.api.Request;
 import jpuppeteer.api.Response;
 import jpuppeteer.api.*;
 import jpuppeteer.api.event.AbstractListener;
-import jpuppeteer.api.event.browser.TargetClosed;
-import jpuppeteer.api.event.browser.TargetCrashed;
-import jpuppeteer.api.event.browser.TargetCreated;
-import jpuppeteer.api.event.browser.TargetInfoChanged;
+import jpuppeteer.api.event.browser.*;
 import jpuppeteer.api.event.page.RequestInterceptedEvent;
 import jpuppeteer.api.event.page.*;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
+import jpuppeteer.cdp.client.constant.browser.DownloadProgressEventState;
 import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration;
 import jpuppeteer.cdp.client.entity.browser.Bounds;
 import jpuppeteer.cdp.client.entity.browser.GetWindowForTargetRequest;
@@ -79,6 +78,8 @@ public class ChromePage extends ChromeFrame implements Page {
 
     private final Map<String, Response> responseMap;
 
+    private final Map<String, ChromeDownloadObject> downloadObjectMap;
+
     public ChromePage(ChromeContext browserContext, URI uri, TargetInfo targetInfo, ChromePage opener) {
         super(null, null);
         this.browserContext = browserContext;
@@ -90,6 +91,7 @@ public class ChromePage extends ChromeFrame implements Page {
         this.requestMap = new ConcurrentHashMap<>();
         this.responseMap = new ConcurrentHashMap<>();
         this.frameMap = new ConcurrentHashMap<>();
+        this.downloadObjectMap = new ConcurrentHashMap<>();
         this.initEventListeners();
     }
 
@@ -188,6 +190,18 @@ public class ChromePage extends ChromeFrame implements Page {
                 onTargetCrashed(event.targetId, event.status, event.errorCode);
             }
         };
+        AbstractListener<DownloadWillBegin> downloadWillBeginListener = new AbstractListener<DownloadWillBegin>() {
+            @Override
+            public void accept(DownloadWillBegin downloadWillBegin) {
+                onDownloadStart(downloadWillBegin);
+            }
+        };
+        AbstractListener<DownloadProgress> downloadProgressListener = new AbstractListener<DownloadProgress>() {
+            @Override
+            public void accept(DownloadProgress downloadProgress) {
+                onDownloadProgress(downloadProgress);
+            }
+        };
         AbstractListener<TargetClosed> closedListener = new AbstractListener<TargetClosed>() {
             @Override
             public void accept(TargetClosed event) {
@@ -196,6 +210,8 @@ public class ChromePage extends ChromeFrame implements Page {
                     onTargetDestroyed(event.targetId);
                 } finally {
                     if (targetInfo.getTargetId().equals(event.targetId)) {
+                        browserContext().browser().removeListener(downloadWillBeginListener);
+                        browserContext().browser().removeListener(downloadProgressListener);
                         browserContext().browser().removeListener(createdListener);
                         browserContext().browser().removeListener(changedListener);
                         browserContext().browser().removeListener(crashedListener);
@@ -208,6 +224,38 @@ public class ChromePage extends ChromeFrame implements Page {
         this.browserContext().browser().addListener(changedListener);
         this.browserContext().browser().addListener(crashedListener);
         this.browserContext().browser().addListener(closedListener);
+        this.browserContext().browser().addListener(downloadWillBeginListener);
+        this.browserContext().browser().addListener(downloadProgressListener);
+    }
+
+    private void onDownloadStart(DownloadWillBegin event) {
+        Frame frame = getFrame(event.frameId);
+        if (frame == null) {
+            logger.warn("frame not found, frameId={}", event.frameId);
+            return;
+        }
+        ChromeDownloadObject downloadObject = new ChromeDownloadObject(frame, event.guid, event.url, event.suggestedFilename);
+        this.downloadObjectMap.put(event.guid, downloadObject);
+        ChromeContext context = (ChromeContext) this.browserContext();
+        context.onDownloadStart(downloadObject);
+    }
+
+    private void onDownloadProgress(DownloadProgress event) {
+        ChromeDownloadObject downloadObject;
+        if (event.state == DownloadProgressEventState.INPROGRESS) {
+            downloadObject = this.downloadObjectMap.get(event.guid);
+        } else {
+            downloadObject = this.downloadObjectMap.remove(event.guid);
+        }
+        if (downloadObject == null) {
+            logger.warn("download object not found, guid={}", event.guid);
+            return;
+        }
+        downloadObject.setState(event.state);
+        downloadObject.setTotalBytes(event.totalBytes);
+        downloadObject.setReceivedBytes(event.receivedBytes);
+        ChromeContext context = (ChromeContext) this.browserContext();
+        context.onDownloadProgress(downloadObject);
     }
 
     private void onTargetCreated(TargetInfo info) {

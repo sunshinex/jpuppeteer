@@ -2,10 +2,15 @@ package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
 import jpuppeteer.api.BrowserContext;
+import jpuppeteer.api.DownloadListener;
+import jpuppeteer.api.DownloadObject;
 import jpuppeteer.api.Page;
 import jpuppeteer.cdp.client.constant.browser.PermissionType;
+import jpuppeteer.cdp.client.constant.browser.SetDownloadBehaviorRequestBehavior;
+import jpuppeteer.cdp.client.entity.browser.CancelDownloadRequest;
 import jpuppeteer.cdp.client.entity.browser.GrantPermissionsRequest;
 import jpuppeteer.cdp.client.entity.browser.ResetPermissionsRequest;
+import jpuppeteer.cdp.client.entity.browser.SetDownloadBehaviorRequest;
 import jpuppeteer.cdp.client.entity.network.Cookie;
 import jpuppeteer.cdp.client.entity.network.CookieParam;
 import jpuppeteer.cdp.client.entity.storage.ClearCookiesRequest;
@@ -28,9 +33,44 @@ public class ChromeContext implements BrowserContext {
 
     private final String browserContextId;
 
+    private volatile DownloadListener downloadListener;
+
     public ChromeContext(ChromeBrowser browser, String browserContextId) {
         this.browser = browser;
         this.browserContextId = browserContextId;
+    }
+
+    private XFuture<?> setDownloadBehavior(SetDownloadBehaviorRequest request) {
+        return this.browser().connection().browser.setDownloadBehavior(request);
+    }
+
+    protected void onDownloadStart(DownloadObject downloadObject) {
+        DownloadListener listener = this.downloadListener;
+        if (listener == null) {
+            return;
+        }
+        listener.onStart(downloadObject);
+    }
+
+    protected void onDownloadProgress(DownloadObject downloadObject) {
+        DownloadListener listener = this.downloadListener;
+        if (listener == null) {
+            return;
+        }
+        switch (downloadObject.state()) {
+
+            case INPROGRESS:
+                listener.onProgress(downloadObject);
+                break;
+
+            case COMPLETED:
+                listener.onComplete(downloadObject);
+                break;
+
+            case CANCELED:
+                listener.onCancel(downloadObject);
+                break;
+        }
     }
 
     @Override
@@ -91,6 +131,34 @@ public class ChromeContext implements BrowserContext {
                     o.getCookies().toArray(cookies);
                     return cookies;
                 });
+    }
+
+    @Override
+    public XFuture<?> enableDownloader(String downloadPath, DownloadListener downloadListener) {
+        SetDownloadBehaviorRequest request = new SetDownloadBehaviorRequest();
+        request.setBrowserContextId(browserContextId());
+        request.setBehavior(SetDownloadBehaviorRequestBehavior.ALLOW);
+        request.setEventsEnabled(true);
+        request.setDownloadPath(downloadPath);
+        this.downloadListener = downloadListener;
+        return setDownloadBehavior(request);
+    }
+
+    @Override
+    public XFuture<?> disableDownloader() {
+        SetDownloadBehaviorRequest request = new SetDownloadBehaviorRequest();
+        request.setBrowserContextId(browserContextId());
+        request.setBehavior(SetDownloadBehaviorRequestBehavior.DENY);
+        this.downloadListener = null;
+        return setDownloadBehavior(request);
+    }
+
+    @Override
+    public XFuture<?> cancelDownload(String guid) {
+        CancelDownloadRequest request = new CancelDownloadRequest();
+        request.setBrowserContextId(browserContextId());
+        request.setGuid(guid);
+        return this.browser().connection().browser.cancelDownload(request);
     }
 
     @Override

@@ -31,6 +31,12 @@ public interface BrowserContext {
 
     XFuture<Cookie[]> getCookies();
 
+    XFuture<?> enableDownloader(String downloadPath, DownloadListener listener);
+
+    XFuture<?> disableDownloader();
+
+    XFuture<?> cancelDownload(String guid);
+
     void close();
 
 }

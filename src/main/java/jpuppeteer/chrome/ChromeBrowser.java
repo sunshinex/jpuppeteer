@@ -10,6 +10,8 @@ import jpuppeteer.api.event.browser.*;
 import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.client.constant.storage.StorageType;
+import jpuppeteer.cdp.client.entity.browser.DownloadProgressEvent;
+import jpuppeteer.cdp.client.entity.browser.DownloadWillBeginEvent;
 import jpuppeteer.cdp.client.entity.browser.GetVersionResponse;
 import jpuppeteer.cdp.client.entity.network.Cookie;
 import jpuppeteer.cdp.client.entity.network.CookieParam;
@@ -151,12 +153,12 @@ public class ChromeBrowser extends ChromeContext implements Browser {
 
     @Override
     public void addListener(AbstractListener<? extends BrowserEvent> listener) {
-        this.eventEmitter.addListener(listener);
+        eventEmitter.addListener(listener);
     }
 
     @Override
     public void removeListener(AbstractListener<? extends BrowserEvent> listener) {
-        this.eventEmitter.removeListener(listener);
+        eventEmitter.removeListener(listener);
     }
 
     private class BrowserEventEmitter extends AbstractEventEmitter<BrowserEvent> {
@@ -170,7 +172,7 @@ public class ChromeBrowser extends ChromeContext implements Browser {
             }
         }
 
-        public void emit(BrowserEvent event) {
+        protected void emit(BrowserEvent event) {
             super.emit(event);
         }
     }
@@ -205,6 +207,16 @@ public class ChromeBrowser extends ChromeContext implements Browser {
                 case TARGET_TARGETDESTROYED:
                     TargetDestroyedEvent targetDestroyedEvent = event.getObject();
                     eventEmitter.emit(new TargetClosed(targetDestroyedEvent.getTargetId()));
+                    break;
+
+                case BROWSER_DOWNLOADWILLBEGIN:
+                    DownloadWillBeginEvent downloadWillBeginEvent = event.getObject();
+                    eventEmitter.emit(new DownloadWillBegin(downloadWillBeginEvent));
+                    break;
+
+                case BROWSER_DOWNLOADPROGRESS:
+                    DownloadProgressEvent downloadProgressEvent = event.getObject();
+                    eventEmitter.emit(new DownloadProgress(downloadProgressEvent));
                     break;
             }
         }
