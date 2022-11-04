@@ -6,6 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import jpuppeteer.api.Browser;
 import jpuppeteer.api.Launcher;
+import jpuppeteer.api.Page;
 import jpuppeteer.cdp.client.entity.target.TargetInfo;
 import jpuppeteer.util.XFuture;
 import jpuppeteer.util.XPromise;
@@ -91,7 +92,7 @@ public class ChromeLauncher implements Launcher {
         return new ChromeBrowser(uri, null);
     }
 
-    public static ChromePage attach(String strUri) throws Exception {
+    public static Page attach(String strUri) throws Exception {
         EventLoop eventLoop = new NioEventLoopGroup(1, r -> {
             return new Thread(r, "browser");
         }).next();
