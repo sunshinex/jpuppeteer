@@ -13,8 +13,19 @@ public abstract class AbstractListener<E> implements Consumer<E> {
 
     private final Class<E> type;
 
+    private final boolean once;
+
+    private final AtomicLong emitCount;
+
+    protected AbstractListener(boolean once, Class<E> clazz) {
+        this.id = COUNTER.getAndIncrement();
+        this.type = clazz;
+        this.once = once;
+        this.emitCount = new AtomicLong(0);
+    }
+
     @SuppressWarnings("unchecked")
-    protected AbstractListener() {
+    protected AbstractListener(boolean once) {
         this.id = COUNTER.getAndIncrement();
         ParameterizedType parameterizedType = (ParameterizedType) this.getClass().getGenericSuperclass();
         Type eType = parameterizedType.getActualTypeArguments()[0];
@@ -25,6 +36,12 @@ public abstract class AbstractListener<E> implements Consumer<E> {
         } else {
             throw new RuntimeException("unknown actual type:" + eType.getTypeName());
         }
+        this.once = once;
+        this.emitCount = new AtomicLong(0);
+    }
+
+    protected AbstractListener() {
+        this(false);
     }
 
     public final Class<E> type() {
@@ -33,6 +50,14 @@ public abstract class AbstractListener<E> implements Consumer<E> {
 
     public final long id() {
         return id;
+    }
+
+    public final boolean once() {
+        return once;
+    }
+
+    protected final long emitAndCount() {
+        return emitCount.getAndIncrement();
     }
 
 }
