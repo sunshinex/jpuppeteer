@@ -2,14 +2,11 @@ async function waitSelector(selector, timeout) {
     const root = this === window || this === undefined ? document : this;
     return new Promise(function(resolve, reject){
         function checkType(node) {
-            if (!node || !node.nodeType ||
-                node.nodeType !== 1 || !node.matches ||
-                !(node.matches instanceof Function)) {
-                return false;
-            }
-            return true;
+            return !(!node || !node.nodeType ||
+              node.nodeType !== 1 || !node.matches ||
+              !(node.matches instanceof Function));
         }
-        function checkVisible(node) {
+        function checkVisibility(node) {
             return node.getClientRects().length > 0;
         }
         function checkDone(node) {
@@ -18,7 +15,7 @@ async function waitSelector(selector, timeout) {
             }
             if (node.matches(selector)) {
                 //节点本身是目标节点
-                if (checkVisible(node)) {
+                if (checkVisibility(node)) {
                     //目标节点可见，完成
                     done(node);
                     return true;
@@ -28,7 +25,7 @@ async function waitSelector(selector, timeout) {
             } else {
                 //节点本身不是目标节点，也需要判断子节点是否存在目标节点
                 const result = node.querySelector(selector);
-                if (checkType(result) && checkVisible(result)) {
+                if (checkType(result) && checkVisibility(result)) {
                     done(result);
                     return true;
                 } else {
