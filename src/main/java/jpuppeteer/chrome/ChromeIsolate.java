@@ -1,5 +1,6 @@
 package jpuppeteer.chrome;
 
+import com.fasterxml.jackson.databind.JavaType;
 import jpuppeteer.api.BindingFunction;
 import jpuppeteer.api.BrowserObject;
 import jpuppeteer.api.Frame;
@@ -85,6 +86,18 @@ public class ChromeIsolate implements Isolate {
     }
 
     @Override
+    public <R> XFuture<R> eval(EvaluateRequest request, JavaType type) {
+        return runtime().evaluate(request)
+                .sync(o -> {
+                    IsolateUtil.checkException(o.getExceptionDetails());
+                    if (checkNull(o.getResult().getType(), o.getResult().getSubtype())) {
+                        return null;
+                    }
+                    return IsolateUtil.remoteObjectToValue(o.getResult(), type);
+                });
+    }
+
+    @Override
     public XFuture<BrowserObject> eval(String expression, Integer timeout) {
         return eval(IsolateUtil.buildEvaluateRequest(expression, isolateId, false, timeout, uniqueId));
     }
@@ -92,6 +105,11 @@ public class ChromeIsolate implements Isolate {
     @Override
     public <R> XFuture<R> eval(String expression, Integer timeout, Class<R> clazz) {
         return eval(IsolateUtil.buildEvaluateRequest(expression, isolateId, true, timeout, uniqueId), clazz);
+    }
+
+    @Override
+    public <R> XFuture<R> eval(String expression, Integer timeout, JavaType type) {
+        return eval(IsolateUtil.buildEvaluateRequest(expression, isolateId, true, timeout, uniqueId), type);
     }
 
     @Override
@@ -119,6 +137,18 @@ public class ChromeIsolate implements Isolate {
     }
 
     @Override
+    public <R> XFuture<R> call(CallFunctionOnRequest request, JavaType type) {
+        return runtime().callFunctionOn(request)
+                .sync(o -> {
+                    IsolateUtil.checkException(o.getExceptionDetails());
+                    if (checkNull(o.getResult().getType(), o.getResult().getSubtype())) {
+                        return null;
+                    }
+                    return IsolateUtil.remoteObjectToValue(o.getResult(), type);
+                });
+    }
+
+    @Override
     public XFuture<BrowserObject> call(String declaration, String objectId, Object... args) {
         if (objectId == null) {
             throw new IllegalArgumentException("objectId required");
@@ -135,6 +165,14 @@ public class ChromeIsolate implements Isolate {
     }
 
     @Override
+    public <R> XFuture<R> call(String declaration, String objectId, JavaType type, Object... args) {
+        if (objectId == null) {
+            throw new IllegalArgumentException("objectId required");
+        }
+        return call(IsolateUtil.buildCallRequest(declaration, objectId, true, null, args), type);
+    }
+
+    @Override
     public XFuture<BrowserObject> call(String declaration, Object... args) {
         return call(IsolateUtil.buildCallRequest(declaration, null, false, isolateId, args));
     }
@@ -142,6 +180,11 @@ public class ChromeIsolate implements Isolate {
     @Override
     public <R> XFuture<R> call(String declaration, Class<R> clazz, Object... args) {
         return call(IsolateUtil.buildCallRequest(declaration, null, true, isolateId, args), clazz);
+    }
+
+    @Override
+    public <R> XFuture<R> call(String declaration, JavaType type, Object... args) {
+        return call(IsolateUtil.buildCallRequest(declaration, null, true, isolateId, args), type);
     }
 
     @Override

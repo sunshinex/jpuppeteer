@@ -65,7 +65,7 @@ public class ChromeElement implements Element {
 
     @Override
     public XFuture<Element[]> querySelectorAll(String selector) {
-        return frame.call("function (selector){return this.querySelectorAll(selector);}", (Object) selector)
+        return frame.call("function (selector){return this.querySelectorAll(selector);}", objectId(), selector)
                 .async(BrowserObject::getProperties)
                 .sync(browserObjects -> {
                     Element[] elements = new Element[browserObjects.length];

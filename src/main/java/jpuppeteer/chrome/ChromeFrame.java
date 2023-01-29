@@ -1,5 +1,6 @@
 package jpuppeteer.chrome;
 
+import com.fasterxml.jackson.databind.JavaType;
 import io.netty.channel.EventLoop;
 import jpuppeteer.api.*;
 import jpuppeteer.api.event.AbstractEventEmitter;
@@ -153,6 +154,11 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
     }
 
     @Override
+    public <R> XFuture<R> eval(EvaluateRequest request, JavaType type) {
+        return assertIsolateNotNull().eval(request, type);
+    }
+
+    @Override
     public XFuture<BrowserObject> eval(String expression, Integer timeout) {
         return assertIsolateNotNull().eval(expression, timeout);
     }
@@ -160,6 +166,11 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
     @Override
     public <R> XFuture<R> eval(String expression, Integer timeout, Class<R> clazz) {
         return assertIsolateNotNull().eval(expression, timeout, clazz);
+    }
+
+    @Override
+    public <R> XFuture<R> eval(String expression, Integer timeout, JavaType type) {
+        return assertIsolateNotNull().eval(expression, timeout, type);
     }
 
     @Override
@@ -173,6 +184,11 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
     }
 
     @Override
+    public <R> XFuture<R> call(CallFunctionOnRequest request, JavaType type) {
+        return assertIsolateNotNull().call(request, type);
+    }
+
+    @Override
     public XFuture<BrowserObject> call(String declaration, String objectId, Object... args) {
         return assertIsolateNotNull().call(declaration, objectId, args);
     }
@@ -183,6 +199,11 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
     }
 
     @Override
+    public <R> XFuture<R> call(String declaration, String objectId, JavaType type, Object... args) {
+        return assertIsolateNotNull().call(declaration, objectId, type, args);
+    }
+
+    @Override
     public XFuture<BrowserObject> call(String declaration, Object... args) {
         return assertIsolateNotNull().call(declaration, args);
     }
@@ -190,6 +211,11 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
     @Override
     public <R> XFuture<R> call(String declaration, Class<R> clazz, Object... args) {
         return assertIsolateNotNull().call(declaration, clazz, args);
+    }
+
+    @Override
+    public <R> XFuture<R> call(String declaration, JavaType type, Object... args) {
+        return assertIsolateNotNull().call(declaration, type, args);
     }
 
     @Override

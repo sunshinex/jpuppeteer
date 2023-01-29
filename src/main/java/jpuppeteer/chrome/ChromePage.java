@@ -231,7 +231,8 @@ public class ChromePage extends ChromeFrame implements Page {
     private void onDownloadStart(DownloadWillBegin event) {
         Frame frame = getFrame(event.frameId);
         if (frame == null) {
-            logger.warn("frame not found, frameId={}", event.frameId);
+            //每个页面都会收到DownloadWillBegin事件, 此处不记录日志
+            //logger.warn("frame not found, frameId={}", event.frameId);
             return;
         }
         ChromeDownloadObject downloadObject = new ChromeDownloadObject(frame, event.guid, event.url, event.suggestedFilename);

@@ -1,5 +1,6 @@
 package jpuppeteer.api;
 
+import com.fasterxml.jackson.databind.JavaType;
 import jpuppeteer.util.XFuture;
 
 public interface BrowserObject {
@@ -14,6 +15,10 @@ public interface BrowserObject {
 
     default <R> XFuture<R> call(String declaration, Class<R> clazz, Object... args) {
         return isolate().call(declaration, objectId(), clazz, args);
+    }
+
+    default <R> XFuture<R> call(String declaration, JavaType type, Object... args) {
+        return isolate().call(declaration, objectId(), type, args);
     }
 
     XFuture<BrowserObject[]> getProperties();

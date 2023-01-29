@@ -1,7 +1,8 @@
 package jpuppeteer.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.POJONode;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
 import jpuppeteer.api.BrowserObject;
 import jpuppeteer.cdp.client.constant.runtime.RemoteObjectSubtype;
 import jpuppeteer.cdp.client.constant.runtime.RemoteObjectType;
@@ -86,7 +87,7 @@ public class IsolateUtil {
         return argument;
     }
 
-    public static <R> R remoteObjectToValue(RemoteObject object, Class<R> clazz) {
+    private static JsonNode remoteObjectToJson(RemoteObject object) {
         if (object.getObjectId() != null) {
             //对于objectId存在的，直接返回空
             return null;
@@ -104,11 +105,24 @@ public class IsolateUtil {
         } else if (RemoteObjectType.BIGINT.equals(object.getType())) {
             value = new BigInteger(StringUtils.removeEnd(object.getUnserializableValue(), "n"));
         }
-        POJONode node = new POJONode(value);
+        return JacksonUtil.INSTANCE.valueToTree(value);
+    }
+
+    public static <R> R remoteObjectToValue(RemoteObject object, Class<R> clazz) {
         try {
+            JsonNode node = remoteObjectToJson(object);
             return JacksonUtil.INSTANCE.treeToValue(node, clazz);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Object to JavaObject `"+clazz.getName()+"` failed", e);
+        }
+    }
+
+    public static <R> R remoteObjectToValue(RemoteObject object, JavaType type) {
+        try {
+            JsonNode node = remoteObjectToJson(object);
+            return JacksonUtil.INSTANCE.treeToValue(node, type);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Object to JavaType `"+type.toString()+"` failed", e);
         }
     }
 
