@@ -58,38 +58,4 @@ public abstract class AbstractEventEmitter<E> implements EventEmitter<E> {
     public void removeListener(AbstractListener<? extends E> listener) {
         listeners.remove(listener.id());
     }
-
-    public static void main(String[] args) throws Exception {
-        AbstractEventEmitter<PageEvent> eventEmitter = new AbstractEventEmitter<PageEvent>() {
-            @Override
-            protected void emitInternal(AbstractListener<PageEvent> listener, PageEvent event) {
-                listener.accept(event);
-            }
-        };
-
-        eventEmitter.addListener(new AbstractListener<LoadedEvent>(true) {
-            @Override
-            public void accept(LoadedEvent event) {
-                System.out.println(event.timestamp());
-            }
-        });
-
-        new Thread() {
-            @Override
-            public void run() {
-                LoadedEvent event = new LoadedEvent(BigDecimal.ZERO);
-                eventEmitter.emit(event);
-            }
-        }.start();
-
-        new Thread() {
-            @Override
-            public void run() {
-                LoadedEvent event = new LoadedEvent(BigDecimal.ONE);
-                eventEmitter.emit(event);
-            }
-        }.start();
-
-        TimeUnit.SECONDS.sleep(5);
-    }
 }
