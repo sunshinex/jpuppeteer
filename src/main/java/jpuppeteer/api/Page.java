@@ -58,12 +58,6 @@ public interface Page extends Frame {
 
     XFuture<?> removeScriptToEvaluateOnNewDocument(String scriptId);
 
-    XFuture<?> watch(String selector, Consumer<Element> watchFunction, boolean once);
-
-    default XFuture<?> watch(String selector, Consumer<Element> watchFunction) {
-        return watch(selector, watchFunction, false);
-    }
-
     XFuture<?> enableNetwork(jpuppeteer.cdp.client.entity.network.EnableRequest request);
 
     default XFuture<?> enableNetwork() {

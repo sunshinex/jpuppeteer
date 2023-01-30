@@ -29,6 +29,10 @@ public interface Frame extends EventEmitter<PageEvent>, Isolate {
 
     XFuture<?> watch(String selector, Consumer<Element> watchFunction, boolean once);
 
+    default XFuture<?> watch(String selector, Consumer<Element> watchFunction) {
+        return watch(selector, watchFunction, false);
+    }
+
     XFuture<String> navigate(String url, String referer);
 
     default XFuture<String> navigate(String url) {
