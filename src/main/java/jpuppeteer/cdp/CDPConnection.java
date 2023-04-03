@@ -323,10 +323,12 @@ public class CDPConnection {
                 }
                 if (json.has(ERROR)) {
                     JsonNode error = json.get(ERROR);
-                    String errorMsg = error.get("message").asText();
-                    String errorData = error.get("data").asText();
-                    if (StringUtils.isNotEmpty(errorData)) {
-                        errorMsg += "(" + errorData + ")";
+                    String errorMsg = "";
+                    if (error.has("message")) {
+                        errorMsg += error.get("message").asText();
+                    }
+                    if (error.has("data")) {
+                        errorMsg += "(" + error.get("data").asText() + ")";
                     }
                     promise.tryFailure(new CDPException(error.get("code").asInt(), errorMsg));
                 } else {

@@ -7,17 +7,16 @@ import com.google.common.collect.Lists;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import jpuppeteer.api.Browser;
-import jpuppeteer.api.DownloadListener;
-import jpuppeteer.api.DownloadObject;
-import jpuppeteer.api.Page;
+import jpuppeteer.api.*;
 import jpuppeteer.api.event.AbstractListener;
 import jpuppeteer.api.event.page.LoadedEvent;
+import jpuppeteer.api.event.page.PageEvent;
 import jpuppeteer.cdp.client.constant.emulation.ScreenOrientationType;
 import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration;
 import jpuppeteer.cdp.client.entity.emulation.SetUserAgentOverrideRequest;
 import jpuppeteer.cdp.client.entity.emulation.UserAgentBrandVersion;
 import jpuppeteer.cdp.client.entity.emulation.UserAgentMetadata;
+import jpuppeteer.chrome.ChromeBrowser;
 import jpuppeteer.chrome.ChromeLauncher;
 import jpuppeteer.util.JacksonUtil;
 import jpuppeteer.util.ScriptUtil;
@@ -34,46 +33,56 @@ public class MainTest {
 
     @Test
     public void test() throws Exception {
-        Browser browser = new ChromeLauncher("D:\\chrome93\\chrome.exe").launch(/*new String[]{"--proxy-server=58.215.100.180:20154"}*/);
-        Page page = browser.newPage().get(30, TimeUnit.SECONDS);
-        page.addScriptToEvaluateOnNewDocument("window.fakeRandom = " + Math.random())
-                .get(5, TimeUnit.SECONDS);
-        page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/fake.js"))
-                .get(5, TimeUnit.SECONDS);
-        SetUserAgentOverrideRequest userAgent = new SetUserAgentOverrideRequest(
-                "Mozilla/5.0 (Linux; Android 12; Redmi K30 5G) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Mobile Safari/537.36",
-                "zh-CN,zh",
-                "Linux aarch64",
-                null
-        );
-        page.setUserAgent(userAgent).get(5, TimeUnit.SECONDS);
-        page.setDevice(ScreenOrientationType.PORTRAITPRIMARY, 393, 873, 393, 873, 2.75, true)
-                        .get(5, TimeUnit.SECONDS);
-        page.enableTouchEmulation(true, 5).get(5, TimeUnit.SECONDS);
-        page.enableEmitTouchEventsForMouse(true, SetEmitTouchEventsForMouseRequestConfiguration.MOBILE).get(5, TimeUnit.SECONDS);
-        page.browserContext().enableDownloader("D:\\tmp\\download", new DownloadListener() {
+        Browser browser = ChromeLauncher.launch("ws://127.0.0.1:8192/devtools/browser");
+        Page page = browser.newPage().get(10, TimeUnit.SECONDS);
+        page.addListener(new AbstractListener<LoadedEvent>() {
             @Override
-            public void onStart(DownloadObject downloadObject) {
-                System.out.println("download start:" + downloadObject.guid());
-            }
-
-            @Override
-            public void onProgress(DownloadObject downloadObject) {
-                System.out.println("download progress:" + downloadObject.guid());
-            }
-
-            @Override
-            public void onComplete(DownloadObject downloadObject) {
-                System.out.println("download complete:" + downloadObject.guid());
-            }
-
-            @Override
-            public void onCancel(DownloadObject downloadObject) {
-                System.out.println("download canceled:" + downloadObject.guid());
+            public void accept(LoadedEvent pageEvent) {
+                System.out.println(page);
             }
         });
-        page.navigate("https://speedtest02.js165.com.prod.hosts.ooklaserver.net:8080/download?size=25000000");
+        page.navigate("https://www.baidu.com/");
         TimeUnit.DAYS.sleep(1);
+//        Browser browser = new ChromeLauncher("D:\\chrome93\\chrome.exe").launch(/*new String[]{"--proxy-server=58.215.100.180:20154"}*/);
+//        Page page = browser.newPage().get(30, TimeUnit.SECONDS);
+//        page.addScriptToEvaluateOnNewDocument("window.fakeRandom = " + Math.random())
+//                .get(5, TimeUnit.SECONDS);
+//        page.addScriptToEvaluateOnNewDocument(ScriptUtil.load("script/fake.js"))
+//                .get(5, TimeUnit.SECONDS);
+//        SetUserAgentOverrideRequest userAgent = new SetUserAgentOverrideRequest(
+//                "Mozilla/5.0 (Linux; Android 12; Redmi K30 5G) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Mobile Safari/537.36",
+//                "zh-CN,zh",
+//                "Linux aarch64",
+//                null
+//        );
+//        page.setUserAgent(userAgent).get(5, TimeUnit.SECONDS);
+//        page.setDevice(ScreenOrientationType.PORTRAITPRIMARY, 393, 873, 393, 873, 2.75, true)
+//                        .get(5, TimeUnit.SECONDS);
+//        page.enableTouchEmulation(true, 5).get(5, TimeUnit.SECONDS);
+//        page.enableEmitTouchEventsForMouse(true, SetEmitTouchEventsForMouseRequestConfiguration.MOBILE).get(5, TimeUnit.SECONDS);
+//        page.browserContext().enableDownloader("D:\\tmp\\download", new DownloadListener() {
+//            @Override
+//            public void onStart(DownloadObject downloadObject) {
+//                System.out.println("download start:" + downloadObject.guid());
+//            }
+//
+//            @Override
+//            public void onProgress(DownloadObject downloadObject) {
+//                System.out.println("download progress:" + downloadObject.guid());
+//            }
+//
+//            @Override
+//            public void onComplete(DownloadObject downloadObject) {
+//                System.out.println("download complete:" + downloadObject.guid());
+//            }
+//
+//            @Override
+//            public void onCancel(DownloadObject downloadObject) {
+//                System.out.println("download canceled:" + downloadObject.guid());
+//            }
+//        });
+//        page.navigate("https://speedtest02.js165.com.prod.hosts.ooklaserver.net:8080/download?size=25000000");
+//        TimeUnit.DAYS.sleep(1);
     }
 
 }

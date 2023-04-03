@@ -17,13 +17,13 @@ public class JacksonUtil {
     }
 
     public static ObjectMapper createMapper() {
-        return JsonMapper.builder()
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-                .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
-                .serializationInclusion(JsonInclude.Include.NON_NULL)
-                .defaultTimeZone(TimeZone.getTimeZone("Asia/Shanghai"))
-                .build();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+        mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+        return mapper;
     }
 
 }
