@@ -22,7 +22,7 @@
     <jackson.version>2.14.1</jackson.version>
     <netty.version>4.1.86.Final</netty.version>
     <guava.version>31.1-jre</guava.version>
-    <httpclient.version>4.5.9</httpclient.version>
+    <httpclient.version>4.5.13</httpclient.version>
   </properties>
 
   <dependencies>
