@@ -23,7 +23,11 @@ public interface BrowserObject {
 
     XFuture<BrowserObject[]> getProperties();
 
+    XFuture<?> setProperty(String name, Object value);
+
     XFuture<BrowserObject> getProperty(String name);
+
+    <R> XFuture<R> getProperty(String name, Class<R> clazz);
 
     XFuture<?> release();
 

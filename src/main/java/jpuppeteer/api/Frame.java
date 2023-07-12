@@ -5,7 +5,6 @@ import jpuppeteer.api.event.page.PageEvent;
 import jpuppeteer.util.XFuture;
 
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public interface Frame extends EventEmitter<PageEvent>, Isolate {
 
@@ -27,11 +26,9 @@ public interface Frame extends EventEmitter<PageEvent>, Isolate {
 
     XFuture<Element> waitSelector(String selector, long timeout, TimeUnit unit);
 
-    XFuture<?> watch(String selector, Consumer<Element> watchFunction, boolean once);
+    XFuture<String> watch(String selector, WatchFunction watchFunction, long timeout, TimeUnit unit);
 
-    default XFuture<?> watch(String selector, Consumer<Element> watchFunction) {
-        return watch(selector, watchFunction, false);
-    }
+    XFuture<?> unwatch(String id);
 
     XFuture<String> navigate(String url, String referer);
 

@@ -6,7 +6,6 @@ import jpuppeteer.util.XFuture;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public interface Element extends BrowserObject {
 
@@ -18,11 +17,9 @@ public interface Element extends BrowserObject {
 
     XFuture<Element> waitSelector(String selector, long timeout, TimeUnit unit);
 
-    XFuture<?> watch(String selector, Consumer<Element> watchFunction, boolean once);
+    XFuture<String> watch(String selector, WatchFunction watchFunction, long timeout, TimeUnit unit);
 
-    default XFuture<?> watch(String selector, Consumer<Element> watchFunction) {
-        return watch(selector, watchFunction, false);
-    }
+    XFuture<?> unwatch(String id);
 
     XFuture<String> getAttribute(String name);
 
@@ -38,17 +35,7 @@ public interface Element extends BrowserObject {
 
     XFuture<?> remove();
 
-    XFuture<String> value();
-
-    XFuture<?> value(String value);
-
-    XFuture<String> html();
-
-    XFuture<?> html(String html);
-
     XFuture<?> scrollIntoView();
-
-    XFuture<?> clear();
 
     XFuture<?> input(String text, int delay);
 

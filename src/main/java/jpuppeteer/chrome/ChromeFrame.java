@@ -1,7 +1,9 @@
 package jpuppeteer.chrome;
 
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.netty.channel.EventLoop;
+import io.netty.util.concurrent.Promise;
 import jpuppeteer.api.*;
 import jpuppeteer.api.event.AbstractEventEmitter;
 import jpuppeteer.api.event.AbstractListener;
@@ -10,8 +12,8 @@ import jpuppeteer.cdp.client.entity.page.CreateIsolatedWorldRequest;
 import jpuppeteer.cdp.client.entity.page.NavigateRequest;
 import jpuppeteer.cdp.client.entity.runtime.CallFunctionOnRequest;
 import jpuppeteer.cdp.client.entity.runtime.EvaluateRequest;
-import jpuppeteer.util.ScriptUtil;
-import jpuppeteer.util.XFuture;
+import jpuppeteer.constant.WatchAction;
+import jpuppeteer.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +22,12 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import static jpuppeteer.constant.WatchConsts.UNWATCH_PREFIX;
+import static jpuppeteer.constant.WatchConsts.WATCH_PREFIX;
+
 public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Frame {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromeFrame.class);
-
-    private static final String SCRIPT_WAIT_SELECTOR = ScriptUtil.load("script/waitselector.js");
 
     private static final String SCRIPT_WATCH = ScriptUtil.load("script/watch.js");
 
@@ -239,26 +242,61 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
 
     @Override
     public XFuture<Element> waitSelector(String selector, long timeout, TimeUnit unit) {
-        timeout = unit.toMillis(timeout);
-        return assertIsolateNotNull().call(SCRIPT_WAIT_SELECTOR, (Object) selector, timeout)
-                .sync(o -> new ChromeElement(this, o));
+        XPromise<Element> promise = new XPromise<>(eventLoop());
+        WatchFunction watchFunction = (id, action, element) -> {
+            if (action == WatchAction.SHOW) {
+                unwatch(id).addListener(f -> {
+                    if (!f.isSuccess()) {
+                        logger.warn("unwatch failed, id={}", id, f.cause());
+                    }
+                });
+                promise.trySuccess(element);
+            }
+        };
+        watch(selector, watchFunction, timeout, unit).addListener(f -> {
+            if (!f.isSuccess()) {
+                promise.tryFailure(f.cause());
+            }
+        });
+        return promise;
     }
 
     @Override
-    public XFuture<?> watch(String selector, Consumer<Element> watchFunction, boolean once) {
-        String functionName = "watch_" + UUID.randomUUID().toString().replace("-", "");
-        return addBinding(functionName, (isolate, hash) -> {
-                    isolate.eval("window['" + hash + "']")
-                            .addListener(f -> {
-                                if (f.cause() != null) {
-                                    logger.error("query watch object failed, error={}", f.cause().getMessage(), f.cause());
-                                } else {
-                                    Element node = new ChromeElement(this, (BrowserObject) f.getNow());
-                                    watchFunction.accept(node);
-                                }
-                            });
+    public XFuture<String> watch(String selector, WatchFunction watchFunction, long timeout, TimeUnit unit) {
+        String id = UUID.randomUUID().toString().replace("-", "");
+        String watchFunctionName = WATCH_PREFIX + id;
+        String unwatchFunctionName = UNWATCH_PREFIX + id;
+        long timeoutMs = unit.toMillis(timeout);
+        return addBinding(watchFunctionName, (isolate, jsonStr) -> {
+                    try {
+                        JsonNode json = JacksonUtil.INSTANCE.readTree(jsonStr);
+                        String actionStr = json.get("action").asText();
+                        WatchAction action = WatchAction.findByValue(actionStr);
+                        String nodeId = json.get("nodeId").asText();
+                        isolate.eval("window['" + nodeId + "']")
+                                .addListener(f -> {
+                                    if (f.cause() != null) {
+                                        logger.error("query watch object failed, error={}", f.cause().getMessage(), f.cause());
+                                    } else if (action == null) {
+                                        logger.warn("unknown watch action:{}", actionStr);
+                                    } else {
+                                        watchFunction.onVisibilityChanged(id, action, new ChromeElement(this, (BrowserObject) f.getNow()));
+                                    }
+                                });
+                    } catch (Exception e) {
+                        logger.error("process watch binding call failed, error={}", e.getMessage(), e);
+                    }
                 })
-                .async(o -> call(SCRIPT_WATCH, (Object) selector, functionName, once));
+                .async(o -> call(SCRIPT_WATCH, (Object)selector, watchFunctionName, unwatchFunctionName, timeoutMs))
+                .sync(o -> id);
+    }
+
+    @Override
+    public XFuture<?> unwatch(String id) {
+        String watchFunctionName = WATCH_PREFIX + id;
+        String unwatchFunctionName = UNWATCH_PREFIX + id;
+        return assertIsolateNotNull().call(unwatchFunctionName)
+                .async(o -> removeBinding(watchFunctionName));
     }
 
     @Override

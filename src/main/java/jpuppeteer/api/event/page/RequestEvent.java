@@ -71,7 +71,7 @@ public class RequestEvent extends FrameEvent implements Request {
     }
 
     @Override
-    public HttpHeader[] headers() {
+    public HttpHeader[] requestHeaders() {
         return headers;
     }
 

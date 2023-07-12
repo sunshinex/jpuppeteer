@@ -109,8 +109,8 @@ public class AuthEvent extends FrameEvent implements Authenticator {
     }
 
     @Override
-    public HttpHeader[] headers() {
-        return request.headers();
+    public HttpHeader[] requestHeaders() {
+        return request.requestHeaders();
     }
 
     @Override

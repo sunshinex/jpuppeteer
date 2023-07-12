@@ -16,6 +16,7 @@ import jpuppeteer.cdp.client.entity.network.CookieParam;
 import jpuppeteer.cdp.client.entity.storage.ClearCookiesRequest;
 import jpuppeteer.cdp.client.entity.storage.GetCookiesRequest;
 import jpuppeteer.cdp.client.entity.storage.SetCookiesRequest;
+import jpuppeteer.cdp.client.entity.target.CloseTargetRequest;
 import jpuppeteer.cdp.client.entity.target.CreateTargetRequest;
 import jpuppeteer.cdp.client.entity.target.DisposeBrowserContextRequest;
 import jpuppeteer.cdp.client.entity.target.TargetInfo;
@@ -107,7 +108,16 @@ public class ChromeContext implements BrowserContext {
                             false, false
                     );
                     ChromePage page = new ChromePage(this, targetInfo);
-                    return page.attach();
+                    return page.attach().addListener(f0 -> {
+                        if (!f0.isSuccess()) {
+                            browser().connection().target.closeTarget(new CloseTargetRequest(o.getTargetId()))
+                                    .addListener(f1 -> {
+                                        if (!f1.isSuccess()) {
+                                            logger.warn("attach failed and close target failed, targetId={}", o.getTargetId(), f1.cause());
+                                        }
+                                    });
+                        }
+                    });
                 });
     }
 

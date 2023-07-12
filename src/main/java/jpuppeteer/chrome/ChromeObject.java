@@ -47,8 +47,18 @@ public class ChromeObject implements BrowserObject {
     }
 
     @Override
+    public XFuture<?> setProperty(String name, Object value) {
+        return call("function(name, value){this[name] = value;}", name, value);
+    }
+
+    @Override
     public XFuture<BrowserObject> getProperty(String name) {
-        return isolate.call("function(name){return this[name]}", objectId, false, name);
+        return call("function(name){return this[name];}", name);
+    }
+
+    @Override
+    public <R> XFuture<R> getProperty(String name, Class<R> clazz) {
+        return call("function(name){return this[name];}", clazz, name);
     }
 
     @Override

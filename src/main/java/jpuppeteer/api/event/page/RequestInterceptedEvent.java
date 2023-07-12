@@ -241,8 +241,8 @@ public class RequestInterceptedEvent extends FrameEvent implements InterceptedRe
     }
 
     @Override
-    public HttpHeader[] headers() {
-        return request.headers();
+    public HttpHeader[] requestHeaders() {
+        return request.requestHeaders();
     }
 
     @Override

@@ -15,7 +15,7 @@ public interface Request {
 
     String method();
 
-    HttpHeader[] headers();
+    HttpHeader[] requestHeaders();
 
     ResourceType resourceType();
 
