@@ -14,6 +14,7 @@ import jpuppeteer.cdp.CDPConnection;
 import jpuppeteer.cdp.CDPEvent;
 import jpuppeteer.cdp.client.constant.browser.DownloadProgressEventState;
 import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration;
+import jpuppeteer.cdp.client.constant.network.ContentEncoding;
 import jpuppeteer.cdp.client.entity.browser.Bounds;
 import jpuppeteer.cdp.client.entity.browser.GetWindowForTargetRequest;
 import jpuppeteer.cdp.client.entity.browser.SetWindowBoundsRequest;
@@ -51,6 +52,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class ChromePage extends ChromeFrame implements Page {
 
@@ -678,10 +680,14 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public XFuture<?> close() {
-        requestMap.clear();
-        responseMap.clear();
-        return connection.target.closeTarget(new CloseTargetRequest(targetId()));
+    public void close() {
+        try {
+            requestMap.clear();
+            responseMap.clear();
+            connection.target.closeTarget(new CloseTargetRequest(targetId())).get(30, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            throw new RuntimeException("close page failed", e);
+        }
     }
 
     @Override
@@ -780,6 +786,13 @@ public class ChromePage extends ChromeFrame implements Page {
     @Override
     public XFuture<?> setUserAgent(SetUserAgentOverrideRequest userAgent) {
         return connection.emulation.setUserAgentOverride(userAgent);
+    }
+
+    @Override
+    public XFuture<?> setAcceptEncoding(ContentEncoding... encodings) {
+        SetAcceptedEncodingsRequest request = new SetAcceptedEncodingsRequest();
+        request.setEncodings(Lists.newArrayList(encodings));
+        return connection.network.setAcceptedEncodings(request);
     }
 
     @Override

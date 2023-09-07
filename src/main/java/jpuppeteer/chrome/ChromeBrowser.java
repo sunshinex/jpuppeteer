@@ -18,7 +18,6 @@ import jpuppeteer.cdp.client.entity.network.CookieParam;
 import jpuppeteer.cdp.client.entity.storage.ClearDataForOriginRequest;
 import jpuppeteer.cdp.client.entity.target.*;
 import jpuppeteer.util.XFuture;
-import jpuppeteer.util.XPromise;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,17 +79,8 @@ public class ChromeBrowser extends ChromeContext implements Browser {
 
     @Override
     public XFuture<BrowserContext> createContext(CreateBrowserContextRequest request) {
-        XPromise<BrowserContext> promise = new XPromise<>(eventLoop);
-        connection.target.createBrowserContext(request).addListener(f -> {
-            if (f.cause() != null) {
-                promise.tryFailure(f.cause());
-            } else {
-                CreateBrowserContextResponse response = (CreateBrowserContextResponse) f.getNow();
-                ChromeContext context = new ChromeContext(ChromeBrowser.this, response.getBrowserContextId());
-                promise.trySuccess(context);
-            }
-        });
-        return promise;
+        return connection.target.createBrowserContext(request)
+                .sync(response -> new ChromeContext(ChromeBrowser.this, response.getBrowserContextId()));
     }
 
     @Override

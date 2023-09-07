@@ -5,6 +5,7 @@ import jpuppeteer.cdp.client.constant.browser.WindowState;
 import jpuppeteer.cdp.client.constant.emulation.ScreenOrientationType;
 import jpuppeteer.cdp.client.constant.emulation.SetEmitTouchEventsForMouseRequestConfiguration;
 import jpuppeteer.cdp.client.constant.fetch.RequestStage;
+import jpuppeteer.cdp.client.constant.network.ContentEncoding;
 import jpuppeteer.cdp.client.constant.page.CaptureScreenshotRequestFormat;
 import jpuppeteer.cdp.client.entity.browser.Bounds;
 import jpuppeteer.cdp.client.entity.emulation.ScreenOrientation;
@@ -155,9 +156,15 @@ public interface Page extends Frame {
 
     XFuture<?> setUserAgent(SetUserAgentOverrideRequest userAgent);
 
-    default XFuture<?> setUserAgent(String userAgent) {
-        return setUserAgent(new SetUserAgentOverrideRequest(userAgent, "zh-CN,zh;q=0.9", "Win32", null));
+    default XFuture<?> setUserAgent(String userAgent, String acceptLanguage, String platform) {
+        return setUserAgent(new SetUserAgentOverrideRequest(userAgent, acceptLanguage, platform, null));
     }
+
+    default XFuture<?> setUserAgent(String userAgent) {
+        return setUserAgent(new SetUserAgentOverrideRequest(userAgent, null, null, null));
+    }
+
+    XFuture<?> setAcceptEncoding(ContentEncoding... encodings);
 
     XFuture<?> setDevice(SetDeviceMetricsOverrideRequest device);
 
@@ -203,7 +210,7 @@ public interface Page extends Frame {
 
     XFuture<?> activate();
 
-    XFuture<?> close();
+    void close();
 
     //keyboard event;
     XFuture<?> keyDown(USKeyboardDefinition key);
