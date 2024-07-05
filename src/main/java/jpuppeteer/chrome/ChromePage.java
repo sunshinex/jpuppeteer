@@ -58,7 +58,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-public class ChromePage extends ChromeFrame implements Page, Connection {
+public class ChromePage extends ChromeFrame implements Page {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromePage.class);
 
@@ -136,11 +136,6 @@ public class ChromePage extends ChromeFrame implements Page, Connection {
                 initFrame(frame, child);
             }
         }
-    }
-
-    @Override
-    public ChannelFuture connect() {
-        return ;
     }
 
     /**
