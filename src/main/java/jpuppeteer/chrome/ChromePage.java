@@ -1,6 +1,9 @@
 package jpuppeteer.chrome;
 
 import com.google.common.collect.Lists;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoop;
 import jpuppeteer.api.Frame;
 import jpuppeteer.api.Request;
@@ -34,6 +37,7 @@ import jpuppeteer.cdp.client.entity.page.*;
 import jpuppeteer.cdp.client.entity.runtime.*;
 import jpuppeteer.cdp.client.entity.target.ActivateTargetRequest;
 import jpuppeteer.cdp.client.entity.target.CloseTargetRequest;
+import jpuppeteer.cdp.client.entity.target.ExposeDevToolsProtocolRequest;
 import jpuppeteer.cdp.client.entity.target.TargetInfo;
 import jpuppeteer.constant.LifecyclePhase;
 import jpuppeteer.constant.MouseDefinition;
@@ -54,7 +58,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-public class ChromePage extends ChromeFrame implements Page {
+public class ChromePage extends ChromeFrame implements Page, Connection {
 
     private static final Logger logger = LoggerFactory.getLogger(ChromePage.class);
 
@@ -76,9 +80,9 @@ public class ChromePage extends ChromeFrame implements Page {
 
     private final Map<Integer, Isolate> isolateMap;
 
-    private final Map<String, Request> requestMap;
+    private final Map<String, RequestEvent> requestMap;
 
-    private final Map<String, Response> responseMap;
+    private final Map<String, ResponseEvent> responseMap;
 
     private final Map<String, ChromeDownloadObject> downloadObjectMap;
 
@@ -132,6 +136,20 @@ public class ChromePage extends ChromeFrame implements Page {
                 initFrame(frame, child);
             }
         }
+    }
+
+    @Override
+    public ChannelFuture connect() {
+        return ;
+    }
+
+    /**
+     * TODO 这个地方后面要看怎么写得更优雅
+     * 这个方法用作覆盖CDPConnection的open方法
+     * @return 如果返回null，则执行CDPConnection默认的open方法
+     */
+    protected ChannelFuture open(ChannelInitializer<? extends Channel> initializer) {
+        return null;
     }
 
     public XFuture<Page> attach() {
@@ -315,8 +333,8 @@ public class ChromePage extends ChromeFrame implements Page {
         frame.setFrameInfo(event.getFrame());
         if (frame == ChromePage.this) {
             //如果是页面的跳转，则清空所有的请求跟响应map
-            Request request = requestMap.remove(loaderId());
-            Response response = responseMap.remove(loaderId());
+            RequestEvent request = requestMap.remove(loaderId());
+            ResponseEvent response = responseMap.remove(loaderId());
             requestMap.clear();
             responseMap.clear();
             if (request != null) {
@@ -510,7 +528,7 @@ public class ChromePage extends ChromeFrame implements Page {
                 .status(event.getResponse().getStatus())
                 .statusText(event.getResponse().getStatusText())
                 .mimeType(event.getResponse().getMimeType())
-                .headers(headers)
+                .responseHeaders(headers)
                 .requestHeaders(requestHeaders)
                 .connectionReused(event.getResponse().getConnectionReused())
                 .connectionId(event.getResponse().getConnectionId().intValue())
@@ -553,7 +571,7 @@ public class ChromePage extends ChromeFrame implements Page {
                 .build();
 
         HttpHeader[] responseHeaders = null;
-        if (event.getResponseHeaders() != null && event.getResponseHeaders().size() > 0) {
+        if (event.getResponseHeaders() != null && !event.getResponseHeaders().isEmpty()) {
             List<HttpHeader> responseHeaderList = new ArrayList<>(event.getResponseHeaders().size());
             for (int i = 0; i< event.getResponseHeaders().size(); i++) {
                 HeaderEntry entry = event.getResponseHeaders().get(i);
@@ -618,7 +636,11 @@ public class ChromePage extends ChromeFrame implements Page {
 
     @Override
     public String url() {
-        return targetInfo.getUrl();
+        String url = super.url();
+        if (url == null) {
+            url = targetInfo.getUrl();
+        }
+        return url;
     }
 
     @Override
@@ -894,7 +916,7 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public XFuture<?> touchStart(int x, int y) {
+    public XFuture<?> touchStart(double x, double y) {
         return connection.inputWrapper.touchStart(x, y);
     }
 
@@ -909,7 +931,7 @@ public class ChromePage extends ChromeFrame implements Page {
     }
 
     @Override
-    public XFuture<?> touchMove(int x, int y) {
+    public XFuture<?> touchMove(double x, double y) {
         return connection.inputWrapper.touchMove(x, y);
     }
 
@@ -923,10 +945,26 @@ public class ChromePage extends ChromeFrame implements Page {
         return connection.target.activateTarget(new ActivateTargetRequest(targetId()));
     }
 
+    @Override
+    public XFuture<?> expose(String bindingName) {
+        ExposeDevToolsProtocolRequest request = new ExposeDevToolsProtocolRequest(targetId());
+        request.setBindingName(bindingName);
+        return connection.target.exposeDevToolsProtocol(request);
+    }
+
     class PageConnection extends CDPConnection {
 
         public PageConnection() {
             super(ChromePage.this.eventLoop(), uri);
+        }
+
+        @Override
+        protected ChannelFuture open(ChannelInitializer<? extends Channel> initializer) {
+            ChannelFuture cf = ChromePage.this.open(initializer);
+            if (cf != null) {
+                return cf;
+            }
+            return super.open(initializer);
         }
 
         @Override

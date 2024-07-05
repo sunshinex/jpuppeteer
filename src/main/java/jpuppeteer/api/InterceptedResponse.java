@@ -19,10 +19,14 @@ public interface InterceptedResponse extends Request {
 
     XFuture<?> continues();
 
-    XFuture<?> respond(int statusCode, HttpHeader[] headers, byte[] body);
+    XFuture<?> respond(int statusCode, String responsePhrase, HttpHeader[] headers, byte[] body);
+
+    default XFuture<?> respond(int statusCode, String responsePhrase) {
+        return respond(statusCode, responsePhrase, null, null);
+    }
 
     default XFuture<?> respond(int statusCode) {
-        return respond(statusCode, null, null);
+        return respond(statusCode, null, null, null);
     }
 
 }

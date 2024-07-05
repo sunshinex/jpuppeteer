@@ -11,6 +11,7 @@ import jpuppeteer.cdp.client.domain.Fetch;
 import jpuppeteer.cdp.client.entity.fetch.AuthChallenge;
 import jpuppeteer.cdp.client.entity.fetch.AuthChallengeResponse;
 import jpuppeteer.cdp.client.entity.fetch.ContinueWithAuthRequest;
+import jpuppeteer.constant.HttpMethod;
 import jpuppeteer.util.XFuture;
 
 public class AuthEvent extends FrameEvent implements Authenticator {
@@ -104,7 +105,7 @@ public class AuthEvent extends FrameEvent implements Authenticator {
     }
 
     @Override
-    public String method() {
+    public HttpMethod method() {
         return request.method();
     }
 

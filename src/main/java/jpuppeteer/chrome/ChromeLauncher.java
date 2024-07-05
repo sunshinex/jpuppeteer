@@ -1,6 +1,7 @@
 package jpuppeteer.chrome;
 
 import com.google.common.util.concurrent.SettableFuture;
+import io.netty.channel.Channel;
 import io.netty.channel.EventLoop;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
@@ -94,7 +95,7 @@ public class ChromeLauncher implements Launcher {
 
     public static Page attach(String strUri) throws Exception {
         EventLoop eventLoop = new NioEventLoopGroup(1, r -> {
-            return new Thread(r, "browser");
+            return new Thread(r, "page");
         }).next();
         URI uri = URI.create(strUri);
         String[] pathSeg = uri.getPath().split("/");
@@ -105,16 +106,14 @@ public class ChromeLauncher implements Launcher {
         );
         ChromePage page = new WebViewPage(uri, targetInfo, null, eventLoop) {
             @Override
-            public XFuture<?> close() {
-                return XPromise.wrap(GlobalEventExecutor.INSTANCE.submit(() -> {
-                    try {
-                        super.close().get(30, TimeUnit.SECONDS);
-                    } catch (Exception e) {
-                        logger.error("close webview page failed", e);
-                    } finally {
-                        eventLoop.shutdownGracefully();
-                    }
-                }));
+            public void close() {
+                try {
+                    super.close();
+                } catch (Exception e) {
+                    logger.error("close webview page failed", e);
+                } finally {
+                    eventLoop.shutdownGracefully();
+                }
             }
         };
         return page.attach().get(30, TimeUnit.SECONDS);

@@ -248,11 +248,11 @@ public class Input {
                 .sync(o -> touchPoints);
     }
 
-    private TouchPoint createTouchPoint(int x, int y) {
+    private TouchPoint createTouchPoint(double x, double y) {
         return new TouchPoint(BigDecimal.valueOf(x), BigDecimal.valueOf(y));
     }
 
-    public XFuture<TouchPoint[]> touchStart(int x, int y) {
+    public XFuture<TouchPoint[]> touchStart(double x, double y) {
         return touchStart(new TouchPoint[]{createTouchPoint(x, y)});
     }
 
@@ -270,7 +270,7 @@ public class Input {
                 .sync(o -> touchPoints);
     }
 
-    public XFuture<TouchPoint[]> touchMove(int x, int y) {
+    public XFuture<TouchPoint[]> touchMove(double x, double y) {
         return touchMove(new TouchPoint[]{createTouchPoint(x, y)});
     }
 

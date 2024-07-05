@@ -247,14 +247,19 @@ public interface Page extends Frame {
     //touch event
     XFuture<?> touchStart(TouchPoint[] touchPoints);
 
-    XFuture<?> touchStart(int x, int y);
+    XFuture<?> touchStart(double x, double y);
 
     XFuture<?> touchEnd();
 
     XFuture<?> touchMove(TouchPoint[] touchPoints);
 
-    XFuture<?> touchMove(int x, int y);
+    XFuture<?> touchMove(double x, double y);
 
     XFuture<?> touchCancel();
 
+    XFuture<?> expose(String bindingName);
+
+    default XFuture<?> expose() {
+        return expose(null);
+    }
 }

@@ -20,6 +20,8 @@ public interface Frame extends EventEmitter<PageEvent>, Isolate {
 
     String url();
 
+    String origin();
+
     XFuture<Element> querySelector(String selector);
 
     XFuture<Element[]> querySelectorAll(String selector);

@@ -8,6 +8,7 @@ import jpuppeteer.cdp.client.constant.network.ResourceType;
 import jpuppeteer.cdp.client.domain.Network;
 import jpuppeteer.cdp.client.entity.network.GetRequestPostDataRequest;
 import jpuppeteer.cdp.client.entity.network.GetRequestPostDataResponse;
+import jpuppeteer.constant.HttpMethod;
 import jpuppeteer.util.XFuture;
 import jpuppeteer.util.XPromise;
 
@@ -23,7 +24,7 @@ public class RequestEvent extends FrameEvent implements Request {
 
     private final String url;
 
-    private final String method;
+    private final HttpMethod method;
 
     private final HttpHeader[] headers;
 
@@ -35,7 +36,7 @@ public class RequestEvent extends FrameEvent implements Request {
 
     private final String postData;
 
-    private RequestEvent(Frame frame, Network network, EventExecutor executor, String requestId, String loaderId, String url, String method, HttpHeader[] headers, ResourceType resourceType, String location, Boolean hasPostData, String postData) {
+    private RequestEvent(Frame frame, Network network, EventExecutor executor, String requestId, String loaderId, String url, HttpMethod method, HttpHeader[] headers, ResourceType resourceType, String location, Boolean hasPostData, String postData) {
         super(frame);
         this.network = network;
         this.executor = executor;
@@ -66,7 +67,7 @@ public class RequestEvent extends FrameEvent implements Request {
     }
 
     @Override
-    public String method() {
+    public HttpMethod method() {
         return method;
     }
 
@@ -110,7 +111,7 @@ public class RequestEvent extends FrameEvent implements Request {
         private String requestId;
         private String loaderId;
         private String url;
-        private String method;
+        private HttpMethod method;
         private HttpHeader[] headers;
         private ResourceType resourceType;
         private String location;
@@ -147,7 +148,7 @@ public class RequestEvent extends FrameEvent implements Request {
         }
 
         public RequestEventBuilder method(String method) {
-            this.method = method;
+            this.method = HttpMethod.findByValue(method);
             return this;
         }
 

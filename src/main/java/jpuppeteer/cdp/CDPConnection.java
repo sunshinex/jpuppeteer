@@ -22,7 +22,6 @@ import jpuppeteer.util.CDPException;
 import jpuppeteer.util.JacksonUtil;
 import jpuppeteer.util.XFuture;
 import jpuppeteer.util.XPromise;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,7 +118,7 @@ public class CDPConnection {
 
     }
 
-    private ChannelFuture open() {
+    protected ChannelFuture open(ChannelInitializer<? extends Channel> initializer) {
         String scheme = uri.getScheme() == null ? WS : uri.getScheme();
         if (!scheme.equals(WS)) {
             throw new RuntimeException("Unsupported protocol: " + scheme);
@@ -133,22 +132,25 @@ public class CDPConnection {
                 .option(ChannelOption.SO_LINGER, 3)
                 .option(ChannelOption.SO_REUSEADDR, true)
                 .option(ChannelOption.AUTO_CLOSE, true)
-                .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel ch) {
-                        ChannelPipeline p = ch.pipeline();
-                        p.addLast(
-                                new HttpClientCodec(),
-                                new HttpObjectAggregator(8192),
-                                new Handshake());
-                    }
-                })
-                .connect(uri.getHost(), uri.getPort())
-                .addListener(f -> {
-                    if (f.cause() != null) {
-                        connectFuture.tryFailure(f.cause());
-                    }
-                });
+                .handler(initializer)
+                .connect(uri.getHost(), uri.getPort());
+    }
+
+    private ChannelFuture open() {
+        return open(new ChannelInitializer<Channel>() {
+            @Override
+            protected void initChannel(Channel ch) {
+                ChannelPipeline p = ch.pipeline();
+                p.addLast(
+                        new HttpClientCodec(),
+                        new HttpObjectAggregator(8192),
+                        new Handshake());
+            }
+        }).addListener(f -> {
+            if (f.cause() != null) {
+                connectFuture.tryFailure(f.cause());
+            }
+        });
     }
 
     public boolean isClosed() {
@@ -177,7 +179,7 @@ public class CDPConnection {
         if (logger.isDebugEnabled()) {
             logger.debug("[{}] ==> send message={}", uri.getPath(), jsonStr);
         }
-
+        long start = System.currentTimeMillis();
         XPromise<JsonNode> promise = new XPromise<>(eventLoop);
         promiseMap.put(id, promise);
         TextWebSocketFrame frame = new TextWebSocketFrame(jsonStr);
@@ -198,6 +200,8 @@ public class CDPConnection {
             if (f.isCancelled()) {
                 logger.debug("future cancelled, id={}", id);
                 promiseMap.remove(id);
+            } else if (f.isDone()) {
+                logger.debug("[{}] <== recv:{}, elapse={}ms", uri.getPath(), id, System.currentTimeMillis() - start);
             }
         });
         return promise;

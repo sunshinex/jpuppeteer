@@ -35,7 +35,7 @@ public class ResponseEvent extends FrameEvent implements Response {
 
     private final String mimeType;
 
-    private final HttpHeader[] headers;
+    private final HttpHeader[] responseHeaders;
 
     private final HttpHeader[] requestHeaders;
 
@@ -53,7 +53,7 @@ public class ResponseEvent extends FrameEvent implements Response {
 
     private final Integer encodedDataLength;
 
-    private ResponseEvent(Frame frame, Network network, EventExecutor executor, String requestId, String loaderId, ResourceType resourceType, String url, String protocol, Integer status, String statusText, String mimeType, HttpHeader[] headers, HttpHeader[] requestHeaders, Boolean connectionReused, Integer connectionId, InetSocketAddress remoteAddress, Boolean fromDiskCache, Boolean fromServiceWorker, Boolean fromPrefetchCache, Integer encodedDataLength) {
+    private ResponseEvent(Frame frame, Network network, EventExecutor executor, String requestId, String loaderId, ResourceType resourceType, String url, String protocol, Integer status, String statusText, String mimeType, HttpHeader[] responseHeaders, HttpHeader[] requestHeaders, Boolean connectionReused, Integer connectionId, InetSocketAddress remoteAddress, Boolean fromDiskCache, Boolean fromServiceWorker, Boolean fromPrefetchCache, Integer encodedDataLength) {
         super(frame);
         this.network = network;
         this.executor = executor;
@@ -65,7 +65,7 @@ public class ResponseEvent extends FrameEvent implements Response {
         this.status = status;
         this.statusText = statusText;
         this.mimeType = mimeType;
-        this.headers = headers;
+        this.responseHeaders = responseHeaders;
         this.requestHeaders = requestHeaders;
         this.connectionReused = connectionReused;
         this.connectionId = connectionId;
@@ -117,8 +117,8 @@ public class ResponseEvent extends FrameEvent implements Response {
     }
 
     @Override
-    public HttpHeader[] headers() {
-        return headers;
+    public HttpHeader[] responseHeaders() {
+        return responseHeaders;
     }
 
     @Override
@@ -185,7 +185,7 @@ public class ResponseEvent extends FrameEvent implements Response {
         private Integer status;
         private String statusText;
         private String mimeType;
-        private HttpHeader[] headers;
+        private HttpHeader[] responseHeaders;
         private HttpHeader[] requestHeaders;
         private Boolean connectionReused;
         private Integer connectionId;
@@ -249,8 +249,8 @@ public class ResponseEvent extends FrameEvent implements Response {
             return this;
         }
 
-        public ResponseEventBuilder headers(HttpHeader[] headers) {
-            this.headers = headers;
+        public ResponseEventBuilder responseHeaders(HttpHeader[] responseHeaders) {
+            this.responseHeaders = responseHeaders;
             return this;
         }
 
@@ -300,7 +300,7 @@ public class ResponseEvent extends FrameEvent implements Response {
         }
 
         public ResponseEvent build() {
-            return new ResponseEvent(frame, network, executor, requestId, loaderId, resourceType, url, protocol, status, statusText, mimeType, headers, requestHeaders, connectionReused, connectionId, remoteAddress, fromDiskCache, fromServiceWorker, fromPrefetchCache, encodedDataLength);
+            return new ResponseEvent(frame, network, executor, requestId, loaderId, resourceType, url, protocol, status, statusText, mimeType, responseHeaders, requestHeaders, connectionReused, connectionId, remoteAddress, fromDiskCache, fromServiceWorker, fromPrefetchCache, encodedDataLength);
         }
     }
 }

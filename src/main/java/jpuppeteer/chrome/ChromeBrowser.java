@@ -1,5 +1,8 @@
 package jpuppeteer.chrome;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoop;
 import io.netty.channel.nio.NioEventLoopGroup;
 import jpuppeteer.api.Browser;
@@ -65,6 +68,15 @@ public class ChromeBrowser extends ChromeContext implements Browser {
 
     protected CDPConnection connection() {
         return connection;
+    }
+
+    /**
+     * TODO 这个地方后面要看怎么写得更优雅
+     * 这个方法用作覆盖CDPConnection的open方法
+     * @return 如果返回null，则执行CDPConnection默认的open方法
+     */
+    protected ChannelFuture open(ChannelInitializer<? extends Channel> initializer) {
+        return null;
     }
 
     @Override
@@ -171,6 +183,15 @@ public class ChromeBrowser extends ChromeContext implements Browser {
 
         public BrowserConnection(EventLoop eventLoop, URI uri) {
             super(eventLoop, uri);
+        }
+
+        @Override
+        protected ChannelFuture open(ChannelInitializer<? extends Channel> initializer) {
+            ChannelFuture cf = ChromeBrowser.this.open(initializer);
+            if (cf != null) {
+                return cf;
+            }
+            return super.open(initializer);
         }
 
         @Override

@@ -25,7 +25,7 @@ public interface Response {
 
     String mimeType();
 
-    HttpHeader[] headers();
+    HttpHeader[] responseHeaders();
 
     HttpHeader[] requestHeaders();
 

@@ -108,6 +108,7 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
 
     @Override
     public String url() {
+        jpuppeteer.cdp.client.entity.page.Frame frameInfo = this.frameInfo;
         if (frameInfo == null) {
             return null;
         }
@@ -116,6 +117,15 @@ public class ChromeFrame extends AbstractEventEmitter<PageEvent> implements Fram
             url += frameInfo.getUrlFragment();
         }
         return url;
+    }
+
+    @Override
+    public String origin() {
+        jpuppeteer.cdp.client.entity.page.Frame frameInfo = this.frameInfo;
+        if (frameInfo == null) {
+            return null;
+        }
+        return frameInfo.getSecurityOrigin();
     }
 
     @Override

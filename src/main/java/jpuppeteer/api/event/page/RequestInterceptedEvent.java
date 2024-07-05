@@ -10,6 +10,7 @@ import jpuppeteer.cdp.client.constant.network.ErrorReason;
 import jpuppeteer.cdp.client.constant.network.ResourceType;
 import jpuppeteer.cdp.client.domain.Fetch;
 import jpuppeteer.cdp.client.entity.fetch.*;
+import jpuppeteer.constant.HttpMethod;
 import jpuppeteer.util.XFuture;
 
 import java.nio.charset.Charset;
@@ -116,7 +117,7 @@ public class RequestInterceptedEvent extends FrameEvent implements InterceptedRe
     }
 
     @Override
-    public XFuture<?> continues(String method, String url, HttpHeader[] headers, byte[] body) {
+    public XFuture<?> continues(HttpMethod method, String url, HttpHeader[] headers, byte[] body) {
         List<HeaderEntry> entries = null;
         if (headers != null && headers.length > 0) {
             entries = new ArrayList<>(headers.length);
@@ -129,7 +130,8 @@ public class RequestInterceptedEvent extends FrameEvent implements InterceptedRe
         if (body != null) {
             base64Body = Base64.getEncoder().encodeToString(body);
         }
-        ContinueRequestRequest request = new ContinueRequestRequest(interceptorId, url, method, base64Body, entries);
+        String methodName = method != null ? method.value() : null;
+        ContinueRequestRequest request = new ContinueRequestRequest(interceptorId, url, methodName, base64Body, entries);
         return fetch.continueRequest(request);
     }
 
@@ -172,11 +174,13 @@ public class RequestInterceptedEvent extends FrameEvent implements InterceptedRe
     }
 
     @Override
-    public XFuture<?> respond(int statusCode, HttpHeader[] headers, byte[] body) {
+    public XFuture<?> respond(int statusCode, String responsePhrase, HttpHeader[] headers, byte[] body) {
         if (!STATUS_TEXT.containsKey(statusCode)) {
             throw new RuntimeException("unknown statusCode " + statusCode);
         }
-        String responsePhase = STATUS_TEXT.get(statusCode);
+        if (responsePhrase == null) {
+            responsePhrase = STATUS_TEXT.get(statusCode);
+        }
         Charset encoding = Charsets.UTF_8;
         boolean contentTypeDefined = false;
         List<HeaderEntry> entries = null;
@@ -215,7 +219,7 @@ public class RequestInterceptedEvent extends FrameEvent implements InterceptedRe
         }
         FulfillRequestRequest request = new FulfillRequestRequest(
                 interceptorId, statusCode, entries,
-                null, encodedBody, responsePhase
+                null, encodedBody, responsePhrase
         );
         return fetch.fulfillRequest(request);
     }
@@ -236,7 +240,7 @@ public class RequestInterceptedEvent extends FrameEvent implements InterceptedRe
     }
 
     @Override
-    public String method() {
+    public HttpMethod method() {
         return request.method();
     }
 

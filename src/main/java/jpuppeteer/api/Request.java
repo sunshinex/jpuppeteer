@@ -1,6 +1,7 @@
 package jpuppeteer.api;
 
 import jpuppeteer.cdp.client.constant.network.ResourceType;
+import jpuppeteer.constant.HttpMethod;
 import jpuppeteer.util.XFuture;
 
 public interface Request {
@@ -13,7 +14,7 @@ public interface Request {
 
     String url();
 
-    String method();
+    HttpMethod method();
 
     HttpHeader[] requestHeaders();
 

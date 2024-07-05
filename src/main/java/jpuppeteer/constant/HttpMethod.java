@@ -1,16 +1,18 @@
 package jpuppeteer.constant;
 
-public enum HttpMethod {
+import jpuppeteer.cdp.client.CDPEnum;
 
-    OPTIONS("options"),
-    GET("get"),
-    HEAD("head"),
-    POST("post"),
-    PUT("put"),
-    PATCH("patch"),
-    DELETE("delete"),
-    TRACE("trace"),
-    CONNECT("connect"),
+public enum HttpMethod implements CDPEnum {
+
+    OPTIONS("OPTIONS"),
+    GET("GET"),
+    HEAD("HEAD"),
+    POST("POST"),
+    PUT("PUT"),
+    PATCH("PATCH"),
+    DELETE("DELETE"),
+    TRACE("TRACE"),
+    CONNECT("CONNECT"),
     ;
 
     private final String value;
@@ -19,6 +21,7 @@ public enum HttpMethod {
         this.value = value;
     }
 
+    @Override
     public String value() {
         return value;
     }
@@ -27,7 +30,7 @@ public enum HttpMethod {
         if (value == null) {
             return null;
         }
-        String lowerValue = value.toLowerCase();
+        String lowerValue = value.toUpperCase();
         for(HttpMethod method : values()) {
             if (lowerValue.equals(method.value)) {
                 return method;
